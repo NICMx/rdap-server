@@ -77,11 +77,16 @@ public class RdapServlet extends HttpServlet {
 			return;
 		}
 		RdapResult result;
+		
+		/* TODO get dababase connection here. */
+		
 		try {
 			result = handler.handle(request);
 		} catch (RequestHandleException e) {
 			writeError(httpResponse, e.getMessage());
 			return;
+		} finally {
+			/* TODO return dababase connection here. */
 		}
 
 		/* Build the response. */

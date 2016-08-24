@@ -14,9 +14,7 @@ public class BareRequest {
 
 	/** If the URI was /rdap/ip/192.0.2.0/24, then this is "ip". */
 	private String resourceType;
-	/**
-	 * If the URI was /rdap/ip/192.0.2.0/24, then this is ["192.0.2.0", "24"].
-	 */
+	/** If the URI was /rdap/ip/192.0.2.0/24, then this is ["192.0.2.0", "24"]. */
 	private String[] payload;
 
 	public BareRequest(String uri) throws RequestValidationException {

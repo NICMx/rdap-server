@@ -9,8 +9,9 @@ public interface RdapRequestHandler {
 	 * Returns the "Resource Type Path Segment" label this query is supposed to
 	 * handle.
 	 * 
-	 * For example, if this handler takes care of queries in the form
-	 * "/rdap/domain/<domain name>", then this function returns "domain".
+	 * For example, if this handler is supposed to take care of queries in the
+	 * form "/rdap/domain/<domain name>", then this function must return
+	 * "domain".
 	 * 
 	 * @return the "Resource Type Path Segment" label this query is supposed to
 	 *         handle.
@@ -19,7 +20,7 @@ public interface RdapRequestHandler {
 
 	/**
 	 * Validates the request of the user, parses the arguments and creates a
-	 * more handler-friendly RdapRequest out of the `query` parameters.
+	 * more handler-friendly {@link RdapRequest} out of the `query` parameters.
 	 * 
 	 * @param query
 	 *            Arguments to the request. For example, if the request was
