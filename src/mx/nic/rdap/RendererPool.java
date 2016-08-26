@@ -27,8 +27,10 @@ public class RendererPool {
 		for (String name : rendererNames) {
 			Class<?> clazz = Class.forName(properties.getProperty(name + ".class"));
 			Constructor<?> constructor = clazz.getConstructor();
-			Object renderer = constructor.newInstance();
-			renderers.put(name, (Renderer) renderer);
+			Renderer renderer = (Renderer) constructor.newInstance();
+			for (String contentType : renderer.getRequestContentTypes()) {
+				renderers.put(contentType, renderer);
+			}
 		}
 	}
 

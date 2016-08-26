@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import mx.nic.rdap.exception.RequestHandleException;
 import mx.nic.rdap.exception.RequestValidationException;
+import mx.nic.rdap.renderer.DefaultRenderer;
 
 /**
  * Main class of the RDAP Servlet.
@@ -57,14 +58,14 @@ public class RdapServlet extends HttpServlet {
 		try {
 			bareRequest = new BareRequest(httpRequest.getRequestURI());
 		} catch (RequestValidationException e) {
-			writeError(httpResponse, e.getMessage());
+			httpResponse.sendError(404, e.getMessage());
 			return;
 		}
 
 		/* Recognize the request type and retrieve the proper handler. */
 		RdapRequestHandler handler = RequestHandlerPool.get(bareRequest.getResourceType());
 		if (handler == null) {
-			writeError(httpResponse, "There is no handler mapped to label '" + bareRequest.getResourceType() + "'");
+			httpResponse.sendError(404, "There is no handler mapped to label '" + bareRequest.getResourceType() + "'");
 			return;
 		}
 
@@ -73,7 +74,7 @@ public class RdapServlet extends HttpServlet {
 		try {
 			request = handler.validate(bareRequest.getPayload());
 		} catch (RequestValidationException e) {
-			writeError(httpResponse, e.getMessage());
+			httpResponse.sendError(400, e.getMessage());
 			return;
 		}
 
@@ -83,19 +84,19 @@ public class RdapServlet extends HttpServlet {
 		try {
 			result = handler.handle(request);
 		} catch (RequestHandleException e) {
-			writeError(httpResponse, e.getMessage());
+			httpResponse.sendError(400, e.getMessage());
 			return;
 		} finally {
 			/* TODO return dababase connection here. */
 		}
 
 		/* Build the response. */
-		Renderer renderer = RendererPool.get("json");
+		Renderer renderer = RendererPool.get(httpRequest.getContentType());
+		if (renderer == null) {
+			renderer = new DefaultRenderer();
+		}
+		httpResponse.setContentType(renderer.getResponseContentType());
 		renderer.render(result, httpResponse.getWriter());
-	}
-
-	private void writeError(HttpServletResponse httpResponse, String error) throws IOException {
-		httpResponse.getWriter().append(error);
 	}
 
 }

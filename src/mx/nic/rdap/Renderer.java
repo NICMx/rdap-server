@@ -4,6 +4,11 @@ import java.io.PrintWriter;
 
 public interface Renderer {
 
+	/** Content types this renderer handles. */
+	public String[] getRequestContentTypes();
+	/** Content type this renderer returns. */
+	public String getResponseContentType();
+	
 	/**
 	 * Prints `result` in `printWriter`.
 	 * 
