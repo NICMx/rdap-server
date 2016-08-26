@@ -9,11 +9,11 @@ import mx.nic.rdap.RdapResult;
 public class SampleResult implements RdapResult {
 
 	private String domain;
-	
+
 	public SampleResult(String domain) {
 		this.domain = domain;
 	}
-	
+
 	@Override
 	public JsonObject toJson() {
 		return Json.createObjectBuilder() //

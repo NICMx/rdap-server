@@ -8,7 +8,7 @@ import mx.nic.rdap.exception.RequestValidationException;
 import mx.nic.rdap.result.PotatoResult;
 
 public class PotatoHandler implements RdapRequestHandler {
-	
+
 	@Override
 	public String getResourceType() {
 		return "potato";
@@ -23,5 +23,5 @@ public class PotatoHandler implements RdapRequestHandler {
 	public RdapResult handle(RdapRequest request) throws RequestHandleException {
 		return new PotatoResult();
 	}
-	
+
 }

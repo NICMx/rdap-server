@@ -26,16 +26,16 @@ public class SampleHandler implements RdapRequestHandler {
 		} catch (UnknownHostException e) {
 			throw new RequestValidationException(e);
 		}
-		
+
 		Integer prefixLength = null;
-		if (query.length > 1) { 
+		if (query.length > 1) {
 			try {
 				prefixLength = Integer.parseInt(query[1]);
 			} catch (NumberFormatException e) {
 				throw new RequestValidationException(e);
 			}
 		}
-		
+
 		return new SampleRequest(address, prefixLength);
 	}
 
@@ -47,7 +47,10 @@ public class SampleHandler implements RdapRequestHandler {
 	}
 
 	private String getDomainForPrefix(InetAddress address, Integer prefixLength) {
-		/* Database lookup goes here. This is an example so just return a constant. */
+		/*
+		 * Database lookup goes here. This is an example so just return a
+		 * constant.
+		 */
 		return "domain.mx";
 	}
 

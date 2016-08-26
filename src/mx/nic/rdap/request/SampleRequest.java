@@ -14,11 +14,11 @@ public class SampleRequest implements RdapRequest {
 		this.address = address;
 		this.prefixLength = prefixLength;
 	}
-	
+
 	public InetAddress getAddress() {
 		return address;
 	}
-	
+
 	public Integer getPrefixLength() {
 		return prefixLength;
 	}

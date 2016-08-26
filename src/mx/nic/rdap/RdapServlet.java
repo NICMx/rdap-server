@@ -21,7 +21,7 @@ public class RdapServlet extends HttpServlet {
 	/** File from which we will load the request handlers. */
 	private static final String HANDLERS_FILE = "META-INF/handlers.properties";
 	/** File from which we will load the renderer. */
-	private static final String RENDERER_FILE = "META-INF/renderer.properties";
+	private static final String RENDERERS_FILE = "META-INF/renderers.properties";
 
 	/** This is just a warning shutupper. */
 	private static final long serialVersionUID = 1L;
@@ -34,7 +34,7 @@ public class RdapServlet extends HttpServlet {
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException {
 		super();
 		RequestHandlerPool.loadHandlers(HANDLERS_FILE);
-		RendererPool.loadRenderers(RENDERER_FILE);
+		RendererPool.loadRenderers(RENDERERS_FILE);
 	}
 
 	/**
@@ -76,10 +76,10 @@ public class RdapServlet extends HttpServlet {
 			writeError(httpResponse, e.getMessage());
 			return;
 		}
-		RdapResult result;
-		
+
 		/* TODO get dababase connection here. */
-		
+
+		RdapResult result;
 		try {
 			result = handler.handle(request);
 		} catch (RequestHandleException e) {
@@ -90,7 +90,7 @@ public class RdapServlet extends HttpServlet {
 		}
 
 		/* Build the response. */
-		Renderer renderer = RendererPool.getActiveRenderer();
+		Renderer renderer = RendererPool.get("json");
 		renderer.render(result, httpResponse.getWriter());
 	}
 

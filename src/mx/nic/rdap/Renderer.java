@@ -13,6 +13,6 @@ public interface Renderer {
 	 *            the response we're building to the user, stream/writer
 	 *            version.
 	 */
-	void render(RdapResult result, PrintWriter printWriter);
+	public void render(RdapResult result, PrintWriter printWriter);
 
 }

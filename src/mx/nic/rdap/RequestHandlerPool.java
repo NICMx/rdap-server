@@ -23,20 +23,16 @@ public class RequestHandlerPool {
 		Properties properties = new Properties();
 		properties.load(handlerStream);
 
-		String handlers[] = properties.getProperty("handlers").split("\\s*,\\s*");
-		for (String handler : handlers) {
-			Class<?> clazz = Class.forName(properties.getProperty(handler + ".class"));
+		String handlerNames[] = properties.getProperty("handlers").split("\\s*,\\s*");
+		for (String name : handlerNames) {
+			Class<?> clazz = Class.forName(properties.getProperty(name + ".class"));
 			Constructor<?> constructor = clazz.getConstructor();
-			Object handlerObject = constructor.newInstance();
-			RequestHandlerPool.add((RdapRequestHandler) handlerObject);
+			RdapRequestHandler handler = (RdapRequestHandler) constructor.newInstance();
+			handlers.put(handler.getResourceType(), handler);
 		}
 	}
 
-	private static synchronized void add(RdapRequestHandler handler) {
-		handlers.put(handler.getResourceType(), handler);
-	}
-
-	public static synchronized RdapRequestHandler get(String resourceType) {
+	public static RdapRequestHandler get(String resourceType) {
 		return handlers.get(resourceType);
 	}
 
