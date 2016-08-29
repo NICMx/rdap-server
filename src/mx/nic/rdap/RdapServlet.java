@@ -2,6 +2,7 @@ package mx.nic.rdap;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.PriorityQueue;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import mx.nic.rdap.AcceptHeaderFieldParser.Accept;
 import mx.nic.rdap.exception.RequestHandleException;
 import mx.nic.rdap.exception.RequestValidationException;
 import mx.nic.rdap.renderer.DefaultRenderer;
@@ -91,12 +93,25 @@ public class RdapServlet extends HttpServlet {
 		}
 
 		/* Build the response. */
-		Renderer renderer = RendererPool.get(httpRequest.getContentType());
-		if (renderer == null) {
-			renderer = new DefaultRenderer();
-		}
+		Renderer renderer = findRenderer(httpRequest);
 		httpResponse.setContentType(renderer.getResponseContentType());
 		renderer.render(result, httpResponse.getWriter());
+	}
+
+	private Renderer findRenderer(HttpServletRequest httpRequest) {
+		Renderer renderer;
+
+		AcceptHeaderFieldParser parser = new AcceptHeaderFieldParser(httpRequest.getHeader("Accept"));
+		PriorityQueue<Accept> accepts = parser.getQueue();
+
+		while (!accepts.isEmpty()) {
+			renderer = RendererPool.get(accepts.remove().getMediaRange());
+			if (renderer != null) {
+				return renderer;
+			}
+		}
+
+		return new DefaultRenderer();
 	}
 
 }

@@ -12,7 +12,7 @@ public class DefaultRenderer extends JsonRenderer {
 
 	@Override
 	public String[] getRequestContentTypes() {
-		return null;
+		return new String[] { null };
 	}
 
 	@Override
