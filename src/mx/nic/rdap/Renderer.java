@@ -2,13 +2,20 @@ package mx.nic.rdap;
 
 import java.io.PrintWriter;
 
+/**
+ * A response formatter. Transforms a {@link RdapResult} to something the user
+ * can parse.
+ *
+ * @author aleiva
+ */
 public interface Renderer {
 
-	/** Content types this renderer handles. */
+	/** Content types that trigger this renderer. */
 	public String[] getRequestContentTypes();
+
 	/** Content type this renderer returns. */
 	public String getResponseContentType();
-	
+
 	/**
 	 * Prints `result` in `printWriter`.
 	 * 

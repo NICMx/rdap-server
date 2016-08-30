@@ -2,6 +2,8 @@ package mx.nic.rdap;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.PriorityQueue;
 
 import javax.servlet.ServletException;
@@ -22,9 +24,11 @@ import mx.nic.rdap.renderer.DefaultRenderer;
 public class RdapServlet extends HttpServlet {
 
 	/** File from which we will load the request handlers. */
-	private static final String HANDLERS_FILE = "META-INF/handlers.properties";
+	private static final String HANDLERS_FILE = "handlers.properties";
 	/** File from which we will load the renderer. */
-	private static final String RENDERERS_FILE = "META-INF/renderers.properties";
+	private static final String RENDERERS_FILE = "renderers.properties";
+	/** File from which we will load the database connection. */
+	private static final String DATABASE_FILE = "database.properties";
 
 	/** This is just a warning shutupper. */
 	private static final long serialVersionUID = 1L;
@@ -34,10 +38,11 @@ public class RdapServlet extends HttpServlet {
 	 */
 	public RdapServlet()
 			throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException {
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException, SQLException {
 		super();
-		RequestHandlerPool.loadHandlers(HANDLERS_FILE);
-		RendererPool.loadRenderers(RENDERERS_FILE);
+		DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
+		RequestHandlerPool.loadHandlers(Util.loadProperties(HANDLERS_FILE));
+		RendererPool.loadRenderers(Util.loadProperties(RENDERERS_FILE));
 	}
 
 	/**
@@ -80,16 +85,15 @@ public class RdapServlet extends HttpServlet {
 			return;
 		}
 
-		/* TODO get dababase connection here. */
-
 		RdapResult result;
 		try {
-			result = handler.handle(request);
-		} catch (RequestHandleException e) {
-			httpResponse.sendError(400, e.getMessage());
+			result = handleRequest(handler, request);
+		} catch (SQLException e1) {
+			httpResponse.sendError(500, e1.getMessage());
 			return;
-		} finally {
-			/* TODO return dababase connection here. */
+		} catch (RequestHandleException e) {
+			httpResponse.sendError(e.getHttpResponseStatusCode(), e.getMessage());
+			return;
 		}
 
 		/* Build the response. */
@@ -98,6 +102,26 @@ public class RdapServlet extends HttpServlet {
 		renderer.render(result, httpResponse.getWriter());
 	}
 
+	/**
+	 * Offsets the handling of <code>request</code> to <code>handler</code>.
+	 *
+	 * It's really just a one-liner to prevent nested try-catches from bleeding
+	 * my eyes.
+	 */
+	private RdapResult handleRequest(RdapRequestHandler handler, RdapRequest request)
+			throws SQLException, RequestHandleException {
+		Connection connection = DatabaseSession.getConnection();
+		try {
+			return handler.handle(request, connection);
+		} finally {
+			connection.close();
+		}
+	}
+
+	/**
+	 * Tries hard to find the best suitable renderer for
+	 * <code>httpRequest</code>.
+	 */
 	private Renderer findRenderer(HttpServletRequest httpRequest) {
 		Renderer renderer;
 
@@ -111,6 +135,7 @@ public class RdapServlet extends HttpServlet {
 			}
 		}
 
+		// TODO return 406 if none of the content types yield a renderer?
 		return new DefaultRenderer();
 	}
 

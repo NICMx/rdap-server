@@ -1,5 +1,8 @@
 package mx.nic.rdap;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import mx.nic.rdap.exception.RequestHandleException;
 import mx.nic.rdap.exception.RequestValidationException;
 
@@ -39,10 +42,12 @@ public interface RdapRequestHandler {
 	 * 
 	 * @param request
 	 *            result from {@link #validate(String[])}.
+	 * @param connection
+	 *            Already initialized connection to the database.
 	 * @return response to the user.
 	 * @throws RequestHandleException
 	 *             Errors found handling `request`.
 	 */
-	public RdapResult handle(RdapRequest request) throws RequestHandleException;
+	public RdapResult handle(RdapRequest request, Connection connection) throws SQLException, RequestHandleException;
 
 }

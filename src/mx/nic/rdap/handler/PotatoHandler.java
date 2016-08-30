@@ -1,5 +1,7 @@
 package mx.nic.rdap.handler;
 
+import java.sql.Connection;
+
 import mx.nic.rdap.RdapRequest;
 import mx.nic.rdap.RdapResult;
 import mx.nic.rdap.RdapRequestHandler;
@@ -20,7 +22,7 @@ public class PotatoHandler implements RdapRequestHandler {
 	}
 
 	@Override
-	public RdapResult handle(RdapRequest request) throws RequestHandleException {
+	public RdapResult handle(RdapRequest request, Connection connection) throws RequestHandleException {
 		return new PotatoResult();
 	}
 
