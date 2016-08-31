@@ -1,4 +1,4 @@
-package mx.nic.rdap;
+package mx.nic.rdap.db;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -9,8 +9,7 @@ import java.util.Properties;
 import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
 
 /**
- * Just a container of the database connections pool. Still sketchy and under
- * development.
+ * Just a container of the database connections pool.
  *
  * @author aleiva
  */

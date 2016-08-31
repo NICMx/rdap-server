@@ -1,5 +1,6 @@
 package mx.nic.rdap;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -48,6 +49,7 @@ public interface RdapRequestHandler {
 	 * @throws RequestHandleException
 	 *             Errors found handling `request`.
 	 */
-	public RdapResult handle(RdapRequest request, Connection connection) throws SQLException, RequestHandleException;
+	public RdapResult handle(RdapRequest request, Connection connection)
+			throws IOException, SQLException, RequestHandleException;
 
 }

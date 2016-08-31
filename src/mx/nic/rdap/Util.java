@@ -12,8 +12,8 @@ import java.util.Properties;
 public class Util {
 
 	/**
-	 * Loads the properties configuration file <code>META-INF/fileName</code>
-	 * and returns it.
+	 * Loads the properties configuration file
+	 * <code>META-INF/fileName.properties</code> and returns it.
 	 * 
 	 * @param fileName
 	 *            name of the configuration file you want to load.
@@ -23,12 +23,10 @@ public class Util {
 	 *             classpath.
 	 */
 	public static Properties loadProperties(String fileName) throws IOException {
+		fileName = "META-INF/" + fileName + ".properties";
 		Properties result = new Properties();
-		InputStream configStream = DatabaseSession.class.getClassLoader().getResourceAsStream("META-INF/" + fileName);
-		try {
+		try (InputStream configStream = Util.class.getClassLoader().getResourceAsStream(fileName)) {
 			result.load(configStream);
-		} finally {
-			configStream.close();
 		}
 		return result;
 	}

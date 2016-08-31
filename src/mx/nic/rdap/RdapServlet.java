@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import mx.nic.rdap.AcceptHeaderFieldParser.Accept;
+import mx.nic.rdap.db.DatabaseSession;
 import mx.nic.rdap.exception.RequestHandleException;
 import mx.nic.rdap.exception.RequestValidationException;
 import mx.nic.rdap.renderer.DefaultRenderer;
@@ -24,11 +25,11 @@ import mx.nic.rdap.renderer.DefaultRenderer;
 public class RdapServlet extends HttpServlet {
 
 	/** File from which we will load the request handlers. */
-	private static final String HANDLERS_FILE = "handlers.properties";
+	private static final String HANDLERS_FILE = "handlers";
 	/** File from which we will load the renderer. */
-	private static final String RENDERERS_FILE = "renderers.properties";
+	private static final String RENDERERS_FILE = "renderers";
 	/** File from which we will load the database connection. */
-	private static final String DATABASE_FILE = "database.properties";
+	private static final String DATABASE_FILE = "database";
 
 	/** This is just a warning shutupper. */
 	private static final long serialVersionUID = 1L;
@@ -86,10 +87,10 @@ public class RdapServlet extends HttpServlet {
 		}
 
 		RdapResult result;
-		try {
-			result = handleRequest(handler, request);
-		} catch (SQLException e1) {
-			httpResponse.sendError(500, e1.getMessage());
+		try (Connection connection = DatabaseSession.getConnection()) {
+			result = handler.handle(request, connection);
+		} catch (SQLException | IOException e) {
+			httpResponse.sendError(500, e.getMessage());
 			return;
 		} catch (RequestHandleException e) {
 			httpResponse.sendError(e.getHttpResponseStatusCode(), e.getMessage());
@@ -100,22 +101,6 @@ public class RdapServlet extends HttpServlet {
 		Renderer renderer = findRenderer(httpRequest);
 		httpResponse.setContentType(renderer.getResponseContentType());
 		renderer.render(result, httpResponse.getWriter());
-	}
-
-	/**
-	 * Offsets the handling of <code>request</code> to <code>handler</code>.
-	 *
-	 * It's really just a one-liner to prevent nested try-catches from bleeding
-	 * my eyes.
-	 */
-	private RdapResult handleRequest(RdapRequestHandler handler, RdapRequest request)
-			throws SQLException, RequestHandleException {
-		Connection connection = DatabaseSession.getConnection();
-		try {
-			return handler.handle(request, connection);
-		} finally {
-			connection.close();
-		}
 	}
 
 	/**
