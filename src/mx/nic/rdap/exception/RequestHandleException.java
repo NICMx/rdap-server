@@ -1,10 +1,7 @@
 package mx.nic.rdap.exception;
 
-import mx.nic.rdap.RdapRequestHandler;
-
 /**
- * Problems found during a
- * {@link RdapRequestHandler#handle(mx.nic.rdap.RdapRequest)}.
+ * Generic problems found handling RDAP requests.
  * 
  * @author aleiva
  */
@@ -28,6 +25,11 @@ public class RequestHandleException extends Exception {
 
 	public RequestHandleException(int httpResponseStatusCode, String message) {
 		super(message);
+		this.httpResponseStatusCode = httpResponseStatusCode;
+	}
+
+	public RequestHandleException(int httpResponseStatusCode, Throwable cause) {
+		super(cause);
 		this.httpResponseStatusCode = httpResponseStatusCode;
 	}
 
