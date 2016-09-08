@@ -1,4 +1,4 @@
-package mx.nic.rdap;
+package mx.nic.rdap.server;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

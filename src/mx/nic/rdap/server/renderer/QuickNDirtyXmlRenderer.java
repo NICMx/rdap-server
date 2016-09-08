@@ -1,4 +1,4 @@
-package mx.nic.rdap.renderer;
+package mx.nic.rdap.server.renderer;
 
 import java.io.PrintWriter;
 import java.util.Map.Entry;
@@ -6,8 +6,8 @@ import java.util.Map.Entry;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 
-import mx.nic.rdap.RdapResult;
-import mx.nic.rdap.Renderer;
+import mx.nic.rdap.server.RdapResult;
+import mx.nic.rdap.server.Renderer;
 
 /**
  * Just a placeholder so I can test the Renderer framework.

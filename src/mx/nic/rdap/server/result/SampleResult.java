@@ -1,10 +1,10 @@
-package mx.nic.rdap.result;
+package mx.nic.rdap.server.result;
 
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 
-import mx.nic.rdap.RdapResult;
+import mx.nic.rdap.server.RdapResult;
 
 public class SampleResult implements RdapResult {
 

@@ -1,12 +1,12 @@
-package mx.nic.rdap.renderer;
+package mx.nic.rdap.server.renderer;
 
 import java.io.PrintWriter;
 
 import javax.json.Json;
 import javax.json.JsonWriter;
 
-import mx.nic.rdap.RdapResult;
-import mx.nic.rdap.Renderer;
+import mx.nic.rdap.server.RdapResult;
+import mx.nic.rdap.server.Renderer;
 
 public class JsonRenderer implements Renderer {
 

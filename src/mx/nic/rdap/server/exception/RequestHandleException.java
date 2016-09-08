@@ -1,4 +1,4 @@
-package mx.nic.rdap.exception;
+package mx.nic.rdap.server.exception;
 
 /**
  * Generic problems found handling RDAP requests.

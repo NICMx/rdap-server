@@ -1,4 +1,4 @@
-package mx.nic.rdap.servlet;
+package mx.nic.rdap.server.servlet;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -11,14 +11,14 @@ import java.sql.SQLException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
-import mx.nic.rdap.RdapResult;
-import mx.nic.rdap.RdapServlet;
-import mx.nic.rdap.Util;
-import mx.nic.rdap.db.QueryGroup;
-import mx.nic.rdap.exception.MalformedRequestException;
-import mx.nic.rdap.exception.ObjectNotFoundException;
-import mx.nic.rdap.exception.RequestHandleException;
-import mx.nic.rdap.result.SampleResult;
+import mx.nic.rdap.server.RdapResult;
+import mx.nic.rdap.server.RdapServlet;
+import mx.nic.rdap.server.Util;
+import mx.nic.rdap.server.db.QueryGroup;
+import mx.nic.rdap.server.exception.MalformedRequestException;
+import mx.nic.rdap.server.exception.ObjectNotFoundException;
+import mx.nic.rdap.server.exception.RequestHandleException;
+import mx.nic.rdap.server.result.SampleResult;
 
 @WebServlet(name = "rdap", urlPatterns = { "/sample/*" })
 public class SampleServlet extends RdapServlet {

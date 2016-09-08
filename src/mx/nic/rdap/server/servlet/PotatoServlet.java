@@ -1,13 +1,13 @@
-package mx.nic.rdap.servlet;
+package mx.nic.rdap.server.servlet;
 
 import java.sql.Connection;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
-import mx.nic.rdap.RdapResult;
-import mx.nic.rdap.RdapServlet;
-import mx.nic.rdap.result.PotatoResult;
+import mx.nic.rdap.server.RdapResult;
+import mx.nic.rdap.server.RdapServlet;
+import mx.nic.rdap.server.result.PotatoResult;
 
 @WebServlet(name = "rdap", urlPatterns = { "/potato/*" })
 public class PotatoServlet extends RdapServlet {

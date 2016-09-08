@@ -1,11 +1,11 @@
-package mx.nic.rdap;
+package mx.nic.rdap.server;
 
 import java.util.PriorityQueue;
 
 import org.junit.Test;
 
 import junit.framework.TestCase;
-import mx.nic.rdap.AcceptHeaderFieldParser.Accept;
+import mx.nic.rdap.server.AcceptHeaderFieldParser.Accept;
 
 public class AcceptHeaderTest extends TestCase {
 

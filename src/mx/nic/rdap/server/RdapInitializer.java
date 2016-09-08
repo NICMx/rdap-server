@@ -1,10 +1,10 @@
-package mx.nic.rdap;
+package mx.nic.rdap.server;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
-import mx.nic.rdap.db.DatabaseSession;
+import mx.nic.rdap.server.db.DatabaseSession;
 
 @WebListener
 public class RdapInitializer implements ServletContextListener {

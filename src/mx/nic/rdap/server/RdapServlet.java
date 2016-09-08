@@ -1,4 +1,4 @@
-package mx.nic.rdap;
+package mx.nic.rdap.server;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -10,11 +10,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import mx.nic.rdap.AcceptHeaderFieldParser.Accept;
-import mx.nic.rdap.db.DatabaseSession;
-import mx.nic.rdap.exception.ObjectNotFoundException;
-import mx.nic.rdap.exception.RequestHandleException;
-import mx.nic.rdap.renderer.DefaultRenderer;
+import mx.nic.rdap.server.AcceptHeaderFieldParser.Accept;
+import mx.nic.rdap.server.db.DatabaseSession;
+import mx.nic.rdap.server.exception.ObjectNotFoundException;
+import mx.nic.rdap.server.exception.RequestHandleException;
+import mx.nic.rdap.server.renderer.DefaultRenderer;
 
 /**
  * Main class of the RDAP Servlet.

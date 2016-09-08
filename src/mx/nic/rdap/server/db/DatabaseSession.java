@@ -1,4 +1,4 @@
-package mx.nic.rdap.db;
+package mx.nic.rdap.server.db;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

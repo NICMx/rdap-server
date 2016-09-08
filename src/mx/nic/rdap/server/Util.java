@@ -1,4 +1,4 @@
-package mx.nic.rdap;
+package mx.nic.rdap.server;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,7 +7,7 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
-import mx.nic.rdap.exception.RequestHandleException;
+import mx.nic.rdap.server.exception.RequestHandleException;
 
 /**
  * Random miscellaneous functions useful anywhere.

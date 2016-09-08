@@ -1,4 +1,4 @@
-package mx.nic.rdap.renderer;
+package mx.nic.rdap.server.renderer;
 
 /**
  * This is the renderer for requests lacking a content type.
