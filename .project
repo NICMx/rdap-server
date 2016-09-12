@@ -3,6 +3,7 @@
 	<name>rdap</name>
 	<comment></comment>
 	<projects>
+		<project>rdap-core</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
