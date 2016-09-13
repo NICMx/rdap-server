@@ -17,6 +17,25 @@ import mx.nic.rdap.core.db.IpAddress;
  */
 public class IpAddressDAO extends IpAddress implements DatabaseObject {
 
+	/**
+	 * Constructor
+	 */
+	public IpAddressDAO() {
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * Constructor that create a IpAddressDao from a resulset
+	 */
+	public IpAddressDAO(ResultSet resultSet) {
+		super();
+		try {
+			loadFromDatabase(resultSet);
+		} catch (SQLException e) {
+			// TODO Manage the exception
+		}
+	}
+
 	@Override
 	public void loadFromDatabase(ResultSet resultSet) throws SQLException {
 		// validate if resulset is null
@@ -39,8 +58,7 @@ public class IpAddressDAO extends IpAddress implements DatabaseObject {
 
 	@Override
 	public void storeToDatabase(PreparedStatement preparedStatement) throws SQLException {
-		// TODO Auto-generated method stub
-
+		// Unimplement
 	}
 
 }
