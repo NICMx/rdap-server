@@ -4,14 +4,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import mx.nic.rdap.core.db.Event;
+
 /**
- * A remark structure denotes information about the object class that contains
- * it
+ * DAO for the Event object.This data structure represents events that have
+ * occurred on an instance of an object class
  * 
  * @author dalpuche
  *
  */
-public class Remark extends mx.nic.rdap.core.db.Remark implements DatabaseObject {
+public class EventDAO extends Event implements DatabaseObject {
 
 	/*
 	 * (non-Javadoc)

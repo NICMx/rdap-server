@@ -4,16 +4,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.server.db.DatabaseObject;
 
 /**
- * This data structure represents events that have occurred on an instance of an
- * object class
+ * DAO for the Link object.The object is a data structure that signify link an
+ * object to other resources on the Internet.
  * 
  * @author dalpuche
  *
  */
-public class Event extends mx.nic.rdap.core.db.Event implements DatabaseObject {
+public class LinkDAO extends Link implements DatabaseObject {
 
 	/*
 	 * (non-Javadoc)

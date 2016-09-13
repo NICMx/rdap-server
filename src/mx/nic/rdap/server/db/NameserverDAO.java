@@ -4,15 +4,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import mx.nic.rdap.core.db.Nameserver;
+
 /**
- * This object class represents the information of organizations, corporations,
- * governments, non-profits, clubs, individual persons, and informal groups of
- * people.
+ * The nameserver object class represents information regarding DNS nameservers
+ * used in both forward and reverse DNS
  * 
  * @author dalpuche
  *
  */
-public class Entity extends mx.nic.rdap.core.db.Entity implements DatabaseObject {
+public class NameserverDAO extends Nameserver implements DatabaseObject {
+	
 
 	/*
 	 * (non-Javadoc)
@@ -23,7 +25,6 @@ public class Entity extends mx.nic.rdap.core.db.Entity implements DatabaseObject
 	@Override
 	public void loadFromDatabase(ResultSet resultSet) throws SQLException {
 		// TODO Auto-generated method stub
-
 	}
 
 	/*
@@ -35,7 +36,6 @@ public class Entity extends mx.nic.rdap.core.db.Entity implements DatabaseObject
 	@Override
 	public void storeToDatabase(PreparedStatement preparedStatement) throws SQLException {
 		// TODO Auto-generated method stub
-
 	}
 
 }

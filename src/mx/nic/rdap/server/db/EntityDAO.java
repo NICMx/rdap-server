@@ -4,33 +4,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import mx.nic.rdap.core.db.Entity;
+
 /**
- * The nameserver object class represents information regarding DNS nameservers
- * used in both forward and reverse DNS
+ * DAO for the Entity Object.This object class represents the information of
+ * organizations, corporations, governments, non-profits, clubs, individual
+ * persons, and informal groups of people.
  * 
  * @author dalpuche
  *
  */
-public class Nameserver extends mx.nic.rdap.core.db.Nameserver implements DatabaseObject {
-
-	/**
-	 * Return the ldh name from the punycode name
-	 * 
-	 * @return the ldh name of the domain
-	 */
-	public String getLdhName() {
-		return this.getPunycodeName();// ldh name is the punycode
-	}
-
-	/**
-	 * Return the unicode name from the punycode name
-	 * 
-	 * @return the unicode name of the domain
-	 */
-	public String getUnicodeName() {
-		// TODO:Magic stuff here
-		return "";// ldh name is the punycode
-	}
+public class EntityDAO extends Entity implements DatabaseObject {
 
 	/*
 	 * (non-Javadoc)
@@ -41,6 +25,7 @@ public class Nameserver extends mx.nic.rdap.core.db.Nameserver implements Databa
 	@Override
 	public void loadFromDatabase(ResultSet resultSet) throws SQLException {
 		// TODO Auto-generated method stub
+
 	}
 
 	/*
@@ -52,6 +37,7 @@ public class Nameserver extends mx.nic.rdap.core.db.Nameserver implements Databa
 	@Override
 	public void storeToDatabase(PreparedStatement preparedStatement) throws SQLException {
 		// TODO Auto-generated method stub
+
 	}
 
 }

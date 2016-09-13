@@ -6,13 +6,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import mx.nic.rdap.core.db.IpAddress;
+
 /**
- * Object representig an IpAddress, different to {@link IpNetwork}
+ * DAO for the IpAddress Object.Object representig an IpAddress, different to
+ * {@link IpNetwork}
  * 
  * @author dalpuche
  *
  */
-public class IpAddress extends mx.nic.rdap.core.db.IpAddress implements DatabaseObject {
+public class IpAddressDAO extends IpAddress implements DatabaseObject {
 
 	@Override
 	public void loadFromDatabase(ResultSet resultSet) throws SQLException {
