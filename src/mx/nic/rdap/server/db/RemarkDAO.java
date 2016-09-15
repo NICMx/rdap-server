@@ -52,6 +52,7 @@ public class RemarkDAO extends Remark implements DatabaseObject {
 		this.setTitle(resultSet.getString("rem_title"));
 		this.setType(resultSet.getString("rem_type"));
 		this.setLanguage(resultSet.getString("rem_lang"));
+		//Retrieve the RemarkDescriptions
 		try {
 			this.setDescriptions(RemarkDescriptionModel.findByRemarkId(this.getId()));
 		} catch (IOException e) {

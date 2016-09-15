@@ -1,7 +1,5 @@
 package mx.nic.rdap.server;
 
-import java.sql.SQLException;
-
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;

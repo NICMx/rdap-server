@@ -26,7 +26,7 @@ public class RemarkDescriptionModel {
 	protected static QueryGroup queryGroup = null;
 
 	/**
-	 * UNUSED:Store a RemarkDescription in the database
+	 * Store a RemarkDescription in the database
 	 * 
 	 * @param remark
 	 * @return true if the insert was correct
