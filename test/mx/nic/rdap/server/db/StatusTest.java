@@ -1,0 +1,41 @@
+package mx.nic.rdap.server.db;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
+
+import org.junit.Test;
+
+import mx.nic.rdap.server.Util;
+import mx.nic.rdap.server.db.model.StatusModel;
+import mx.nix.rdap.core.catalog.Status;
+
+/**
+ * Test for the class Status
+ * @author dalpuche
+ *
+ */
+public class StatusTest {
+
+	/** File from which we will load the database connection. */
+	private static final String DATABASE_FILE = "database";
+
+	@Test
+	/**
+	 * Test that retrieve an array of Status from a Nameserver id
+	 */
+	public void getByNameserverId() {
+		try {
+			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
+			List<Status> status=StatusModel.getByNameServerId(1L);
+			assert !status.isEmpty();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+}
