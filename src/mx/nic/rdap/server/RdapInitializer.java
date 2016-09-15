@@ -1,5 +1,7 @@
 package mx.nic.rdap.server;
 
+import java.sql.SQLException;
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
@@ -26,7 +28,11 @@ public class RdapInitializer implements ServletContextListener {
 
 	@Override
 	public void contextDestroyed(ServletContextEvent event) {
-		// Nothing needed here.
+		try {
+			DatabaseSession.close();
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 
 }

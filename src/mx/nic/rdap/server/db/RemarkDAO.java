@@ -68,10 +68,9 @@ public class RemarkDAO extends Remark implements DatabaseObject {
 	 */
 	@Override
 	public void storeToDatabase(PreparedStatement preparedStatement) throws SQLException {
-		preparedStatement.setLong(1, this.getId());
-		preparedStatement.setString(2, this.getTitle());
-		preparedStatement.setString(3, this.getType());
-		preparedStatement.setString(4, this.getLanguage());
+		preparedStatement.setString(1, this.getTitle());
+		preparedStatement.setString(2, this.getType());
+		preparedStatement.setString(3, this.getLanguage());
 	}
 
 }

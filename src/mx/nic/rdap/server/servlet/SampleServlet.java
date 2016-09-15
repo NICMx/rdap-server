@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.Util;
+import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.db.QueryGroup;
 import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.ObjectNotFoundException;
@@ -35,10 +36,10 @@ public class SampleServlet extends RdapServlet {
 	}
 
 	@Override
-	protected RdapResult doRdapGet(HttpServletRequest httpRequest, Connection connection)
+	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
 		SampleRequest request = parseRequest(httpRequest);
-		return doQuery(connection, request);
+		return doQuery( request);
 	}
 
 	private SampleRequest parseRequest(HttpServletRequest httpRequest) throws RequestHandleException {
@@ -63,8 +64,9 @@ public class SampleServlet extends RdapServlet {
 		return new SampleRequest(address, prefixLength);
 	}
 
-	private RdapResult doQuery(Connection connection, SampleRequest request) throws IOException, SQLException {
-		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("find-domain"))) {
+	private RdapResult doQuery( SampleRequest request) throws IOException, SQLException {
+		
+		try (Connection connection=DatabaseSession.getConnection();PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("find-domain"))) {
 			statement.setString(1, request.address.getHostAddress());
 			ResultSet resultSet = statement.executeQuery();
 
@@ -77,7 +79,7 @@ public class SampleServlet extends RdapServlet {
 	}
 
 	@Override
-	protected RdapResult doRdapHead(HttpServletRequest request, Connection connection) throws RequestHandleException {
+	protected RdapResult doRdapHead(HttpServletRequest request) throws RequestHandleException {
 		throw new RequestHandleException(501, "Not implemented yet.");
 	}
 

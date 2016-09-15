@@ -27,16 +27,17 @@ public class RemarkTest {
 	public void insert(){
 		try {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
+			
 			RemarkDAO remark=new RemarkDAO();
-			remark.setId(3L);
-			remark.setTitle("Test "+remark.getId());
+			Double testId=Math.random();
+			remark.setTitle("Test "+testId);
 			remark.setType("Test");
 			RemarkDescriptionDAO description1=new RemarkDescriptionDAO();
-			description1.setDescription("First description of the remark "+remark.getId());
+			description1.setDescription("First description of the remark "+testId);
 			description1.setRemarkId(remark.getId());
 			description1.setOrder(1);
 			RemarkDescriptionDAO description2=new RemarkDescriptionDAO();
-			description2.setDescription("Second description of the remark"+remark.getId());
+			description2.setDescription("Second description of the remark"+testId);
 			description2.setRemarkId(remark.getId());
 			description2.setOrder(2);
 			List<mx.nic.rdap.core.db.RemarkDescription> descriptions=new ArrayList<mx.nic.rdap.core.db.RemarkDescription>();
@@ -50,7 +51,15 @@ public class RemarkTest {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally{
+			try {
+				DatabaseSession.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+		
 		
 	}
 	
@@ -65,6 +74,13 @@ public class RemarkTest {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally{
+			try {
+				DatabaseSession.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 	}

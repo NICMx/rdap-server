@@ -23,6 +23,7 @@ public class DatabaseSession {
 		ds.setUrl(config.getProperty("url"));
 		ds.setUsername(config.getProperty("userName"));
 		ds.setPassword(config.getProperty("password"));
+		ds.setDefaultAutoCommit(Boolean.parseBoolean(config.getProperty("autoCommit")));
 
 		testDatabase();
 	}
@@ -30,8 +31,7 @@ public class DatabaseSession {
 	private static void testDatabase() throws SQLException {
 		// http://stackoverflow.com/questions/3668506
 		final String TEST_QUERY = "select 1";
-		Connection connection = getConnection();
-		Statement statement = connection.createStatement();
+		try(Connection connection = getConnection();Statement statement = connection.createStatement();){
 		ResultSet resultSet = statement.executeQuery(TEST_QUERY);
 
 		if (!resultSet.next()) {
@@ -40,11 +40,14 @@ public class DatabaseSession {
 		int result = resultSet.getInt(1);
 		if (result != 1) {
 			throw new SQLException("'" + TEST_QUERY + "' returned " + result);
-		}
+		}}
 	}
 
 	public static Connection getConnection() throws SQLException {
 		return ds.getConnection();
 	}
 
+	public static void close() throws SQLException{
+		ds.close();
+	}
 }

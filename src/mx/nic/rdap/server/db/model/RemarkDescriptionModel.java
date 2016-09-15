@@ -35,9 +35,8 @@ public class RemarkDescriptionModel {
 	 */
 	public static boolean storeToDatabase(RemarkDescription remarkDescription) throws IOException, SQLException {
 		RemarkDescriptionModel.queryGroup = new QueryGroup(QUERY_GROUP);
-		Connection connection = DatabaseSession.getConnection();
-		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"))) {
-			((RemarkDescriptionDAO)remarkDescription).storeToDatabase(statement);
+		try (Connection connection = DatabaseSession.getConnection();PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"))) {
+			((RemarkDescriptionDAO) remarkDescription).storeToDatabase(statement);
 			return (statement.executeUpdate() == 1);// TODO Validate if the
 													// insert was correct
 			// connection.commit();//TODO: autocommit=?
@@ -54,22 +53,22 @@ public class RemarkDescriptionModel {
 	 */
 	public static List<RemarkDescription> findByRemarkId(Long id) throws IOException, SQLException {
 		RemarkDescriptionModel.queryGroup = new QueryGroup(QUERY_GROUP);
-		Connection connection = DatabaseSession.getConnection();
-		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByRemarkId"))) {
+		try (Connection connection = DatabaseSession.getConnection();PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByRemarkId"))) {
 			statement.setLong(1, id);
-			ResultSet resultSet = statement.executeQuery();
-			if (!resultSet.next()) {
-				throw new ObjectNotFoundException("Object not found.");// TODO:
-																		// Managae
-																		// the
-																		// exception
+			try (ResultSet resultSet = statement.executeQuery()) {
+				if (!resultSet.next()) {
+					throw new ObjectNotFoundException("Object not found.");// TODO:
+																			// Managae
+																			// the
+																			// exception
+				}
+				List<RemarkDescription> remarks = new ArrayList<RemarkDescription>();
+				do {
+					RemarkDescriptionDAO remarkDescription = new RemarkDescriptionDAO(resultSet);
+					remarks.add(remarkDescription);
+				} while (resultSet.next());
+				return remarks;
 			}
-			List<RemarkDescription> remarks = new ArrayList<RemarkDescription>();
-			do {
-				RemarkDescriptionDAO remarkDescription = new RemarkDescriptionDAO(resultSet);
-				remarks.add(remarkDescription);
-			} while (resultSet.next());
-			return remarks;
 		}
 	}
 
