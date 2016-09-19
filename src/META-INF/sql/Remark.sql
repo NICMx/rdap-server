@@ -1,5 +1,5 @@
 #storeToDatabase
-INSERT INTO rdap.remark VALUES (?,?,?,?);
+INSERT INTO rdap.remark VALUES (null,?,?,?);
 
 #getByNameserverId
 SELECT rem.* FROM rdap.remark rem JOIN rdap.nameserver_remarks nse ON nse.rem_id=rem.rem_id WHERE nse.nse_id=?;

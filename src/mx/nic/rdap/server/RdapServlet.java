@@ -1,7 +1,6 @@
 package mx.nic.rdap.server;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.PriorityQueue;
 
@@ -11,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import mx.nic.rdap.server.AcceptHeaderFieldParser.Accept;
-import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.ObjectNotFoundException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.renderer.DefaultRenderer;
@@ -29,7 +27,7 @@ public abstract class RdapServlet extends HttpServlet {
 	 */
 	protected void doHead(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		handleRequest(request, response, (r, c) -> doRdapHead(r, c));
+		handleRequest(request, response, (r) -> doRdapHead(r));
 	}
 
 	/**
@@ -38,14 +36,14 @@ public abstract class RdapServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		handleRequest(request, response, (r, c) -> doRdapGet(r, c));
+		handleRequest(request, response, (r) -> doRdapGet(r));
 	}
 
 	private void handleRequest(HttpServletRequest request, HttpServletResponse response, HandleAction predicate)
 			throws ServletException, IOException {
 		RdapResult result;
-		try (Connection connection = DatabaseSession.getConnection()) {
-			result = predicate.handle(request, connection);
+		try {
+			result = predicate.handle(request);
 		} catch (ObjectNotFoundException e) {
 			response.sendError(404, e.getMessage());
 			return;
@@ -76,7 +74,7 @@ public abstract class RdapServlet extends HttpServlet {
 	 * @throws RequestHandleException
 	 *             Errors found handling `request`.
 	 */
-	protected abstract RdapResult doRdapGet(HttpServletRequest request, Connection connection)
+	protected abstract RdapResult doRdapGet(HttpServletRequest request)
 			throws RequestHandleException, IOException, SQLException;
 
 	/**
@@ -93,7 +91,7 @@ public abstract class RdapServlet extends HttpServlet {
 	 * @throws RequestHandleException
 	 *             Errors found handling `request`.
 	 */
-	protected abstract RdapResult doRdapHead(HttpServletRequest request, Connection connection)
+	protected abstract RdapResult doRdapHead(HttpServletRequest request)
 			throws RequestHandleException, IOException, SQLException;
 
 	/**
@@ -118,7 +116,7 @@ public abstract class RdapServlet extends HttpServlet {
 	}
 
 	private interface HandleAction {
-		RdapResult handle(HttpServletRequest request, Connection connection)
+		RdapResult handle(HttpServletRequest request)
 				throws IOException, SQLException, RequestHandleException;
 	}
 

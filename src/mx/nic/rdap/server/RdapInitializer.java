@@ -26,7 +26,11 @@ public class RdapInitializer implements ServletContextListener {
 
 	@Override
 	public void contextDestroyed(ServletContextEvent event) {
-		// Nothing needed here.
+		try {
+			DatabaseSession.close();
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 
 }

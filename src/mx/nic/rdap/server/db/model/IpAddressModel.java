@@ -34,27 +34,28 @@ public class IpAddressModel {
 	public static NameserverIpAddressesStruct getIpAddressStructByNameserverId(Long nameserverId)
 			throws IOException, SQLException {
 		IpAddressModel.queryGroup = new QueryGroup(QUERY_GROUP);
-		Connection connection = DatabaseSession.getConnection();
-		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByNameserverId"))) {
+		try (Connection connection = DatabaseSession.getConnection();
+				PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByNameserverId"))) {
 			statement.setLong(1, nameserverId);
-			ResultSet resultSet = statement.executeQuery();
-			if (!resultSet.next()) {
-				throw new ObjectNotFoundException("Object not found.");// TODO:
-																		// Managae
-																		// the
-																		// exception
-			}
-			// Process the resulset to construct the struct
-			NameserverIpAddressesStruct struct = new NameserverIpAddressesStruct();
-			do {
-				IpAddressDAO ipAddressDAO = new IpAddressDAO(resultSet);
-				if (ipAddressDAO.getType() == 4) {
-					struct.getIpv4Adresses().add(ipAddressDAO);
-				} else {
-					struct.getIpv6Adresses().add(ipAddressDAO);
+			try (ResultSet resultSet = statement.executeQuery()) {
+				if (!resultSet.next()) {
+					throw new ObjectNotFoundException("Object not found.");// TODO:
+																			// Managae
+																			// the
+																			// exception
 				}
-			} while (resultSet.next());
-			return struct;
+				// Process the resulset to construct the struct
+				NameserverIpAddressesStruct struct = new NameserverIpAddressesStruct();
+				do {
+					IpAddressDAO ipAddressDAO = new IpAddressDAO(resultSet);
+					if (ipAddressDAO.getType() == 4) {
+						struct.getIpv4Adresses().add(ipAddressDAO);
+					} else {
+						struct.getIpv6Adresses().add(ipAddressDAO);
+					}
+				} while (resultSet.next());
+				return struct;
+			}
 		}
 	}
 }
