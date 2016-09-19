@@ -12,6 +12,7 @@ import mx.nix.rdap.core.catalog.Status;
 
 /**
  * Test for the class Status
+ * 
  * @author dalpuche
  *
  */
@@ -22,12 +23,29 @@ public class StatusTest {
 
 	@Test
 	/**
+	 * Test the store of a nameserver status in the database
+	 */
+	public void storeNameserverStatusToDatabase() {
+		try {
+			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
+			Status status = Status.ACTIVE;
+			StatusModel.storeNameserverStatusToDatabase(status, 1l);
+			assert true;
+		} catch (IOException | SQLException e) {
+			assert false;
+			e.printStackTrace();
+		}
+
+	}
+
+	@Test
+	/**
 	 * Test that retrieve an array of Status from a Nameserver id
 	 */
 	public void getByNameserverId() {
 		try {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
-			List<Status> status=StatusModel.getByNameServerId(1L);
+			List<Status> status = StatusModel.getByNameServerId(1L);
 			assert !status.isEmpty();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

@@ -7,11 +7,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.mysql.jdbc.Statement;
 
 import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.core.db.RemarkDescription;
 import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.db.QueryGroup;
 import mx.nic.rdap.server.db.RemarkDAO;
@@ -24,6 +25,9 @@ import mx.nic.rdap.server.exception.ObjectNotFoundException;
  *
  */
 public class RemarkModel {
+
+	private final static Logger logger = Logger.getLogger(RemarkModel.class.getName());
+
 	private final static String QUERY_GROUP = "Remark";
 
 	protected static QueryGroup queryGroup = null;
@@ -36,7 +40,7 @@ public class RemarkModel {
 	 * @throws IOException
 	 * @throws SQLException
 	 */
-	public static void storeToDatabase(Remark remark) throws IOException, SQLException {
+	public static long storeToDatabase(Remark remark) throws IOException, SQLException {
 		RemarkModel.queryGroup = new QueryGroup(QUERY_GROUP);
 
 		try (Connection connection = DatabaseSession.getConnection();
@@ -47,14 +51,37 @@ public class RemarkModel {
 															// give us the id
 															// generated for the
 															// object stored
-			((RemarkDAO)remark).storeToDatabase(statement);
+			((RemarkDAO) remark).storeToDatabase(statement);
+			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			statement.executeUpdate();
 			ResultSet result = statement.getGeneratedKeys();
 			result.next();
-			Long remardInsertedId = result.getLong(1);
-			for (RemarkDescription remarkDescription : remark.getDescriptions()) {
-				remarkDescription.setRemarkId(remardInsertedId);
-				RemarkDescriptionModel.storeToDatabase(remarkDescription);
+			Long remarkInsertedId = result.getLong(1);// The id of the remark
+														// inserted
+			RemarkDescriptionModel.storeAllToDatabase(remark.getDescriptions(), remarkInsertedId);
+			return remarkInsertedId;
+		}
+	}
+
+	/**
+	 * Store the nameserver remarks
+	 * 
+	 * @throws SQLException
+	 * @throws IOException
+	 */
+	public static void storeNameserverRemarksToDatabase(List<Remark> remarks, Long nameserverId)
+			throws SQLException, IOException {
+		LinkModel.queryGroup = new QueryGroup(QUERY_GROUP);
+		try (Connection connection = DatabaseSession.getConnection();
+				PreparedStatement statement = connection
+						.prepareStatement(queryGroup.getQuery("storeNameserverRemarksToDatabase"))) {
+			for (Remark remark : remarks) {
+				Long remarkId = RemarkModel.storeToDatabase(remark);
+				statement.setLong(1, nameserverId);
+				statement.setLong(2, remarkId);
+				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+				statement.executeUpdate();// TODO Validate if the
+				// insert was correct
 			}
 		}
 	}
@@ -73,6 +100,7 @@ public class RemarkModel {
 		try (Connection connection = DatabaseSession.getConnection();
 				PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByNameserverId"))) {
 			statement.setLong(1, nameserverId);
+			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery();) {
 				return processResultSet(resultSet);
 			}

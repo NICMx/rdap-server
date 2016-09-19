@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.db.QueryGroup;
@@ -19,9 +21,33 @@ import mx.nix.rdap.core.catalog.Status;
  */
 public class StatusModel {
 
+	private final static Logger logger = Logger.getLogger(StatusModel.class.getName());
+
 	private final static String QUERY_GROUP = "Status";
 
 	protected static QueryGroup queryGroup = null;
+
+	/**
+	 * Store a statement in the relational table nameserver_status
+	 * 
+	 * @param status
+	 * @param nameserverId
+	 * @throws IOException
+	 * @throws SQLException
+	 */
+	public static void storeNameserverStatusToDatabase(Status status, Long nameserverId)
+			throws IOException, SQLException {
+		StatusModel.queryGroup = new QueryGroup(QUERY_GROUP);
+		try (Connection connection = DatabaseSession.getConnection();
+				PreparedStatement statement = connection
+						.prepareStatement(queryGroup.getQuery("storeNameserverStatusToDatabase"))) {
+			statement.setLong(1, nameserverId);
+			statement.setLong(2, status.getId());
+			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+			statement.executeUpdate();
+		}
+
+	}
 
 	/**
 	 * Get all Status for a Nameserver
@@ -36,6 +62,7 @@ public class StatusModel {
 		try (Connection connection = DatabaseSession.getConnection();
 				PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByNameServerId"))) {
 			statement.setLong(1, nameserverId);
+			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
 				if (!resultSet.next()) {
 					throw new ObjectNotFoundException("Object not found.");// TODO:
