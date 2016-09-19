@@ -37,17 +37,19 @@ public class IpAddressModel {
 	 * @throws IOException
 	 * @throws SQLException
 	 */
-	public static boolean storeToDatabase(NameserverIpAddressesStruct struct) throws IOException, SQLException {
+	public static boolean storeToDatabase(NameserverIpAddressesStruct struct,long nameserverId) throws IOException, SQLException {
 		IpAddressModel.queryGroup = new QueryGroup(QUERY_GROUP);
 		try (Connection connection = DatabaseSession.getConnection();
 				PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"))) {
 			for (IpAddress addressV4 : struct.getIpv4Adresses()) {
+				addressV4.setNameserverId(nameserverId);
 				((IpAddressDAO) addressV4).storeToDatabase(statement);
 				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 				statement.executeUpdate();// TODO Validate if the
 											// insert was correct
 			}
 			for (IpAddress addressV6 : struct.getIpv6Adresses()) {
+				addressV6.setNameserverId(nameserverId);
 				((IpAddressDAO) addressV6).storeToDatabase(statement);
 				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 				statement.executeUpdate();// TODO Validate if the

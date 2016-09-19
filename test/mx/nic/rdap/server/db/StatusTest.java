@@ -2,6 +2,7 @@ package mx.nic.rdap.server.db;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
@@ -29,7 +30,11 @@ public class StatusTest {
 		try {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
 			Status status = Status.ACTIVE;
-			StatusModel.storeNameserverStatusToDatabase(status, 1l);
+			Status status2 = Status.INACTIVE;
+			List<Status> statusList=new ArrayList<Status>();
+			statusList.add(status);
+			statusList.add(status2);
+			StatusModel.storeNameserverStatusToDatabase(statusList, 1l);
 			assert true;
 		} catch (IOException | SQLException e) {
 			assert false;

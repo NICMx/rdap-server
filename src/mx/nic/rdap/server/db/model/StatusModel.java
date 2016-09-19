@@ -28,23 +28,25 @@ public class StatusModel {
 	protected static QueryGroup queryGroup = null;
 
 	/**
-	 * Store a statement in the relational table nameserver_status
+	 * Store a array of statement in the relational table nameserver_status
 	 * 
 	 * @param status
 	 * @param nameserverId
 	 * @throws IOException
 	 * @throws SQLException
 	 */
-	public static void storeNameserverStatusToDatabase(Status status, Long nameserverId)
+	public static void storeNameserverStatusToDatabase(List<Status> statusList, Long nameserverId)
 			throws IOException, SQLException {
 		StatusModel.queryGroup = new QueryGroup(QUERY_GROUP);
 		try (Connection connection = DatabaseSession.getConnection();
 				PreparedStatement statement = connection
 						.prepareStatement(queryGroup.getQuery("storeNameserverStatusToDatabase"))) {
-			statement.setLong(1, nameserverId);
-			statement.setLong(2, status.getId());
-			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-			statement.executeUpdate();
+			for (Status status : statusList) {
+				statement.setLong(1, nameserverId);
+				statement.setLong(2, status.getId());
+				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+				statement.executeUpdate();
+			}
 		}
 
 	}

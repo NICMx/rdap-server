@@ -39,7 +39,7 @@ public class IpAddressTest {
 			ipv6.setAddress(InetAddress.getByName("2001:db8::1"));
 			struct.getIpv4Adresses().add(ipv4);
 			// struct.getIpv6Adresses().add(ipv6);
-			IpAddressModel.storeToDatabase(struct);
+			IpAddressModel.storeToDatabase(struct,1l);
 			assert true;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
