@@ -21,7 +21,7 @@ public class IpAddressDAO extends IpAddress implements DatabaseObject {
 	 * Constructor
 	 */
 	public IpAddressDAO() {
-		// TODO Auto-generated constructor stub
+		super();
 	}
 
 	/**
@@ -41,6 +41,7 @@ public class IpAddressDAO extends IpAddress implements DatabaseObject {
 		// validate if resulset is null
 		if (resultSet.wasNull()) {
 			this.setId(0L);
+			this.setNameserverId(0L);
 			this.setType(0);
 			this.setAddress(null);
 			return;
@@ -48,6 +49,7 @@ public class IpAddressDAO extends IpAddress implements DatabaseObject {
 
 		this.setId(resultSet.getLong("iad_id"));
 		this.setType(resultSet.getInt("iad_type"));
+		this.setNameserverId(resultSet.getLong("nse_id"));
 		try {
 			this.setAddress(InetAddress.getByName(resultSet.getString("iad_value")));
 		} catch (UnknownHostException e) {
@@ -58,7 +60,9 @@ public class IpAddressDAO extends IpAddress implements DatabaseObject {
 
 	@Override
 	public void storeToDatabase(PreparedStatement preparedStatement) throws SQLException {
-		// Unimplement
+		preparedStatement.setLong(1, this.getNameserverId());
+		preparedStatement.setInt(2, this.getType());
+		preparedStatement.setString(3, this.getAddress().getHostAddress());
 	}
 
 }
