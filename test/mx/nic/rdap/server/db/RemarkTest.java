@@ -1,6 +1,7 @@
 package mx.nic.rdap.server.db;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +46,9 @@ public class RemarkTest {
 			descriptions.add(description1);
 			descriptions.add(description2);
 			remark.setDescriptions(descriptions);
-			RemarkModel.storeToDatabase(remark);
+			try (Connection connection = DatabaseSession.getConnection()) {
+				RemarkModel.storeToDatabase(remark, connection);
+			}
 			assert true;
 		} catch (SQLException | IOException e) {
 			// TODO Auto-generated catch block
@@ -66,7 +69,9 @@ public class RemarkTest {
 	public void getAll() {
 		try {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
-			assert !RemarkModel.getAll().isEmpty();
+			try (Connection connection = DatabaseSession.getConnection()) {
+				assert !RemarkModel.getAll(connection).isEmpty();
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

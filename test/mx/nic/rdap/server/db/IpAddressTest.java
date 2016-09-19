@@ -2,6 +2,7 @@ package mx.nic.rdap.server.db;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.junit.Test;
@@ -39,7 +40,9 @@ public class IpAddressTest {
 			ipv6.setAddress(InetAddress.getByName("2001:db8::1"));
 			struct.getIpv4Adresses().add(ipv4);
 			// struct.getIpv6Adresses().add(ipv6);
-			IpAddressModel.storeToDatabase(struct,1l);
+			try (Connection connection = DatabaseSession.getConnection()) {
+				IpAddressModel.storeToDatabase(struct, 1l, connection);
+			}
 			assert true;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -49,6 +52,13 @@ public class IpAddressTest {
 			// TODO Auto-generated catch block
 			assert false;
 			e.printStackTrace();
+		} finally {
+			try {
+				DatabaseSession.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -59,14 +69,24 @@ public class IpAddressTest {
 	public void getByNameserverId() {
 		try {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
-			NameserverIpAddressesStruct struct = IpAddressModel.getIpAddressStructByNameserverId(1L);
-			assert !struct.getIpv4Adresses().isEmpty() && !struct.getIpv6Adresses().isEmpty();
+			try (Connection connection = DatabaseSession.getConnection()) {
+				NameserverIpAddressesStruct struct = IpAddressModel.getIpAddressStructByNameserverId(1L, connection);
+
+				assert !struct.getIpv4Adresses().isEmpty();
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			try {
+				DatabaseSession.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 	}

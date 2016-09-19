@@ -10,7 +10,6 @@ import java.util.logging.Logger;
 
 import mx.nic.rdap.core.db.IpAddress;
 import mx.nic.rdap.core.db.struct.NameserverIpAddressesStruct;
-import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.db.IpAddressDAO;
 import mx.nic.rdap.server.db.QueryGroup;
 import mx.nic.rdap.server.exception.ObjectNotFoundException;
@@ -37,10 +36,10 @@ public class IpAddressModel {
 	 * @throws IOException
 	 * @throws SQLException
 	 */
-	public static boolean storeToDatabase(NameserverIpAddressesStruct struct,long nameserverId) throws IOException, SQLException {
+	public static boolean storeToDatabase(NameserverIpAddressesStruct struct, long nameserverId, Connection connection)
+			throws IOException, SQLException {
 		IpAddressModel.queryGroup = new QueryGroup(QUERY_GROUP);
-		try (Connection connection = DatabaseSession.getConnection();
-				PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"))) {
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"))) {
 			for (IpAddress addressV4 : struct.getIpv4Adresses()) {
 				addressV4.setNameserverId(nameserverId);
 				((IpAddressDAO) addressV4).storeToDatabase(statement);
@@ -69,11 +68,10 @@ public class IpAddressModel {
 	 * @throws IOException
 	 * @throws SQLException
 	 */
-	public static NameserverIpAddressesStruct getIpAddressStructByNameserverId(Long nameserverId)
+	public static NameserverIpAddressesStruct getIpAddressStructByNameserverId(Long nameserverId, Connection connection)
 			throws IOException, SQLException {
 		IpAddressModel.queryGroup = new QueryGroup(QUERY_GROUP);
-		try (Connection connection = DatabaseSession.getConnection();
-				PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByNameserverId"))) {
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByNameserverId"))) {
 			statement.setLong(1, nameserverId);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
@@ -86,7 +84,7 @@ public class IpAddressModel {
 				// Process the resulset to construct the struct
 				NameserverIpAddressesStruct struct = new NameserverIpAddressesStruct();
 				do {
-					IpAddressDAO ipAddressDAO = new IpAddressDAO(resultSet);
+					IpAddressDAO ipAddressDAO = new IpAddressDAO(resultSet,connection);
 					if (ipAddressDAO.getType() == 4) {
 						struct.getIpv4Adresses().add(ipAddressDAO);
 					} else {

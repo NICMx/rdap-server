@@ -2,6 +2,7 @@ package mx.nic.rdap.server.db;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,17 +28,17 @@ public class IpAddressDAO extends IpAddress implements DatabaseObject {
 	/**
 	 * Constructor that create a IpAddressDao from a resulset
 	 */
-	public IpAddressDAO(ResultSet resultSet) {
+	public IpAddressDAO(ResultSet resultSet,Connection connection) {
 		super();
 		try {
-			loadFromDatabase(resultSet);
+			loadFromDatabase(resultSet,connection);
 		} catch (SQLException e) {
 			// TODO Manage the exception
 		}
 	}
 
 	@Override
-	public void loadFromDatabase(ResultSet resultSet) throws SQLException {
+	public void loadFromDatabase(ResultSet resultSet,Connection connection) throws SQLException {
 		// validate if resulset is null
 		if (resultSet.wasNull()) {
 			this.setId(0L);

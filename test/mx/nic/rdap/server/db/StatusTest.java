@@ -1,6 +1,7 @@
 package mx.nic.rdap.server.db;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,14 +32,23 @@ public class StatusTest {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
 			Status status = Status.ACTIVE;
 			Status status2 = Status.INACTIVE;
-			List<Status> statusList=new ArrayList<Status>();
+			List<Status> statusList = new ArrayList<Status>();
 			statusList.add(status);
 			statusList.add(status2);
-			StatusModel.storeNameserverStatusToDatabase(statusList, 1l);
+			try (Connection connection = DatabaseSession.getConnection()) {
+				StatusModel.storeNameserverStatusToDatabase(statusList, 1l, connection);
+			}
 			assert true;
 		} catch (IOException | SQLException e) {
 			assert false;
 			e.printStackTrace();
+		} finally {
+			try {
+				DatabaseSession.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 	}
@@ -50,14 +60,23 @@ public class StatusTest {
 	public void getByNameserverId() {
 		try {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
-			List<Status> status = StatusModel.getByNameServerId(1L);
-			assert !status.isEmpty();
+			try (Connection connection = DatabaseSession.getConnection()) {
+				List<Status> status = StatusModel.getByNameServerId(1L, connection);
+				assert !status.isEmpty();
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			try {
+				DatabaseSession.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 	}

@@ -65,13 +65,12 @@ public class EventModel {
 	 * @throws SQLException
 	 * @throws IOException
 	 */
-	public static void storeNameserverEventsToDatabase(List<Event> events, Long nameserverId)
+	public static void storeNameserverEventsToDatabase(List<Event> events, Long nameserverId, Connection connection)
 			throws SQLException, IOException {
 		EventModel.queryGroup = new QueryGroup(QUERY_GROUP);
 
-		try (Connection connection = DatabaseSession.getConnection();
-				PreparedStatement statement = connection
-						.prepareStatement(queryGroup.getQuery("storeNameserverEventsToDatabase"))) {
+		try (PreparedStatement statement = connection
+				.prepareStatement(queryGroup.getQuery("storeNameserverEventsToDatabase"))) {
 			for (Event event : events) {
 				Long eventId = EventModel.storeToDatabase(event);
 				statement.setLong(1, nameserverId);
@@ -91,10 +90,10 @@ public class EventModel {
 	 * @throws IOException
 	 * @throws SQLException
 	 */
-	public static List<Event> getByNameServerId(Long nameserverId) throws IOException, SQLException {
+	public static List<Event> getByNameServerId(Long nameserverId, Connection connection)
+			throws IOException, SQLException {
 		EventModel.queryGroup = new QueryGroup(QUERY_GROUP);
-		try (Connection connection = DatabaseSession.getConnection();
-				PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByNameServerId"))) {
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByNameServerId"))) {
 			statement.setLong(1, nameserverId);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
@@ -106,7 +105,7 @@ public class EventModel {
 				}
 				List<Event> events = new ArrayList<Event>();
 				do {
-					EventDAO event = new EventDAO(resultSet);
+					EventDAO event = new EventDAO(resultSet,connection);
 					events.add(event);
 				} while (resultSet.next());
 				return events;

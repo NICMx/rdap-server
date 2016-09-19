@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.db.QueryGroup;
 import mx.nic.rdap.server.exception.ObjectNotFoundException;
 import mx.nix.rdap.core.catalog.Status;
@@ -35,12 +34,11 @@ public class StatusModel {
 	 * @throws IOException
 	 * @throws SQLException
 	 */
-	public static void storeNameserverStatusToDatabase(List<Status> statusList, Long nameserverId)
-			throws IOException, SQLException {
+	public static void storeNameserverStatusToDatabase(List<Status> statusList, Long nameserverId,
+			Connection connection) throws IOException, SQLException {
 		StatusModel.queryGroup = new QueryGroup(QUERY_GROUP);
-		try (Connection connection = DatabaseSession.getConnection();
-				PreparedStatement statement = connection
-						.prepareStatement(queryGroup.getQuery("storeNameserverStatusToDatabase"))) {
+		try (PreparedStatement statement = connection
+				.prepareStatement(queryGroup.getQuery("storeNameserverStatusToDatabase"))) {
 			for (Status status : statusList) {
 				statement.setLong(1, nameserverId);
 				statement.setLong(2, status.getId());
@@ -59,10 +57,10 @@ public class StatusModel {
 	 * @throws IOException
 	 * @throws SQLException
 	 */
-	public static List<Status> getByNameServerId(Long nameserverId) throws IOException, SQLException {
+	public static List<Status> getByNameServerId(Long nameserverId, Connection connection)
+			throws IOException, SQLException {
 		StatusModel.queryGroup = new QueryGroup(QUERY_GROUP);
-		try (Connection connection = DatabaseSession.getConnection();
-				PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByNameServerId"))) {
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByNameServerId"))) {
 			statement.setLong(1, nameserverId);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {

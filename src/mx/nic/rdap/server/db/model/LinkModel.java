@@ -13,7 +13,6 @@ import java.util.logging.Logger;
 import com.mysql.jdbc.Statement;
 
 import mx.nic.rdap.core.db.Link;
-import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.db.LinkDAO;
 import mx.nic.rdap.server.db.QueryGroup;
 import mx.nic.rdap.server.exception.ObjectNotFoundException;
@@ -38,11 +37,10 @@ public class LinkModel {
 	 * @throws SQLException
 	 * @throws IOException
 	 */
-	public static Long storeToDatabase(Link link) throws SQLException, IOException {
+	public static Long storeToDatabase(Link link, Connection connection) throws SQLException, IOException {
 		LinkModel.queryGroup = new QueryGroup(QUERY_GROUP);
-		try (Connection connection = DatabaseSession.getConnection();
-				PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"),
-						Statement.RETURN_GENERATED_KEYS)) {
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"),
+				Statement.RETURN_GENERATED_KEYS)) {
 			((LinkDAO) link).storeToDatabase(statement);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			statement.executeUpdate();// TODO Validate if the
@@ -60,14 +58,13 @@ public class LinkModel {
 	 * @throws SQLException
 	 * @throws IOException
 	 */
-	public static void storeNameserverLinksToDatabase(List<Link> links, Long nameserverId)
+	public static void storeNameserverLinksToDatabase(List<Link> links, Long nameserverId, Connection connection)
 			throws SQLException, IOException {
 		LinkModel.queryGroup = new QueryGroup(QUERY_GROUP);
-		try (Connection connection = DatabaseSession.getConnection();
-				PreparedStatement statement = connection
-						.prepareStatement(queryGroup.getQuery("storeNameserverLinkToDatabase"))) {
+		try (PreparedStatement statement = connection
+				.prepareStatement(queryGroup.getQuery("storeNameserverLinkToDatabase"))) {
 			for (Link link : links) {
-				Long linkId = LinkModel.storeToDatabase(link);
+				Long linkId = LinkModel.storeToDatabase(link,connection);
 				statement.setLong(1, nameserverId);
 				statement.setLong(2, linkId);
 				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
@@ -83,13 +80,13 @@ public class LinkModel {
 	 * @throws SQLException
 	 * @throws IOException
 	 */
-	public static void storeEventLinksToDatabase(List<Link> links, Long eventId) throws SQLException, IOException {
+	public static void storeEventLinksToDatabase(List<Link> links, Long eventId, Connection connection)
+			throws SQLException, IOException {
 		LinkModel.queryGroup = new QueryGroup(QUERY_GROUP);
-		try (Connection connection = DatabaseSession.getConnection();
-				PreparedStatement statement = connection
-						.prepareStatement(queryGroup.getQuery("storeEventLinksToDatabase"))) {
+		try (PreparedStatement statement = connection
+				.prepareStatement(queryGroup.getQuery("storeEventLinksToDatabase"))) {
 			for (Link link : links) {
-				Long linkId = LinkModel.storeToDatabase(link);
+				Long linkId = LinkModel.storeToDatabase(link,connection);
 				statement.setLong(1, eventId);
 				statement.setLong(2, linkId);
 				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
@@ -107,10 +104,10 @@ public class LinkModel {
 	 * @throws IOException
 	 * @throws SQLException
 	 */
-	public static List<Link> getByNameServerId(Long nameserverId) throws IOException, SQLException {
+	public static List<Link> getByNameServerId(Long nameserverId, Connection connection)
+			throws IOException, SQLException {
 		LinkModel.queryGroup = new QueryGroup(QUERY_GROUP);
-		try (Connection connection = DatabaseSession.getConnection();
-				PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByNameServerId"))) {
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByNameServerId"))) {
 			statement.setLong(1, nameserverId);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
@@ -122,7 +119,7 @@ public class LinkModel {
 				}
 				List<Link> links = new ArrayList<Link>();
 				do {
-					LinkDAO link = new LinkDAO(resultSet);
+					LinkDAO link = new LinkDAO(resultSet,connection);
 					links.add(link);
 				} while (resultSet.next());
 				return links;

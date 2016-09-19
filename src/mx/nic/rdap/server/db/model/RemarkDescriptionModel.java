@@ -11,7 +11,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import mx.nic.rdap.core.db.RemarkDescription;
-import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.db.QueryGroup;
 import mx.nic.rdap.server.db.RemarkDescriptionDAO;
 import mx.nic.rdap.server.exception.ObjectNotFoundException;
@@ -38,11 +37,11 @@ public class RemarkDescriptionModel {
 	 * @throws IOException
 	 * @throws SQLException
 	 */
-	public static void storeAllToDatabase(List<RemarkDescription> descriptions, Long remarkInsertedId)
-			throws IOException, SQLException {
+	public static void storeAllToDatabase(List<RemarkDescription> descriptions, Long remarkInsertedId,
+			Connection connection) throws IOException, SQLException {
 		for (RemarkDescription remarkDescription : descriptions) {
 			remarkDescription.setRemarkId(remarkInsertedId);
-			RemarkDescriptionModel.storeToDatabase(remarkDescription);
+			RemarkDescriptionModel.storeToDatabase(remarkDescription,connection);
 		}
 	}
 
@@ -54,10 +53,10 @@ public class RemarkDescriptionModel {
 	 * @throws IOException
 	 * @throws SQLException
 	 */
-	public static void storeToDatabase(RemarkDescription remarkDescription) throws IOException, SQLException {
+	public static void storeToDatabase(RemarkDescription remarkDescription, Connection connection)
+			throws IOException, SQLException {
 		RemarkDescriptionModel.queryGroup = new QueryGroup(QUERY_GROUP);
-		try (Connection connection = DatabaseSession.getConnection();
-				PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"))) {
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"))) {
 			((RemarkDescriptionDAO) remarkDescription).storeToDatabase(statement);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			statement.executeUpdate();// TODO Validate if the
@@ -73,10 +72,10 @@ public class RemarkDescriptionModel {
 	 * @throws IOException
 	 * @throws SQLException
 	 */
-	public static List<RemarkDescription> findByRemarkId(Long id) throws IOException, SQLException {
+	public static List<RemarkDescription> findByRemarkId(Long id, Connection connection)
+			throws IOException, SQLException {
 		RemarkDescriptionModel.queryGroup = new QueryGroup(QUERY_GROUP);
-		try (Connection connection = DatabaseSession.getConnection();
-				PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByRemarkId"))) {
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByRemarkId"))) {
 			statement.setLong(1, id);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
@@ -88,7 +87,7 @@ public class RemarkDescriptionModel {
 				}
 				List<RemarkDescription> remarks = new ArrayList<RemarkDescription>();
 				do {
-					RemarkDescriptionDAO remarkDescription = new RemarkDescriptionDAO(resultSet);
+					RemarkDescriptionDAO remarkDescription = new RemarkDescriptionDAO(resultSet,connection);
 					remarks.add(remarkDescription);
 				} while (resultSet.next());
 				return remarks;

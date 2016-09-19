@@ -1,8 +1,10 @@
 package mx.nic.rdap.server.db;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -11,6 +13,7 @@ import org.junit.Test;
 import mx.nic.rdap.core.db.Event;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.model.EventModel;
+import mx.nix.rdap.core.catalog.EventAction;
 
 /**
  * Test for the class Event
@@ -31,7 +34,7 @@ public class EventTest {
 		try {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
 			Event event = new EventDAO();
-			// event.setEventAction("Registro");
+			event.setEventAction(EventAction.DELETION);
 			String formatDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date());
 			event.setEventDate(formatDate);
 			event.setEventActor("dalpuche");
@@ -40,6 +43,45 @@ public class EventTest {
 		} catch (SQLException | IOException e) {
 			assert false;
 			e.printStackTrace();
+		} finally {
+			try {
+				DatabaseSession.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	@Test
+	/**
+	 * Store am event in the database
+	 */
+	public void insertNameserverEvent() {
+		try {
+			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
+			Event event = new EventDAO();
+			event.setEventAction(EventAction.EXPIRATION);
+			String formatDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date());
+			event.setEventDate(formatDate);
+			event.setEventActor("dalpuche");
+			List<Event> events = new ArrayList<Event>();
+			events.add(event);
+			try (Connection connection = DatabaseSession.getConnection()) {
+				EventModel.storeNameserverEventsToDatabase(events, 1L, connection);
+			}
+			assert true;
+		} catch (SQLException | IOException e) {
+			assert false;
+			e.printStackTrace();
+		} finally {
+			try {
+				DatabaseSession.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 	}
@@ -51,11 +93,21 @@ public class EventTest {
 	public void getByNameserverId() {
 		try {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
-			List<Event> events = EventModel.getByNameServerId(1l);
+			try (Connection connection = DatabaseSession.getConnection()) {
+				List<Event> events = EventModel.getByNameServerId(1l, connection);
+				System.out.println(events.size());
+			}
 			assert true;
 		} catch (SQLException | IOException e) {
 			assert false;
 			e.printStackTrace();
+		} finally {
+			try {
+				DatabaseSession.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 }

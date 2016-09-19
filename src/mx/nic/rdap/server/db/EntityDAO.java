@@ -1,5 +1,6 @@
 package mx.nic.rdap.server.db;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,7 +24,7 @@ public class EntityDAO extends Entity implements DatabaseObject {
 	 * mx.nic.rdap.core.db.DatabaseObject#loadFromDatabase(java.sql.ResultSet)
 	 */
 	@Override
-	public void loadFromDatabase(ResultSet resultSet) throws SQLException {
+	public void loadFromDatabase(ResultSet resultSet,Connection connection) throws SQLException {
 		// TODO Auto-generated method stub
 
 	}

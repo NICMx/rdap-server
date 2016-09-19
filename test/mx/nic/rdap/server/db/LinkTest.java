@@ -1,16 +1,12 @@
 package mx.nic.rdap.server.db;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
-
-import com.sun.jmx.snmp.Timestamp;
 
 import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.server.Util;
@@ -37,12 +33,21 @@ public class LinkTest {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
 			Link link = new LinkDAO();
 			link.setValue("spotify.com");
-			LinkModel.storeToDatabase(link);
+			try (Connection connection = DatabaseSession.getConnection()) {
+				LinkModel.storeToDatabase(link, connection);
+			}
 			assert true;
 		} catch (SQLException | IOException e) {
 			assert false;
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			try {
+				DatabaseSession.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 	}
@@ -55,13 +60,22 @@ public class LinkTest {
 		try {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
 			List<Link> links = new ArrayList<Link>();
-			links = LinkModel.getByNameServerId(1L);
-			System.out.println(links.size());
+			try (Connection connection = DatabaseSession.getConnection()) {
+				links = LinkModel.getByNameServerId(1L, connection);
+				System.out.println(links.size());
+			}
 			assert true;
 		} catch (SQLException | IOException e) {
 			assert false;
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			try {
+				DatabaseSession.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 	}

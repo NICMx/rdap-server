@@ -1,5 +1,6 @@
 package mx.nic.rdap.server.db;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,10 +25,10 @@ public class RemarkDescriptionDAO extends RemarkDescription implements DatabaseO
 	/**
 	 * 
 	 */
-	public RemarkDescriptionDAO(ResultSet resultSet) {
+	public RemarkDescriptionDAO(ResultSet resultSet,Connection connection) {
 		 super();
 		 try {
-			loadFromDatabase(resultSet);
+			loadFromDatabase(resultSet,connection);
 		} catch (SQLException e) {
 			// TODO Manage the exception
 		}
@@ -40,7 +41,7 @@ public class RemarkDescriptionDAO extends RemarkDescription implements DatabaseO
 	 * mx.nic.rdap.core.db.DatabaseObject#loadFromDatabase(java.sql.ResultSet)
 	 */
 	@Override
-	public void loadFromDatabase(ResultSet resultSet) throws SQLException {
+	public void loadFromDatabase(ResultSet resultSet,Connection connection) throws SQLException {
 		if (resultSet.wasNull())
 			return;
 		this.setRemarkId(resultSet.getLong("rem_id"));
