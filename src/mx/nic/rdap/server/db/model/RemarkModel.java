@@ -131,17 +131,20 @@ public class RemarkModel {
 	 * @return
 	 * @throws SQLException
 	 * @throws ObjectNotFoundException
+	 * @throws IOException 
 	 */
 	private static List<Remark> processResultSet(ResultSet resultSet, Connection connection)
-			throws SQLException, ObjectNotFoundException {
+			throws SQLException, ObjectNotFoundException, IOException {
 		if (!resultSet.next()) {
 			throw new ObjectNotFoundException("Object not found.");
 		}
 		List<Remark> remarks = new ArrayList<Remark>();
 		do {
-			RemarkDAO remark = new RemarkDAO(resultSet, connection);
+			RemarkDAO remark = new RemarkDAO(resultSet);
+			remark.setDescriptions(RemarkDescriptionModel.findByRemarkId(remark.getId(), connection));//load the remark descriptions of the remark
 			remarks.add(remark);
 		} while (resultSet.next());
 		return remarks;
 	}
+
 }

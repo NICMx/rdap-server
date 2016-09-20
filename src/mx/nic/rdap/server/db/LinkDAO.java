@@ -1,12 +1,10 @@
 package mx.nic.rdap.server.db;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import mx.nic.rdap.core.db.Link;
-import mx.nic.rdap.server.db.DatabaseObject;
 
 /**
  * DAO for the Link object.The object is a data structure that signify link an
@@ -26,14 +24,12 @@ public class LinkDAO extends Link implements DatabaseObject {
 
 	/**
 	 * Construct a Link from a resulset
+	 * 
+	 * @throws SQLException
 	 */
-	public LinkDAO(ResultSet resultSet,Connection connection) {
+	public LinkDAO(ResultSet resultSet) throws SQLException {
 		super();
-		try {
-			loadFromDatabase(resultSet,connection);
-		} catch (SQLException e) {
-			// TODO Manage the exception
-		}
+		loadFromDatabase(resultSet);
 	}
 
 	/*
@@ -43,7 +39,7 @@ public class LinkDAO extends Link implements DatabaseObject {
 	 * mx.nic.rdap.core.db.DatabaseObject#loadFromDatabase(java.sql.ResultSet)
 	 */
 	@Override
-	public void loadFromDatabase(ResultSet resultSet,Connection connection) throws SQLException {
+	public void loadFromDatabase(ResultSet resultSet) throws SQLException {
 		if (resultSet.wasNull())
 			return;
 		this.setId(resultSet.getLong("lin_id"));

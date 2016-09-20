@@ -38,20 +38,45 @@ public class LinkTest {
 			}
 			assert true;
 		} catch (SQLException | IOException e) {
-			assert false;
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			assert false;
 		} finally {
 			try {
 				DatabaseSession.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 
 	}
 
+	/**
+	 * Store nameserver's links
+	 */
+	@Test
+	public void insertNameserverLinks(){
+		try {
+
+			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
+			Link link = new LinkDAO();
+			link.setValue("spotify2.com");
+			List<Link> links=new ArrayList<Link>();
+			links.add(link);
+			try (Connection connection = DatabaseSession.getConnection()) {
+				LinkModel.storeNameserverLinksToDatabase(links,1L, connection);
+			}
+			assert true;
+		} catch (SQLException | IOException e) {
+			e.printStackTrace();
+			assert false;
+		} finally {
+			try {
+				DatabaseSession.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 	@Test
 	/**
 	 * Test that retrieve an array of links from a Nameserver id
@@ -67,13 +92,11 @@ public class LinkTest {
 			assert true;
 		} catch (SQLException | IOException e) {
 			assert false;
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			try {
 				DatabaseSession.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

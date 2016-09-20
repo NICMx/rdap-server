@@ -26,14 +26,11 @@ public class NameserverDAO extends Nameserver implements DatabaseObject {
 	 * Contruct a NameserverDAO from a resulset
 	 * 
 	 * @param resultSet
+	 * @throws SQLException
 	 */
-	public NameserverDAO(ResultSet resultSet) {
+	public NameserverDAO(ResultSet resultSet) throws SQLException {
 		super();
-		try {
-			loadFromDatabase(resultSet);
-		} catch (SQLException e) {
-			// TODO Manage the exception
-		}
+		loadFromDatabase(resultSet);
 	}
 
 	/*

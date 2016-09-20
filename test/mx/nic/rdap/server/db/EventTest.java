@@ -43,8 +43,8 @@ public class EventTest {
 			}
 			assert true;
 		} catch (SQLException | IOException e) {
-			assert false;
 			e.printStackTrace();
+			assert false;
 		} finally {
 			try {
 				DatabaseSession.close();
@@ -75,8 +75,8 @@ public class EventTest {
 			}
 			assert true;
 		} catch (SQLException | IOException e) {
-			assert false;
 			e.printStackTrace();
+			assert false;
 		} finally {
 			try {
 				DatabaseSession.close();
@@ -96,13 +96,12 @@ public class EventTest {
 		try {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
 			try (Connection connection = DatabaseSession.getConnection()) {
-				List<Event> events = EventModel.getByNameServerId(1l, connection);
-				System.out.println(events.size());
+				EventModel.getByNameServerId(1L, connection);
 			}
 			assert true;
 		} catch (SQLException | IOException e) {
-			assert false;
 			e.printStackTrace();
+			assert false;
 		} finally {
 			try {
 				DatabaseSession.close();

@@ -44,15 +44,13 @@ public class IpAddressTest {
 				IpAddressModel.storeToDatabase(struct, 1L, connection);
 			}
 			assert true;
-		} catch (SQLException|IOException e) {
-			// TODO Auto-generated catch block
+		} catch (SQLException | IOException e) {
 			assert false;
 			e.printStackTrace();
-		}  finally {
+		} finally {
 			try {
 				DatabaseSession.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -67,18 +65,17 @@ public class IpAddressTest {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
 			try (Connection connection = DatabaseSession.getConnection()) {
 				NameserverIpAddressesStruct struct = IpAddressModel.getIpAddressStructByNameserverId(1L, connection);
-				System.out.println("IPV4 array size:"+ struct.getIpv4Adresses().size());
-				System.out.println("IPV6 array size:"+ struct.getIpv6Adresses().size());
+				System.out.println("IPV4 array size:" + struct.getIpv4Adresses().size());
+				System.out.println("IPV6 array size:" + struct.getIpv6Adresses().size());
 				assert true;
 			}
-		} catch (SQLException|IOException e) {
+		} catch (SQLException | IOException e) {
 			assert false;
 			e.printStackTrace();
-		}  finally {
+		} finally {
 			try {
 				DatabaseSession.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

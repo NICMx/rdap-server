@@ -52,9 +52,52 @@ public class RemarkTest {
 			}
 			assert true;
 		} catch (SQLException | IOException e) {
-			// TODO Auto-generated catch block
-			assert false;
 			e.printStackTrace();
+			assert false;
+		} finally {
+			try {
+				DatabaseSession.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	@Test
+	/**
+	 * Test the insert of nameserver's remarks
+	 */
+	public void insertNameserverRemarks() {
+		try {
+			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
+
+			RemarkDAO remark = new RemarkDAO();
+			Double testId = Math.random();
+			remark.setTitle("Nameserver remarks test" + testId);
+			remark.setType("Nameserver remark");
+			RemarkDescriptionDAO description1 = new RemarkDescriptionDAO();
+			description1.setDescription("First description of the ns remark " + testId);
+			description1.setRemarkId(remark.getId());
+			description1.setOrder(1);
+			RemarkDescriptionDAO description2 = new RemarkDescriptionDAO();
+			description2.setDescription("Second description of the ns remark" + testId);
+			description2.setRemarkId(remark.getId());
+			description2.setOrder(2);
+			List<mx.nic.rdap.core.db.RemarkDescription> descriptions = new ArrayList<mx.nic.rdap.core.db.RemarkDescription>();
+			descriptions.add(description1);
+			descriptions.add(description2);
+			remark.setDescriptions(descriptions);
+			List<Remark> remarks = new ArrayList<Remark>();
+			remarks.add(remark);
+			try (Connection connection = DatabaseSession.getConnection()) {
+				RemarkModel.storeNameserverRemarksToDatabase(remarks, 1L, connection);
+			}
+			assert true;
+		} catch (SQLException | IOException e) {
+			e.printStackTrace();
+			assert false;
 		} finally {
 			try {
 				DatabaseSession.close();
@@ -71,16 +114,12 @@ public class RemarkTest {
 		try {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
 			try (Connection connection = DatabaseSession.getConnection()) {
-				List<Remark> list = RemarkModel.getAll(connection);
-				System.out.println(list.size());
+				RemarkModel.getAll(connection);
 				assert true;
 			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+		} catch (SQLException | IOException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			assert false;
 		} finally {
 			try {
 				DatabaseSession.close();

@@ -86,10 +86,10 @@ public class IpAddressModel {
 				// Process the resulset to construct the struct
 				NameserverIpAddressesStruct struct = new NameserverIpAddressesStruct();
 				do {
-					IpAddressDAO ipAddressDAO = new IpAddressDAO(resultSet, connection);
+					IpAddressDAO ipAddressDAO = new IpAddressDAO(resultSet);
 					if (ipAddressDAO.getType() == 4) {
 						struct.getIpv4Adresses().add(ipAddressDAO);
-					} else if(ipAddressDAO.getType() == 6) {
+					} else if (ipAddressDAO.getType() == 6) {
 						struct.getIpv6Adresses().add(ipAddressDAO);
 					}
 				} while (resultSet.next());

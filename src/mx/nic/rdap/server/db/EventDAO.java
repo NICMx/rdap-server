@@ -1,6 +1,5 @@
 package mx.nic.rdap.server.db;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,14 +25,11 @@ public class EventDAO extends Event implements DatabaseObject {
 
 	/**
 	 * @param resultSet
+	 * @throws SQLException
 	 */
-	public EventDAO(ResultSet resultSet,Connection connection) {
+	public EventDAO(ResultSet resultSet) throws SQLException {
 		super();
-		try {
-			this.loadFromDatabase(resultSet,connection);
-		} catch (SQLException e) {
-			// TODO Manage the exception
-		}
+		this.loadFromDatabase(resultSet);
 	}
 
 	/*
@@ -43,7 +39,7 @@ public class EventDAO extends Event implements DatabaseObject {
 	 * mx.nic.rdap.core.db.DatabaseObject#loadFromDatabase(java.sql.ResultSet)
 	 */
 	@Override
-	public void loadFromDatabase(ResultSet resultSet,Connection connection) throws SQLException {
+	public void loadFromDatabase(ResultSet resultSet) throws SQLException {
 		if (resultSet.wasNull())
 			return;
 		this.setId(resultSet.getLong("eve_id"));
@@ -61,7 +57,7 @@ public class EventDAO extends Event implements DatabaseObject {
 	 */
 	@Override
 	public void storeToDatabase(PreparedStatement preparedStatement) throws SQLException {
-		 preparedStatement.setString(1, Integer.toString(this.getEventAction().getId()));
+		preparedStatement.setString(1, Integer.toString(this.getEventAction().getId()));
 		preparedStatement.setString(2, this.getEventActor());
 		preparedStatement.setString(3, this.getEventDate());
 

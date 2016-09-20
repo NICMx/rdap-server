@@ -36,7 +36,7 @@ public class RemarkDescriptionModel {
 			throw new RuntimeException("Error loading query group");
 		}
 	}
-	
+
 	/**
 	 * Store a list of RemarkDescriptions
 	 * 
@@ -49,7 +49,7 @@ public class RemarkDescriptionModel {
 			Connection connection) throws IOException, SQLException {
 		for (RemarkDescription remarkDescription : descriptions) {
 			remarkDescription.setRemarkId(remarkInsertedId);
-			RemarkDescriptionModel.storeToDatabase(remarkDescription,connection);
+			RemarkDescriptionModel.storeToDatabase(remarkDescription, connection);
 		}
 	}
 
@@ -93,7 +93,7 @@ public class RemarkDescriptionModel {
 				}
 				List<RemarkDescription> remarks = new ArrayList<RemarkDescription>();
 				do {
-					RemarkDescriptionDAO remarkDescription = new RemarkDescriptionDAO(resultSet,connection);
+					RemarkDescriptionDAO remarkDescription = new RemarkDescriptionDAO(resultSet);
 					remarks.add(remarkDescription);
 				} while (resultSet.next());
 				return remarks;

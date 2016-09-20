@@ -1,13 +1,10 @@
 package mx.nic.rdap.server.db;
 
-import java.io.IOException;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.server.db.model.RemarkDescriptionModel;
 
 /**
  * DAO for the remark Object.A remark structure denotes information about the
@@ -29,14 +26,11 @@ public class RemarkDAO extends Remark implements DatabaseObject {
 	 * Construct the Remark from a resulset
 	 * 
 	 * @param resultSet
+	 * @throws SQLException
 	 */
-	public RemarkDAO(ResultSet resultSet,Connection connection) {
+	public RemarkDAO(ResultSet resultSet) throws SQLException {
 		super();
-		try {
-			loadFromDatabase(resultSet,connection);
-		} catch (SQLException e) {
-			// TODO Manage the exception
-		}
+		loadFromDatabase(resultSet);
 	}
 
 	/*
@@ -46,19 +40,13 @@ public class RemarkDAO extends Remark implements DatabaseObject {
 	 * mx.nic.rdap.core.db.DatabaseObject#loadFromDatabase(java.sql.ResultSet)
 	 */
 	@Override
-	public void loadFromDatabase(ResultSet resultSet,Connection connection) throws SQLException {
+	public void loadFromDatabase(ResultSet resultSet) throws SQLException {
 		if (resultSet.wasNull())
 			return;
 		this.setId(resultSet.getLong("rem_id"));
 		this.setTitle(resultSet.getString("rem_title"));
 		this.setType(resultSet.getString("rem_type"));
 		this.setLanguage(resultSet.getString("rem_lang"));
-		//Retrieve the RemarkDescriptions
-		try {
-			this.setDescriptions(RemarkDescriptionModel.findByRemarkId(this.getId(),connection));
-		} catch (IOException e) {
-			// TODO Manage the exception
-		}
 
 	}
 

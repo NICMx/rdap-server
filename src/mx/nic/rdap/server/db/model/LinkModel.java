@@ -68,7 +68,7 @@ public class LinkModel {
 	public static void storeNameserverLinksToDatabase(List<Link> links, Long nameserverId, Connection connection)
 			throws SQLException, IOException {
 		try (PreparedStatement statement = connection
-				.prepareStatement(queryGroup.getQuery("storeNameserverLinkToDatabase"))) {
+				.prepareStatement(queryGroup.getQuery("storeNameserverLinksToDatabase"))) {
 			for (Link link : links) {
 				Long linkId = LinkModel.storeToDatabase(link, connection);
 				statement.setLong(1, nameserverId);
@@ -123,7 +123,7 @@ public class LinkModel {
 				}
 				List<Link> links = new ArrayList<Link>();
 				do {
-					LinkDAO link = new LinkDAO(resultSet, connection);
+					LinkDAO link = new LinkDAO(resultSet);
 					links.add(link);
 				} while (resultSet.next());
 				return links;

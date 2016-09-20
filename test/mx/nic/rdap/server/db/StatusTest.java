@@ -22,12 +22,12 @@ public class StatusTest {
 
 	/** File from which we will load the database connection. */
 	private static final String DATABASE_FILE = "database";
-
+	
 	@Test
 	/**
 	 * Test the store of a nameserver status in the database
 	 */
-	public void storeNameserverStatusToDatabase() {
+	public void insertNameserverStatusToDatabase() {
 		try {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
 			Status status = Status.ACTIVE;
@@ -40,13 +40,12 @@ public class StatusTest {
 			}
 			assert true;
 		} catch (IOException | SQLException e) {
-			assert false;
 			e.printStackTrace();
+			assert false;
 		} finally {
 			try {
 				DatabaseSession.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -61,20 +60,16 @@ public class StatusTest {
 		try {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
 			try (Connection connection = DatabaseSession.getConnection()) {
-				List<Status> status = StatusModel.getByNameServerId(1L, connection);
-				assert !status.isEmpty();
+				StatusModel.getByNameServerId(1L, connection);
+				assert true;
 			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+		} catch (SQLException | IOException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			assert false;
 		} finally {
 			try {
 				DatabaseSession.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

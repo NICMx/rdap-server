@@ -1,6 +1,5 @@
 package mx.nic.rdap.server.db;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,26 +13,23 @@ import mx.nic.rdap.core.db.RemarkDescription;
  *
  */
 public class RemarkDescriptionDAO extends RemarkDescription implements DatabaseObject {
-	
+
 	/**
 	 * Constructor default
 	 */
 	public RemarkDescriptionDAO() {
 		super();
-		}
-	
+	}
+
 	/**
+	 * @throws SQLException
 	 * 
 	 */
-	public RemarkDescriptionDAO(ResultSet resultSet,Connection connection) {
-		 super();
-		 try {
-			loadFromDatabase(resultSet,connection);
-		} catch (SQLException e) {
-			// TODO Manage the exception
-		}
+	public RemarkDescriptionDAO(ResultSet resultSet) throws SQLException {
+		super();
+		loadFromDatabase(resultSet);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -41,7 +37,7 @@ public class RemarkDescriptionDAO extends RemarkDescription implements DatabaseO
 	 * mx.nic.rdap.core.db.DatabaseObject#loadFromDatabase(java.sql.ResultSet)
 	 */
 	@Override
-	public void loadFromDatabase(ResultSet resultSet,Connection connection) throws SQLException {
+	public void loadFromDatabase(ResultSet resultSet) throws SQLException {
 		if (resultSet.wasNull())
 			return;
 		this.setRemarkId(resultSet.getLong("rem_id"));
@@ -58,9 +54,8 @@ public class RemarkDescriptionDAO extends RemarkDescription implements DatabaseO
 	@Override
 	public void storeToDatabase(PreparedStatement preparedStatement) throws SQLException {
 		preparedStatement.setInt(1, this.getOrder());
-		preparedStatement.setLong(2,this.getRemarkId());
+		preparedStatement.setLong(2, this.getRemarkId());
 		preparedStatement.setString(3, this.getDescription());
-		
 
 	}
 

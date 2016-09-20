@@ -108,7 +108,7 @@ public class EventModel {
 				}
 				List<Event> events = new ArrayList<Event>();
 				do {
-					EventDAO event = new EventDAO(resultSet, connection);
+					EventDAO event = new EventDAO(resultSet);
 					events.add(event);
 				} while (resultSet.next());
 				return events;
