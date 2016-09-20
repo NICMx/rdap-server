@@ -38,7 +38,9 @@ public class EventTest {
 			String formatDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date());
 			event.setEventDate(formatDate);
 			event.setEventActor("dalpuche");
-			EventModel.storeToDatabase(event);
+			try (Connection connection = DatabaseSession.getConnection()) {
+				EventModel.storeToDatabase(event, connection);
+			}
 			assert true;
 		} catch (SQLException | IOException e) {
 			assert false;

@@ -13,7 +13,6 @@ import java.util.logging.Logger;
 import com.mysql.jdbc.Statement;
 
 import mx.nic.rdap.core.db.Event;
-import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.db.EventDAO;
 import mx.nic.rdap.server.db.QueryGroup;
 import mx.nic.rdap.server.exception.ObjectNotFoundException;
@@ -40,11 +39,10 @@ public class EventModel {
 	 * @throws SQLException
 	 * @throws IOException
 	 */
-	public static long storeToDatabase(Event event) throws SQLException, IOException {
+	public static long storeToDatabase(Event event, Connection connection) throws SQLException, IOException {
 		EventModel.queryGroup = new QueryGroup(QUERY_GROUP);
-		try (Connection connection = DatabaseSession.getConnection();
-				PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"),
-						Statement.RETURN_GENERATED_KEYS)) {
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"),
+				Statement.RETURN_GENERATED_KEYS)) {
 			((EventDAO) event).storeToDatabase(statement);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			statement.executeUpdate();// TODO Validate if the
@@ -72,7 +70,7 @@ public class EventModel {
 		try (PreparedStatement statement = connection
 				.prepareStatement(queryGroup.getQuery("storeNameserverEventsToDatabase"))) {
 			for (Event event : events) {
-				Long eventId = EventModel.storeToDatabase(event);
+				Long eventId = EventModel.storeToDatabase(event,connection);
 				statement.setLong(1, nameserverId);
 				statement.setLong(2, eventId);
 				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
@@ -105,7 +103,7 @@ public class EventModel {
 				}
 				List<Event> events = new ArrayList<Event>();
 				do {
-					EventDAO event = new EventDAO(resultSet,connection);
+					EventDAO event = new EventDAO(resultSet, connection);
 					events.add(event);
 				} while (resultSet.next());
 				return events;
