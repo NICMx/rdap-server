@@ -11,6 +11,7 @@ import java.util.List;
 import org.junit.Test;
 
 import mx.nic.rdap.core.db.Event;
+import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.model.EventModel;
 import mx.nix.rdap.core.catalog.EventAction;
@@ -38,6 +39,9 @@ public class EventTest {
 			String formatDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date());
 			event.setEventDate(formatDate);
 			event.setEventActor("dalpuche");
+			Link link = new LinkDAO();
+			link.setValue("linkofevent.com");
+			event.getLinks().add(link);
 			try (Connection connection = DatabaseSession.getConnection()) {
 				EventModel.storeToDatabase(event, connection);
 			}

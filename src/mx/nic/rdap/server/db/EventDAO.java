@@ -43,7 +43,7 @@ public class EventDAO extends Event implements DatabaseObject {
 		if (resultSet.wasNull())
 			return;
 		this.setId(resultSet.getLong("eve_id"));
-		this.setEventAction(EventAction.getById(Integer.parseInt(resultSet.getString("eve_action"))));
+		this.setEventAction(EventAction.getById(resultSet.getInt("eac_id")));
 		this.setEventActor(resultSet.getString("eve_actor"));
 		this.setEventDate(resultSet.getString("eve_date"));
 
@@ -57,7 +57,7 @@ public class EventDAO extends Event implements DatabaseObject {
 	 */
 	@Override
 	public void storeToDatabase(PreparedStatement preparedStatement) throws SQLException {
-		preparedStatement.setString(1, Integer.toString(this.getEventAction().getId()));
+		preparedStatement.setLong(1,this.getEventAction().getId());
 		preparedStatement.setString(2, this.getEventActor());
 		preparedStatement.setString(3, this.getEventDate());
 

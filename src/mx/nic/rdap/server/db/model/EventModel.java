@@ -57,7 +57,7 @@ public class EventModel {
 			ResultSet result = statement.getGeneratedKeys();
 			result.next();
 			Long eventId = result.getLong(1);// The id of the link inserted
-			// LinkModel.storeEventLinksToDatabase(event.getLinks(), eventId);
+			LinkModel.storeEventLinksToDatabase(event.getLinks(), eventId,connection);
 			return eventId;
 		}
 	}
@@ -109,6 +109,7 @@ public class EventModel {
 				List<Event> events = new ArrayList<Event>();
 				do {
 					EventDAO event = new EventDAO(resultSet);
+					event.setLinks(LinkModel.getByEventId(event.getId(), connection));
 					events.add(event);
 				} while (resultSet.next());
 				return events;

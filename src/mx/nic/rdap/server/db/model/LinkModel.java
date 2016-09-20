@@ -130,4 +130,31 @@ public class LinkModel {
 			}
 		}
 	}
+	
+	/**
+	 * Get all links for a event
+	 * 
+	 * @param nameserverId
+	 * @return
+	 * @throws IOException
+	 * @throws SQLException
+	 */
+	public static List<Link> getByEventId(Long eventId, Connection connection)
+			throws IOException, SQLException {
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByEventId"))) {
+			statement.setLong(1, eventId);
+			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+			try (ResultSet resultSet = statement.executeQuery()) {
+				if (!resultSet.next()) {
+					return null; //An event can have no links
+				}
+				List<Link> links = new ArrayList<Link>();
+				do {
+					LinkDAO link = new LinkDAO(resultSet);
+					links.add(link);
+				} while (resultSet.next());
+				return links;
+			}
+		}
+	}
 }
