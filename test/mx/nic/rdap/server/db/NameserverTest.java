@@ -40,7 +40,7 @@ public class NameserverTest {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
 			// Nameserver base data
 			Nameserver nameserver = new NameserverDAO();
-			nameserver.setHandle("XXXX");
+			nameserver.setHandle("XXXX2");
 			nameserver.setPunycodeName("ns1.xn--fo-5ja.example");
 			nameserver.setPort43("whois.example.net");
 			nameserver.setRarId(1L);
@@ -114,6 +114,16 @@ public class NameserverTest {
 			event2.setEventDate(formatDate);
 			event2.setEventActor("joe@example.com");
 
+			//event links data
+			List<Link> eventLinks = new ArrayList<Link>();
+			Link eventLink = new LinkDAO();
+			eventLink.setValue("eventLink1");
+			eventLink.setRel("eventlink");
+			eventLink.setHref("http://example.net/eventlink/xxxx");
+			eventLink.setType("application/rdap+json");
+			eventLinks.add(eventLink);
+			event2.setLinks(eventLinks);
+			
 			events.add(event1);
 			events.add(event2);
 			nameserver.setEvents(events);
