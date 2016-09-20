@@ -29,6 +29,14 @@ public class RemarkDescriptionModel {
 
 	protected static QueryGroup queryGroup = null;
 
+	static {
+		try {
+			RemarkDescriptionModel.queryGroup = new QueryGroup(QUERY_GROUP);
+		} catch (IOException e) {
+			throw new RuntimeException("Error loading query group");
+		}
+	}
+	
 	/**
 	 * Store a list of RemarkDescriptions
 	 * 
@@ -55,7 +63,6 @@ public class RemarkDescriptionModel {
 	 */
 	public static void storeToDatabase(RemarkDescription remarkDescription, Connection connection)
 			throws IOException, SQLException {
-		RemarkDescriptionModel.queryGroup = new QueryGroup(QUERY_GROUP);
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"))) {
 			((RemarkDescriptionDAO) remarkDescription).storeToDatabase(statement);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
@@ -74,7 +81,6 @@ public class RemarkDescriptionModel {
 	 */
 	public static List<RemarkDescription> findByRemarkId(Long id, Connection connection)
 			throws IOException, SQLException {
-		RemarkDescriptionModel.queryGroup = new QueryGroup(QUERY_GROUP);
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByRemarkId"))) {
 			statement.setLong(1, id);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());

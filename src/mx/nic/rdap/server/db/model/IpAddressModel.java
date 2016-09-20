@@ -28,35 +28,38 @@ public class IpAddressModel {
 
 	protected static QueryGroup queryGroup = null;
 
+	static {
+		try {
+			IpAddressModel.queryGroup = new QueryGroup(QUERY_GROUP);
+		} catch (IOException e) {
+			throw new RuntimeException("Error loading query group");
+		}
+	}
+
 	/**
 	 * Store an array of IpAddress in the database
 	 * 
 	 * @param remark
-	 * @return true if the insert was correct
 	 * @throws IOException
 	 * @throws SQLException
 	 */
-	public static boolean storeToDatabase(NameserverIpAddressesStruct struct, long nameserverId, Connection connection)
+	public static void storeToDatabase(NameserverIpAddressesStruct struct, long nameserverId, Connection connection)
 			throws IOException, SQLException {
-		IpAddressModel.queryGroup = new QueryGroup(QUERY_GROUP);
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"))) {
 			for (IpAddress addressV4 : struct.getIpv4Adresses()) {
 				addressV4.setNameserverId(nameserverId);
 				((IpAddressDAO) addressV4).storeToDatabase(statement);
 				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 				statement.executeUpdate();// TODO Validate if the
-											// insert was correct
+				// insert was correct
 			}
 			for (IpAddress addressV6 : struct.getIpv6Adresses()) {
 				addressV6.setNameserverId(nameserverId);
 				((IpAddressDAO) addressV6).storeToDatabase(statement);
 				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 				statement.executeUpdate();// TODO Validate if the
-											// insert was correct
+				// insert was correct
 			}
-			return true;
-		} catch (Exception e) {
-			return false;// TODO: manage the exception
 		}
 	}
 
@@ -70,7 +73,6 @@ public class IpAddressModel {
 	 */
 	public static NameserverIpAddressesStruct getIpAddressStructByNameserverId(Long nameserverId, Connection connection)
 			throws IOException, SQLException {
-		IpAddressModel.queryGroup = new QueryGroup(QUERY_GROUP);
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByNameserverId"))) {
 			statement.setLong(1, nameserverId);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
@@ -84,10 +86,10 @@ public class IpAddressModel {
 				// Process the resulset to construct the struct
 				NameserverIpAddressesStruct struct = new NameserverIpAddressesStruct();
 				do {
-					IpAddressDAO ipAddressDAO = new IpAddressDAO(resultSet,connection);
+					IpAddressDAO ipAddressDAO = new IpAddressDAO(resultSet, connection);
 					if (ipAddressDAO.getType() == 4) {
 						struct.getIpv4Adresses().add(ipAddressDAO);
-					} else {
+					} else if(ipAddressDAO.getType() == 6) {
 						struct.getIpv6Adresses().add(ipAddressDAO);
 					}
 				} while (resultSet.next());

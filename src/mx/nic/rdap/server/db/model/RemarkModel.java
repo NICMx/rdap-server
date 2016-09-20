@@ -31,6 +31,14 @@ public class RemarkModel {
 
 	protected static QueryGroup queryGroup = null;
 
+	static {
+		try {
+			RemarkModel.queryGroup = new QueryGroup(QUERY_GROUP);
+		} catch (IOException e) {
+			throw new RuntimeException("Error loading query group");
+		}
+	}
+
 	/**
 	 * Store a Remark in the database
 	 * 
@@ -40,8 +48,6 @@ public class RemarkModel {
 	 * @throws SQLException
 	 */
 	public static long storeToDatabase(Remark remark, Connection connection) throws IOException, SQLException {
-		RemarkModel.queryGroup = new QueryGroup(QUERY_GROUP);
-
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"),
 				Statement.RETURN_GENERATED_KEYS)) {// The Remark's id is
 													// autoincremental,
@@ -69,7 +75,6 @@ public class RemarkModel {
 	 */
 	public static void storeNameserverRemarksToDatabase(List<Remark> remarks, Long nameserverId, Connection connection)
 			throws SQLException, IOException {
-		LinkModel.queryGroup = new QueryGroup(QUERY_GROUP);
 		try (PreparedStatement statement = connection
 				.prepareStatement(queryGroup.getQuery("storeNameserverRemarksToDatabase"))) {
 			for (Remark remark : remarks) {

@@ -39,20 +39,16 @@ public class IpAddressTest {
 			ipv6.setNameserverId(1l);
 			ipv6.setAddress(InetAddress.getByName("2001:db8::1"));
 			struct.getIpv4Adresses().add(ipv4);
-			// struct.getIpv6Adresses().add(ipv6);
+			struct.getIpv6Adresses().add(ipv6);
 			try (Connection connection = DatabaseSession.getConnection()) {
-				IpAddressModel.storeToDatabase(struct, 1l, connection);
+				IpAddressModel.storeToDatabase(struct, 1L, connection);
 			}
 			assert true;
-		} catch (SQLException e) {
+		} catch (SQLException|IOException e) {
 			// TODO Auto-generated catch block
 			assert false;
 			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			assert false;
-			e.printStackTrace();
-		} finally {
+		}  finally {
 			try {
 				DatabaseSession.close();
 			} catch (SQLException e) {
@@ -71,16 +67,14 @@ public class IpAddressTest {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
 			try (Connection connection = DatabaseSession.getConnection()) {
 				NameserverIpAddressesStruct struct = IpAddressModel.getIpAddressStructByNameserverId(1L, connection);
-
-				assert !struct.getIpv4Adresses().isEmpty();
+				System.out.println("IPV4 array size:"+ struct.getIpv4Adresses().size());
+				System.out.println("IPV6 array size:"+ struct.getIpv6Adresses().size());
+				assert true;
 			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+		} catch (SQLException|IOException e) {
+			assert false;
 			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
+		}  finally {
 			try {
 				DatabaseSession.close();
 			} catch (SQLException e) {

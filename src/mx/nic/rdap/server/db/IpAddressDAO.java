@@ -63,7 +63,10 @@ public class IpAddressDAO extends IpAddress implements DatabaseObject {
 	public void storeToDatabase(PreparedStatement preparedStatement) throws SQLException {
 		preparedStatement.setLong(1, this.getNameserverId());
 		preparedStatement.setInt(2, this.getType());
-		preparedStatement.setString(3, this.getAddress().getHostAddress());
+		preparedStatement.setInt(3, this.getType());//To store the ipv6,use an if clause, the third parameter is the type to compare if is a ipv4 or a opv6 
+		preparedStatement.setString(4, this.getAddress().getHostAddress());
+		preparedStatement.setString(5, this.getAddress().getHostAddress());
+
 	}
 
 }

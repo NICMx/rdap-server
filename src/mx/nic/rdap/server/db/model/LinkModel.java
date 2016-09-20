@@ -31,6 +31,14 @@ public class LinkModel {
 
 	protected static QueryGroup queryGroup = null;
 
+	static {
+		try {
+			LinkModel.queryGroup = new QueryGroup(QUERY_GROUP);
+		} catch (IOException e) {
+			throw new RuntimeException("Error loading query group");
+		}
+	}
+
 	/**
 	 * Store a Link in the Database
 	 * 
@@ -38,7 +46,6 @@ public class LinkModel {
 	 * @throws IOException
 	 */
 	public static Long storeToDatabase(Link link, Connection connection) throws SQLException, IOException {
-		LinkModel.queryGroup = new QueryGroup(QUERY_GROUP);
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"),
 				Statement.RETURN_GENERATED_KEYS)) {
 			((LinkDAO) link).storeToDatabase(statement);
@@ -60,11 +67,10 @@ public class LinkModel {
 	 */
 	public static void storeNameserverLinksToDatabase(List<Link> links, Long nameserverId, Connection connection)
 			throws SQLException, IOException {
-		LinkModel.queryGroup = new QueryGroup(QUERY_GROUP);
 		try (PreparedStatement statement = connection
 				.prepareStatement(queryGroup.getQuery("storeNameserverLinkToDatabase"))) {
 			for (Link link : links) {
-				Long linkId = LinkModel.storeToDatabase(link,connection);
+				Long linkId = LinkModel.storeToDatabase(link, connection);
 				statement.setLong(1, nameserverId);
 				statement.setLong(2, linkId);
 				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
@@ -82,11 +88,10 @@ public class LinkModel {
 	 */
 	public static void storeEventLinksToDatabase(List<Link> links, Long eventId, Connection connection)
 			throws SQLException, IOException {
-		LinkModel.queryGroup = new QueryGroup(QUERY_GROUP);
 		try (PreparedStatement statement = connection
 				.prepareStatement(queryGroup.getQuery("storeEventLinksToDatabase"))) {
 			for (Link link : links) {
-				Long linkId = LinkModel.storeToDatabase(link,connection);
+				Long linkId = LinkModel.storeToDatabase(link, connection);
 				statement.setLong(1, eventId);
 				statement.setLong(2, linkId);
 				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
@@ -106,7 +111,6 @@ public class LinkModel {
 	 */
 	public static List<Link> getByNameServerId(Long nameserverId, Connection connection)
 			throws IOException, SQLException {
-		LinkModel.queryGroup = new QueryGroup(QUERY_GROUP);
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByNameServerId"))) {
 			statement.setLong(1, nameserverId);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
@@ -119,7 +123,7 @@ public class LinkModel {
 				}
 				List<Link> links = new ArrayList<Link>();
 				do {
-					LinkDAO link = new LinkDAO(resultSet,connection);
+					LinkDAO link = new LinkDAO(resultSet, connection);
 					links.add(link);
 				} while (resultSet.next());
 				return links;

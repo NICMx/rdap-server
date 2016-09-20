@@ -31,6 +31,14 @@ public class EventModel {
 
 	protected static QueryGroup queryGroup = null;
 
+	static {
+		try {
+			EventModel.queryGroup = new QueryGroup(QUERY_GROUP);
+		} catch (IOException e) {
+			throw new RuntimeException("Error loading query group");
+		}
+	}
+
 	/**
 	 * Store a Event in the Database
 	 * 
@@ -40,7 +48,6 @@ public class EventModel {
 	 * @throws IOException
 	 */
 	public static long storeToDatabase(Event event, Connection connection) throws SQLException, IOException {
-		EventModel.queryGroup = new QueryGroup(QUERY_GROUP);
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"),
 				Statement.RETURN_GENERATED_KEYS)) {
 			((EventDAO) event).storeToDatabase(statement);
@@ -65,12 +72,11 @@ public class EventModel {
 	 */
 	public static void storeNameserverEventsToDatabase(List<Event> events, Long nameserverId, Connection connection)
 			throws SQLException, IOException {
-		EventModel.queryGroup = new QueryGroup(QUERY_GROUP);
 
 		try (PreparedStatement statement = connection
 				.prepareStatement(queryGroup.getQuery("storeNameserverEventsToDatabase"))) {
 			for (Event event : events) {
-				Long eventId = EventModel.storeToDatabase(event,connection);
+				Long eventId = EventModel.storeToDatabase(event, connection);
 				statement.setLong(1, nameserverId);
 				statement.setLong(2, eventId);
 				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
@@ -90,7 +96,6 @@ public class EventModel {
 	 */
 	public static List<Event> getByNameServerId(Long nameserverId, Connection connection)
 			throws IOException, SQLException {
-		EventModel.queryGroup = new QueryGroup(QUERY_GROUP);
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByNameServerId"))) {
 			statement.setLong(1, nameserverId);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());

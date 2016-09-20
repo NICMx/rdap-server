@@ -26,6 +26,14 @@ public class StatusModel {
 
 	protected static QueryGroup queryGroup = null;
 
+	static {
+		try {
+			StatusModel.queryGroup = new QueryGroup(QUERY_GROUP);
+		} catch (IOException e) {
+			throw new RuntimeException("Error loading query group");
+		}
+	}
+
 	/**
 	 * Store a array of statement in the relational table nameserver_status
 	 * 
@@ -36,7 +44,6 @@ public class StatusModel {
 	 */
 	public static void storeNameserverStatusToDatabase(List<Status> statusList, Long nameserverId,
 			Connection connection) throws IOException, SQLException {
-		StatusModel.queryGroup = new QueryGroup(QUERY_GROUP);
 		try (PreparedStatement statement = connection
 				.prepareStatement(queryGroup.getQuery("storeNameserverStatusToDatabase"))) {
 			for (Status status : statusList) {
@@ -59,7 +66,6 @@ public class StatusModel {
 	 */
 	public static List<Status> getByNameServerId(Long nameserverId, Connection connection)
 			throws IOException, SQLException {
-		StatusModel.queryGroup = new QueryGroup(QUERY_GROUP);
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByNameServerId"))) {
 			statement.setLong(1, nameserverId);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
