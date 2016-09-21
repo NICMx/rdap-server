@@ -7,9 +7,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import mx.nic.rdap.core.db.RemarkDescription;
-import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.db.QueryGroup;
 import mx.nic.rdap.server.db.RemarkDescriptionDAO;
 import mx.nic.rdap.server.exception.ObjectNotFoundException;
@@ -21,9 +22,36 @@ import mx.nic.rdap.server.exception.ObjectNotFoundException;
  *
  */
 public class RemarkDescriptionModel {
+
+	private final static Logger logger = Logger.getLogger(RemarkDescriptionModel.class.getName());
+
 	private final static String QUERY_GROUP = "RemarkDescription";
 
 	protected static QueryGroup queryGroup = null;
+
+	static {
+		try {
+			RemarkDescriptionModel.queryGroup = new QueryGroup(QUERY_GROUP);
+		} catch (IOException e) {
+			throw new RuntimeException("Error loading query group");
+		}
+	}
+
+	/**
+	 * Store a list of RemarkDescriptions
+	 * 
+	 * @param descriptions
+	 * @param remarkInsertedId
+	 * @throws IOException
+	 * @throws SQLException
+	 */
+	public static void storeAllToDatabase(List<RemarkDescription> descriptions, Long remarkInsertedId,
+			Connection connection) throws IOException, SQLException {
+		for (RemarkDescription remarkDescription : descriptions) {
+			remarkDescription.setRemarkId(remarkInsertedId);
+			RemarkDescriptionModel.storeToDatabase(remarkDescription, connection);
+		}
+	}
 
 	/**
 	 * Store a RemarkDescription in the database
@@ -33,13 +61,13 @@ public class RemarkDescriptionModel {
 	 * @throws IOException
 	 * @throws SQLException
 	 */
-	public static boolean storeToDatabase(RemarkDescription remarkDescription) throws IOException, SQLException {
-		RemarkDescriptionModel.queryGroup = new QueryGroup(QUERY_GROUP);
-		try (Connection connection = DatabaseSession.getConnection();PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"))) {
+	public static void storeToDatabase(RemarkDescription remarkDescription, Connection connection)
+			throws IOException, SQLException {
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"))) {
 			((RemarkDescriptionDAO) remarkDescription).storeToDatabase(statement);
-			return (statement.executeUpdate() == 1);// TODO Validate if the
-													// insert was correct
-			// connection.commit();//TODO: autocommit=?
+			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+			statement.executeUpdate();// TODO Validate if the
+										// insert was correct
 		}
 	}
 
@@ -51,10 +79,11 @@ public class RemarkDescriptionModel {
 	 * @throws IOException
 	 * @throws SQLException
 	 */
-	public static List<RemarkDescription> findByRemarkId(Long id) throws IOException, SQLException {
-		RemarkDescriptionModel.queryGroup = new QueryGroup(QUERY_GROUP);
-		try (Connection connection = DatabaseSession.getConnection();PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByRemarkId"))) {
+	public static List<RemarkDescription> findByRemarkId(Long id, Connection connection)
+			throws IOException, SQLException {
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByRemarkId"))) {
 			statement.setLong(1, id);
+			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
 				if (!resultSet.next()) {
 					throw new ObjectNotFoundException("Object not found.");// TODO:

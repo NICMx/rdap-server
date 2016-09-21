@@ -13,26 +13,23 @@ import mx.nic.rdap.core.db.RemarkDescription;
  *
  */
 public class RemarkDescriptionDAO extends RemarkDescription implements DatabaseObject {
-	
+
 	/**
 	 * Constructor default
 	 */
 	public RemarkDescriptionDAO() {
 		super();
-		}
-	
+	}
+
 	/**
+	 * @throws SQLException
 	 * 
 	 */
-	public RemarkDescriptionDAO(ResultSet resultSet) {
-		 super();
-		 try {
-			loadFromDatabase(resultSet);
-		} catch (SQLException e) {
-			// TODO Manage the exception
-		}
+	public RemarkDescriptionDAO(ResultSet resultSet) throws SQLException {
+		super();
+		loadFromDatabase(resultSet);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -57,9 +54,8 @@ public class RemarkDescriptionDAO extends RemarkDescription implements DatabaseO
 	@Override
 	public void storeToDatabase(PreparedStatement preparedStatement) throws SQLException {
 		preparedStatement.setInt(1, this.getOrder());
-		preparedStatement.setLong(2,this.getRemarkId());
+		preparedStatement.setLong(2, this.getRemarkId());
 		preparedStatement.setString(3, this.getDescription());
-		
 
 	}
 

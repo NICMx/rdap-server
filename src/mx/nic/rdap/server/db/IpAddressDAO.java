@@ -21,33 +21,38 @@ public class IpAddressDAO extends IpAddress implements DatabaseObject {
 	 * Constructor
 	 */
 	public IpAddressDAO() {
-		// TODO Auto-generated constructor stub
+		super();
 	}
 
 	/**
 	 * Constructor that create a IpAddressDao from a resulset
+	 * 
+	 * @throws SQLException
 	 */
-	public IpAddressDAO(ResultSet resultSet) {
+	public IpAddressDAO(ResultSet resultSet) throws SQLException {
 		super();
-		try {
-			loadFromDatabase(resultSet);
-		} catch (SQLException e) {
-			// TODO Manage the exception
-		}
+		loadFromDatabase(resultSet);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * mx.nic.rdap.core.db.DatabaseObject#loadFromDatabase(java.sql.ResultSet)
+	 */
 	@Override
 	public void loadFromDatabase(ResultSet resultSet) throws SQLException {
 		// validate if resulset is null
 		if (resultSet.wasNull()) {
 			this.setId(0L);
+			this.setNameserverId(0L);
 			this.setType(0);
 			this.setAddress(null);
 			return;
 		}
 
 		this.setId(resultSet.getLong("iad_id"));
-		this.setType(resultSet.getInt("iad_type"));
+		this.setNameserverId(resultSet.getLong("nse_id"));
 		try {
 			this.setAddress(InetAddress.getByName(resultSet.getString("iad_value")));
 		} catch (UnknownHostException e) {
@@ -56,9 +61,24 @@ public class IpAddressDAO extends IpAddress implements DatabaseObject {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see mx.nic.rdap.core.db.DatabaseObject#storeToDatabase(java.sql.
+	 * PreparedStatement)
+	 */
 	@Override
 	public void storeToDatabase(PreparedStatement preparedStatement) throws SQLException {
-		// Unimplement
+		preparedStatement.setLong(1, this.getNameserverId());
+		preparedStatement.setInt(2, this.getType());
+		preparedStatement.setInt(3, this.getType());// To store the ipv6,use an
+													// if clause, the third
+													// parameter is the type to
+													// compare if is a ipv4 or a
+													// opv6
+		preparedStatement.setString(4, this.getAddress().getHostAddress());
+		preparedStatement.setString(5, this.getAddress().getHostAddress());
+
 	}
 
 }
