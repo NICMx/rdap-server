@@ -19,6 +19,7 @@ import mx.nic.rdap.core.db.RemarkDescription;
 import mx.nic.rdap.core.db.struct.NameserverIpAddressesStruct;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.model.NameserverModel;
+import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
 import mx.nix.rdap.core.catalog.EventAction;
 import mx.nix.rdap.core.catalog.Status;
 
@@ -34,13 +35,35 @@ public class NameserverTest {
 	private static final String DATABASE_FILE = "database";
 
 	@Test
+	public void insertMinimunNameServer() {
+		try {
+			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
+			// Nameserver base data
+			Nameserver nameserver = new NameserverDAO();
+			nameserver.setPunycodeName("ns.xn--test-minumun.example");
+			nameserver.setRarId(1L);
+			NameserverModel.storeToDatabase(nameserver);
+			assert true;
+		} catch (RequiredValueNotFoundException | SQLException | IOException e) {
+			e.printStackTrace();
+			assert false;
+		} finally {
+			try {
+				DatabaseSession.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Test
 	public void insert() {
 
 		try {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
 			// Nameserver base data
 			Nameserver nameserver = new NameserverDAO();
-			nameserver.setHandle("XXXX2");
+			nameserver.setHandle("XXXX3");
 			nameserver.setPunycodeName("ns1.xn--fo-5ja.example");
 			nameserver.setPort43("whois.example.net");
 			nameserver.setRarId(1L);
@@ -114,7 +137,7 @@ public class NameserverTest {
 			event2.setEventDate(formatDate);
 			event2.setEventActor("joe@example.com");
 
-			//event links data
+			// event links data
 			List<Link> eventLinks = new ArrayList<Link>();
 			Link eventLink = new LinkDAO();
 			eventLink.setValue("eventLink1");
@@ -123,13 +146,13 @@ public class NameserverTest {
 			eventLink.setType("application/rdap+json");
 			eventLinks.add(eventLink);
 			event2.setLinks(eventLinks);
-			
+
 			events.add(event1);
 			events.add(event2);
 			nameserver.setEvents(events);
 			NameserverModel.storeToDatabase(nameserver);
 			assert true;
-		} catch (SQLException | IOException e) {
+		} catch (RequiredValueNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
 			assert false;
 		} finally {
@@ -145,11 +168,11 @@ public class NameserverTest {
 	public void findByName() {
 		try {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
-			Nameserver nameserver=new NameserverDAO();
-			nameserver=NameserverModel.findByName("ns1.xn--fo-5ja.example");
+			Nameserver nameserver = new NameserverDAO();
+			nameserver = NameserverModel.findByName("ns1.xn--fo-5ja.example");
 			System.out.println(nameserver.toString());
 			assert true;
-		}catch(SQLException | IOException e) {
+		} catch (SQLException | IOException e) {
 			e.printStackTrace();
 			assert false;
 		} finally {

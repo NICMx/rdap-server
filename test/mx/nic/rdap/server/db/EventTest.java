@@ -14,6 +14,7 @@ import mx.nic.rdap.core.db.Event;
 import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.model.EventModel;
+import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
 import mx.nix.rdap.core.catalog.EventAction;
 
 /**
@@ -46,7 +47,7 @@ public class EventTest {
 				EventModel.storeToDatabase(event, connection);
 			}
 			assert true;
-		} catch (SQLException | IOException e) {
+		} catch (RequiredValueNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
 			assert false;
 		} finally {
@@ -78,7 +79,7 @@ public class EventTest {
 				EventModel.storeNameserverEventsToDatabase(events, 1L, connection);
 			}
 			assert true;
-		} catch (SQLException | IOException e) {
+		} catch (RequiredValueNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
 			assert false;
 		} finally {
