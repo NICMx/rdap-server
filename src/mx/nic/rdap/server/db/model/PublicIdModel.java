@@ -80,6 +80,7 @@ public class PublicIdModel {
 		PublicIdModel.queryGroup = new QueryGroup(QUERY_GROUP);
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getBy" + name))) {
 			statement.setLong(1, entityId);
+			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
 				return processResultSet(resultSet);
 			}
@@ -88,6 +89,7 @@ public class PublicIdModel {
 
 	public static List<PublicId> getAll(Connection connection) throws SQLException {
 		try (PreparedStatement statement = connection.prepareStatement("getAll")) {
+			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
 			ResultSet resultSet = statement.executeQuery();
 			return processResultSet(resultSet);
 		}

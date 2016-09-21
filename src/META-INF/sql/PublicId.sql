@@ -1,6 +1,9 @@
 #storeToDatabase
 INSERT INTO rdap.public_id VALUES (null,?,?);
 
+#getAll
+SELECT * FROM rdap.public_id
+
 #getByDomain
 SELECT public_id.* FROM public_id INNER JOIN domain_public_ids ON public_id.pid_id = domain_public_ids.pid_id WHERE  domain_public_ids.dom_id=?;
 
