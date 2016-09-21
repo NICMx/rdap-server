@@ -4,7 +4,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+
 import mx.nic.rdap.core.db.Link;
+import mx.nic.rdap.server.renderer.json.JsonParser;
 
 /**
  * DAO for the Link object.The object is a data structure that signify link an
@@ -13,7 +18,7 @@ import mx.nic.rdap.core.db.Link;
  * @author dalpuche
  *
  */
-public class LinkDAO extends Link implements DatabaseObject {
+public class LinkDAO extends Link implements DatabaseObject, JsonParser {
 
 	/**
 	 * Contructor default
@@ -30,6 +35,20 @@ public class LinkDAO extends Link implements DatabaseObject {
 	public LinkDAO(ResultSet resultSet) throws SQLException {
 		super();
 		loadFromDatabase(resultSet);
+	}
+
+	/**
+	 * Construct a "self" Link
+	 * 
+	 * @param objectClassName
+	 * @param query
+	 */
+	public LinkDAO(String objectClassName, String query) {
+		super();
+		this.setValue("http://example.com/" + objectClassName + "/" + query);
+		this.setRel("self");
+		this.setHref("http://example.com/" + objectClassName + "/" + query);
+		this.setType("application/rdap+json");
 	}
 
 	/*
@@ -67,6 +86,34 @@ public class LinkDAO extends Link implements DatabaseObject {
 		preparedStatement.setString(5, this.getTitle());
 		preparedStatement.setString(6, this.getMedia());
 		preparedStatement.setString(7, this.getType());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see mx.nic.rdap.server.renderer.JsonParser#toJson()
+	 */
+	@Override
+	public JsonObject toJson() {
+		JsonObjectBuilder builder = Json.createObjectBuilder();
+		if (this.getValue() != null && !this.getValue().isEmpty())
+			builder.add("value", this.getValue());
+		if (this.getRel() != null && !this.getRel().isEmpty())
+			builder.add("rel", this.getRel());
+		builder.add("href", this.getHref());
+		if (this.getHreflag() != null && !this.getHref().isEmpty())
+			builder.add("hreflang", this.getHreflag());
+		if (this.getTitle() != null && !this.getTitle().isEmpty())
+			builder.add("title", this.getTitle());
+		if (this.getMedia() != null && !this.getMedia().isEmpty())
+			builder.add("media", this.getMedia());
+		if (this.getType() != null && !this.getType().isEmpty())
+			builder.add("type", this.getType());
+		return builder.build();
+	}
+
+	public String toString() {
+		return toJson().toString();
 	}
 
 }

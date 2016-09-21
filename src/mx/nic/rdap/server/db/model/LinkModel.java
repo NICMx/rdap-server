@@ -121,6 +121,28 @@ public class LinkModel {
 	}
 
 	/**
+	 * Store the remark links
+	 * 
+	 * @throws SQLException
+	 * @throws IOException
+	 * @throws RequiredValueNotFoundException
+	 */
+	public static void storeRemarkLinksToDatabase(List<Link> links, Long remarkId, Connection connection)
+			throws SQLException, IOException, RequiredValueNotFoundException {
+		try (PreparedStatement statement = connection
+				.prepareStatement(queryGroup.getQuery("storeRemarkLinksToDatabase"))) {
+			for (Link link : links) {
+				Long linkId = LinkModel.storeToDatabase(link, connection);
+				statement.setLong(1, remarkId);
+				statement.setLong(2, linkId);
+				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+				statement.executeUpdate();// TODO Validate if the
+				// insert was correct
+			}
+		}
+	}
+
+	/**
 	 * Get all links for a Nameserver
 	 * 
 	 * @param nameserverId
@@ -175,4 +197,31 @@ public class LinkModel {
 			}
 		}
 	}
+
+	/**
+	 * Get all links for a Remark
+	 * 
+	 * @param nameserverId
+	 * @return
+	 * @throws IOException
+	 * @throws SQLException
+	 */
+	public static List<Link> getByRemarkId(Long remarkId, Connection connection) throws IOException, SQLException {
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByRemarkId"))) {
+			statement.setLong(1, remarkId);
+			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+			try (ResultSet resultSet = statement.executeQuery()) {
+				if (!resultSet.next()) {
+					return null; // An event can have no links
+				}
+				List<Link> links = new ArrayList<Link>();
+				do {
+					LinkDAO link = new LinkDAO(resultSet);
+					links.add(link);
+				} while (resultSet.next());
+				return links;
+			}
+		}
+	}
+
 }
