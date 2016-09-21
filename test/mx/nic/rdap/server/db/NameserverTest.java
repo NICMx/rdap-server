@@ -43,6 +43,7 @@ public class NameserverTest {
 			nameserver.setPunycodeName("ns.xn--test-minumun.example");
 			nameserver.setRarId(1L);
 			NameserverModel.storeToDatabase(nameserver);
+			System.out.println(nameserver);
 			assert true;
 		} catch (RequiredValueNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
@@ -151,6 +152,7 @@ public class NameserverTest {
 			events.add(event2);
 			nameserver.setEvents(events);
 			NameserverModel.storeToDatabase(nameserver);
+			System.out.println(nameserver);
 			assert true;
 		} catch (RequiredValueNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
