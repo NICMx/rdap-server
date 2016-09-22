@@ -3,6 +3,7 @@ package mx.nic.rdap.server.db;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -51,7 +52,7 @@ public class EventDAO extends Event implements DatabaseObject, JsonParser {
 		this.setId(resultSet.getLong("eve_id"));
 		this.setEventAction(EventAction.getById(resultSet.getInt("eac_id")));
 		this.setEventActor(resultSet.getString("eve_actor"));
-		this.setEventDate(resultSet.getString("eve_date"));
+		this.setEventDate(resultSet.getTimestamp("eve_date"));
 
 	}
 
@@ -65,8 +66,7 @@ public class EventDAO extends Event implements DatabaseObject, JsonParser {
 	public void storeToDatabase(PreparedStatement preparedStatement) throws SQLException {
 		preparedStatement.setLong(1, this.getEventAction().getId());
 		preparedStatement.setString(2, this.getEventActor());
-		preparedStatement.setString(3, this.getEventDate());
-
+		preparedStatement.setTimestamp(3, new Timestamp(this.getEventDate().getTime()));
 	}
 
 	/*
@@ -80,7 +80,7 @@ public class EventDAO extends Event implements DatabaseObject, JsonParser {
 		builder.add("eventAction", this.getEventAction().getValue());
 		if (this.getEventActor() != null && !this.getEventActor().isEmpty())
 			builder.add("eventActor", this.getEventActor());
-		builder.add("eventDate", this.getEventDate());
+		builder.add("eventDate", this.getEventDate().toInstant().toString());
 		if (this.getLinks() != null && !this.getLinks().isEmpty())
 			builder.add("links", JsonUtil.getLinksJson(this.getLinks()));
 		return builder.build();

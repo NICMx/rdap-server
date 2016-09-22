@@ -3,7 +3,6 @@ package mx.nic.rdap.server.db;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -64,7 +63,7 @@ public class NameserverTest {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
 			// Nameserver base data
 			Nameserver nameserver = new NameserverDAO();
-			nameserver.setHandle("XXXX3");
+			nameserver.setHandle("XXXX4");
 			nameserver.setPunycodeName("ns1.xn--fo-5ja.example");
 			nameserver.setPort43("whois.example.net");
 			nameserver.setRarId(1L);
@@ -130,12 +129,11 @@ public class NameserverTest {
 			List<Event> events = new ArrayList<Event>();
 			Event event1 = new EventDAO();
 			event1.setEventAction(EventAction.REGISTRATION);
-			String formatDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date());
-			event1.setEventDate(formatDate);
+			event1.setEventDate(new Date());
 
 			Event event2 = new EventDAO();
 			event2.setEventAction(EventAction.LAST_CHANGED);
-			event2.setEventDate(formatDate);
+			event2.setEventDate(new Date());
 			event2.setEventActor("joe@example.com");
 
 			// event links data
