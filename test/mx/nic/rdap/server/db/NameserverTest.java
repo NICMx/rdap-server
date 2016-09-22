@@ -63,7 +63,7 @@ public class NameserverTest {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
 			// Nameserver base data
 			Nameserver nameserver = new NameserverDAO();
-			nameserver.setHandle("XXXX4");
+			nameserver.setHandle("XXXX7");
 			nameserver.setPunycodeName("ns1.xn--fo-5ja.example");
 			nameserver.setPort43("whois.example.net");
 			nameserver.setRarId(1L);

@@ -107,6 +107,29 @@ public class NameserverModel {
 	}
 
 	/**
+	 * verify if a nameserver exist by it's name
+	 * 
+	 * @param name
+	 * @return
+	 * @throws IOException
+	 * @throws SQLException
+	 */
+	public static boolean existNameserverByName(String name) throws IOException, SQLException {
+		NameserverModel.queryGroup = new QueryGroup(QUERY_GROUP);
+		try (Connection connection = DatabaseSession.getConnection();
+				PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("existByName"))) {
+			statement.setString(1, name);
+			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+			try (ResultSet resultSet = statement.executeQuery()) {
+				if (!resultSet.next()) {
+					return false;
+				}
+				return true;
+			}
+		}
+	}
+
+	/**
 	 * Load the nested object of the nameserver
 	 * 
 	 * @param nameserver
