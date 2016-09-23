@@ -3,7 +3,6 @@ package mx.nic.rdap.server.db;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,6 +13,7 @@ import mx.nic.rdap.core.db.Event;
 import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.model.EventModel;
+import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
 import mx.nix.rdap.core.catalog.EventAction;
 
 /**
@@ -36,8 +36,7 @@ public class EventTest {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
 			Event event = new EventDAO();
 			event.setEventAction(EventAction.DELETION);
-			String formatDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date());
-			event.setEventDate(formatDate);
+			event.setEventDate(new Date());
 			event.setEventActor("dalpuche");
 			Link link = new LinkDAO();
 			link.setValue("linkofevent.com");
@@ -46,7 +45,7 @@ public class EventTest {
 				EventModel.storeToDatabase(event, connection);
 			}
 			assert true;
-		} catch (SQLException | IOException e) {
+		} catch (RequiredValueNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
 			assert false;
 		} finally {
@@ -69,16 +68,15 @@ public class EventTest {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
 			Event event = new EventDAO();
 			event.setEventAction(EventAction.EXPIRATION);
-			String formatDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date());
-			event.setEventDate(formatDate);
+			event.setEventDate(new Date());
 			event.setEventActor("dalpuche");
 			List<Event> events = new ArrayList<Event>();
 			events.add(event);
 			try (Connection connection = DatabaseSession.getConnection()) {
-				EventModel.storeNameserverEventsToDatabase(events, 1L, connection);
+				EventModel.storeNameserverEventsToDatabase(events, 5L, connection);
 			}
 			assert true;
-		} catch (SQLException | IOException e) {
+		} catch (RequiredValueNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
 			assert false;
 		} finally {
@@ -100,7 +98,10 @@ public class EventTest {
 		try {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
 			try (Connection connection = DatabaseSession.getConnection()) {
-				EventModel.getByNameServerId(1L, connection);
+				List<Event> events = EventModel.getByNameServerId(5L, connection);
+				for (Event event : events) {
+					System.out.println(event);
+				}
 			}
 			assert true;
 		} catch (SQLException | IOException e) {

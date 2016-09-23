@@ -16,6 +16,7 @@ import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.server.db.QueryGroup;
 import mx.nic.rdap.server.db.RemarkDAO;
 import mx.nic.rdap.server.exception.ObjectNotFoundException;
+import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
 
 /**
  * Model for the Remark Object
@@ -46,8 +47,10 @@ public class RemarkModel {
 	 * @return true if the insert was correct
 	 * @throws IOException
 	 * @throws SQLException
+	 * @throws RequiredValueNotFoundException
 	 */
-	public static long storeToDatabase(Remark remark, Connection connection) throws IOException, SQLException {
+	public static long storeToDatabase(Remark remark, Connection connection)
+			throws IOException, SQLException, RequiredValueNotFoundException {
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"),
 				Statement.RETURN_GENERATED_KEYS)) {// The Remark's id is
 													// autoincremental,
@@ -63,6 +66,7 @@ public class RemarkModel {
 			Long remarkInsertedId = result.getLong(1);// The id of the remark
 														// inserted
 			RemarkDescriptionModel.storeAllToDatabase(remark.getDescriptions(), remarkInsertedId, connection);
+			LinkModel.storeRemarkLinksToDatabase(remark.getLinks(), remarkInsertedId, connection);
 			return remarkInsertedId;
 		}
 	}
@@ -72,9 +76,10 @@ public class RemarkModel {
 	 * 
 	 * @throws SQLException
 	 * @throws IOException
+	 * @throws RequiredValueNotFoundException
 	 */
 	public static void storeNameserverRemarksToDatabase(List<Remark> remarks, Long nameserverId, Connection connection)
-			throws SQLException, IOException {
+			throws SQLException, IOException, RequiredValueNotFoundException {
 		try (PreparedStatement statement = connection
 				.prepareStatement(queryGroup.getQuery("storeNameserverRemarksToDatabase"))) {
 			for (Remark remark : remarks) {
@@ -131,7 +136,7 @@ public class RemarkModel {
 	 * @return
 	 * @throws SQLException
 	 * @throws ObjectNotFoundException
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	private static List<Remark> processResultSet(ResultSet resultSet, Connection connection)
 			throws SQLException, ObjectNotFoundException, IOException {
@@ -141,7 +146,17 @@ public class RemarkModel {
 		List<Remark> remarks = new ArrayList<Remark>();
 		do {
 			RemarkDAO remark = new RemarkDAO(resultSet);
-			remark.setDescriptions(RemarkDescriptionModel.findByRemarkId(remark.getId(), connection));//load the remark descriptions of the remark
+			remark.setDescriptions(RemarkDescriptionModel.findByRemarkId(remark.getId(), connection));// load
+																										// the
+																										// remark
+																										// descriptions
+																										// of
+																										// the
+																										// remark
+			remark.setLinks(LinkModel.getByRemarkId(remark.getId(), connection));// load
+																					// the
+																					// remark's
+																					// links
 			remarks.add(remark);
 		} while (resultSet.next());
 		return remarks;

@@ -16,6 +16,8 @@ import mx.nic.rdap.core.db.Event;
 import mx.nic.rdap.server.db.EventDAO;
 import mx.nic.rdap.server.db.QueryGroup;
 import mx.nic.rdap.server.exception.ObjectNotFoundException;
+import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
+import mx.nix.rdap.core.catalog.EventAction;
 
 /**
  * The model for the Event object
@@ -40,14 +42,30 @@ public class EventModel {
 	}
 
 	/**
+	 * Validate the required attributes for the event
+	 * 
+	 * @param event
+	 * @throws RequiredValueNotFoundException
+	 */
+	private static void isValidForStore(Event event) throws RequiredValueNotFoundException {
+		if (event.getEventAction() == null || event.getEventAction().compareTo(EventAction.UNKNOWN) == 0)
+			throw new RequiredValueNotFoundException("eventAction", "Event");
+		if (event.getEventDate() == null)
+			throw new RequiredValueNotFoundException("eventDate", "Event");
+	}
+
+	/**
 	 * Store a Event in the Database
 	 * 
 	 * @param event
 	 * @return
 	 * @throws SQLException
 	 * @throws IOException
+	 * @throws RequiredValueNotFoundException
 	 */
-	public static long storeToDatabase(Event event, Connection connection) throws SQLException, IOException {
+	public static long storeToDatabase(Event event, Connection connection)
+			throws SQLException, IOException, RequiredValueNotFoundException {
+		isValidForStore(event);
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"),
 				Statement.RETURN_GENERATED_KEYS)) {
 			((EventDAO) event).storeToDatabase(statement);
@@ -57,7 +75,7 @@ public class EventModel {
 			ResultSet result = statement.getGeneratedKeys();
 			result.next();
 			Long eventId = result.getLong(1);// The id of the link inserted
-			LinkModel.storeEventLinksToDatabase(event.getLinks(), eventId,connection);
+			LinkModel.storeEventLinksToDatabase(event.getLinks(), eventId, connection);
 			return eventId;
 		}
 	}
@@ -69,9 +87,10 @@ public class EventModel {
 	 * @param nameserverId
 	 * @throws SQLException
 	 * @throws IOException
+	 * @throws RequiredValueNotFoundException
 	 */
 	public static void storeNameserverEventsToDatabase(List<Event> events, Long nameserverId, Connection connection)
-			throws SQLException, IOException {
+			throws SQLException, IOException, RequiredValueNotFoundException {
 
 		try (PreparedStatement statement = connection
 				.prepareStatement(queryGroup.getQuery("storeNameserverEventsToDatabase"))) {

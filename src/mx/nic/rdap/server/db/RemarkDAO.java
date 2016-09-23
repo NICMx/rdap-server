@@ -4,7 +4,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+
 import mx.nic.rdap.core.db.Remark;
+import mx.nic.rdap.core.db.RemarkDescription;
+import mx.nic.rdap.server.renderer.json.JsonParser;
+import mx.nic.rdap.server.renderer.json.JsonUtil;
 
 /**
  * DAO for the remark Object.A remark structure denotes information about the
@@ -13,7 +22,7 @@ import mx.nic.rdap.core.db.Remark;
  * @author dalpuche
  *
  */
-public class RemarkDAO extends Remark implements DatabaseObject {
+public class RemarkDAO extends Remark implements DatabaseObject, JsonParser {
 
 	/**
 	 * Constructor default
@@ -63,4 +72,39 @@ public class RemarkDAO extends Remark implements DatabaseObject {
 		preparedStatement.setString(3, this.getLanguage());
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see mx.nic.rdap.server.renderer.JsonParser#toJson()
+	 */
+	@Override
+	public JsonObject toJson() {
+
+		JsonObjectBuilder builder = Json.createObjectBuilder();
+		if (this.getTitle() != null && !this.getTitle().isEmpty())
+			builder.add("title", this.getTitle());
+		builder.add("description", this.getDescriptionsJson());
+		if (this.getType() != null && !this.getType().isEmpty())
+			builder.add("type", this.getType());
+		if (this.getLinks() != null && !this.getLinks().isEmpty())
+			builder.add("links", JsonUtil.getLinksJson(this.getLinks()));
+		return builder.build();
+	}
+
+	/**
+	 * get the jsonArray of the remark's descriptions
+	 * 
+	 * @return
+	 */
+	private JsonArray getDescriptionsJson() {
+		JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+		for (RemarkDescription description : this.getDescriptions()) {
+			arrayBuilder.add(description.getDescription());
+		}
+		return arrayBuilder.build();
+	}
+
+	public String toString() {
+		return toJson().toString();
+	}
 }

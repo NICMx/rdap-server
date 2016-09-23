@@ -11,6 +11,7 @@ import org.junit.Test;
 import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.model.LinkModel;
+import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
 
 /**
  * Test for the class link
@@ -33,11 +34,12 @@ public class LinkTest {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
 			Link link = new LinkDAO();
 			link.setValue("spotify.com");
+			link.setHref("test");
 			try (Connection connection = DatabaseSession.getConnection()) {
 				LinkModel.storeToDatabase(link, connection);
 			}
 			assert true;
-		} catch (SQLException | IOException e) {
+		} catch (RequiredValueNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
 			assert false;
 		} finally {
@@ -54,19 +56,19 @@ public class LinkTest {
 	 * Store nameserver's links
 	 */
 	@Test
-	public void insertNameserverLinks(){
+	public void insertNameserverLinks() {
 		try {
 
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
 			Link link = new LinkDAO();
 			link.setValue("spotify2.com");
-			List<Link> links=new ArrayList<Link>();
+			List<Link> links = new ArrayList<Link>();
 			links.add(link);
 			try (Connection connection = DatabaseSession.getConnection()) {
-				LinkModel.storeNameserverLinksToDatabase(links,1L, connection);
+				LinkModel.storeNameserverLinksToDatabase(links, 6L, connection);
 			}
 			assert true;
-		} catch (SQLException | IOException e) {
+		} catch (RequiredValueNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
 			assert false;
 		} finally {
@@ -77,6 +79,7 @@ public class LinkTest {
 			}
 		}
 	}
+
 	@Test
 	/**
 	 * Test that retrieve an array of links from a Nameserver id
@@ -86,8 +89,11 @@ public class LinkTest {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
 			List<Link> links = new ArrayList<Link>();
 			try (Connection connection = DatabaseSession.getConnection()) {
-				links = LinkModel.getByNameServerId(1L, connection);
-				System.out.println(links.size());
+				links = LinkModel.getByNameServerId(6L, connection);
+				for (Link link : links) {
+					System.out.println(((LinkDAO) link));
+				}
+
 			}
 			assert true;
 		} catch (SQLException | IOException e) {

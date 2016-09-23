@@ -15,6 +15,7 @@ import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.db.NameserverDAO;
 import mx.nic.rdap.server.db.QueryGroup;
 import mx.nic.rdap.server.exception.ObjectNotFoundException;
+import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
 
 /**
  * Model for the Nameserver Object
@@ -31,13 +32,31 @@ public class NameserverModel {
 	protected static QueryGroup queryGroup = null;
 
 	/**
+	 * Validate the required attributes for the nameserver
+	 * 
+	 * @param nameserver
+	 * @throws RequiredValueNotFoundException
+	 */
+	private static void isValidForStore(Nameserver nameserver) throws RequiredValueNotFoundException {
+		if (nameserver.getPunycodeName() == null || nameserver.getPunycodeName().isEmpty())
+			throw new RequiredValueNotFoundException("ldhName", "Nameserver");
+		if (nameserver.getRarId() == null) {// Never has to result true
+			throw new RequiredValueNotFoundException("rarId", "Nameserver");
+
+		}
+	}
+
+	/**
 	 * Store a namerserver in the database
 	 * 
 	 * @param nameserver
 	 * @throws IOException
 	 * @throws SQLException
+	 * @throws RequiredValueNotFoundException
 	 */
-	public static void storeToDatabase(Nameserver nameserver) throws IOException, SQLException {
+	public static void storeToDatabase(Nameserver nameserver)
+			throws IOException, SQLException, RequiredValueNotFoundException {
+		isValidForStore(nameserver);
 		NameserverModel.queryGroup = new QueryGroup(QUERY_GROUP);
 		try (Connection connection = DatabaseSession.getConnection();
 				PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"),
@@ -83,6 +102,29 @@ public class NameserverModel {
 				Nameserver nameserver = new NameserverDAO(resultSet);
 				NameserverModel.loadNestedObjects(nameserver, connection);
 				return nameserver;
+			}
+		}
+	}
+
+	/**
+	 * verify if a nameserver exist by it's name
+	 * 
+	 * @param name
+	 * @return
+	 * @throws IOException
+	 * @throws SQLException
+	 */
+	public static boolean existNameserverByName(String name) throws IOException, SQLException {
+		NameserverModel.queryGroup = new QueryGroup(QUERY_GROUP);
+		try (Connection connection = DatabaseSession.getConnection();
+				PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("existByName"))) {
+			statement.setString(1, name);
+			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+			try (ResultSet resultSet = statement.executeQuery()) {
+				if (!resultSet.next()) {
+					return false;
+				}
+				return true;
 			}
 		}
 	}
