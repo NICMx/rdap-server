@@ -92,6 +92,31 @@ public class RemarkModel {
 			}
 		}
 	}
+	
+	/**
+	 * Stores the domain's remarks
+	 * 
+	 * @param remarks
+	 * @param domainId
+	 * @param connection
+	 * @throws SQLException
+	 * @throws IOException
+	 * @throws RequiredValueNotFoundException
+	 */
+	public static void storeDomainRemarksToDatabase(List<Remark> remarks, Long domainId, Connection connection)
+			throws SQLException, IOException, RequiredValueNotFoundException {
+		try (PreparedStatement statement = connection
+				.prepareStatement(queryGroup.getQuery("storeDomainRemarksToDatabase"))) {
+			for (Remark remark : remarks) {
+				Long remarkId = RemarkModel.storeToDatabase(remark, connection);
+				statement.setLong(1, domainId);
+				statement.setLong(2, remarkId);
+				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+				statement.executeUpdate();// TODO Validate if the
+				// insert was correct
+			}
+		}
+	}
 
 	/**
 	 * Get all remarks for the namemeserver
@@ -114,6 +139,16 @@ public class RemarkModel {
 		}
 	}
 
+	public static List<Remark> getByDomainId(Long domainId, Connection connection) throws SQLException, IOException {
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByDomainId"))) {
+			statement.setLong(1, domainId);
+			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+			try (ResultSet resultSet = statement.executeQuery();) {
+				return processResultSet(resultSet, connection);
+			}
+		}
+	}
+	
 	/**
 	 * Unused. Get all Remarks from DB
 	 * 

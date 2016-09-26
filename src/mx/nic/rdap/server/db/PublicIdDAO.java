@@ -34,9 +34,6 @@ public class PublicIdDAO extends mx.nic.rdap.core.db.PublicId implements Databas
 	 */
 	@Override
 	public void loadFromDatabase(ResultSet resultSet) throws SQLException {
-		// TODO Auto-generated method stub
-		if (resultSet.wasNull())
-			return;
 		this.setId(resultSet.getLong("pid_id"));
 		this.setType(resultSet.getString("pid_type"));
 		this.setPublicId(resultSet.getString("pid_identifier"));

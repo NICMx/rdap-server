@@ -1,6 +1,3 @@
-/**
- * 
- */
 package mx.nic.rdap.server.db;
 
 import java.sql.PreparedStatement;
@@ -8,25 +5,31 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Data access for the zone object
+ * Data access class for the Variant object.
  * 
  * @author evaldes
  *
  */
-public class ZoneDAO extends mx.nic.rdap.core.db.Zone implements DatabaseObject {
+public class VariantDAO extends mx.nic.rdap.core.db.Variant implements DatabaseObject {
 
 	/**
-	 * Default Constructor
+	 * Default constructor
 	 */
-	public ZoneDAO() {
+	public VariantDAO() {
 		super();
 	}
 
-	public ZoneDAO(ResultSet resultSet) {
+	/**
+	 * Constructor with result set
+	 * 
+	 * @param resultSet
+	 */
+	public VariantDAO(ResultSet resultSet) {
+		super();
 		try {
 			loadFromDatabase(resultSet);
 		} catch (SQLException e) {
-			// TODO
+			// TODO manage exception
 		}
 	}
 
@@ -38,8 +41,8 @@ public class ZoneDAO extends mx.nic.rdap.core.db.Zone implements DatabaseObject 
 	 */
 	@Override
 	public void loadFromDatabase(ResultSet resultSet) throws SQLException {
-		this.setId(resultSet.getInt("zone_id"));
-		this.setZoneName(resultSet.getString("zone_name"));
+		this.setId(resultSet.getLong("var_id"));
+		this.setIdnTable(resultSet.getString("var_idn_table"));
 	}
 
 	/*
@@ -51,7 +54,8 @@ public class ZoneDAO extends mx.nic.rdap.core.db.Zone implements DatabaseObject 
 	@Override
 	public void storeToDatabase(PreparedStatement preparedStatement) throws SQLException {
 		// TODO Auto-generated method stub
-		preparedStatement.setString(1, this.getZoneName());
+		preparedStatement.setString(1, this.getIdnTable());
+		preparedStatement.setLong(2, this.getDomainId());
 	}
 
 }

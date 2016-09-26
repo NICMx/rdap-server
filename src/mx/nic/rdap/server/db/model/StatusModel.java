@@ -53,7 +53,28 @@ public class StatusModel {
 				statement.executeUpdate();
 			}
 		}
-
+	}
+	
+	/**
+	 * Stores an array of statements in the relational table domain_status
+	 * 
+	 * @param statusList
+	 * @param domainId
+	 * @param connection
+	 * @throws IOException
+	 * @throws SQLException
+	 */
+	public static void storeDomainStatusToDatabase(List<Status> statusList, Long domainId, Connection connection)
+			throws IOException, SQLException {
+		try (PreparedStatement statement = connection
+				.prepareStatement(queryGroup.getQuery("storeDomainStatusToDatabase"))) {
+			for (Status status : statusList) {
+				statement.setLong(1, domainId);
+				statement.setLong(2, status.getId());
+				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+				statement.executeUpdate();
+			}
+		}
 	}
 
 	/**
@@ -84,4 +105,34 @@ public class StatusModel {
 			}
 		}
 	}
+	
+	/**
+	 * Get all status from a domain
+	 * 
+	 * @param domainId
+	 * @param connection
+	 * @return
+	 * @throws IOException
+	 * @throws SQLException
+	 */
+	public static List<Status> getByDomainId(Long domainId, Connection connection) throws IOException, SQLException {
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByDomainId"))) {
+			statement.setLong(1, domainId);
+			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+			try (ResultSet resultSet = statement.executeQuery()) {
+				if (!resultSet.next()) {
+					throw new ObjectNotFoundException("Object not found.");// TODO:
+																			// Managae
+																			// the
+																			// exception
+				}
+				List<Status> status = new ArrayList<Status>();
+				do {
+					status.add(Status.getById(resultSet.getInt("sta_id")));
+				} while (resultSet.next());
+				return status;
+			}
+		}
+	}
+	
 }

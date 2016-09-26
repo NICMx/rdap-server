@@ -1,6 +1,9 @@
 #storeToDatabase
 INSERT INTO rdap.public_id VALUES (null,?,?);
 
+#storeDomainPublicIdsToDatabase
+INSERT INTO  rdap.domain_public_ids VALUES (?,?)
+
 #getAll
 SELECT * FROM rdap.public_id
 

@@ -97,6 +97,56 @@ public class LinkModel {
 			}
 		}
 	}
+	
+	/**
+	 * Stores the Domain links
+	 * 
+	 * @param links
+	 * @param domainId
+	 * @param connection
+	 * @throws SQLException
+	 * @throws IOException
+	 * @throws RequiredValueNotFoundException
+	 */
+	public static void storeDomainLinksToDatabase(List<Link> links, Long domainId, Connection connection)
+			throws SQLException, IOException, RequiredValueNotFoundException {
+		try (PreparedStatement statement = connection
+				.prepareStatement(queryGroup.getQuery("storeDomainLinksToDatabase"))) {
+			for (Link link : links) {
+				Long linkId = LinkModel.storeToDatabase(link, connection);
+				statement.setLong(1, domainId);
+				statement.setLong(2, linkId);
+				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+				statement.executeUpdate();// TODO Validate if the insert was
+											// correct
+			}
+		}
+	}
+	
+	/**
+	 * Stores the DsData links
+	 * 
+	 * @param links
+	 * @param dsDataId
+	 * @param connection
+	 * @throws SQLException
+	 * @throws IOException
+	 * @throws RequiredValueNotFoundException
+	 */
+	public static void storeDsDataLinksToDatabase(List<Link> links, Long dsDataId, Connection connection)
+			throws SQLException, IOException, RequiredValueNotFoundException {
+		try (PreparedStatement statement = connection
+				.prepareStatement(queryGroup.getQuery("storeDsDataLinksToDatabase"))) {
+			for (Link link : links) {
+				Long linkId = LinkModel.storeToDatabase(link, connection);
+				statement.setLong(1, dsDataId);
+				statement.setLong(2, linkId);
+				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+				statement.executeUpdate();// TODO Validate if the insert was
+											// correct
+			}
+		}
+	}
 
 	/**
 	 * Store the event links
@@ -171,6 +221,36 @@ public class LinkModel {
 			}
 		}
 	}
+	
+	/**
+	 * Gets all links from a domain
+	 * 
+	 * @param domainId
+	 * @param connection
+	 * @return
+	 * @throws IOException
+	 * @throws SQLException
+	 */
+	public static List<Link> getByDomainId(Long domainId, Connection connection) throws IOException, SQLException {
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByDomainId"))) {
+			statement.setLong(1, domainId);
+			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+			try (ResultSet resultSet = statement.executeQuery()) {
+				if (!resultSet.next()) {
+					throw new ObjectNotFoundException("Object not found.");// TODO:
+																			// Managae
+																			// the
+																			// exception
+				}
+				List<Link> links = new ArrayList<Link>();
+				do {
+					LinkDAO link = new LinkDAO(resultSet);
+					links.add(link);
+				} while (resultSet.next());
+				return links;
+			}
+		}
+	}
 
 	/**
 	 * Get all links for a event
@@ -224,4 +304,30 @@ public class LinkModel {
 		}
 	}
 
+	/**
+	 * Get all links for a DsData
+	 * 
+	 * @param dsDataId
+	 * @param connection
+	 * @return
+	 * @throws IOException
+	 * @throws SQLException
+	 */
+	public static List<Link> getByDsDataId(Long dsDataId, Connection connection) throws IOException, SQLException {
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByDsDataId"))) {
+			statement.setLong(1, dsDataId);
+			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+			try (ResultSet resultSet = statement.executeQuery()) {
+				if (!resultSet.next()) {
+					return null; // A dsData can have no links
+				}
+				List<Link> links = new ArrayList<Link>();
+				do {
+					LinkDAO link = new LinkDAO(resultSet);
+					links.add(link);
+				} while (resultSet.next());
+				return links;
+			}
+		}
+	}
 }

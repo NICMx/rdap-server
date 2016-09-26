@@ -1,6 +1,3 @@
-/**
- * 
- */
 package mx.nic.rdap.server.db;
 
 import java.sql.PreparedStatement;
@@ -8,26 +5,30 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Data access for the zone object
+ * Data access class for the VariantName object. It contains the LDH names of a
+ * variant
  * 
  * @author evaldes
  *
  */
-public class ZoneDAO extends mx.nic.rdap.core.db.Zone implements DatabaseObject {
+public class VariantNameDAO extends mx.nic.rdap.core.db.VariantName implements DatabaseObject {
 
-	/**
-	 * Default Constructor
-	 */
-	public ZoneDAO() {
+	public VariantNameDAO() {
 		super();
 	}
 
-	public ZoneDAO(ResultSet resultSet) {
+	public VariantNameDAO(ResultSet resultSet) {
+		super();
 		try {
 			loadFromDatabase(resultSet);
 		} catch (SQLException e) {
-			// TODO
+			// TODO Manage exception
 		}
+	}
+
+	public String getUnicodeName() {
+		// TODO Something
+		return "";
 	}
 
 	/*
@@ -38,8 +39,7 @@ public class ZoneDAO extends mx.nic.rdap.core.db.Zone implements DatabaseObject 
 	 */
 	@Override
 	public void loadFromDatabase(ResultSet resultSet) throws SQLException {
-		this.setId(resultSet.getInt("zone_id"));
-		this.setZoneName(resultSet.getString("zone_name"));
+		this.setLdhName(resultSet.getString("vna_ldh_name"));
 	}
 
 	/*
@@ -50,8 +50,8 @@ public class ZoneDAO extends mx.nic.rdap.core.db.Zone implements DatabaseObject 
 	 */
 	@Override
 	public void storeToDatabase(PreparedStatement preparedStatement) throws SQLException {
-		// TODO Auto-generated method stub
-		preparedStatement.setString(1, this.getZoneName());
+		preparedStatement.setString(1, this.getLdhName());
+		preparedStatement.setLong(2, this.getVariantId());
 	}
 
 }

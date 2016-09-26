@@ -59,11 +59,36 @@ public class PublicIdModel {
 	 * @throws SQLException
 	 * @throws IOException
 	 */
-	public static void storeToDatabase(PublicId publicId, Connection connection) throws SQLException, IOException {
+	public static Long storeToDatabase(PublicId publicId, Connection connection) throws SQLException, IOException {
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"));) {
 			((PublicIdDAO) publicId).storeToDatabase(statement);
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
 			statement.executeUpdate();// TODO Validate if the insert was correct
+			return publicId.getId();
+		}
+	}
+
+	/**
+	 * Stores domain-public id relation
+	 * 
+	 * @param publicIds
+	 * @param domainId
+	 * @param connection
+	 * @throws SQLException
+	 * @throws IOException
+	 */
+	public static void storeDomainPublicIds(List<PublicId> publicIds, Long domainId, Connection connection)
+			throws SQLException, IOException {
+		try (PreparedStatement statement = connection
+				.prepareStatement(queryGroup.getQuery("storeDomainPublicIdsToDatabase"))) {
+			for (PublicId publicId : publicIds) {
+				Long id = PublicIdModel.storeToDatabase(publicId, connection);
+				statement.setLong(1, domainId);
+				statement.setLong(2, id);
+				logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
+				statement.executeUpdate(); // TODO Validate if insert was
+											// correct
+			}
 		}
 	}
 
@@ -81,7 +106,11 @@ public class PublicIdModel {
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getBy" + name))) {
 			statement.setLong(1, entityId);
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
-			try (ResultSet resultSet = statement.executeQuery()) {
+			try (ResultSet resultSet = statement.executeQuery()) { // TODO
+																	// Validate
+																	// if insert
+																	// was
+																	// correct
 				return processResultSet(resultSet);
 			}
 		}
@@ -90,7 +119,9 @@ public class PublicIdModel {
 	public static List<PublicId> getAll(Connection connection) throws SQLException {
 		try (PreparedStatement statement = connection.prepareStatement("getAll")) {
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
-			ResultSet resultSet = statement.executeQuery();
+			ResultSet resultSet = statement.executeQuery(); // TODO Validate if
+															// insert was
+															// correct
 			return processResultSet(resultSet);
 		}
 	}

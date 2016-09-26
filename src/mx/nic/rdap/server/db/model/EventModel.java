@@ -1,3 +1,4 @@
+
 package mx.nic.rdap.server.db.model;
 
 import java.io.IOException;
@@ -104,6 +105,48 @@ public class EventModel {
 			}
 		}
 	}
+	
+	public static void storeDomainEventsToDatabase(List<Event> events, Long domainId, Connection connection)
+			throws SQLException, IOException, RequiredValueNotFoundException {
+		try (PreparedStatement statement = connection
+				.prepareStatement(queryGroup.getQuery("storeDomainEventsToDatabase"))) {
+			for (Event event : events) {
+				Long eventId = EventModel.storeToDatabase(event, connection);
+				statement.setLong(1, domainId);
+				statement.setLong(2, eventId);
+				logger.log(Level.INFO, "Excuting QUERY:" + statement.toString());
+				statement.executeUpdate();// TODO Validate if the insert was
+											// correct
+			}
+		}
+	}
+
+	/**
+	 * Store the DsData events
+	 * 
+	 * @param events
+	 * @param nameserverId
+	 * @param connection
+	 * @throws SQLException
+	 * @throws IOException
+	 * @throws RequiredValueNotFoundException 
+	 */
+	public static void storeDsDataEventsToDatabase(List<Event> events, Long dsDataId, Connection connection)
+			throws SQLException, IOException, RequiredValueNotFoundException {
+
+		try (PreparedStatement statement = connection
+				.prepareStatement(queryGroup.getQuery("storeDsDataEventsToDatabase"))) {
+			for (Event event : events) {
+				Long eventId = EventModel.storeToDatabase(event, connection);
+				statement.setLong(1, dsDataId);
+				statement.setLong(2, eventId);
+				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+				statement.executeUpdate();// TODO Validate if the insert was
+											// correct
+			}
+		}
+	}
+
 
 	/**
 	 * Get all events for a Nameserver
@@ -135,4 +178,63 @@ public class EventModel {
 			}
 		}
 	}
+	
+	/**
+	 * Get all events for a DsData
+	 * 
+	 * @param domainId
+	 * @return
+	 * @throws IOException
+	 * @throws SQLException
+	 */
+	public static List<Event> getByDsDataId(Long dsDataId, Connection connection) throws SQLException, IOException {
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByDsDataId"))) {
+			statement.setLong(1, dsDataId);
+			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
+			try (ResultSet resultSet = statement.executeQuery()) {
+				if (!resultSet.next()) {
+					throw new ObjectNotFoundException("Object not found.");// TODO
+																			// Manage
+																			// the
+																			// exception
+				}
+				List<Event> events = new ArrayList<Event>();
+				do {
+					EventDAO event = new EventDAO(resultSet);
+					event.setLinks(LinkModel.getByEventId(event.getId(), connection));
+					events.add(event);
+				} while (resultSet.next());
+				return events;
+			}
+		}
+	}
+	
+	/**
+	 * Get all events for a Domain
+	 * 
+	 * @param domainId
+	 * @return
+	 * @throws IOException
+	 * @throws SQLException
+	 */
+	public static List<Event> getByDomainId(Long domainId, Connection connection) throws SQLException, IOException {
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByDomainId"))) {
+			statement.setLong(1, domainId);
+			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
+			try (ResultSet resultSet = statement.executeQuery()) {
+				if (!resultSet.next()) {
+					throw new ObjectNotFoundException("Object not found.");
+				}
+				List<Event> events = new ArrayList<Event>();
+				do {
+					EventDAO event = new EventDAO(resultSet);
+					event.setLinks(LinkModel.getByEventId(event.getId(), connection));
+					events.add(event);
+				} while (resultSet.next());
+				return events;
+			}
+
+		}
+	}
+	
 }
