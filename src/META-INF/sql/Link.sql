@@ -13,6 +13,12 @@ SELECT lin.* FROM rdap.link lin JOIN rdap.ds_links dsd ON dsd.lin_id=lin.lin_id 
 #getByDomainId
 SELECT lin.* FROM rdap.link lin JOIN rdap.domain_links dom ON dom.lin_id=lin.lin_id WHERE dom.dom_id=?;
 
+#getByEntityId
+SELECT lin.* FROM rdap.link lin JOIN rdap.registrar_links rar ON rar.lin_id=lin.lin_id WHERE rar.rar_id=?;
+
+#getByRegistrarId
+SELECT lin.* FROM rdap.link lin JOIN rdap.entity_links ent ON ent.lin_id=lin.lin_id WHERE ent.ent_id=?;
+
 #storeNameserverLinksToDatabase
 INSERT INTO rdap.nameserver_links VALUES(?,?);
 
@@ -30,3 +36,9 @@ INSERT INTO rdap.ds_links VALUES(?,?);
 
 #storeDomainLinksToDatabase
 INSERT INTO rdap.domain_links VALUES (?,?);
+
+#storeRegistrarLinksToDatabase
+INSERT INTO rdap.registrar_links VALUES(?,?);
+
+#storeEntityLinksToDatabase
+INSERT INTO rdap.entity_links VALUES(?,?);

@@ -15,13 +15,13 @@ import com.mysql.jdbc.Statement;
 import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.server.db.LinkDAO;
 import mx.nic.rdap.server.db.QueryGroup;
-import mx.nic.rdap.server.exception.ObjectNotFoundException;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
 
 /**
  * The model for the Link object
  * 
  * @author dalpuche
+ * @author dhfelix
  *
  */
 public class LinkModel {
@@ -31,6 +31,22 @@ public class LinkModel {
 	private final static String QUERY_GROUP = "Link";
 
 	protected static QueryGroup queryGroup = null;
+
+	private static final String NS_GET_QUERY = "getByNameServerId";
+	private static final String EVENT_GET_QUERY = "getByEventId";
+	private static final String DS_DATA_GET_QUERY = "getByDsDataId";
+	private static final String DOMAIN_GET_QUERY = "getByDomainId";
+	private static final String REMARK_GET_QUERY = "getByRemarkId";
+	private static final String ENTITY_GET_QUERY = "getByEntityId";
+	private static final String REGISTRAR_GET_QUERY = "getByRegistrarId";
+
+	private static final String NS_STORE_QUERY = "storeNameserverLinksToDatabase";
+	private static final String EVENT_STORE_QUERY = "storeEventLinksToDatabase";
+	private static final String REMARK_STORE_QUERY = "storeRemarkLinksToDatabase";
+	private static final String DS_DATA_STORE_QUERY = "storeDsDataLinksToDatabase";
+	private static final String DOMAIN_STORE_QUERY = "storeDomainLinksToDatabase";
+	private static final String ENTITY_STORE_QUERY = "storeEntityLinksToDatabase";
+	private static final String REGISTRAR_STORE_QUERY = "storeRegistrarLinksToDatabase";
 
 	static {
 		try {
@@ -85,19 +101,9 @@ public class LinkModel {
 	 */
 	public static void storeNameserverLinksToDatabase(List<Link> links, Long nameserverId, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
-		try (PreparedStatement statement = connection
-				.prepareStatement(queryGroup.getQuery("storeNameserverLinksToDatabase"))) {
-			for (Link link : links) {
-				Long linkId = LinkModel.storeToDatabase(link, connection);
-				statement.setLong(1, nameserverId);
-				statement.setLong(2, linkId);
-				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-				statement.executeUpdate();// TODO Validate if the
-				// insert was correct
-			}
-		}
+		storeRemarkRelationToDatabase(links, nameserverId, connection, NS_STORE_QUERY);
 	}
-	
+
 	/**
 	 * Stores the Domain links
 	 * 
@@ -110,19 +116,9 @@ public class LinkModel {
 	 */
 	public static void storeDomainLinksToDatabase(List<Link> links, Long domainId, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
-		try (PreparedStatement statement = connection
-				.prepareStatement(queryGroup.getQuery("storeDomainLinksToDatabase"))) {
-			for (Link link : links) {
-				Long linkId = LinkModel.storeToDatabase(link, connection);
-				statement.setLong(1, domainId);
-				statement.setLong(2, linkId);
-				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-				statement.executeUpdate();// TODO Validate if the insert was
-											// correct
-			}
-		}
+		storeRemarkRelationToDatabase(links, domainId, connection, DOMAIN_STORE_QUERY);
 	}
-	
+
 	/**
 	 * Stores the DsData links
 	 * 
@@ -135,17 +131,7 @@ public class LinkModel {
 	 */
 	public static void storeDsDataLinksToDatabase(List<Link> links, Long dsDataId, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
-		try (PreparedStatement statement = connection
-				.prepareStatement(queryGroup.getQuery("storeDsDataLinksToDatabase"))) {
-			for (Link link : links) {
-				Long linkId = LinkModel.storeToDatabase(link, connection);
-				statement.setLong(1, dsDataId);
-				statement.setLong(2, linkId);
-				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-				statement.executeUpdate();// TODO Validate if the insert was
-											// correct
-			}
-		}
+		storeRemarkRelationToDatabase(links, dsDataId, connection, DS_DATA_STORE_QUERY);
 	}
 
 	/**
@@ -157,17 +143,7 @@ public class LinkModel {
 	 */
 	public static void storeEventLinksToDatabase(List<Link> links, Long eventId, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
-		try (PreparedStatement statement = connection
-				.prepareStatement(queryGroup.getQuery("storeEventLinksToDatabase"))) {
-			for (Link link : links) {
-				Long linkId = LinkModel.storeToDatabase(link, connection);
-				statement.setLong(1, eventId);
-				statement.setLong(2, linkId);
-				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-				statement.executeUpdate();// TODO Validate if the
-				// insert was correct
-			}
-		}
+		storeRemarkRelationToDatabase(links, eventId, connection, EVENT_STORE_QUERY);
 	}
 
 	/**
@@ -179,11 +155,53 @@ public class LinkModel {
 	 */
 	public static void storeRemarkLinksToDatabase(List<Link> links, Long remarkId, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
-		try (PreparedStatement statement = connection
-				.prepareStatement(queryGroup.getQuery("storeRemarkLinksToDatabase"))) {
+		storeRemarkRelationToDatabase(links, remarkId, connection, REMARK_STORE_QUERY);
+	}
+
+	/**
+	 * Store the entity links
+	 * 
+	 * @throws SQLException
+	 * @throws IOException
+	 * @throws RequiredValueNotFoundException
+	 */
+	public static void storeEntityLinksToDatabase(List<Link> links, Long entityId, Connection connection)
+			throws SQLException, IOException, RequiredValueNotFoundException {
+		storeRemarkRelationToDatabase(links, entityId, connection, ENTITY_STORE_QUERY);
+	}
+
+	/**
+	 * Store the registrar links
+	 * 
+	 * @throws SQLException
+	 * @throws IOException
+	 * @throws RequiredValueNotFoundException
+	 */
+	public static void storeRegistrarLinksToDatabase(List<Link> links, Long registrarId, Connection connection)
+			throws SQLException, IOException, RequiredValueNotFoundException {
+		storeRemarkRelationToDatabase(links, registrarId, connection, REGISTRAR_STORE_QUERY);
+	}
+
+	/**
+	 * @param links
+	 *            The links to be stored in the relation.
+	 * @param id
+	 *            Id of the owner of the links.
+	 * @param connection
+	 *            Connection to a database.
+	 * @param storeQueryId
+	 *            SQL query to use to store the relation of the links.
+	 * @throws SQLException
+	 * @throws IOException
+	 * @throws RequiredValueNotFoundException
+	 */
+	private static void storeRemarkRelationToDatabase(List<Link> links, Long id, Connection connection,
+			String storeQueryId) throws SQLException, IOException, RequiredValueNotFoundException {
+		String query = queryGroup.getQuery("storeRemarkLinksToDatabase");
+		try (PreparedStatement statement = connection.prepareStatement(query)) {
 			for (Link link : links) {
 				Long linkId = LinkModel.storeToDatabase(link, connection);
-				statement.setLong(1, remarkId);
+				statement.setLong(1, id);
 				statement.setLong(2, linkId);
 				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 				statement.executeUpdate();// TODO Validate if the
@@ -202,26 +220,9 @@ public class LinkModel {
 	 */
 	public static List<Link> getByNameServerId(Long nameserverId, Connection connection)
 			throws IOException, SQLException {
-		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByNameServerId"))) {
-			statement.setLong(1, nameserverId);
-			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-			try (ResultSet resultSet = statement.executeQuery()) {
-				if (!resultSet.next()) {
-					throw new ObjectNotFoundException("Object not found.");// TODO:
-																			// Managae
-																			// the
-																			// exception
-				}
-				List<Link> links = new ArrayList<Link>();
-				do {
-					LinkDAO link = new LinkDAO(resultSet);
-					links.add(link);
-				} while (resultSet.next());
-				return links;
-			}
-		}
+		return getByRelationId(nameserverId, connection, NS_GET_QUERY);
 	}
-	
+
 	/**
 	 * Gets all links from a domain
 	 * 
@@ -232,24 +233,7 @@ public class LinkModel {
 	 * @throws SQLException
 	 */
 	public static List<Link> getByDomainId(Long domainId, Connection connection) throws IOException, SQLException {
-		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByDomainId"))) {
-			statement.setLong(1, domainId);
-			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-			try (ResultSet resultSet = statement.executeQuery()) {
-				if (!resultSet.next()) {
-					throw new ObjectNotFoundException("Object not found.");// TODO:
-																			// Managae
-																			// the
-																			// exception
-				}
-				List<Link> links = new ArrayList<Link>();
-				do {
-					LinkDAO link = new LinkDAO(resultSet);
-					links.add(link);
-				} while (resultSet.next());
-				return links;
-			}
-		}
+		return getByRelationId(domainId, connection, DOMAIN_GET_QUERY);
 	}
 
 	/**
@@ -261,21 +245,7 @@ public class LinkModel {
 	 * @throws SQLException
 	 */
 	public static List<Link> getByEventId(Long eventId, Connection connection) throws IOException, SQLException {
-		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByEventId"))) {
-			statement.setLong(1, eventId);
-			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-			try (ResultSet resultSet = statement.executeQuery()) {
-				if (!resultSet.next()) {
-					return null; // An event can have no links
-				}
-				List<Link> links = new ArrayList<Link>();
-				do {
-					LinkDAO link = new LinkDAO(resultSet);
-					links.add(link);
-				} while (resultSet.next());
-				return links;
-			}
-		}
+		return getByRelationId(eventId, connection, EVENT_GET_QUERY);
 	}
 
 	/**
@@ -287,21 +257,7 @@ public class LinkModel {
 	 * @throws SQLException
 	 */
 	public static List<Link> getByRemarkId(Long remarkId, Connection connection) throws IOException, SQLException {
-		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByRemarkId"))) {
-			statement.setLong(1, remarkId);
-			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-			try (ResultSet resultSet = statement.executeQuery()) {
-				if (!resultSet.next()) {
-					return null; // An event can have no links
-				}
-				List<Link> links = new ArrayList<Link>();
-				do {
-					LinkDAO link = new LinkDAO(resultSet);
-					links.add(link);
-				} while (resultSet.next());
-				return links;
-			}
-		}
+		return getByRelationId(remarkId, connection, REMARK_GET_QUERY);
 	}
 
 	/**
@@ -314,20 +270,55 @@ public class LinkModel {
 	 * @throws SQLException
 	 */
 	public static List<Link> getByDsDataId(Long dsDataId, Connection connection) throws IOException, SQLException {
-		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByDsDataId"))) {
-			statement.setLong(1, dsDataId);
+		return getByRelationId(dsDataId, connection, DS_DATA_GET_QUERY);
+	}
+
+	/**
+	 * Get all links for an entity
+	 * 
+	 */
+	public static List<Link> getByEntityId(Long entityId, Connection connection) throws IOException, SQLException {
+		return getByRelationId(entityId, connection, ENTITY_GET_QUERY);
+	}
+
+	/**
+	 * Get all links for a registrar.
+	 */
+	public static List<Link> getByRegistrarId(Long registrarId, Connection connection)
+			throws IOException, SQLException {
+		return getByRelationId(registrarId, connection, REGISTRAR_GET_QUERY);
+	}
+
+	/**
+	 * @param id
+	 *            Id of the owner of the links
+	 * @param connection
+	 *            connection to a database.
+	 * @param queryGetId
+	 *            SQL query to get the links of the id.
+	 * @return
+	 * @throws SQLException
+	 */
+	private static List<Link> getByRelationId(Long id, Connection connection, String queryGetId) throws SQLException {
+		String query = queryGroup.getQuery(queryGetId);
+		List<Link> result = null;
+
+		try (PreparedStatement statement = connection.prepareStatement(query)) {
+			statement.setLong(1, id);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
 				if (!resultSet.next()) {
-					return null; // A dsData can have no links
+					return null; // A Data can have no links
 				}
 				List<Link> links = new ArrayList<Link>();
 				do {
 					LinkDAO link = new LinkDAO(resultSet);
 					links.add(link);
 				} while (resultSet.next());
-				return links;
+				result = links;
 			}
 		}
+
+		return result;
 	}
 }

@@ -10,6 +10,12 @@ SELECT eve.eve_id,eve.eac_id,eve.eve_actor,FROM_UNIXTIME(eve.eve_date,'%m/%d/%Y 
 #getByDomainId
 SELECT eve.eve_id,eve.eac_id,eve.eve_actor,FROM_UNIXTIME(eve.eve_date,'%m/%d/%Y %H:%i:%s') as eve_date FROM rdap.event eve JOIN rdap.domain_events dome ON dome.eve_id=eve.eve_id WHERE dome.dom_id=?;
 
+#getByEntityId
+SELECT eve.eve_id,eve.eac_id,eve.eve_actor,FROM_UNIXTIME(eve.eve_date,'%m/%d/%Y %H:%i:%s') as eve_date FROM rdap.event eve JOIN rdap.entity_events ent ON ent.eve_id=eve.eve_id WHERE ent.dom_id=?;
+
+#getByRegistrarId
+SELECT eve.eve_id,eve.eac_id,eve.eve_actor,FROM_UNIXTIME(eve.eve_date,'%m/%d/%Y %H:%i:%s') as eve_date FROM rdap.event eve JOIN rdap.registrar_events rar ON rar.eve_id=eve.eve_id WHERE rar.dom_id=?;
+
 #storeNameserverEventsToDatabase
 INSERT INTO rdap.nameserver_events values (?,?);
 
@@ -18,4 +24,11 @@ INSERT INTO rdap.domain_events VALUES (?,?);
 
 #storeDsDataEventsToDatabase
 INSERT INTO rdap.ds_events values (?,?);
+
+#storeEntityEventsToDatabase
+INSERT INTO rdap.entity_events values (?,?);
+
+#storeRegistrarEventsToDatabase
+INSERT INTO rdap.registrar_events values (?,?);
+
 

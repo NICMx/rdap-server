@@ -22,6 +22,7 @@ import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
  * Model for the Remark Object
  * 
  * @author dalpuche
+ * @author dhfelix
  *
  */
 public class RemarkModel {
@@ -29,6 +30,16 @@ public class RemarkModel {
 	private final static Logger logger = Logger.getLogger(RemarkModel.class.getName());
 
 	private final static String QUERY_GROUP = "Remark";
+
+	private final static String NAMESERVER_STORE_QUERY = "storeNameserverRemarksToDatabase";
+	private final static String DOMAIN_STORE_QUERY = "storeDomainRemarksToDatabase";
+	private final static String ENTITY_STORE_QUERY = "storeEntityRemarksToDatabase";
+	private final static String REGISTRAR_STORE_QUERY = "storeRegistrarRemarksToDatabase";
+
+	private static final String NAMESERVER_GET_QUERY = "getByNameserverId";
+	private static final String DOMAIN_GET_QUERY = "getByDomainId";
+	private static final String ENTITY_GET_QUERY = "getByEntityId";
+	private static final String REGISTRAR_GET_QUERY = "getByRegistrarId";
 
 	protected static QueryGroup queryGroup = null;
 
@@ -71,6 +82,21 @@ public class RemarkModel {
 		}
 	}
 
+	private static void storeRelationRemarksToDatabase(List<Remark> remarks, Long id, Connection connection,
+			String queryId) throws SQLException, IOException, RequiredValueNotFoundException {
+		String query = queryGroup.getQuery(queryId);
+		try (PreparedStatement statement = connection.prepareStatement(query)) {
+			for (Remark remark : remarks) {
+				Long remarkId = RemarkModel.storeToDatabase(remark, connection);
+				statement.setLong(1, id);
+				statement.setLong(2, remarkId);
+				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+				statement.executeUpdate();// TODO Validate if the
+				// insert was correct
+			}
+		}
+	}
+
 	/**
 	 * Store the nameserver remarks
 	 * 
@@ -80,19 +106,9 @@ public class RemarkModel {
 	 */
 	public static void storeNameserverRemarksToDatabase(List<Remark> remarks, Long nameserverId, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
-		try (PreparedStatement statement = connection
-				.prepareStatement(queryGroup.getQuery("storeNameserverRemarksToDatabase"))) {
-			for (Remark remark : remarks) {
-				Long remarkId = RemarkModel.storeToDatabase(remark, connection);
-				statement.setLong(1, nameserverId);
-				statement.setLong(2, remarkId);
-				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-				statement.executeUpdate();// TODO Validate if the
-				// insert was correct
-			}
-		}
+		storeRelationRemarksToDatabase(remarks, nameserverId, connection, NAMESERVER_STORE_QUERY);
 	}
-	
+
 	/**
 	 * Stores the domain's remarks
 	 * 
@@ -105,15 +121,27 @@ public class RemarkModel {
 	 */
 	public static void storeDomainRemarksToDatabase(List<Remark> remarks, Long domainId, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
-		try (PreparedStatement statement = connection
-				.prepareStatement(queryGroup.getQuery("storeDomainRemarksToDatabase"))) {
-			for (Remark remark : remarks) {
-				Long remarkId = RemarkModel.storeToDatabase(remark, connection);
-				statement.setLong(1, domainId);
-				statement.setLong(2, remarkId);
-				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-				statement.executeUpdate();// TODO Validate if the
-				// insert was correct
+		storeRelationRemarksToDatabase(remarks, domainId, connection, DOMAIN_STORE_QUERY);
+	}
+
+	public static void storeEntityRemarksToDatabase(List<Remark> remarks, Long entityId, Connection connection)
+			throws SQLException, IOException, RequiredValueNotFoundException {
+		storeRelationRemarksToDatabase(remarks, entityId, connection, ENTITY_STORE_QUERY);
+	}
+
+	public static void storeRegistrarRemarksToDatabase(List<Remark> remarks, Long registrarId, Connection connection)
+			throws SQLException, IOException, RequiredValueNotFoundException {
+		storeRelationRemarksToDatabase(remarks, registrarId, connection, REGISTRAR_STORE_QUERY);
+	}
+
+	private static List<Remark> getByRelationId(Long id, Connection connection, String queryId)
+			throws IOException, SQLException {
+		String query = queryGroup.getQuery(queryId);
+		try (PreparedStatement statement = connection.prepareStatement(query)) {
+			statement.setLong(1, id);
+			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+			try (ResultSet resultSet = statement.executeQuery();) {
+				return processResultSet(resultSet, connection);
 			}
 		}
 	}
@@ -128,27 +156,22 @@ public class RemarkModel {
 	 */
 	public static List<Remark> getByNameserverId(Long nameserverId, Connection connection)
 			throws IOException, SQLException {
-		RemarkModel.queryGroup = new QueryGroup(QUERY_GROUP);
-
-		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByNameserverId"))) {
-			statement.setLong(1, nameserverId);
-			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-			try (ResultSet resultSet = statement.executeQuery();) {
-				return processResultSet(resultSet, connection);
-			}
-		}
+		return getByRelationId(nameserverId, connection, NAMESERVER_GET_QUERY);
 	}
 
 	public static List<Remark> getByDomainId(Long domainId, Connection connection) throws SQLException, IOException {
-		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByDomainId"))) {
-			statement.setLong(1, domainId);
-			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-			try (ResultSet resultSet = statement.executeQuery();) {
-				return processResultSet(resultSet, connection);
-			}
-		}
+		return getByRelationId(domainId, connection, DOMAIN_GET_QUERY);
 	}
-	
+
+	public static List<Remark> getByEntityId(Long entityId, Connection connection) throws SQLException, IOException {
+		return getByRelationId(entityId, connection, ENTITY_GET_QUERY);
+	}
+
+	public static List<Remark> getByRegistrarId(Long registrarId, Connection connection)
+			throws SQLException, IOException {
+		return getByRelationId(registrarId, connection, REGISTRAR_GET_QUERY);
+	}
+
 	/**
 	 * Unused. Get all Remarks from DB
 	 * 

@@ -41,8 +41,8 @@ public class RemarkDescriptionDAO extends RemarkDescription implements DatabaseO
 		if (resultSet.wasNull())
 			return;
 		this.setRemarkId(resultSet.getLong("rem_id"));
-		this.setDescription(resultSet.getString("rem_desc_description"));
-		this.setOrder(resultSet.getInt("rem_desc_order"));
+		this.setDescription(resultSet.getString("rde_description"));
+		this.setOrder(resultSet.getInt("rde_order"));
 	}
 
 	/*

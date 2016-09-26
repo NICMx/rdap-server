@@ -24,6 +24,7 @@ import mx.nix.rdap.core.catalog.EventAction;
  * The model for the Event object
  * 
  * @author dalpuche
+ * @author dhfelix
  *
  */
 public class EventModel {
@@ -33,6 +34,18 @@ public class EventModel {
 	private final static String QUERY_GROUP = "Event";
 
 	protected static QueryGroup queryGroup = null;
+
+	private static final String NS_GET_QUERY = "getByNameServerId";
+	private static final String DS_DATA_GET_QUERY = "getByDsDataId";
+	private static final String DOMAIN_GET_QUERY = "getByDomainId";
+	private static final String ENTITY_GET_QUERY = "getByEntityId";
+	private static final String REGISTRAR_GET_QUERY = "getByRegistrarId";
+
+	private static final String NS_STORE_QUERY = "storeNameserverEventsToDatabase";
+	private static final String DS_DATA_STORE_QUERY = "storeDsDataEventsToDatabase";
+	private static final String DOMAIN_STORE_QUERY = "storeDomainEventsToDatabase";
+	private static final String ENTITY_STORE_QUERY = "storeEntityEventsToDatabase";
+	private static final String REGISTRAR_STORE_QUERY = "storeRegistrarEventsToDatabase";
 
 	static {
 		try {
@@ -93,32 +106,22 @@ public class EventModel {
 	public static void storeNameserverEventsToDatabase(List<Event> events, Long nameserverId, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
 
-		try (PreparedStatement statement = connection
-				.prepareStatement(queryGroup.getQuery("storeNameserverEventsToDatabase"))) {
-			for (Event event : events) {
-				Long eventId = EventModel.storeToDatabase(event, connection);
-				statement.setLong(1, nameserverId);
-				statement.setLong(2, eventId);
-				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-				statement.executeUpdate();// TODO Validate if the
-				// insert was correct
-			}
-		}
+		storeRelationEventsToDatabase(events, nameserverId, connection, NS_STORE_QUERY);
 	}
-	
+
+	public static void storeEntityEventsToDatabase(List<Event> events, Long entityId, Connection connection)
+			throws SQLException, IOException, RequiredValueNotFoundException {
+		storeRelationEventsToDatabase(events, entityId, connection, ENTITY_STORE_QUERY);
+	}
+
+	public static void storeRegistrarEventsToDatabase(List<Event> events, Long registrarId, Connection connection)
+			throws SQLException, IOException, RequiredValueNotFoundException {
+		storeRelationEventsToDatabase(events, registrarId, connection, REGISTRAR_STORE_QUERY);
+	}
+
 	public static void storeDomainEventsToDatabase(List<Event> events, Long domainId, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
-		try (PreparedStatement statement = connection
-				.prepareStatement(queryGroup.getQuery("storeDomainEventsToDatabase"))) {
-			for (Event event : events) {
-				Long eventId = EventModel.storeToDatabase(event, connection);
-				statement.setLong(1, domainId);
-				statement.setLong(2, eventId);
-				logger.log(Level.INFO, "Excuting QUERY:" + statement.toString());
-				statement.executeUpdate();// TODO Validate if the insert was
-											// correct
-			}
-		}
+		storeRelationEventsToDatabase(events, domainId, connection, DOMAIN_STORE_QUERY);
 	}
 
 	/**
@@ -129,24 +132,27 @@ public class EventModel {
 	 * @param connection
 	 * @throws SQLException
 	 * @throws IOException
-	 * @throws RequiredValueNotFoundException 
+	 * @throws RequiredValueNotFoundException
 	 */
 	public static void storeDsDataEventsToDatabase(List<Event> events, Long dsDataId, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
+		storeRelationEventsToDatabase(events, dsDataId, connection, DS_DATA_STORE_QUERY);
+	}
 
-		try (PreparedStatement statement = connection
-				.prepareStatement(queryGroup.getQuery("storeDsDataEventsToDatabase"))) {
+	private static void storeRelationEventsToDatabase(List<Event> events, Long id, Connection connection,
+			String storeQueryId) throws SQLException, IOException, RequiredValueNotFoundException {
+		String query = queryGroup.getQuery(storeQueryId);
+		try (PreparedStatement statement = connection.prepareStatement(query)) {
 			for (Event event : events) {
 				Long eventId = EventModel.storeToDatabase(event, connection);
-				statement.setLong(1, dsDataId);
+				statement.setLong(1, id);
 				statement.setLong(2, eventId);
-				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+				logger.log(Level.INFO, "Excuting QUERY:" + statement.toString());
 				statement.executeUpdate();// TODO Validate if the insert was
 											// correct
 			}
 		}
 	}
-
 
 	/**
 	 * Get all events for a Nameserver
@@ -158,27 +164,9 @@ public class EventModel {
 	 */
 	public static List<Event> getByNameServerId(Long nameserverId, Connection connection)
 			throws IOException, SQLException {
-		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByNameServerId"))) {
-			statement.setLong(1, nameserverId);
-			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-			try (ResultSet resultSet = statement.executeQuery()) {
-				if (!resultSet.next()) {
-					throw new ObjectNotFoundException("Object not found.");// TODO:
-																			// Managae
-																			// the
-																			// exception
-				}
-				List<Event> events = new ArrayList<Event>();
-				do {
-					EventDAO event = new EventDAO(resultSet);
-					event.setLinks(LinkModel.getByEventId(event.getId(), connection));
-					events.add(event);
-				} while (resultSet.next());
-				return events;
-			}
-		}
+		return getByRelationId(nameserverId, connection, NS_GET_QUERY);
 	}
-	
+
 	/**
 	 * Get all events for a DsData
 	 * 
@@ -188,27 +176,9 @@ public class EventModel {
 	 * @throws SQLException
 	 */
 	public static List<Event> getByDsDataId(Long dsDataId, Connection connection) throws SQLException, IOException {
-		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByDsDataId"))) {
-			statement.setLong(1, dsDataId);
-			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
-			try (ResultSet resultSet = statement.executeQuery()) {
-				if (!resultSet.next()) {
-					throw new ObjectNotFoundException("Object not found.");// TODO
-																			// Manage
-																			// the
-																			// exception
-				}
-				List<Event> events = new ArrayList<Event>();
-				do {
-					EventDAO event = new EventDAO(resultSet);
-					event.setLinks(LinkModel.getByEventId(event.getId(), connection));
-					events.add(event);
-				} while (resultSet.next());
-				return events;
-			}
-		}
+		return getByRelationId(dsDataId, connection, DS_DATA_GET_QUERY);
 	}
-	
+
 	/**
 	 * Get all events for a Domain
 	 * 
@@ -218,8 +188,25 @@ public class EventModel {
 	 * @throws SQLException
 	 */
 	public static List<Event> getByDomainId(Long domainId, Connection connection) throws SQLException, IOException {
-		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByDomainId"))) {
-			statement.setLong(1, domainId);
+		return getByRelationId(domainId, connection, DOMAIN_GET_QUERY);
+	}
+
+	public static List<Event> getByEntityId(Long entityId, Connection connection) throws SQLException, IOException {
+		return getByRelationId(entityId, connection, ENTITY_GET_QUERY);
+	}
+
+	public static List<Event> getByRegistrarId(Long registrarId, Connection connection)
+			throws SQLException, IOException {
+		return getByRelationId(registrarId, connection, REGISTRAR_GET_QUERY);
+	}
+
+	private static List<Event> getByRelationId(Long id, Connection connection, String getQueryId)
+			throws SQLException, IOException {
+		String query = queryGroup.getQuery(getQueryId);
+		List<Event> result = null;
+
+		try (PreparedStatement statement = connection.prepareStatement(query)) {
+			statement.setLong(1, id);
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
 				if (!resultSet.next()) {
@@ -231,10 +218,11 @@ public class EventModel {
 					event.setLinks(LinkModel.getByEventId(event.getId(), connection));
 					events.add(event);
 				} while (resultSet.next());
-				return events;
+				result = events;
 			}
-
 		}
+
+		return result;
 	}
-	
+
 }
