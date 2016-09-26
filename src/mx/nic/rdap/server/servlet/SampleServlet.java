@@ -21,7 +21,7 @@ import mx.nic.rdap.server.exception.ObjectNotFoundException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.SampleResult;
 
-@WebServlet(name = "rdap", urlPatterns = { "/sample/*" })
+@WebServlet(name = "sample", urlPatterns = { "/sample/*" })
 public class SampleServlet extends RdapServlet {
 
 	/** SHUT UP */

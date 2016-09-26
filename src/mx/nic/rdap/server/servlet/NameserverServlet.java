@@ -20,7 +20,7 @@ import mx.nic.rdap.server.result.NameserverResult;
  * @author dalpuche
  *
  */
-@WebServlet(name = "rdap", urlPatterns = { "/nameserver/*" })
+@WebServlet(name = "nameserver", urlPatterns = { "/nameserver/*" })
 public class NameserverServlet extends RdapServlet {
 
 	private static final long serialVersionUID = 1L;
