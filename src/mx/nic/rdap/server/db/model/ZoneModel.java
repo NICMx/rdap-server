@@ -9,6 +9,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -50,7 +52,6 @@ public class ZoneModel {
 	public static Integer storeToDatabase(Zone zone, Connection connection) throws IOException, SQLException {
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"),
 				Statement.RETURN_GENERATED_KEYS)) {
-			System.out.println(zone.getZoneName() + zone.getId());
 			((ZoneDAO) zone).storeToDatabase(statement);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			statement.executeUpdate();
@@ -82,16 +83,19 @@ public class ZoneModel {
 		}
 	}
 
-	public static void getAll(Connection connection) throws IOException, SQLException {
+	public static List<Zone> getAll(Connection connection) throws IOException, SQLException {
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getAll"))) {
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			ResultSet resultSet = statement.executeQuery();
 			if (!resultSet.next()) {
 				throw new ObjectNotFoundException("Object not found.");
 			}
+			List<Zone> zones = new ArrayList<Zone>();
 			do {
-				System.out.println(resultSet.getString("zone_id") + " " + resultSet.getString("zone_name"));
+				ZoneDAO zone = new ZoneDAO(resultSet);
+				zones.add(zone);
 			} while (resultSet.next());
+			return zones;
 		}
 
 	}
