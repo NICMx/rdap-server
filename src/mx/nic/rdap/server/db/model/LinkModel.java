@@ -101,7 +101,7 @@ public class LinkModel {
 	 */
 	public static void storeNameserverLinksToDatabase(List<Link> links, Long nameserverId, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
-		storeRemarkRelationToDatabase(links, nameserverId, connection, NS_STORE_QUERY);
+		storeLinkRelationToDatabase(links, nameserverId, connection, NS_STORE_QUERY);
 	}
 
 	/**
@@ -116,7 +116,7 @@ public class LinkModel {
 	 */
 	public static void storeDomainLinksToDatabase(List<Link> links, Long domainId, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
-		storeRemarkRelationToDatabase(links, domainId, connection, DOMAIN_STORE_QUERY);
+		storeLinkRelationToDatabase(links, domainId, connection, DOMAIN_STORE_QUERY);
 	}
 
 	/**
@@ -131,7 +131,7 @@ public class LinkModel {
 	 */
 	public static void storeDsDataLinksToDatabase(List<Link> links, Long dsDataId, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
-		storeRemarkRelationToDatabase(links, dsDataId, connection, DS_DATA_STORE_QUERY);
+		storeLinkRelationToDatabase(links, dsDataId, connection, DS_DATA_STORE_QUERY);
 	}
 
 	/**
@@ -143,7 +143,7 @@ public class LinkModel {
 	 */
 	public static void storeEventLinksToDatabase(List<Link> links, Long eventId, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
-		storeRemarkRelationToDatabase(links, eventId, connection, EVENT_STORE_QUERY);
+		storeLinkRelationToDatabase(links, eventId, connection, EVENT_STORE_QUERY);
 	}
 
 	/**
@@ -155,7 +155,7 @@ public class LinkModel {
 	 */
 	public static void storeRemarkLinksToDatabase(List<Link> links, Long remarkId, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
-		storeRemarkRelationToDatabase(links, remarkId, connection, REMARK_STORE_QUERY);
+		storeLinkRelationToDatabase(links, remarkId, connection, REMARK_STORE_QUERY);
 	}
 
 	/**
@@ -167,7 +167,7 @@ public class LinkModel {
 	 */
 	public static void storeEntityLinksToDatabase(List<Link> links, Long entityId, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
-		storeRemarkRelationToDatabase(links, entityId, connection, ENTITY_STORE_QUERY);
+		storeLinkRelationToDatabase(links, entityId, connection, ENTITY_STORE_QUERY);
 	}
 
 	/**
@@ -179,7 +179,7 @@ public class LinkModel {
 	 */
 	public static void storeRegistrarLinksToDatabase(List<Link> links, Long registrarId, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
-		storeRemarkRelationToDatabase(links, registrarId, connection, REGISTRAR_STORE_QUERY);
+		storeLinkRelationToDatabase(links, registrarId, connection, REGISTRAR_STORE_QUERY);
 	}
 
 	/**
@@ -195,9 +195,9 @@ public class LinkModel {
 	 * @throws IOException
 	 * @throws RequiredValueNotFoundException
 	 */
-	private static void storeRemarkRelationToDatabase(List<Link> links, Long id, Connection connection,
+	private static void storeLinkRelationToDatabase(List<Link> links, Long id, Connection connection,
 			String storeQueryId) throws SQLException, IOException, RequiredValueNotFoundException {
-		String query = queryGroup.getQuery("storeRemarkLinksToDatabase");
+		String query = queryGroup.getQuery(storeQueryId);
 		try (PreparedStatement statement = connection.prepareStatement(query)) {
 			for (Link link : links) {
 				Long linkId = LinkModel.storeToDatabase(link, connection);
