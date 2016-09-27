@@ -29,6 +29,13 @@ public class PublicIdModel {
 
 	protected static QueryGroup queryGroup = null;
 
+	private static final String REGISTRAR_GET_QUERY = "getByRegistrar";
+	private static final String ENTITY_GET_QUERY = "getByEntity";
+	private static final String DOMAIN_GET_QUERY = "getByDomain";
+	private static final String REGISTRAR_STORE_QUERY = "storeRegistrarPublicIdsToDatabase";
+	private static final String ENTITY_STORE_QUERY = "storeEntityPublicIdsToDatabase";
+	private static final String DOMAIN_STORE_QUERY = "storeDomainPublicIdsToDatabase";
+
 	static {
 		try {
 			SecureDNSModel.queryGroup = new QueryGroup(QUERY_GROUP);
@@ -77,10 +84,9 @@ public class PublicIdModel {
 	 * @throws SQLException
 	 * @throws IOException
 	 */
-	public static void storeDomainPublicIds(List<PublicId> publicIds, Long domainId, Connection connection)
+	private static void storeBy(List<PublicId> publicIds, Long domainId, Connection connection, String query)
 			throws SQLException, IOException {
-		try (PreparedStatement statement = connection
-				.prepareStatement(queryGroup.getQuery("storeDomainPublicIdsToDatabase"))) {
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery(query))) {
 			for (PublicId publicId : publicIds) {
 				Long id = PublicIdModel.storeToDatabase(publicId, connection);
 				statement.setLong(1, domainId);
@@ -92,6 +98,21 @@ public class PublicIdModel {
 		}
 	}
 
+	public static void storePublicIdByDomain(List<PublicId> publicIds, Long domainId, Connection connection)
+			throws SQLException, IOException {
+		storeBy(publicIds, domainId, connection, DOMAIN_STORE_QUERY);
+	}
+
+	public static void storePublicIdByEntity(List<PublicId> publicIds, Long domainId, Connection connection)
+			throws SQLException, IOException {
+		storeBy(publicIds, domainId, connection, ENTITY_STORE_QUERY);
+	}
+
+	public static void storePublicIdByRegistrar(List<PublicId> publicIds, Long domainId, Connection connection)
+			throws SQLException, IOException {
+		storeBy(publicIds, domainId, connection, REGISTRAR_STORE_QUERY);
+	}
+
 	/**
 	 * Get all publicIds from an specific type of Object
 	 * 
@@ -100,10 +121,10 @@ public class PublicIdModel {
 	 * @throws SQLException
 	 * @throws IOException
 	 */
-	public static List<PublicId> getBy(Long entityId, String name, Connection connection)
+	private static List<PublicId> getBy(Long entityId, Connection connection, String query)
 			throws SQLException, IOException {
 		PublicIdModel.queryGroup = new QueryGroup(QUERY_GROUP);
-		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getBy" + name))) {
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery(query))) {
 			statement.setLong(1, entityId);
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) { // TODO
@@ -135,7 +156,7 @@ public class PublicIdModel {
 	 * @throws IOException
 	 */
 	public static List<PublicId> getByDomain(Long domainId, Connection connection) throws SQLException, IOException {
-		return getBy(domainId, "Domain", connection);
+		return getBy(domainId, connection, DOMAIN_GET_QUERY);
 	}
 
 	/**
@@ -147,7 +168,7 @@ public class PublicIdModel {
 	 * @throws IOException
 	 */
 	public static List<PublicId> getByEntity(Long entityId, Connection connection) throws SQLException, IOException {
-		return getBy(entityId, "Entity", connection);
+		return getBy(entityId, connection, ENTITY_GET_QUERY);
 	}
 
 	/**
@@ -160,7 +181,7 @@ public class PublicIdModel {
 	 */
 	public static List<PublicId> getByRegistrar(Long registrarId, Connection connection)
 			throws SQLException, IOException {
-		return getBy(registrarId, "Registrar", connection);
+		return getBy(registrarId, connection, REGISTRAR_GET_QUERY);
 	}
 
 	/**

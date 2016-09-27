@@ -1,5 +1,8 @@
 #storeToDatabase
-INSERT * INTO rdap.zone VALUES(?,?);
+INSERT INTO rdap.zone VALUES(null,?);
+
+#getByZoneId
+SELECT * FROM rdap.zone WHERE zone_id=?;
 
 #getAll
-select * FROM rdap.zone;
+SELECT * FROM rdap.zone;
