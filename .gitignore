@@ -16,3 +16,6 @@ database.properties
 
 /build/
 
+.settings
+.classpath
+.project
