@@ -38,11 +38,11 @@ public class RemarkDescriptionDAO extends RemarkDescription implements DatabaseO
 	 */
 	@Override
 	public void loadFromDatabase(ResultSet resultSet) throws SQLException {
-		if (resultSet.wasNull())
-			return;
 		this.setRemarkId(resultSet.getLong("rem_id"));
 		this.setDescription(resultSet.getString("rde_description"));
-		this.setOrder(resultSet.getInt("rde_order"));
+		int rdeOrder = resultSet.getInt("rde_order");
+		if (!resultSet.wasNull())
+			this.setOrder(rdeOrder);
 	}
 
 	/*

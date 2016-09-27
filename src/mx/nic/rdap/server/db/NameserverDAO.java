@@ -51,13 +51,13 @@ public class NameserverDAO extends Nameserver implements DatabaseObject, JsonPar
 	 */
 	@Override
 	public void loadFromDatabase(ResultSet resultSet) throws SQLException {
-		if (resultSet.wasNull())
-			return;
 		this.setId(resultSet.getLong("nse_id"));
 		this.setHandle(resultSet.getString("nse_handle"));
 		this.setPunycodeName(resultSet.getString("nse_ldh_name"));
 		this.setPort43(resultSet.getString("nse_port43"));
-		this.setRarId(resultSet.getLong("rar_id"));
+		long rarId = resultSet.getLong("rar_id");
+		if (!resultSet.wasNull())
+			this.setRarId(rarId);
 
 	}
 

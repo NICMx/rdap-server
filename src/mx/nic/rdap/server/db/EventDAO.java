@@ -47,8 +47,6 @@ public class EventDAO extends Event implements DatabaseObject, JsonParser {
 	 */
 	@Override
 	public void loadFromDatabase(ResultSet resultSet) throws SQLException {
-		if (resultSet.wasNull())
-			return;
 		this.setId(resultSet.getLong("eve_id"));
 		this.setEventAction(EventAction.getById(resultSet.getInt("eac_id")));
 		this.setEventActor(resultSet.getString("eve_actor"));

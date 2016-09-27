@@ -50,8 +50,6 @@ public class RemarkDAO extends Remark implements DatabaseObject, JsonParser {
 	 */
 	@Override
 	public void loadFromDatabase(ResultSet resultSet) throws SQLException {
-		if (resultSet.wasNull())
-			return;
 		this.setId(resultSet.getLong("rem_id"));
 		this.setTitle(resultSet.getString("rem_title"));
 		this.setType(resultSet.getString("rem_type"));

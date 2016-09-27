@@ -59,8 +59,6 @@ public class LinkDAO extends Link implements DatabaseObject, JsonParser {
 	 */
 	@Override
 	public void loadFromDatabase(ResultSet resultSet) throws SQLException {
-		if (resultSet.wasNull())
-			return;
 		this.setId(resultSet.getLong("lin_id"));
 		this.setValue(resultSet.getString("lin_value"));
 		this.setRel(resultSet.getString("lin_rel"));

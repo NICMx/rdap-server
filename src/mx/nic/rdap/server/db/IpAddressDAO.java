@@ -42,21 +42,14 @@ public class IpAddressDAO extends IpAddress implements DatabaseObject {
 	 */
 	@Override
 	public void loadFromDatabase(ResultSet resultSet) throws SQLException {
-		// validate if resulset is null
-		if (resultSet.wasNull()) {
-			this.setId(0L);
-			this.setNameserverId(0L);
-			this.setType(0);
-			this.setAddress(null);
-			return;
-		}
-
 		this.setId(resultSet.getLong("iad_id"));
 		this.setNameserverId(resultSet.getLong("nse_id"));
 		try {
 			this.setAddress(InetAddress.getByName(resultSet.getString("iad_value")));
 		} catch (UnknownHostException e) {
 			// TODO manage the exception
+			// throw new InvalidValueException("iad_value",
+			// this.getClass().getName());
 		}
 
 	}
