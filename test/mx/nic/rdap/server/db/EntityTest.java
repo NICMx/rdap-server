@@ -5,7 +5,9 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
@@ -18,12 +20,18 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import mx.nic.rdap.core.db.Entity;
+import mx.nic.rdap.core.db.Event;
+import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.Registrar;
+import mx.nic.rdap.core.db.Remark;
+import mx.nic.rdap.core.db.RemarkDescription;
 import mx.nic.rdap.core.db.VCard;
 import mx.nic.rdap.core.db.VCardPostalInfo;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.model.EntityModel;
 import mx.nic.rdap.server.db.model.RegistrarModel;
+import mx.nix.rdap.core.catalog.EventAction;
+import mx.nix.rdap.core.catalog.Status;
 
 /**
  * Tests for the {@link EntityModel}
@@ -104,7 +112,7 @@ public class EntityTest {
 		Long registrarId = null;
 		try {
 			registrarId = RegistrarModel.storeToDatabase(registrar, connection);
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
@@ -123,11 +131,74 @@ public class EntityTest {
 		vCard.setPostalInfo(postalInfoList);
 		entity.setVCard(vCard);
 
+		// Status data
+		List<Status> statusList = new ArrayList<Status>();
+		statusList.add(Status.ACTIVE);
+		statusList.add(Status.ASSOCIATED);
+		entity.setStatus(statusList);
+
+		// Remarks data
+		List<Remark> remarks = new ArrayList<Remark>();
+		Remark remark = new RemarkDAO();
+		remark.setLanguage("ES");
+		remark.setTitle("Prueba");
+		remark.setType("PruebaType");
+
+		List<RemarkDescription> descriptions = new ArrayList<RemarkDescription>();
+		RemarkDescription description1 = new RemarkDescriptionDAO();
+		description1.setOrder(1);
+		description1.setDescription("She sells sea shells down by the sea shore.");
+
+		RemarkDescription description2 = new RemarkDescriptionDAO();
+		description2.setOrder(2);
+		description2.setDescription("Originally written by Terry Sullivan.");
+
+		descriptions.add(description1);
+		descriptions.add(description2);
+		remark.setDescriptions(descriptions);
+		remarks.add(remark);
+		entity.getRemarks().addAll(remarks);
+
+		// Links data
+		List<Link> links = new ArrayList<Link>();
+		Link link = new LinkDAO();
+		link.setValue("http://example.net/nameserver/xxxx");
+		link.setRel("self");
+		link.setHref("http://example.net/nameserver/xxxx");
+		link.setType("application/rdap+json");
+		links.add(link);
+		entity.getLinks().addAll(links);
+
+		// Events Data
+		List<Event> events = new ArrayList<Event>();
+		Event event1 = new EventDAO();
+		event1.setEventAction(EventAction.REGISTRATION);
+		event1.setEventDate(new Timestamp(((new Date()).getTime())));
+
+		Event event2 = new EventDAO();
+		event2.setEventAction(EventAction.LAST_CHANGED);
+		event2.setEventDate(new Timestamp(((new Date()).getTime())));
+		event2.setEventActor("joe@example.com");
+
+		// event links data
+		List<Link> eventLinks = new ArrayList<Link>();
+		Link eventLink = new LinkDAO();
+		eventLink.setValue("eventLink1");
+		eventLink.setRel("eventlink");
+		eventLink.setHref("http://example.net/eventlink/xxxx");
+		eventLink.setType("application/rdap+json");
+		eventLinks.add(eventLink);
+		event2.setLinks(eventLinks);
+
+		events.add(event1);
+		events.add(event2);
+		entity.getEvents().addAll(events);
+
 		// Store it in the database
 		Long entId = null;
 		try {
 			entId = EntityModel.storeToDatabase(entity, connection);
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
@@ -136,14 +207,14 @@ public class EntityTest {
 		Entity byId = null;
 		try {
 			byId = EntityModel.getById(entId, connection);
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
 		Entity byHandle = null;
 		try {
 			byHandle = EntityModel.getByHandle(entity.getHandle(), connection);
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}

@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,7 +17,6 @@ import com.mysql.jdbc.Statement;
 import mx.nic.rdap.core.db.Event;
 import mx.nic.rdap.server.db.EventDAO;
 import mx.nic.rdap.server.db.QueryGroup;
-import mx.nic.rdap.server.exception.ObjectNotFoundException;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
 import mx.nix.rdap.core.catalog.EventAction;
 
@@ -89,6 +89,7 @@ public class EventModel {
 			ResultSet result = statement.getGeneratedKeys();
 			result.next();
 			Long eventId = result.getLong(1);// The id of the link inserted
+			event.setId(eventId);
 			LinkModel.storeEventLinksToDatabase(event.getLinks(), eventId, connection);
 			return eventId;
 		}
@@ -109,16 +110,31 @@ public class EventModel {
 		storeRelationEventsToDatabase(events, nameserverId, connection, NS_STORE_QUERY);
 	}
 
+	/**
+	 *
+	 * Store the entity events
+	 * 
+	 */
 	public static void storeEntityEventsToDatabase(List<Event> events, Long entityId, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
 		storeRelationEventsToDatabase(events, entityId, connection, ENTITY_STORE_QUERY);
 	}
 
+	/**
+	 *
+	 * Store the Registrar events
+	 * 
+	 */
 	public static void storeRegistrarEventsToDatabase(List<Event> events, Long registrarId, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
 		storeRelationEventsToDatabase(events, registrarId, connection, REGISTRAR_STORE_QUERY);
 	}
 
+	/**
+	 *
+	 * Store the Domain events
+	 * 
+	 */
 	public static void storeDomainEventsToDatabase(List<Event> events, Long domainId, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
 		storeRelationEventsToDatabase(events, domainId, connection, DOMAIN_STORE_QUERY);
@@ -191,10 +207,16 @@ public class EventModel {
 		return getByRelationId(domainId, connection, DOMAIN_GET_QUERY);
 	}
 
+	/**
+	 * Get all events for an Entity
+	 */
 	public static List<Event> getByEntityId(Long entityId, Connection connection) throws SQLException, IOException {
 		return getByRelationId(entityId, connection, ENTITY_GET_QUERY);
 	}
 
+	/**
+	 * Get all events for a Registrar
+	 */
 	public static List<Event> getByRegistrarId(Long registrarId, Connection connection)
 			throws SQLException, IOException {
 		return getByRelationId(registrarId, connection, REGISTRAR_GET_QUERY);
@@ -210,7 +232,7 @@ public class EventModel {
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
 				if (!resultSet.next()) {
-					throw new ObjectNotFoundException("Object not found.");
+					return Collections.emptyList();
 				}
 				List<Event> events = new ArrayList<Event>();
 				do {

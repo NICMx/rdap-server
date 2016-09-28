@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -76,6 +77,8 @@ public class RemarkModel {
 			result.next();
 			Long remarkInsertedId = result.getLong(1);// The id of the remark
 														// inserted
+
+			remark.setId(remarkInsertedId);
 			RemarkDescriptionModel.storeAllToDatabase(remark.getDescriptions(), remarkInsertedId, connection);
 			LinkModel.storeRemarkLinksToDatabase(remark.getLinks(), remarkInsertedId, connection);
 			return remarkInsertedId;
@@ -124,11 +127,21 @@ public class RemarkModel {
 		storeRelationRemarksToDatabase(remarks, domainId, connection, DOMAIN_STORE_QUERY);
 	}
 
+	/**
+	 * 
+	 * Stores the Entity's remarks
+	 * 
+	 */
 	public static void storeEntityRemarksToDatabase(List<Remark> remarks, Long entityId, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
 		storeRelationRemarksToDatabase(remarks, entityId, connection, ENTITY_STORE_QUERY);
 	}
 
+	/**
+	 * 
+	 * Stores the Registrar's remarks
+	 * 
+	 */
 	public static void storeRegistrarRemarksToDatabase(List<Remark> remarks, Long registrarId, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
 		storeRelationRemarksToDatabase(remarks, registrarId, connection, REGISTRAR_STORE_QUERY);
@@ -159,14 +172,26 @@ public class RemarkModel {
 		return getByRelationId(nameserverId, connection, NAMESERVER_GET_QUERY);
 	}
 
+	/**
+	 * Get all domain's remarks
+	 * 
+	 */
 	public static List<Remark> getByDomainId(Long domainId, Connection connection) throws SQLException, IOException {
 		return getByRelationId(domainId, connection, DOMAIN_GET_QUERY);
 	}
 
+	/**
+	 * Get all entity's remarks
+	 * 
+	 */
 	public static List<Remark> getByEntityId(Long entityId, Connection connection) throws SQLException, IOException {
 		return getByRelationId(entityId, connection, ENTITY_GET_QUERY);
 	}
 
+	/**
+	 * Get all Registrar's remarks
+	 * 
+	 */
 	public static List<Remark> getByRegistrarId(Long registrarId, Connection connection)
 			throws SQLException, IOException {
 		return getByRelationId(registrarId, connection, REGISTRAR_GET_QUERY);
@@ -199,7 +224,7 @@ public class RemarkModel {
 	private static List<Remark> processResultSet(ResultSet resultSet, Connection connection)
 			throws SQLException, ObjectNotFoundException, IOException {
 		if (!resultSet.next()) {
-			throw new ObjectNotFoundException("Object not found.");
+			return Collections.emptyList();
 		}
 		List<Remark> remarks = new ArrayList<Remark>();
 		do {

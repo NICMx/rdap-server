@@ -5,16 +5,16 @@ INSERT INTO rdap.event VALUES(null,?,?,?);
 SELECT eve.eve_id,eve.eac_id,eve.eve_actor,eve.eve_date FROM rdap.event eve JOIN rdap.nameserver_events nse ON nse.eve_id=eve.eve_id WHERE nse.nse_id=?;
 
 #getByDsDataId
-SELECT eve.eve_id,eve.eac_id,eve.eve_actor,FROM_UNIXTIME(eve.eve_date,'%m/%d/%Y %H:%i:%s') as eve_date FROM rdap.event eve JOIN rdap.ds_events dse ON dse.eve_id=eve.eve_id WHERE dse.dsd_id=?;
+SELECT eve.eve_id,eve.eac_id,eve.eve_actor,eve.eve_date FROM rdap.event eve JOIN rdap.ds_events dse ON dse.eve_id=eve.eve_id WHERE dse.dsd_id=?;
 
 #getByDomainId
-SELECT eve.eve_id,eve.eac_id,eve.eve_actor,FROM_UNIXTIME(eve.eve_date,'%m/%d/%Y %H:%i:%s') as eve_date FROM rdap.event eve JOIN rdap.domain_events dome ON dome.eve_id=eve.eve_id WHERE dome.dom_id=?;
+SELECT eve.eve_id,eve.eac_id,eve.eve_actor,eve.eve_date FROM rdap.event eve JOIN rdap.domain_events dome ON dome.eve_id=eve.eve_id WHERE dome.dom_id=?;
 
 #getByEntityId
-SELECT eve.eve_id,eve.eac_id,eve.eve_actor,FROM_UNIXTIME(eve.eve_date,'%m/%d/%Y %H:%i:%s') as eve_date FROM rdap.event eve JOIN rdap.entity_events ent ON ent.eve_id=eve.eve_id WHERE ent.dom_id=?;
+SELECT eve.eve_id,eve.eac_id,eve.eve_actor,eve.eve_date FROM rdap.event eve JOIN rdap.entity_events ent ON ent.eve_id=eve.eve_id WHERE ent.ent_id=?;
 
 #getByRegistrarId
-SELECT eve.eve_id,eve.eac_id,eve.eve_actor,FROM_UNIXTIME(eve.eve_date,'%m/%d/%Y %H:%i:%s') as eve_date FROM rdap.event eve JOIN rdap.registrar_events rar ON rar.eve_id=eve.eve_id WHERE rar.dom_id=?;
+SELECT eve.eve_id,eve.eac_id,eve.eve_actor,eve.eve_date FROM rdap.event eve JOIN rdap.registrar_events rar ON rar.eve_id=eve.eve_id WHERE rar.rar_id=?;
 
 #storeNameserverEventsToDatabase
 INSERT INTO rdap.nameserver_events values (?,?);

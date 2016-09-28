@@ -11,11 +11,16 @@ import java.util.logging.Logger;
 
 import com.mysql.jdbc.Statement;
 
+import mx.nic.rdap.core.db.Event;
+import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.Registrar;
+import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.core.db.VCard;
 import mx.nic.rdap.server.db.QueryGroup;
 import mx.nic.rdap.server.db.RegistrarDAO;
 import mx.nic.rdap.server.exception.ObjectNotFoundException;
+import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
+import mx.nix.rdap.core.catalog.Status;
 
 /**
  * Model for the {@link RegistrarDAO} object.
@@ -47,8 +52,11 @@ public class RegistrarModel {
 	 * @param connection
 	 * @return
 	 * @throws SQLException
+	 * @throws RequiredValueNotFoundException
+	 * @throws IOException
 	 */
-	public static long storeToDatabase(Registrar registrar, Connection connection) throws SQLException {
+	public static long storeToDatabase(Registrar registrar, Connection connection)
+			throws SQLException, IOException, RequiredValueNotFoundException {
 		long registrarId;
 
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"),
@@ -69,6 +77,8 @@ public class RegistrarModel {
 
 		VCardModel.storeRegistrarContactToDatabase(registrar.getvCardList(), registrarId, connection);
 
+		storeNestedObjects(registrar, connection);
+
 		return registrarId;
 	}
 
@@ -80,8 +90,9 @@ public class RegistrarModel {
 	 * @param connection
 	 * @return
 	 * @throws SQLException
+	 * @throws IOException
 	 */
-	public static Registrar getById(Long registrarId, Connection connection) throws SQLException {
+	public static Registrar getById(Long registrarId, Connection connection) throws SQLException, IOException {
 		Registrar registrarResult = null;
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getById"));) {
 			statement.setLong(1, registrarId);
@@ -90,7 +101,7 @@ public class RegistrarModel {
 			registrarResult = processResultSet(resultSet, connection);
 		}
 
-		getRegistrarSonObjects(registrarResult, connection);
+		getRegistrarNestedObjects(registrarResult, connection);
 
 		return registrarResult;
 	}
@@ -103,8 +114,10 @@ public class RegistrarModel {
 	 * @param connection
 	 * @return
 	 * @throws SQLException
+	 * @throws IOException
 	 */
-	public static Registrar getByHandle(String registrarHandle, Connection connection) throws SQLException {
+	public static Registrar getByHandle(String registrarHandle, Connection connection)
+			throws SQLException, IOException {
 		Registrar registrarResult = null;
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByHandle"));) {
 			statement.setString(1, registrarHandle);
@@ -113,7 +126,7 @@ public class RegistrarModel {
 			registrarResult = processResultSet(resultSet, connection);
 		}
 
-		getRegistrarSonObjects(registrarResult, connection);
+		getRegistrarNestedObjects(registrarResult, connection);
 
 		return registrarResult;
 	}
@@ -124,14 +137,29 @@ public class RegistrarModel {
 	 * @param registrar
 	 * @param connection
 	 * @throws SQLException
+	 * @throws IOException
 	 */
-	private static void getRegistrarSonObjects(Registrar registrar, Connection connection) throws SQLException {
+	private static void getRegistrarNestedObjects(Registrar registrar, Connection connection)
+			throws SQLException, IOException {
+		Long registrarId = registrar.getId();
 		try {
-			List<VCard> vCardList = VCardModel.getByRegistrarId(registrar.getId(), connection);
+			List<VCard> vCardList = VCardModel.getByRegistrarId(registrarId, connection);
 			registrar.setvCardList(vCardList);
 		} catch (ObjectNotFoundException e) {
 			// Could not have a VCard.
 		}
+
+		List<Status> byRarID = StatusModel.getByRegistrarId(registrarId, connection);
+		registrar.getStatus().addAll(byRarID);
+
+		List<Link> byRarId2 = LinkModel.getByRegistrarId(registrarId, connection);
+		registrar.getLinks().addAll(byRarId2);
+
+		List<Remark> byRarId3 = RemarkModel.getByRegistrarId(registrarId, connection);
+		registrar.getRemarks().addAll(byRarId3);
+
+		List<Event> byRarId4 = EventModel.getByRegistrarId(registrarId, connection);
+		registrar.getEvents().addAll(byRarId4);
 	}
 
 	/**
@@ -175,5 +203,22 @@ public class RegistrarModel {
 		registrar.loadFromDatabase(resultSet);
 
 		return registrar;
+	}
+
+	/**
+	 * Store the nested objects of a Registrar.
+	 * 
+	 * @param registrar
+	 * @param connection
+	 * @throws SQLException
+	 * @throws IOException
+	 * @throws RequiredValueNotFoundException
+	 */
+	private static void storeNestedObjects(Registrar registrar, Connection connection)
+			throws SQLException, IOException, RequiredValueNotFoundException {
+		StatusModel.storeRegistrarStatusToDatabase(registrar.getStatus(), registrar.getId(), connection);
+		RemarkModel.storeRegistrarRemarksToDatabase(registrar.getRemarks(), registrar.getId(), connection);
+		LinkModel.storeRegistrarLinksToDatabase(registrar.getLinks(), registrar.getId(), connection);
+		EventModel.storeRegistrarEventsToDatabase(registrar.getEvents(), registrar.getId(), connection);
 	}
 }

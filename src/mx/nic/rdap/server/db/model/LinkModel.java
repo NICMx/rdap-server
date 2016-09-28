@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -88,6 +89,7 @@ public class LinkModel {
 			ResultSet result = statement.getGeneratedKeys();
 			result.next();
 			Long linkId = result.getLong(1);// The id of the link inserted
+			link.setId(linkId);
 			return linkId;
 		}
 	}
@@ -308,7 +310,7 @@ public class LinkModel {
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
 				if (!resultSet.next()) {
-					return null; // A Data can have no links
+					return Collections.emptyList(); // A Data can have no links
 				}
 				List<Link> links = new ArrayList<Link>();
 				do {

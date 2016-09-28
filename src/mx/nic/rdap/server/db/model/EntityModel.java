@@ -5,17 +5,23 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.mysql.jdbc.Statement;
 
 import mx.nic.rdap.core.db.Entity;
+import mx.nic.rdap.core.db.Event;
+import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.Registrar;
+import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.core.db.VCard;
 import mx.nic.rdap.server.db.EntityDAO;
 import mx.nic.rdap.server.db.QueryGroup;
 import mx.nic.rdap.server.exception.ObjectNotFoundException;
+import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
+import mx.nix.rdap.core.catalog.Status;
 
 /**
  * Model for the Entity Object
@@ -47,8 +53,11 @@ public class EntityModel {
 	 * @param connection
 	 * @return
 	 * @throws SQLException
+	 * @throws RequiredValueNotFoundException
+	 * @throws IOException
 	 */
-	public static long storeToDatabase(Entity entity, Connection connection) throws SQLException {
+	public static long storeToDatabase(Entity entity, Connection connection)
+			throws SQLException, IOException, RequiredValueNotFoundException {
 		long entityId;
 
 		VCard vCard = entity.getVCard();
@@ -72,7 +81,26 @@ public class EntityModel {
 			entity.setId(entityId);
 		}
 
+		storeNestedObjects(entity, connection);
+
 		return entityId;
+	}
+
+	/**
+	 * Store the nested objects of the entity.
+	 * 
+	 * @param entity
+	 * @param connection
+	 * @throws SQLException
+	 * @throws IOException
+	 * @throws RequiredValueNotFoundException
+	 */
+	private static void storeNestedObjects(Entity entity, Connection connection)
+			throws SQLException, IOException, RequiredValueNotFoundException {
+		StatusModel.storeEntityStatusToDatabase(entity.getStatus(), entity.getId(), connection);
+		RemarkModel.storeEntityRemarksToDatabase(entity.getRemarks(), entity.getId(), connection);
+		LinkModel.storeEntityLinksToDatabase(entity.getLinks(), entity.getId(), connection);
+		EventModel.storeEntityEventsToDatabase(entity.getEvents(), entity.getId(), connection);
 	}
 
 	/**
@@ -84,8 +112,9 @@ public class EntityModel {
 	 *            connection use to query the object.
 	 * @return
 	 * @throws SQLException
+	 * @throws IOException
 	 */
-	public static Entity getById(Long entityId, Connection connection) throws SQLException {
+	public static Entity getById(Long entityId, Connection connection) throws SQLException, IOException {
 		Entity entResult = null;
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getById"));) {
 			statement.setLong(1, entityId);
@@ -94,7 +123,7 @@ public class EntityModel {
 			entResult = processResultSet(resultSet, connection);
 		}
 
-		getSonObjects(entResult, connection);
+		getNestedObjects(entResult, connection);
 		return entResult;
 	}
 
@@ -107,8 +136,9 @@ public class EntityModel {
 	 *            connection use to query the object.
 	 * @return
 	 * @throws SQLException
+	 * @throws IOException
 	 */
-	public static Entity getByHandle(String entityHandle, Connection connection) throws SQLException {
+	public static Entity getByHandle(String entityHandle, Connection connection) throws SQLException, IOException {
 		Entity entResult = null;
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByHandle"));) {
 			statement.setString(1, entityHandle);
@@ -117,7 +147,7 @@ public class EntityModel {
 			entResult = processResultSet(resultSet, connection);
 		}
 
-		getSonObjects(entResult, connection);
+		getNestedObjects(entResult, connection);
 		return entResult;
 	}
 
@@ -127,13 +157,28 @@ public class EntityModel {
 	 * @param entity
 	 * @param connection
 	 * @throws SQLException
+	 * @throws IOException
 	 */
-	private static void getSonObjects(Entity entity, Connection connection) throws SQLException {
+	private static void getNestedObjects(Entity entity, Connection connection) throws SQLException, IOException {
 		Registrar rar = RegistrarModel.getById(entity.getRarId(), connection);
 		entity.setRegistrar(rar);
 
 		VCard vCard = VCardModel.getById(entity.getVCardId(), connection);
 		entity.setVCard(vCard);
+
+		Long entityId = entity.getId();
+
+		List<Status> byEntityId = StatusModel.getByEntityId(entityId, connection);
+		entity.getStatus().addAll(byEntityId);
+
+		List<Link> byEntityId2 = LinkModel.getByEntityId(entityId, connection);
+		entity.getLinks().addAll(byEntityId2);
+
+		List<Remark> byEntityId3 = RemarkModel.getByEntityId(entityId, connection);
+		entity.getRemarks().addAll(byEntityId3);
+
+		List<Event> byEntityId4 = EventModel.getByEntityId(entityId, connection);
+		entity.getEvents().addAll(byEntityId4);
 	}
 
 	/**

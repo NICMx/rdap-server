@@ -14,10 +14,10 @@ SELECT lin.* FROM rdap.link lin JOIN rdap.ds_links dsd ON dsd.lin_id=lin.lin_id 
 SELECT lin.* FROM rdap.link lin JOIN rdap.domain_links dom ON dom.lin_id=lin.lin_id WHERE dom.dom_id=?;
 
 #getByEntityId
-SELECT lin.* FROM rdap.link lin JOIN rdap.registrar_links rar ON rar.lin_id=lin.lin_id WHERE rar.rar_id=?;
+SELECT lin.* FROM rdap.link lin JOIN rdap.entity_links ent ON ent.lin_id=lin.lin_id WHERE ent.ent_id=?;
 
 #getByRegistrarId
-SELECT lin.* FROM rdap.link lin JOIN rdap.entity_links ent ON ent.lin_id=lin.lin_id WHERE ent.ent_id=?;
+SELECT lin.* FROM rdap.link lin JOIN rdap.registrar_links rar ON rar.lin_id=lin.lin_id WHERE rar.rar_id=?;
 
 #storeNameserverLinksToDatabase
 INSERT INTO rdap.nameserver_links VALUES(?,?);

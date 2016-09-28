@@ -6,12 +6,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import mx.nic.rdap.server.db.QueryGroup;
-import mx.nic.rdap.server.exception.ObjectNotFoundException;
 import mx.nix.rdap.core.catalog.Status;
 
 /**
@@ -170,10 +170,7 @@ public class StatusModel {
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
 				if (!resultSet.next()) {
-					throw new ObjectNotFoundException("Object not found.");// TODO:
-																			// Managae
-																			// the
-																			// exception
+					return Collections.emptyList();
 				}
 				List<Status> status = new ArrayList<Status>();
 				do {
