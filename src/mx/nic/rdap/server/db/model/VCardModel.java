@@ -75,6 +75,9 @@ public class VCardModel {
 
 	public static void storeRegistrarContactToDatabase(List<VCard> vCardList, Long registrarId, Connection connection)
 			throws SQLException {
+		if (vCardList.isEmpty())
+			return;
+
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeRegistrarContact"),
 				Statement.RETURN_GENERATED_KEYS);) {
 			for (VCard vCard : vCardList) {

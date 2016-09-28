@@ -21,6 +21,7 @@ import org.junit.Test;
 
 import mx.nic.rdap.core.db.Event;
 import mx.nic.rdap.core.db.Link;
+import mx.nic.rdap.core.db.PublicId;
 import mx.nic.rdap.core.db.Registrar;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.core.db.RemarkDescription;
@@ -244,9 +245,20 @@ public class RegistrarTest {
 		events.add(event1);
 		events.add(event2);
 		registrar.getEvents().addAll(events);
-		
-		
-		
+
+		// PublicId data
+		List<PublicId> listPids = new ArrayList<>();
+		PublicId pid = new PublicIdDAO();
+		pid.setPublicId("dumy pid 1");
+		pid.setType("dummy iana");
+		PublicId pid2 = new PublicIdDAO();
+		pid.setPublicId("dumy pid 2");
+		pid.setType("dummy IETF");
+		listPids.add(pid);
+		listPids.add(pid2);
+
+		registrar.getPublicIds().addAll(listPids);
+
 		Long registrarId = null;
 		try {
 			registrarId = RegistrarModel.storeToDatabase(registrar, connection);

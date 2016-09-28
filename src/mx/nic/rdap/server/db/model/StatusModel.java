@@ -104,6 +104,9 @@ public class StatusModel {
 
 	private static void storeRelationStatusToDatabase(List<Status> statusList, Long id, Connection connection,
 			String storeQueryId) throws SQLException {
+		if (statusList.isEmpty())
+			return;
+
 		String query = queryGroup.getQuery(storeQueryId);
 		try (PreparedStatement statement = connection.prepareStatement(query)) {
 			for (Status status : statusList) {

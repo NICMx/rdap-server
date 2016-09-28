@@ -14,6 +14,7 @@ import com.mysql.jdbc.Statement;
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Event;
 import mx.nic.rdap.core.db.Link;
+import mx.nic.rdap.core.db.PublicId;
 import mx.nic.rdap.core.db.Registrar;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.core.db.VCard;
@@ -97,6 +98,7 @@ public class EntityModel {
 	 */
 	private static void storeNestedObjects(Entity entity, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
+		PublicIdModel.storePublicIdByEntity(entity.getPublicIds(), entity.getId(), connection);
 		StatusModel.storeEntityStatusToDatabase(entity.getStatus(), entity.getId(), connection);
 		RemarkModel.storeEntityRemarksToDatabase(entity.getRemarks(), entity.getId(), connection);
 		LinkModel.storeEntityLinksToDatabase(entity.getLinks(), entity.getId(), connection);
@@ -160,7 +162,7 @@ public class EntityModel {
 	 * @throws IOException
 	 */
 	private static void getNestedObjects(Entity entity, Connection connection) throws SQLException, IOException {
-		Registrar rar = RegistrarModel.getById(entity.getRarId(), connection);
+		Registrar rar = RegistrarModel.getMinimumById(entity.getRarId(), connection);
 		entity.setRegistrar(rar);
 
 		VCard vCard = VCardModel.getById(entity.getVCardId(), connection);
@@ -179,6 +181,9 @@ public class EntityModel {
 
 		List<Event> byEntityId4 = EventModel.getByEntityId(entityId, connection);
 		entity.getEvents().addAll(byEntityId4);
+
+		List<PublicId> byEntity = PublicIdModel.getByEntity(entityId, connection);
+		entity.getPublicIds().addAll(byEntity);
 	}
 
 	/**

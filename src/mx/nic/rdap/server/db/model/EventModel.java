@@ -157,6 +157,9 @@ public class EventModel {
 
 	private static void storeRelationEventsToDatabase(List<Event> events, Long id, Connection connection,
 			String storeQueryId) throws SQLException, IOException, RequiredValueNotFoundException {
+		if (events.isEmpty())
+			return;
+
 		String query = queryGroup.getQuery(storeQueryId);
 		try (PreparedStatement statement = connection.prepareStatement(query)) {
 			for (Event event : events) {

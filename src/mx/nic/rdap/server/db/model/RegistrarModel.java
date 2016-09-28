@@ -13,6 +13,7 @@ import com.mysql.jdbc.Statement;
 
 import mx.nic.rdap.core.db.Event;
 import mx.nic.rdap.core.db.Link;
+import mx.nic.rdap.core.db.PublicId;
 import mx.nic.rdap.core.db.Registrar;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.core.db.VCard;
@@ -20,6 +21,7 @@ import mx.nic.rdap.server.db.QueryGroup;
 import mx.nic.rdap.server.db.RegistrarDAO;
 import mx.nic.rdap.server.exception.ObjectNotFoundException;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
+import mx.nix.rdap.core.catalog.Roles;
 import mx.nix.rdap.core.catalog.Status;
 
 /**
@@ -131,6 +133,46 @@ public class RegistrarModel {
 		return registrarResult;
 	}
 
+	public static Registrar getMinimumById(Long registrarId, Connection connection) throws SQLException {
+		Registrar registrarResult = null;
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getById"));) {
+			statement.setLong(1, registrarId);
+			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+			ResultSet resultSet = statement.executeQuery();
+			registrarResult = processResultSet(resultSet, connection);
+		}
+
+		try {
+			List<VCard> vCardList = VCardModel.getByRegistrarId(registrarResult.getId(), connection);
+			registrarResult.setvCardList(vCardList);
+		} catch (ObjectNotFoundException e) {
+			// Could not have a VCard.
+		}
+
+		registrarResult.setRol(Roles.SPONSOR);
+
+		return registrarResult;
+	}
+
+	public static Registrar getMinimumByHandle(String registrarHandle, Connection connection) throws SQLException {
+		Registrar registrarResult = null;
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByHandle"));) {
+			statement.setString(1, registrarHandle);
+			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+			ResultSet resultSet = statement.executeQuery();
+			registrarResult = processResultSet(resultSet, connection);
+		}
+
+		try {
+			List<VCard> vCardList = VCardModel.getByRegistrarId(registrarResult.getId(), connection);
+			registrarResult.setvCardList(vCardList);
+		} catch (ObjectNotFoundException e) {
+			// Could not have a VCard.
+		}
+
+		return registrarResult;
+	}
+
 	/**
 	 * Gets and sets the nested objects of a {@link Registrar}.
 	 * 
@@ -160,6 +202,11 @@ public class RegistrarModel {
 
 		List<Event> byRarId4 = EventModel.getByRegistrarId(registrarId, connection);
 		registrar.getEvents().addAll(byRarId4);
+
+		List<PublicId> byRegistrar = PublicIdModel.getByRegistrar(registrarId, connection);
+		registrar.getPublicIds().addAll(byRegistrar);
+
+		registrar.setRol(Roles.REGISTRAR);
 	}
 
 	/**
@@ -216,6 +263,7 @@ public class RegistrarModel {
 	 */
 	private static void storeNestedObjects(Registrar registrar, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
+		PublicIdModel.storePublicIdByRegistrar(registrar.getPublicIds(), registrar.getId(), connection);
 		StatusModel.storeRegistrarStatusToDatabase(registrar.getStatus(), registrar.getId(), connection);
 		RemarkModel.storeRegistrarRemarksToDatabase(registrar.getRemarks(), registrar.getId(), connection);
 		LinkModel.storeRegistrarLinksToDatabase(registrar.getLinks(), registrar.getId(), connection);
