@@ -199,6 +199,9 @@ public class LinkModel {
 	 */
 	private static void storeLinkRelationToDatabase(List<Link> links, Long id, Connection connection,
 			String storeQueryId) throws SQLException, IOException, RequiredValueNotFoundException {
+		if (links.isEmpty())
+			return;
+
 		String query = queryGroup.getQuery(storeQueryId);
 		try (PreparedStatement statement = connection.prepareStatement(query)) {
 			for (Link link : links) {

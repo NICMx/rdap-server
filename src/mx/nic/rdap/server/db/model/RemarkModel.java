@@ -87,6 +87,9 @@ public class RemarkModel {
 
 	private static void storeRelationRemarksToDatabase(List<Remark> remarks, Long id, Connection connection,
 			String queryId) throws SQLException, IOException, RequiredValueNotFoundException {
+		if (remarks.isEmpty())
+			return;
+
 		String query = queryGroup.getQuery(queryId);
 		try (PreparedStatement statement = connection.prepareStatement(query)) {
 			for (Remark remark : remarks) {

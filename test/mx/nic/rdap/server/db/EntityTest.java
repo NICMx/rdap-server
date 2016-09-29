@@ -22,6 +22,7 @@ import org.junit.Test;
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Event;
 import mx.nic.rdap.core.db.Link;
+import mx.nic.rdap.core.db.PublicId;
 import mx.nic.rdap.core.db.Registrar;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.core.db.RemarkDescription;
@@ -193,6 +194,19 @@ public class EntityTest {
 		events.add(event1);
 		events.add(event2);
 		entity.getEvents().addAll(events);
+
+		// PublicId data
+		List<PublicId> listPids = new ArrayList<>();
+		PublicId pid = new PublicIdDAO();
+		pid.setPublicId("dumy pid 1");
+		pid.setType("dummy iana");
+		PublicId pid2 = new PublicIdDAO();
+		pid.setPublicId("dumy pid 2");
+		pid.setType("dummy IETF");
+		listPids.add(pid);
+		listPids.add(pid2);
+
+		entity.getPublicIds().addAll(listPids);
 
 		// Store it in the database
 		Long entId = null;
