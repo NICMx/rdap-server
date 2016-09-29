@@ -4,6 +4,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+
+import mx.nic.rdap.server.renderer.json.JsonParser;
+
 /**
  * Data access class for the PublicId object. This data structure maps a public
  * identifier to an object class.
@@ -11,10 +17,11 @@ import java.sql.SQLException;
  * @author evaldes
  *
  */
-public class PublicIdDAO extends mx.nic.rdap.core.db.PublicId implements DatabaseObject {
+public class PublicIdDAO extends mx.nic.rdap.core.db.PublicId implements DatabaseObject, JsonParser {
 
 	public PublicIdDAO() {
 		super();
+
 	}
 
 	public PublicIdDAO(ResultSet resultSet) throws SQLException {
@@ -49,6 +56,16 @@ public class PublicIdDAO extends mx.nic.rdap.core.db.PublicId implements Databas
 	public void storeToDatabase(PreparedStatement preparedStatement) throws SQLException {
 		preparedStatement.setString(1, this.getType());
 		preparedStatement.setString(2, this.getPublicId());
+	}
+
+	@Override
+	public JsonObject toJson() {
+		JsonObjectBuilder builder = Json.createObjectBuilder();
+
+		builder.add("type", getType());
+		builder.add("identifier", getPublicId());
+
+		return builder.build();
 	}
 
 }

@@ -22,6 +22,17 @@ import mx.nix.rdap.core.catalog.Status;
  */
 public class JsonUtil {
 
+	public static JsonArray getRdapConformance(String... others) {
+		JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+		arrayBuilder.add("rdap_level_0");
+		if (others != null) {
+			for (String s : others) {
+				arrayBuilder.add(s);
+			}
+		}
+		return arrayBuilder.build();
+	}
+
 	/**
 	 * Get the common JsonObject of the rdap objects
 	 * 
