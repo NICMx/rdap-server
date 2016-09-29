@@ -21,7 +21,7 @@ import mx.nic.rdap.server.db.QueryGroup;
 import mx.nic.rdap.server.db.RegistrarDAO;
 import mx.nic.rdap.server.exception.ObjectNotFoundException;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
-import mx.nix.rdap.core.catalog.Roles;
+import mx.nix.rdap.core.catalog.Rol;
 import mx.nix.rdap.core.catalog.Status;
 
 /**
@@ -149,7 +149,7 @@ public class RegistrarModel {
 			// Could not have a VCard.
 		}
 
-		registrarResult.setRol(Roles.SPONSOR);
+		registrarResult.setRol(Rol.SPONSOR);
 
 		return registrarResult;
 	}
@@ -206,7 +206,7 @@ public class RegistrarModel {
 		List<PublicId> byRegistrar = PublicIdModel.getByRegistrar(registrarId, connection);
 		registrar.getPublicIds().addAll(byRegistrar);
 
-		registrar.setRol(Roles.REGISTRAR);
+		registrar.setRol(Rol.REGISTRAR);
 	}
 
 	/**
