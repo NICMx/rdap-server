@@ -58,6 +58,7 @@ public class ZoneModel {
 			ResultSet resultSet = statement.getGeneratedKeys();
 			resultSet.next();
 			Integer zoneId = resultSet.getInt(1);// Inserted Zone's Id
+			zone.setId(zoneId);
 			return zoneId;
 		}
 	}

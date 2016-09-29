@@ -34,7 +34,7 @@ public class VariantModel {
 
 	static {
 		try {
-			SecureDNSModel.queryGroup = new QueryGroup(QUERY_GROUP);
+			queryGroup = new QueryGroup(QUERY_GROUP);
 		} catch (IOException e) {
 			throw new RuntimeException("Error loading query group");
 		}
@@ -77,7 +77,8 @@ public class VariantModel {
 			List<VariantName> variantNames = variant.getVariantNames();
 			VariantNameModel.storeAllToDatabase(variantNames, variantInsertedId, connection);
 			List<VariantRelation> relations = variant.getRelations();
-			VariantRelationModel.storeVariantRelations(relations, variant.getId(), connection);
+			VariantRelationModel.storeVariantRelations(relations, variantInsertedId, connection);
+			variant.setId(variantInsertedId);
 		}
 	}
 
@@ -89,41 +90,23 @@ public class VariantModel {
 	 * @throws IOException
 	 */
 	public static List<Variant> getByDomainId(Long domainId, Connection connection) throws SQLException, IOException {
-		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByDomainId"));
-				ResultSet resultSet = statement.executeQuery();) {
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByDomainId"))) {
 			statement.setLong(1, domainId);
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
-			return processResultSet(resultSet, connection);
+			ResultSet resultSet = statement.executeQuery();
+			if (!resultSet.next()) {
+				throw new ObjectNotFoundException("Object not found.");
+			}
+			List<Variant> variants = new ArrayList<Variant>();
+			do {
+				VariantDAO variant = new VariantDAO(resultSet);
+				System.out.println("" + variant.getId() + variant.getIdnTable() + variant.getDomainId());
+				variant.setVariantNames(VariantNameModel.getByVariantId(variant.getId(), connection));
+				variant.setRelations(VariantRelationModel.getByVariantId(variant.getId(), connection));
+				variants.add(variant);
+			} while (resultSet.next());
+			return variants;
 		}
-	}
-
-	/**
-	 * Get's all variants from database
-	 * 
-	 * @return
-	 * @throws IOException
-	 * @throws SQLException
-	 */
-	public static List<Variant> getAll(Connection connection) throws IOException, SQLException {
-		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getAll"));
-				ResultSet resultSet = statement.executeQuery()) {
-			return processResultSet(resultSet, connection);
-		}
-	}
-
-	private static List<Variant> processResultSet(ResultSet resultSet, Connection connection)
-			throws SQLException, IOException {
-		if (!resultSet.next()) {
-			throw new ObjectNotFoundException("Object not found.");
-		}
-		List<Variant> variants = new ArrayList<Variant>();
-		do {
-			VariantDAO variant = new VariantDAO(resultSet);
-			variant.setVariantNames(VariantNameModel.getByVariantId(variant.getId(), connection));
-			variant.setRelations(VariantRelationModel.getByVariantId(variant.getId(), connection));
-			variants.add(variant);
-		} while (resultSet.next());
-		return variants;
 	}
 
 }

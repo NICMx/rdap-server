@@ -31,7 +31,7 @@ public class DsDataModel {
 
 	static {
 		try {
-			DsDataModel.queryGroup = new QueryGroup(QUERY_GROUP);
+			queryGroup = new QueryGroup(QUERY_GROUP);
 		} catch (IOException e) {
 			throw new RuntimeException("Error loading query group.");
 		}

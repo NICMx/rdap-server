@@ -33,7 +33,7 @@ public class VariantRelationModel {
 
 	static {
 		try {
-			SecureDNSModel.queryGroup = new QueryGroup(QUERY_GROUP);
+			queryGroup = new QueryGroup(QUERY_GROUP);
 		} catch (IOException e) {
 			throw new RuntimeException("Error loading query group");
 		}
@@ -51,6 +51,7 @@ public class VariantRelationModel {
 			throws IOException, SQLException {
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByVariantId"))) {
 			statement.setLong(1, variantId);
+			System.out.println(variantId);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {// Validate
 																	// results
@@ -78,10 +79,16 @@ public class VariantRelationModel {
 			throws SQLException {
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeVariantRelation"))) {
 			for (VariantRelation relation : relations) {
-				statement.setLong(1, variantId);
-				statement.setInt(2, relation.getId());
+				System.out.println(variantId + " " + relation.getId());// get
+																		// variant
+																		// id
+																		// here
+				statement.setLong(2, variantId);
+				statement.setInt(1, relation.getId());
 				logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
+				statement.executeUpdate();
 			}
 		}
 	}
+
 }

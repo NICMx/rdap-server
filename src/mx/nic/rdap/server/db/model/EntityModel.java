@@ -4,8 +4,9 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
+import java.sql.SQLException; 
+import java.util.ArrayList; 
+import java.util.List; 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -149,6 +150,39 @@ public class EntityModel {
 
 		getNestedObjects(entResult, connection);
 		return entResult;
+	}
+
+	/**
+	 * Get an entity by its domainId
+	 * 
+	 * @param domainId
+	 *            Unique identifier of a domain.
+	 * @param connection
+	 *            Connection used to query the object.
+	 * @return
+	 * @throws SQLException
+	 */
+	public static List<Entity> getByDomainId(Long domainId, Connection connection) throws SQLException {
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByDomain"))) {// TODO
+																												// query
+			statement.setLong(1, domainId);
+			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+			try (ResultSet resultSet = statement.executeQuery()) {
+				if (!resultSet.next()) {
+					throw new ObjectNotFoundException("Object not found.");// TODO
+																			// manage
+																			// exception
+				}
+				List<Entity> entities = new ArrayList<Entity>();
+				do {
+					Entity entity = processResultSet(resultSet, connection);// TODO
+																			// validate
+																			// output
+					entities.add(entity);
+				} while (resultSet.next());
+				return entities;
+			}
+		}
 	}
 
 	/**

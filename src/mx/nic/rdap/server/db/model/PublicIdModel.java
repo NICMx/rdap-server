@@ -38,7 +38,7 @@ public class PublicIdModel {
 
 	static {
 		try {
-			SecureDNSModel.queryGroup = new QueryGroup(QUERY_GROUP);
+			queryGroup = new QueryGroup(QUERY_GROUP);
 		} catch (IOException e) {
 			throw new RuntimeException("Error loading query group");
 		}

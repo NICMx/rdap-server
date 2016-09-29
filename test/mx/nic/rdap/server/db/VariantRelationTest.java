@@ -1,6 +1,3 @@
-/**
- * 
- */
 package mx.nic.rdap.server.db;
 
 import static org.junit.Assert.fail;
@@ -8,30 +5,21 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.Random;
 
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import mx.nic.rdap.core.db.Zone;
 import mx.nic.rdap.server.Util;
-import mx.nic.rdap.server.db.model.ZoneModel;
-import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
+import mx.nic.rdap.server.db.model.VariantRelationModel;
+import mx.nix.rdap.core.catalog.VariantRelation;
 
-/**
- * Tests for the {@link ZoneModel}
- * 
- * @author evaldes
- *
- */
-
-public class ZoneTest {
+public class VariantRelationTest {
 	/**
 	 * File from which we will load the database connection.
 	 */
@@ -87,50 +75,42 @@ public class ZoneTest {
 		}
 	}
 
-	@Test
 	/**
-	 * Creates a new Zone instance and stores it in the database, then it get an
-	 * instance with the id generated
+	 * Stores a list of variant´s relations
 	 */
-	public void insertAndGetBy() throws IOException, SQLException, RequiredValueNotFoundException {
-		Random random = new Random();
-		int randomInt = random.nextInt();
+	@Test
+	public void storeByVariantId() {
+		Long variantId = 61L;
+		List<VariantRelation> relations = new ArrayList<VariantRelation>();
 
-		Zone zone = createZone(null, "example" + randomInt + ".mx");
-		Integer zoneId;
-		System.out.println(zone.getZoneName() + zone.getId());
-		try {
-			zoneId = ZoneModel.storeToDatabase(zone, connection);
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-		System.out.println("" + zoneId);
-		Zone byId = new Zone();
+		VariantRelation relation1 = VariantRelation.REGISTERED;
+		VariantRelation relation2 = VariantRelation.CONJOINED;
+
+		relations.add(relation1);
+		relations.add(relation2);
 
 		try {
-			byId = ZoneModel.getByZoneId(zoneId, connection);
+			VariantRelationModel.storeVariantRelations(relations, variantId, connection);
+			// TODO Ignore if repeated?
 		} catch (SQLException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
-		System.out.println(byId.getZoneName() + " " + byId.getId());
-		Assert.assertTrue("Get by Id fails", zone.equals(byId));
 	}
 
+	/**
+	 * Gets a list of relation based on the variant´s id
+	 */
 	@Test
-	public void getAll() throws IOException, SQLException {
-		List<Zone> zones = ZoneModel.getAll(connection);
-		for (Zone zone : zones) {
-			System.out.println(zone.getId() + " " + zone.getZoneName());
-		}
-		System.out.print("\n\n");
-	}
+	public void getByVariantId() {
+		Long variantId = 61L;
 
-	public ZoneDAO createZone(Integer id, String zoneName) {
-		ZoneDAO zone = new ZoneDAO();
-		zone.setId(id);
-		zone.setZoneName(zoneName);
-		return zone;
+		try {
+			VariantRelationModel.getByVariantId(variantId, connection);
+		} catch (IOException | SQLException e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
 	}
 
 }
