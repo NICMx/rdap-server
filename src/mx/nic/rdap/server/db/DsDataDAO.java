@@ -25,14 +25,11 @@ public class DsDataDAO extends mx.nic.rdap.core.db.DsData implements DatabaseObj
 	 * Construct DsData from a ResultSet
 	 * 
 	 * @param resultSet
+	 * @throws SQLException
 	 */
-	public DsDataDAO(ResultSet resultSet) {
+	public DsDataDAO(ResultSet resultSet) throws SQLException {
 		super();
-		try {
-			loadFromDatabase(resultSet);
-		} catch (SQLException e) {
-			// TODO Manage exception
-		}
+		loadFromDatabase(resultSet);
 	}
 
 	/*
@@ -48,6 +45,7 @@ public class DsDataDAO extends mx.nic.rdap.core.db.DsData implements DatabaseObj
 		this.setAlgorithm(resultSet.getInt("dsd_algorithm"));
 		this.setDigest(resultSet.getString("dsd_digest"));
 		this.setDigestType(resultSet.getInt("dsd_digest_type"));
+		this.setSecureDNSId(resultSet.getLong("sdns_id"));
 	}
 
 	/*

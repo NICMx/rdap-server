@@ -12,12 +12,14 @@ import java.util.logging.Logger;
 import mx.nic.rdap.core.db.SecureDNS;
 import mx.nic.rdap.server.db.QueryGroup;
 import mx.nic.rdap.server.db.SecureDNSDAO;
+import mx.nic.rdap.server.exception.ObjectNotFoundException;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
 
 /**
  * Model for the SecureDNS object
  * 
  * @author evaldes
+ * @author dhfelix
  *
  */
 public class SecureDNSModel {
@@ -38,17 +40,23 @@ public class SecureDNSModel {
 
 	public static Long storeToDatabase(SecureDNS secureDns, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
-		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"),
-				Statement.RETURN_GENERATED_KEYS)) {
+		String query = queryGroup.getQuery("storeToDatabase");
+		try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 			((SecureDNSDAO) secureDns).storeToDatabase(statement);
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
 			statement.executeUpdate();// TODO Validate if insert was correct
+
 			ResultSet resultSet = statement.getGeneratedKeys();
 			resultSet.next();
 			Long secureDnsId = resultSet.getLong(1);
-			DsDataModel.storeToDatabase(secureDns.getDsData(), connection);
-			return secureDnsId;
+
+			secureDns.setId(secureDnsId);
+
 		}
+
+		DsDataModel.storeAllToDatabase(secureDns.getDsData(), secureDns.getId(), connection);
+
+		return secureDns.getId();
 	}
 
 	public static SecureDNS getByDomain(Long domainId, Connection connection) throws SQLException, IOException {
@@ -56,6 +64,10 @@ public class SecureDNSModel {
 			statement.setLong(1, domainId);
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
 			ResultSet resultSet = statement.executeQuery();
+			if (!resultSet.next()) {
+				throw new ObjectNotFoundException("Object Not Found");
+			}
+
 			SecureDNSDAO secureDns = new SecureDNSDAO(resultSet);
 			secureDns.setDsData(DsDataModel.getBySecureDnsId(secureDns.getId(), connection));
 			return secureDns;

@@ -5,6 +5,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,6 +22,7 @@ import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
  * Model for the DsData Object
  * 
  * @author evaldes
+ * @author dhfelix
  *
  */
 public class DsDataModel {
@@ -39,32 +43,62 @@ public class DsDataModel {
 
 	public static long storeToDatabase(DsData dsData, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
-		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"), // TODO
-																												// QUERY
-				Statement.RETURN_GENERATED_KEYS)) {
+		String query = queryGroup.getQuery("storeToDatabase");
+		try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 			((DsDataDAO) dsData).storeToDatabase(statement);
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
 			statement.executeUpdate();// TODO Validate if it was correct
+
 			ResultSet resultSet = statement.getGeneratedKeys();
 			resultSet.next();
 			Long dsDataId = resultSet.getLong(1);
-			EventModel.storeDsDataEventsToDatabase(dsData.getEvents(), dsDataId, connection);
-			LinkModel.storeDsDataLinksToDatabase(dsData.getLinks(), dsDataId, connection);
-			return dsDataId;
+
+			dsData.setId(dsDataId);
 		}
+
+		EventModel.storeDsDataEventsToDatabase(dsData.getEvents(), dsData.getId(), connection);
+		LinkModel.storeDsDataLinksToDatabase(dsData.getLinks(), dsData.getId(), connection);
+
+		return dsData.getId();
 	}
 
-	public static DsData getBySecureDnsId(Long secureDnsId, Connection connection) throws SQLException, IOException {
-		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getBySecureDns"));) {// TODO
-																													// QUERY
+	public static void storeAllToDatabase(List<DsData> dsDataList, Long secureDnsId, Connection connection)
+			throws SQLException, IOException, RequiredValueNotFoundException {
+		if (dsDataList.isEmpty()) {
+			return;
+		}
+
+		for (DsData dsData : dsDataList) {
+			dsData.setSecureDNSId(secureDnsId);
+			storeToDatabase(dsData, connection);
+		}
+
+	}
+
+	public static List<DsData> getBySecureDnsId(Long secureDnsId, Connection connection)
+			throws SQLException, IOException {
+		String query = queryGroup.getQuery("getBySecureDns");
+		List<DsData> resultList = null;
+
+		try (PreparedStatement statement = connection.prepareStatement(query);) { // QUERY
 			statement.setLong(1, secureDnsId);
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
 			ResultSet resultSet = statement.executeQuery();// TODO Validate if
 															// it was correct
-			DsDataDAO dsData = new DsDataDAO(resultSet);
-			dsData.setEvents(EventModel.getByDsDataId(dsData.getId(), connection));
-			dsData.setLinks(LinkModel.getByDsDataId(dsData.getId(), connection));
-			return dsData;
+			if (!resultSet.next()) {
+				return Collections.emptyList();
+			}
+
+			resultList = new ArrayList<>();
+
+			do {
+				DsDataDAO dsData = new DsDataDAO(resultSet);
+				dsData.setEvents(EventModel.getByDsDataId(dsData.getId(), connection));
+				dsData.setLinks(LinkModel.getByDsDataId(dsData.getId(), connection));
+				resultList.add(dsData);
+			} while (resultSet.next());
 		}
+
+		return resultList;
 	}
 }
