@@ -133,7 +133,7 @@ public class VariantTest {
 		variantNames2.add(createVariantName("xn--fo-8ja.example"));
 
 		variants.add(createVariant(null, relations1, variantNames1, domainId, null));
-		variants.add(createVariant(domainId, relations2, variantNames2, domainId, ".EXAMPLE Spanish"));
+		variants.add(createVariant(null, relations2, variantNames2, domainId, ".EXAMPLE Spanish"));
 
 		// Stores variants to database
 		try {

@@ -150,7 +150,7 @@ public class SecureDnsTest {
 		dsDataList.add(dsData);
 		dsDataList.add(dsData2);
 
-		SecureDNS secureDns = getSecureDns(null, 3L, true, true, dsDataList);
+		SecureDNS secureDns = getSecureDns(null, domainId, true, true, dsDataList);
 
 		try {
 			SecureDNSModel.storeToDatabase(secureDns, connection);
@@ -202,4 +202,48 @@ public class SecureDnsTest {
 		return ds;
 	}
 
+	public static SecureDNSDAO createDefaultSDNS() {
+		List<DsData> dsDataList = new ArrayList<>();
+
+		// Links data
+		List<Link> links = new ArrayList<Link>();
+		Link link = new LinkDAO();
+		link.setValue("http://example.net/nameserver/xxxx");
+		link.setRel("self");
+		link.setHref("http://example.net/nameserver/xxxx");
+		link.setType("application/rdap+json");
+		links.add(link);
+
+		// Events Data
+		List<Event> events = new ArrayList<Event>();
+		Event event1 = new EventDAO();
+		event1.setEventAction(EventAction.REGISTRATION);
+		event1.setEventDate(new Timestamp(((new Date()).getTime())));
+
+		Event event2 = new EventDAO();
+		event2.setEventAction(EventAction.LAST_CHANGED);
+		event2.setEventDate(new Timestamp(((new Date()).getTime())));
+		event2.setEventActor("joe@example.com");
+
+		// event links data
+		List<Link> eventLinks = new ArrayList<Link>();
+		Link eventLink = new LinkDAO();
+		eventLink.setValue("eventLink1");
+		eventLink.setRel("eventlink");
+		eventLink.setHref("http://example.net/eventlink/xxxx");
+		eventLink.setType("application/rdap+json");
+		eventLinks.add(eventLink);
+		event2.setLinks(eventLinks);
+
+		events.add(event1);
+		events.add(event2);
+
+		DsData dsData = getDsData(null, null, 66612, 1, "ABCDEF1234", 1, links, events);
+		DsData dsData2 = getDsData(null, null, 1234, 1, "abcd5432", 1, null, null);
+		dsDataList.add(dsData);
+		dsDataList.add(dsData2);
+
+		SecureDNS secureDns = getSecureDns(null, null, true, true, dsDataList);
+		return (SecureDNSDAO) secureDns;
+	}
 }

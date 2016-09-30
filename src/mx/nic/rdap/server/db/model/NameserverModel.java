@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -79,7 +80,7 @@ public class NameserverModel {
 		}
 
 	}
-	
+
 	public static void storeDomainNameserversToDatabase(List<Nameserver> nameservers, Long domainId,
 			Connection connection) throws SQLException, IOException, RequiredValueNotFoundException {
 		try (PreparedStatement statement = connection
@@ -125,7 +126,7 @@ public class NameserverModel {
 			}
 		}
 	}
-	
+
 	public static List<Nameserver> getByDomainId(Long domainId, Connection connection)
 			throws SQLException, IOException {
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByDomainId"))) {
@@ -133,10 +134,10 @@ public class NameserverModel {
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
 				if (!resultSet.next()) {
-					throw new ObjectNotFoundException("Object not found.");// TODO:
-																			// Managae
-																			// the
-																			// exception
+					// TODO a domain can not have nameservers?
+					// throw new ObjectNotFoundException("Object not found.");
+					return Collections.emptyList();
+
 				}
 				List<Nameserver> nameservers = new ArrayList<Nameserver>();
 				do {

@@ -49,26 +49,26 @@ public class DomainModel {
 	 */
 	public static void storeToDatabase(Domain domain, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
-		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"),
-				Statement.RETURN_GENERATED_KEYS)) {
+		String query = queryGroup.getQuery("storeToDatabase");
+		Long domainId;
+		try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 			((DomainDAO) domain).storeToDatabase(statement);
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
 			statement.executeUpdate();// TODO Validate if insert was correct
+
 			ResultSet resultSet = statement.getGeneratedKeys();
 			resultSet.next();
-			Long domainId = resultSet.getLong(1);
-			RemarkModel.storeDomainRemarksToDatabase(domain.getRemarks(), domainId, connection);
-			EventModel.storeDomainEventsToDatabase(domain.getEvents(), domainId, connection);
-			StatusModel.storeDomainStatusToDatabase(domain.getStatus(), domainId, connection);
-			LinkModel.storeDomainLinksToDatabase(domain.getLinks(), domainId, connection);
-			NameserverModel.storeDomainNameserversToDatabase(domain.getNameServers(), domainId, connection);
-			DomainEntityRoleModel.storeAllToDatabase(domain.getEntities(), domainId, connection); // TODO
-																									// QUERY
-																									// with
-																									// non-repeating
-																									// handler
-																									// validation
+			domainId = resultSet.getLong(1);
+			domain.setId(domainId);
 		}
+		RemarkModel.storeDomainRemarksToDatabase(domain.getRemarks(), domainId, connection);
+		EventModel.storeDomainEventsToDatabase(domain.getEvents(), domainId, connection);
+		StatusModel.storeDomainStatusToDatabase(domain.getStatus(), domainId, connection);
+		LinkModel.storeDomainLinksToDatabase(domain.getLinks(), domainId, connection);
+		NameserverModel.storeDomainNameserversToDatabase(domain.getNameServers(), domainId, connection);
+
+		EntityModel.getByDomainId(domainId, connection);
+		DomainEntityRoleModel.storeAllToDatabase(domain.getEntities(), domainId, connection);
 	}
 
 	/**

@@ -4,6 +4,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import mx.nic.rdap.core.db.Domain;
+
 /**
  * Data access class for the Domain object. The domain object class represents a
  * DNS name and point of delegation.
@@ -11,7 +13,7 @@ import java.sql.SQLException;
  * @author evaldes
  *
  */
-public class DomainDAO extends mx.nic.rdap.core.db.Domain implements DatabaseObject {
+public class DomainDAO extends Domain implements DatabaseObject {
 
 	/**
 	 * Default Constreuctor

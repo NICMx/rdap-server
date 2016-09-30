@@ -82,7 +82,7 @@ public class EntityDAO extends Entity implements DatabaseObject, JsonParser {
 		return arrB.build();
 	}
 
-	private JsonArray getRoles() {
+	private JsonArray getJsonRoles() {
 		JsonArrayBuilder builder = Json.createArrayBuilder();
 
 		builder.add(getRegistrar().getRol().getValue());
