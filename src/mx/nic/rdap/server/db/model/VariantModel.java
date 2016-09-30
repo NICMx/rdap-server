@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,6 +23,7 @@ import mx.nix.rdap.core.catalog.VariantRelation;
  * Model for the Variant Object
  * 
  * @author evaldes
+ * @author dhfelix
  *
  */
 public class VariantModel {
@@ -65,7 +67,8 @@ public class VariantModel {
 	 * @throws IOException
 	 * @throws SQLException
 	 */
-	public static void storeToDatabase(Variant variant, Connection connection) throws IOException, SQLException {
+	public static Long storeToDatabase(Variant variant, Connection connection) throws IOException, SQLException {
+		Long variantInsertedId = null;
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"),
 				Statement.RETURN_GENERATED_KEYS)) {
 			((VariantDAO) variant).storeToDatabase(statement);
@@ -73,13 +76,14 @@ public class VariantModel {
 			statement.executeUpdate();// TODO Validate if it was correct
 			ResultSet resultSet = statement.getGeneratedKeys();
 			resultSet.next();
-			Long variantInsertedId = resultSet.getLong(1);
-			List<VariantName> variantNames = variant.getVariantNames();
-			VariantNameModel.storeAllToDatabase(variantNames, variantInsertedId, connection);
-			List<VariantRelation> relations = variant.getRelations();
-			VariantRelationModel.storeVariantRelations(relations, variantInsertedId, connection);
+			variantInsertedId = resultSet.getLong(1);
 			variant.setId(variantInsertedId);
 		}
+
+		storeVariantNames(variant, connection);
+		storeVariantRelations(variant, connection);
+
+		return variantInsertedId;
 	}
 
 	/**
@@ -90,22 +94,149 @@ public class VariantModel {
 	 * @throws IOException
 	 */
 	public static List<Variant> getByDomainId(Long domainId, Connection connection) throws SQLException, IOException {
+		List<Variant> variants = null;
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByDomainId"))) {
 			statement.setLong(1, domainId);
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
 			ResultSet resultSet = statement.executeQuery();
 			if (!resultSet.next()) {
-				throw new ObjectNotFoundException("Object not found.");
+				// A domain can have no variants.
+				return Collections.emptyList();
 			}
-			List<Variant> variants = new ArrayList<Variant>();
+
+			variants = new ArrayList<>();
 			do {
 				VariantDAO variant = new VariantDAO(resultSet);
-				System.out.println("" + variant.getId() + variant.getIdnTable() + variant.getDomainId());
-				variant.setVariantNames(VariantNameModel.getByVariantId(variant.getId(), connection));
-				variant.setRelations(VariantRelationModel.getByVariantId(variant.getId(), connection));
 				variants.add(variant);
 			} while (resultSet.next());
-			return variants;
+		}
+
+		for (Variant variant : variants) {
+			setVariantNames(variant, connection);
+			setVariantRelations(variant, connection);
+		}
+
+		return variants;
+	}
+
+	public static Variant getById(Long variantId, Connection connection) throws SQLException, IOException {
+		Variant result = null;
+		String query = queryGroup.getQuery("getById");
+		try (PreparedStatement statement = connection.prepareStatement(query);) {
+			statement.setLong(1, variantId);
+			logger.log(Level.INFO, "Executing QUERY" + statement.toString());
+			ResultSet resultSet = statement.executeQuery();
+			if (!resultSet.next()) {
+				throw new ObjectNotFoundException("Object Not found");
+			}
+
+			result = new VariantDAO(resultSet);
+		}
+
+		setVariantNames(result, connection);
+		setVariantRelations(result, connection);
+
+		return result;
+	}
+
+	/**
+	 * Gets and set all variant relations from a variant
+	 * 
+	 * @param variantId
+	 * @return
+	 * @throws IOException
+	 * @throws SQLException
+	 */
+	private static void setVariantRelations(Variant variant, Connection connection) throws IOException, SQLException {
+		Long variantId = variant.getId();
+		try (PreparedStatement statement = connection
+				.prepareStatement(queryGroup.getQuery("getVariantRelationsByVariantId"))) {
+			statement.setLong(1, variantId);
+			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+			try (ResultSet resultSet = statement.executeQuery()) {
+				// Validate results
+				if (!resultSet.next()) {
+					// TODO is there any reason not to have variantRelations?
+					throw new ObjectNotFoundException("Object not found.");
+				}
+				List<VariantRelation> relations = variant.getRelations();
+				do {
+					relations.add(VariantRelation.getById(resultSet.getInt("rel_id")));
+				} while (resultSet.next());
+				return;
+			}
+		}
+	}
+
+	/**
+	 * Inserts variant's relation to database
+	 * 
+	 * @param relations
+	 * @param variantId
+	 * @param connection
+	 * @throws SQLException
+	 */
+	private static void storeVariantRelations(Variant variant, Connection connection) throws SQLException {
+		if (variant.getRelations().isEmpty())
+			return;
+
+		Long variantId = variant.getId();
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeVariantRelation"))) {
+			for (VariantRelation relation : variant.getRelations()) {
+				statement.setInt(1, relation.getId());
+				statement.setLong(2, variantId);
+				logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
+				statement.executeUpdate();
+			}
+		}
+	}
+
+	/**
+	 * Store a Variant's variantNames into the database
+	 * 
+	 * @param variantName
+	 * @throws IOException
+	 * @throws SQLException
+	 */
+	private static void storeVariantNames(Variant variant, Connection connection) throws IOException, SQLException {
+		if (variant.getVariantNames().isEmpty())
+			return;
+
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeVariantNames"))) {
+			Long variantId = variant.getId();
+			for (VariantName variantName : variant.getVariantNames()) {
+				statement.setString(1, variantName.getPunycode());
+				statement.setLong(2, variantId);
+				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+				statement.executeUpdate();
+			}
+		}
+	}
+
+	/**
+	 * Get and set all VariantNames from a Variant
+	 * 
+	 * @param variant
+	 * @return
+	 * @throws SQLException
+	 * @throws IOException
+	 */
+	private static void setVariantNames(Variant variant, Connection connection) throws SQLException, IOException {
+		try (PreparedStatement statement = connection
+				.prepareStatement(queryGroup.getQuery("getVariantNamesByVariantId"))) {
+			statement.setLong(1, variant.getId());
+			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+			ResultSet resultSet = statement.executeQuery();
+			if (!resultSet.next()) {
+				// TODO is there any reason not to have variantsName?
+				throw new ObjectNotFoundException("Object not found.");
+			}
+			List<VariantName> variantNames = variant.getVariantNames();
+			do {
+				VariantName variantName = new VariantName();
+				variantName.setLdhName(resultSet.getString("vna_ldh_name"));
+				variantNames.add(variantName);
+			} while (resultSet.next());
 		}
 	}
 

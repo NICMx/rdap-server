@@ -43,6 +43,7 @@ public class VariantDAO extends mx.nic.rdap.core.db.Variant implements DatabaseO
 	public void loadFromDatabase(ResultSet resultSet) throws SQLException {
 		this.setId(resultSet.getLong("var_id"));
 		this.setIdnTable(resultSet.getString("var_idn_table"));
+		this.setDomainId(resultSet.getLong("dom_id"));
 	}
 
 	/*

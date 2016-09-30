@@ -8,10 +8,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.Random;
 
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -78,34 +78,62 @@ public class VariantTest {
 	}
 
 	@Test
+	public void insertAndGetSimpleVariant() {
+		Variant variant = new VariantDAO();
+
+		List<VariantRelation> relations = variant.getRelations();
+		List<VariantName> names = variant.getVariantNames();
+
+		relations.add(VariantRelation.REGISTERED);
+		relations.add(VariantRelation.CONJOINED);
+
+		names.add(createVariantName("xn--fo-cka.example"));
+		names.add(createVariantName("xn--fo-fka.example"));
+
+		variant.setDomainId(3L);
+
+		Long variantId = null;
+		try {
+			variantId = VariantModel.storeToDatabase(variant, connection);
+		} catch (IOException | SQLException e) {
+			e.printStackTrace();
+			fail();
+		}
+
+		Variant byId = null;
+		try {
+			byId = VariantModel.getById(variantId, connection);
+		} catch (SQLException | IOException e) {
+			e.printStackTrace();
+			fail();
+		}
+
+		Assert.assertTrue("getById Fails", variant.equals(byId));
+
+	}
+
+	@Test
 	public void insertAndGetByDomainId() {
-
-		Random random = new Random();
 		Long domainId = 3L;
-
-		Long variantId1 = random.nextLong();
-		Long variantId2 = random.nextLong();
 
 		// Generates array of new variants with relations and variant names
 		List<Variant> variants = new ArrayList<Variant>();
-		List<VariantRelation> relations = new ArrayList<VariantRelation>();
 
-		VariantRelation relation = VariantRelation.REGISTERED;
-		relations.add(relation);
-
+		List<VariantRelation> relations1 = new ArrayList<VariantRelation>();
+		relations1.add(VariantRelation.REGISTERED);
+		relations1.add(VariantRelation.CONJOINED);
 		List<VariantName> variantNames1 = new ArrayList<VariantName>();
-		VariantName variantName1 = VariantNameTest.createVariantName("xn--fo-8ja.example" + variantId1, null);
-		variantNames1.add(variantName1);
-		List<VariantName> variantNames2 = new ArrayList<VariantName>();
-		VariantName variantName2 = VariantNameTest.createVariantName("xn--fo-9ja.example" + variantId2, null);
-		variantNames2.add(variantName2);
+		variantNames1.add(createVariantName("xn--fo-cka.example"));
+		variantNames1.add(createVariantName("xn--fo-fka.example"));
 
-		Variant variant1 = createVariant(null, relations, variantNames1, 1L);
-		Variant variant2 = createVariant(null, relations, variantNames2, 1L);
-		variants.add(variant1);
-		variants.add(variant2);
-		System.out.println("" + variants.get(0).getId());
-		System.out.println("" + variants.get(1).getId());
+		List<VariantRelation> relations2 = new ArrayList<VariantRelation>();
+		relations2.add(VariantRelation.UNREGISTERED);
+		relations2.add(VariantRelation.REGISTRATION_RESTRICTED);
+		List<VariantName> variantNames2 = new ArrayList<VariantName>();
+		variantNames2.add(createVariantName("xn--fo-8ja.example"));
+
+		variants.add(createVariant(null, relations1, variantNames1, domainId, null));
+		variants.add(createVariant(domainId, relations2, variantNames2, domainId, ".EXAMPLE Spanish"));
 
 		// Stores variants to database
 		try {
@@ -117,26 +145,32 @@ public class VariantTest {
 		}
 
 		// Retrieving stored variants
-		List<Variant> byDomId = new ArrayList<Variant>();
-		System.out.println("" + domainId);
+		List<Variant> byDomId = null;
 		try {
 			byDomId = VariantModel.getByDomainId(domainId, connection);
 		} catch (SQLException | IOException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
-		// TODO equals
+
+		Assert.assertTrue("getByDomainId Fails", variants.size() == byDomId.size() && variants.containsAll(byDomId));
 	}
 
 	public static VariantDAO createVariant(Long id, List<VariantRelation> relations, List<VariantName> variantNames,
-			Long domainId) {
+			Long domainId, String idnTable) {
 		VariantDAO variant = new VariantDAO();
 		variant.setId(id);
-		variant.setIdnTable(".test  Spanish");
-		variant.setRelations(relations);
-		variant.setVariantNames(variantNames);
+		variant.setIdnTable(idnTable);
+		variant.getRelations().addAll(relations);
+		variant.getVariantNames().addAll(variantNames);
 		variant.setDomainId(domainId);
 		return variant;
+	}
+
+	public static VariantName createVariantName(String punycode) {
+		VariantName variantName = new VariantName();
+		variantName.setLdhName(punycode);
+		return variantName;
 	}
 
 }
