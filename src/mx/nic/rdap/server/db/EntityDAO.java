@@ -13,6 +13,7 @@ import javax.json.JsonObjectBuilder;
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.server.renderer.json.JsonParser;
 import mx.nic.rdap.server.renderer.json.JsonUtil;
+import mx.nix.rdap.core.catalog.Rol;
 
 /**
  * DAO for the Entity Object.This object class represents the information of
@@ -35,8 +36,6 @@ public class EntityDAO extends Entity implements DatabaseObject, JsonParser {
 		setId(resultSet.getLong("ent_id"));
 		setHandle(resultSet.getString("ent_handle"));
 		setPort43(resultSet.getString("ent_port43"));
-		setRarId(resultSet.getLong("rar_id"));
-		setVCardId(resultSet.getLong("vca_id"));
 
 	}
 
@@ -50,8 +49,6 @@ public class EntityDAO extends Entity implements DatabaseObject, JsonParser {
 	public void storeToDatabase(PreparedStatement preparedStatement) throws SQLException {
 		preparedStatement.setString(1, getHandle());
 		preparedStatement.setString(2, getPort43());
-		preparedStatement.setLong(3, getRarId());
-		preparedStatement.setLong(4, getVCardId());
 	}
 
 	@Override
@@ -67,26 +64,18 @@ public class EntityDAO extends Entity implements DatabaseObject, JsonParser {
 		// Get the common JsonObject of the rdap objects
 		JsonUtil.getCommonRdapJsonObject(builder, this);
 
-		if (getRegistrar() != null) {
-			builder.add("entity", getEntities());
+		if (getJsonRoles() != null && !getJsonRoles().isEmpty()) {
+			builder.add("roles", getJsonRoles());
 		}
 
 		return builder.build();
 	}
 
-	private JsonArray getEntities() {
-		JsonArrayBuilder arrB = Json.createArrayBuilder();
-		JsonObject json = ((RegistrarDAO) getRegistrar()).toJson();
-		arrB.add(json);
-
-		return arrB.build();
-	}
-
 	private JsonArray getJsonRoles() {
 		JsonArrayBuilder builder = Json.createArrayBuilder();
-
-		builder.add(getRegistrar().getRol().getValue());
-
+		for (Rol rol : getRoles()) {
+			builder.add(rol.getValue());
+		}
 		return builder.build();
 	}
 

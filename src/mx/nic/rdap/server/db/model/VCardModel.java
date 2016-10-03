@@ -12,7 +12,6 @@ import java.util.logging.Logger;
 
 import com.mysql.jdbc.Statement;
 
-import mx.nic.rdap.core.db.Registrar;
 import mx.nic.rdap.core.db.VCard;
 import mx.nic.rdap.core.db.VCardPostalInfo;
 import mx.nic.rdap.server.db.QueryGroup;
@@ -78,7 +77,7 @@ public class VCardModel {
 		if (vCardList.isEmpty())
 			return;
 
-		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeRegistrarContact"),
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeEntityContact"),
 				Statement.RETURN_GENERATED_KEYS);) {
 			for (VCard vCard : vCardList) {
 				statement.setLong(1, registrarId);
@@ -122,9 +121,9 @@ public class VCardModel {
 	 * @return
 	 * @throws SQLException
 	 */
-	public static List<VCard> getByRegistrarId(Long registrarId, Connection connection) throws SQLException {
+	public static List<VCard> getByEntityId(Long registrarId, Connection connection) throws SQLException {
 		List<VCard> vCardResults = null;
-		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByRegistrarId"));) {
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByEntityId"));) {
 			statement.setLong(1, registrarId);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			ResultSet resultSet = statement.executeQuery();

@@ -5,12 +5,15 @@ import java.util.List;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
+import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Event;
 import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.RdapObject;
 import mx.nic.rdap.core.db.Remark;
+import mx.nic.rdap.server.db.EntityDAO;
 import mx.nic.rdap.server.db.EventDAO;
 import mx.nic.rdap.server.db.LinkDAO;
 import mx.nic.rdap.server.db.RemarkDAO;
@@ -53,10 +56,24 @@ public class JsonUtil {
 
 		if (object.getStatus() != null && !object.getStatus().isEmpty())
 			builder.add("status", JsonUtil.getStatusJson(object.getStatus()));
+
 		if (object.getPort43() != null && !object.getPort43().isEmpty())
 			builder.add("port43", object.getPort43());
+
+		if (object.getEntities() != null && !object.getEntities().isEmpty())
+			builder.add("entity", getEntitiesJson(object.getEntities()));
 		builder.add("lang", "en");// TODO: read the configuration
 		return builder;
+	}
+
+	public static JsonArray getEntitiesJson(List<Entity> entities) {
+		JsonArrayBuilder arrB = Json.createArrayBuilder();
+		for (Entity ent : entities) {
+			JsonObject json = ((EntityDAO) ent).toJson();
+			arrB.add(json);
+		}
+
+		return arrB.build();
 	}
 
 	/**

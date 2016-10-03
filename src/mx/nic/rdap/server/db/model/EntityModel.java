@@ -4,9 +4,10 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException; 
-import java.util.ArrayList; 
-import java.util.List; 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,13 +17,13 @@ import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Event;
 import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.PublicId;
-import mx.nic.rdap.core.db.Registrar;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.core.db.VCard;
 import mx.nic.rdap.server.db.EntityDAO;
 import mx.nic.rdap.server.db.QueryGroup;
 import mx.nic.rdap.server.exception.ObjectNotFoundException;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
+import mx.nix.rdap.core.catalog.Rol;
 import mx.nix.rdap.core.catalog.Status;
 
 /**
@@ -39,12 +40,34 @@ public class EntityModel {
 
 	protected static QueryGroup queryGroup = null;
 
+	private final static String GET_ENTITY_ENTITY_QUERY = "getEntitysEntitiesQuery";
+	private final static String GET_DOMAIN_ENTITY_QUERY = "getDomainsEntitiesQuery";
+	private final static String GET_NS_ENTITY_QUERY = "getNameserversEntitiesQuery";
+
 	static {
 		try {
 			queryGroup = new QueryGroup(QUERY_GROUP);
 		} catch (IOException e) {
 			throw new RuntimeException("Error while loading query group on " + EntityModel.class.getName(), e);
 		}
+	}
+
+	private static Long existsByHandle(String entityHandle, Connection connection) throws SQLException {
+		String query = queryGroup.getQuery("getIdByHandle");
+		Long entId = null;
+		try (PreparedStatement statement = connection.prepareStatement(query);) {
+			statement.setString(1, entityHandle);
+			ResultSet rs = statement.executeQuery();
+			if (!rs.next()) {
+				return null;
+			}
+			long long1 = rs.getLong("ent_id");
+			if (!rs.wasNull()) {
+				entId = long1;
+			}
+		}
+
+		return entId;
 	}
 
 	/**
@@ -60,15 +83,12 @@ public class EntityModel {
 	 */
 	public static long storeToDatabase(Entity entity, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
-		long entityId;
-
-		VCard vCard = entity.getVCard();
-		if (vCard != null) {
-			long vCardResultId = 0;
-			if (vCard.getId() == null) {
-				vCardResultId = VCardModel.storeToDatabase(vCard, connection);
-			}
-			entity.setVCardId(vCardResultId);
+		Long entityId = existsByHandle(entity.getHandle(), connection);
+		// TODO check if the entity exists, we don't store the nested objects,
+		// we assume that nested objects already exist.
+		if (entityId != null) {
+			entity.setId(entityId);
+			return entityId;
 		}
 
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"),
@@ -81,6 +101,14 @@ public class EntityModel {
 			resultSet.next();
 			entityId = resultSet.getLong(1);
 			entity.setId(entityId);
+		}
+
+		List<VCard> vCardList = entity.getVCardList();
+		if (!vCardList.isEmpty()) {
+			for (VCard vCard : vCardList) {
+				VCardModel.storeToDatabase(vCard, connection);
+			}
+			VCardModel.storeRegistrarContactToDatabase(vCardList, entityId, connection);
 		}
 
 		storeNestedObjects(entity, connection);
@@ -104,6 +132,10 @@ public class EntityModel {
 		RemarkModel.storeEntityRemarksToDatabase(entity.getRemarks(), entity.getId(), connection);
 		LinkModel.storeEntityLinksToDatabase(entity.getLinks(), entity.getId(), connection);
 		EventModel.storeEntityEventsToDatabase(entity.getEvents(), entity.getId(), connection);
+		for (Entity ent : entity.getEntities()) {
+			storeToDatabase(ent, connection);
+		}
+		RolModel.storeEntityEntityRoles(entity.getEntities(), entity.getId(), connection);
 	}
 
 	/**
@@ -155,39 +187,6 @@ public class EntityModel {
 	}
 
 	/**
-	 * Get an entity by its domainId
-	 * 
-	 * @param domainId
-	 *            Unique identifier of a domain.
-	 * @param connection
-	 *            Connection used to query the object.
-	 * @return
-	 * @throws SQLException
-	 */
-	public static List<Entity> getByDomainId(Long domainId, Connection connection) throws SQLException {
-		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByDomain"))) {// TODO
-																												// query
-			statement.setLong(1, domainId);
-			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-			try (ResultSet resultSet = statement.executeQuery()) {
-				if (!resultSet.next()) {
-					throw new ObjectNotFoundException("Object not found.");// TODO
-																			// manage
-																			// exception
-				}
-				List<Entity> entities = new ArrayList<Entity>();
-				do {
-					Entity entity = processResultSet(resultSet, connection);// TODO
-																			// validate
-																			// output
-					entities.add(entity);
-				} while (resultSet.next());
-				return entities;
-			}
-		}
-	}
-
-	/**
 	 * sets the nested objects of the entity.
 	 * 
 	 * @param entity
@@ -196,28 +195,33 @@ public class EntityModel {
 	 * @throws IOException
 	 */
 	private static void getNestedObjects(Entity entity, Connection connection) throws SQLException, IOException {
-		Registrar rar = RegistrarModel.getMinimumById(entity.getRarId(), connection);
-		entity.setRegistrar(rar);
-
-		VCard vCard = VCardModel.getById(entity.getVCardId(), connection);
-		entity.setVCard(vCard);
 
 		Long entityId = entity.getId();
+		try {
+			List<VCard> vCardList = VCardModel.getByEntityId(entityId, connection);
+			entity.getVCardList().addAll(vCardList);
+		} catch (ObjectNotFoundException e) {
+			// Could not have a VCard.
+		}
 
-		List<Status> byEntityId = StatusModel.getByEntityId(entityId, connection);
-		entity.getStatus().addAll(byEntityId);
+		List<Status> statusList = StatusModel.getByEntityId(entityId, connection);
+		entity.getStatus().addAll(statusList);
 
-		List<Link> byEntityId2 = LinkModel.getByEntityId(entityId, connection);
-		entity.getLinks().addAll(byEntityId2);
+		List<Link> linkList = LinkModel.getByEntityId(entityId, connection);
+		entity.getLinks().addAll(linkList);
 
-		List<Remark> byEntityId3 = RemarkModel.getByEntityId(entityId, connection);
-		entity.getRemarks().addAll(byEntityId3);
+		List<Remark> remarkList = RemarkModel.getByEntityId(entityId, connection);
+		entity.getRemarks().addAll(remarkList);
 
-		List<Event> byEntityId4 = EventModel.getByEntityId(entityId, connection);
-		entity.getEvents().addAll(byEntityId4);
+		List<Event> eventList = EventModel.getByEntityId(entityId, connection);
+		entity.getEvents().addAll(eventList);
 
-		List<PublicId> byEntity = PublicIdModel.getByEntity(entityId, connection);
-		entity.getPublicIds().addAll(byEntity);
+		List<PublicId> pidList = PublicIdModel.getByEntity(entityId, connection);
+		entity.getPublicIds().addAll(pidList);
+
+		List<Entity> entitiesByEntityId = getEntitiesByEntityId(entityId, connection);
+		entity.getEntities().addAll(entitiesByEntityId);
+
 	}
 
 	/**
@@ -238,6 +242,87 @@ public class EntityModel {
 		entity.loadFromDatabase(resultSet);
 
 		return entity;
+	}
+
+	public static List<Entity> getEntitiesByEntityId(Long entityId, Connection connection)
+			throws SQLException, IOException {
+		List<Entity> entitiesById = getEntitiesById(entityId, connection, GET_ENTITY_ENTITY_QUERY);
+		for (Entity ent : entitiesById) {
+			List<Rol> entityEntityRol = RolModel.getEntityEntityRol(entityId, ent.getId(), connection);
+			ent.getRoles().addAll(entityEntityRol);
+		}
+
+		return entitiesById;
+	}
+
+	public static List<Entity> getEntitiesByDomainId(Long domainId, Connection connection)
+			throws SQLException, IOException {
+		List<Entity> entitiesById = getEntitiesById(domainId, connection, GET_DOMAIN_ENTITY_QUERY);
+		for (Entity ent : entitiesById) {
+			List<Rol> entityEntityRol = RolModel.getDomainEntityRol(domainId, ent.getId(), connection);
+			ent.getRoles().addAll(entityEntityRol);
+		}
+		return entitiesById;
+	}
+
+	public static List<Entity> getEntitiesByNameserverId(Long nameserverId, Connection connection)
+			throws SQLException, IOException {
+		List<Entity> entitiesById = getEntitiesById(nameserverId, connection, GET_NS_ENTITY_QUERY);
+		for (Entity ent : entitiesById) {
+			List<Rol> entityEntityRol = RolModel.getNameserverEntityRol(nameserverId, ent.getId(), connection);
+			ent.getRoles().addAll(entityEntityRol);
+		}
+		return entitiesById;
+	}
+
+	private static List<Entity> getEntitiesById(Long id, Connection connection, String getQueryId)
+			throws SQLException, IOException {
+		String query = queryGroup.getQuery(getQueryId);
+		List<Entity> result = null;
+		try (PreparedStatement statement = connection.prepareStatement(query);) {
+			statement.setLong(1, id);
+			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
+			ResultSet rs = statement.executeQuery();
+			if (!rs.next()) {
+				return Collections.emptyList();
+			}
+			result = new ArrayList<>();
+
+			do {
+				EntityDAO dao = new EntityDAO();
+				dao.loadFromDatabase(rs);
+				result.add(dao);
+			} while (rs.next());
+		}
+
+		setNestedSimpleObjects(result, connection);
+
+		return result;
+	}
+
+	private static void setNestedSimpleObjects(List<Entity> entities, Connection connection)
+			throws SQLException, IOException {
+
+		for (Entity entity : entities) {
+			Long entityId = entity.getId();
+			try {
+				List<VCard> vCardList = VCardModel.getByEntityId(entityId, connection);
+				entity.getVCardList().addAll(vCardList);
+			} catch (ObjectNotFoundException e) {
+				// Could not have a VCard.
+			}
+
+			List<Status> statusList = StatusModel.getByEntityId(entityId, connection);
+			entity.getStatus().addAll(statusList);
+
+			List<PublicId> pidList = PublicIdModel.getByEntity(entityId, connection);
+			entity.getPublicIds().addAll(pidList);
+
+			List<Event> eventList = EventModel.getByEntityId(entityId, connection);
+			entity.getEvents().addAll(eventList);
+		}
+
+		return;
 	}
 
 }
