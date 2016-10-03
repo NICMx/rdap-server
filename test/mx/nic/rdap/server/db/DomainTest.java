@@ -1,15 +1,20 @@
 package mx.nic.rdap.server.db;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -19,16 +24,21 @@ import org.junit.Test;
 
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Event;
+import mx.nic.rdap.core.db.IpAddress;
 import mx.nic.rdap.core.db.Link;
+import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.PublicId;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.core.db.RemarkDescription;
 import mx.nic.rdap.core.db.Variant;
 import mx.nic.rdap.core.db.VariantName;
-import mx.nic.rdap.core.db.Zone;
+import mx.nic.rdap.core.db.struct.NameserverIpAddressesStruct;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.model.DomainModel;
+import mx.nic.rdap.server.db.model.EntityModel;
+import mx.nic.rdap.server.db.model.NameserverModel;
 import mx.nic.rdap.server.db.model.ZoneModel;
+import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
 import mx.nix.rdap.core.catalog.EventAction;
 import mx.nix.rdap.core.catalog.Rol;
 import mx.nix.rdap.core.catalog.Status;
@@ -96,143 +106,379 @@ public class DomainTest {
 		}
 	}
 
-	// @Test
-	// public void insertAndGetComplex() {
-	// RegistrarDAO registrar = RegistrarTest.getDefaultRegistrar(connection);
-	// Entity entity = EntityTest.createDefaultEntity(connection);
-	//
-	// entity.setRegistrar(null);
-	//
-	// entity.getRoles().add(Rol.TECHNICAL);
-	// entity.getRoles().add(Rol.REGISTRANT);
-	// entity.getRoles().add(Rol.ADMINISTRATIVE);
-	// entity.getRoles().add(Rol.BILLING);
-	//
-	// Zone zone = new Zone();
-	// zone.setZoneName("mx");
-	//
-	// try {
-	// ZoneModel.storeToDatabase(zone, connection);
-	// } catch (IOException | SQLException e) {
-	// e.printStackTrace();
-	// fail();
-	// }
-	//
-	// DomainDAO domain = new DomainDAO();
-	//
-	// domain.getEntities().add(entity);
-	// domain.setRegistrar(registrar);
-	// domain.setRegistrarId(registrar.getId());
-	// domain.setLdhName("foo");
-	// domain.setZone(zone);
-	// domain.setZoneId(zone.getId());
-	// domain.setSecureDNS(SecureDnsTest.createDefaultSDNS());
-	//
-	// List<Variant> variants = new ArrayList<Variant>();
-	//
-	// List<VariantRelation> relations1 = new ArrayList<VariantRelation>();
-	// relations1.add(VariantRelation.REGISTERED);
-	// relations1.add(VariantRelation.CONJOINED);
-	// List<VariantName> variantNames1 = new ArrayList<VariantName>();
-	// variantNames1.add(VariantTest.createVariantName("xn--fo-cka.mx"));
-	// variantNames1.add(VariantTest.createVariantName("xn--fo-fka.mx"));
-	//
-	// List<VariantRelation> relations2 = new ArrayList<VariantRelation>();
-	// relations2.add(VariantRelation.UNREGISTERED);
-	// relations2.add(VariantRelation.REGISTRATION_RESTRICTED);
-	// List<VariantName> variantNames2 = new ArrayList<VariantName>();
-	// variantNames2.add(VariantTest.createVariantName("xn--fo-8ja.mx"));
-	//
-	// variants.add(VariantTest.createVariant(null, relations1, variantNames1,
-	// null, null));
-	// variants.add(VariantTest.createVariant(null, relations2, variantNames2,
-	// null, ".EXAMPLE Spanish"));
-	//
-	// domain.getVariants().addAll(variants);
-	//
-	// domain.getStatus().add(Status.ACTIVE);
-	// domain.getStatus().add(Status.TRANSFER_PROHIBITED);
-	//
-	//
-	// // PublicId data
-	// List<PublicId> listPids = new ArrayList<>();
-	// PublicId pid = new PublicIdDAO();
-	// pid.setPublicId("dumy pid 1");
-	// pid.setType("dummy iana");
-	// PublicId pid2 = new PublicIdDAO();
-	// pid.setPublicId("dumy pid 2");
-	// pid.setType("dummy IETF");
-	// listPids.add(pid);
-	// listPids.add(pid2);
-	//
-	// domain.getPublicIds().addAll(listPids);
-	//
-	// // Remarks data
-	// List<Remark> remarks = new ArrayList<Remark>();
-	// Remark remark = new RemarkDAO();
-	// remark.setLanguage("ES");
-	// remark.setTitle("Prueba");
-	// remark.setType("PruebaType");
-	//
-	// List<RemarkDescription> descriptions = new
-	// ArrayList<RemarkDescription>();
-	// RemarkDescription description1 = new RemarkDescriptionDAO();
-	// description1.setOrder(1);
-	// description1.setDescription("She sells sea shells down by the sea
-	// shore.");
-	//
-	// RemarkDescription description2 = new RemarkDescriptionDAO();
-	// description2.setOrder(2);
-	// description2.setDescription("Originally written by Terry Sullivan.");
-	//
-	// descriptions.add(description1);
-	// descriptions.add(description2);
-	// remark.setDescriptions(descriptions);
-	// remarks.add(remark);
-	// entity.getRemarks().addAll(remarks);
-	//
-	// // Links data
-	// List<Link> links = new ArrayList<Link>();
-	// Link link = new LinkDAO();
-	// link.setValue("http://example.net/domain/xxxx");
-	// link.setRel("other");
-	// link.setHref("http://example.net/domain/xxxx");
-	// link.setType("application/rdap+json");
-	// links.add(link);
-	// domain.getLinks().addAll(links);
-	//
-	// // Events Data
-	// List<Event> events = new ArrayList<Event>();
-	// Event event1 = new EventDAO();
-	// event1.setEventAction(EventAction.REGISTRATION);
-	// event1.setEventDate(new Timestamp(((new Date()).getTime())));
-	//
-	// Event event2 = new EventDAO();
-	// event2.setEventAction(EventAction.LAST_CHANGED);
-	// event2.setEventDate(new Timestamp(((new Date()).getTime())));
-	// event2.setEventActor("joe@example.com");
-	//
-	// // event links data
-	// List<Link> eventLinks = new ArrayList<Link>();
-	// Link eventLink = new LinkDAO();
-	// eventLink.setValue("eventLink1");
-	// eventLink.setRel("eventlink");
-	// eventLink.setHref("http://example.net/eventlink/xxxx");
-	// eventLink.setType("application/rdap+json");
-	// eventLinks.add(eventLink);
-	// event2.setLinks(eventLinks);
-	//
-	// events.add(event1);
-	// events.add(event2);
-	// domain.getEvents().addAll(events);
-	//
-	//
-	// domain.setHandle("foo." + zone.getZoneName());
-	//
-	// DomainModel.storeToDatabase(domain, connection);
-	//
-	//
-	//
-	// }
+	@Test
+	/**
+	 * TODO Unfinished Inserts a default domain
+	 * 
+	 * @return
+	 */
+	public void insertDomainAndGet() {
 
+		Random random = new Random();
+		int randomInt = random.nextInt();
+		DomainDAO domain = new DomainDAO();
+		// TODO Insert with namesarvers
+		// Creates and inserts a default nameserver
+		// List<Nameserver> nameservers = new ArrayList<Nameserver>();
+		// try {
+		// nameservers = createDefaultNameservers(randomInt, regId);
+		// } catch (UnknownHostException e1) {
+		// e1.printStackTrace();
+		// }
+		//// domain.setNameServers(nameservers);
+
+		// TODO Insert with entity
+		// Creates and inserts a default entity
+		// Entity entity = createDefaultEntity(connection);
+		// entity.setRegistrar(registrar);
+		// List<Rol> roles = new ArrayList<Rol>();
+		//
+		// roles.add(Rol.TECHNICAL);
+		// entity.setRoles(roles);
+		// entity.getRoles().add(Rol.TECHNICAL);
+		// entity.getRoles().add(Rol.REGISTRANT);
+		// entity.getRoles().add(Rol.ADMINISTRATIVE);
+		// entity.getRoles().add(Rol.BILLING);
+		// domain.getEntities().add(entity);
+
+		// Creates and inserts a zone
+		ZoneDAO zone = new ZoneDAO();
+		zone.setZoneName("mx" + randomInt);
+
+		try {
+			ZoneModel.storeToDatabase(zone, connection);
+		} catch (IOException | SQLException e) {
+			e.printStackTrace();
+			fail();
+		}
+
+		domain.setLdhName("foo");
+		domain.setZone(zone);
+		domain.setZoneId(zone.getId());
+		domain.setSecureDNS(SecureDnsTest.createDefaultSDNS());
+
+		// Creates and inserts a list of variants into the domain
+		List<Variant> variants = new ArrayList<Variant>();
+
+		List<VariantRelation> relations1 = new ArrayList<VariantRelation>();
+		relations1.add(VariantRelation.REGISTERED);
+		relations1.add(VariantRelation.CONJOINED);
+		List<VariantName> variantNames1 = new ArrayList<VariantName>();
+		variantNames1.add(VariantTest.createVariantName("xn--fo-cka.mx"));
+		variantNames1.add(VariantTest.createVariantName("xn--fo-fka.mx"));
+
+		List<VariantRelation> relations2 = new ArrayList<VariantRelation>();
+		relations2.add(VariantRelation.UNREGISTERED);
+		relations2.add(VariantRelation.REGISTRATION_RESTRICTED);
+		List<VariantName> variantNames2 = new ArrayList<VariantName>();
+		variantNames2.add(VariantTest.createVariantName("xn--fo-8ja.mx"));
+
+		variants.add(VariantTest.createVariant(null, relations1, variantNames1, null, null));
+		variants.add(VariantTest.createVariant(null, relations2, variantNames2, null, ".EXAMPLE Spanish"));
+
+		domain.getVariants().addAll(variants);
+
+		domain.getStatus().add(Status.ACTIVE);
+		domain.getStatus().add(Status.TRANSFER_PROHIBITED);
+
+		// Creates and inserts default public id
+		List<PublicId> listPids = new ArrayList<>();
+		PublicId pid = new PublicIdDAO();
+		pid.setPublicId("dumy pid 1");
+		pid.setType("dummy iana");
+		PublicId pid2 = new PublicIdDAO();
+		pid.setPublicId("dumy pid 2");
+		pid.setType("dummy IETF");
+		listPids.add(pid);
+		listPids.add(pid2);
+
+		domain.getPublicIds().addAll(listPids);
+
+		// Creates and inserts Remark data
+		List<Remark> remarks = new ArrayList<Remark>();
+		Remark remark = new RemarkDAO();
+		remark.setLanguage("ES");
+		remark.setTitle("Prueba");
+		remark.setType("PruebaType");
+
+		List<RemarkDescription> descriptions = new ArrayList<RemarkDescription>();
+		RemarkDescription description1 = new RemarkDescriptionDAO();
+		description1.setOrder(1);
+		description1.setDescription("She sells sea shells down by the sea shore.");
+
+		RemarkDescription description2 = new RemarkDescriptionDAO();
+		description2.setOrder(2);
+		description2.setDescription("Originally written by Terry Sullivan.");
+
+		descriptions.add(description1);
+		descriptions.add(description2);
+		remark.setDescriptions(descriptions);
+		remarks.add(remark);
+		domain.getRemarks().addAll(remarks);
+
+		// Links data
+		List<Link> links = new ArrayList<Link>();
+		Link link = new LinkDAO();
+		link.setValue("http://example.net/domain/xxxx");
+		link.setRel("other");
+		link.setHref("http://example.net/domain/xxxx");
+		link.setType("application/rdap+json");
+		links.add(link);
+		domain.getLinks().addAll(links);
+
+		// Events Data
+		List<Event> events = new ArrayList<Event>();
+		Event event1 = new EventDAO();
+		event1.setEventAction(EventAction.REGISTRATION);
+		event1.setEventDate(new Timestamp(((new Date()).getTime())));
+
+		Event event2 = new EventDAO();
+		event2.setEventAction(EventAction.LAST_CHANGED);
+		event2.setEventDate(new Timestamp(((new Date()).getTime())));
+		event2.setEventActor("joe@example.com");
+
+		// event links data
+		List<Link> eventLinks = new ArrayList<Link>();
+		Link eventLink = new LinkDAO();
+		eventLink.setValue("eventLink1");
+		eventLink.setRel("eventlink");
+		eventLink.setHref("http://example.net/eventlink/xxxx");
+		eventLink.setType("application/rdap+json");
+		eventLinks.add(eventLink);
+		event2.setLinks(eventLinks);
+
+		events.add(event1);
+		events.add(event2);
+		domain.getEvents().addAll(events);
+
+		domain.setHandle("foo." + zone.getZoneName());
+		Long domainId = null;
+		try {
+			domainId = DomainModel.storeToDatabase(domain, connection);
+		} catch (SQLException | IOException | RequiredValueNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+
+		try (Statement statement = connection.createStatement()) {
+			ResultSet resultSet = statement.executeQuery("SELECT * FROM rdap.domain_entity_roles");
+			resultSet.next();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		// Get domain By its id
+		System.out.println("" + domain.getSecureDNS().getId());
+		try {
+			DomainModel.getDomainById(domainId, connection);
+		} catch (SQLException | IOException e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+
+		// TODO Get domain by it´s Id
+	}
+
+	public static List<Nameserver> createDefaultNameservers(int randomInt, Long rarId) throws UnknownHostException {
+		List<Nameserver> nameservers = new ArrayList<Nameserver>();
+		Nameserver nameserver = new NameserverDAO();
+		nameserver.setHandle("XXXX73532" + randomInt);
+		nameserver.setPunycodeName("ns1.xn--fo-5ja" + randomInt + ".example");
+		nameserver.setPort43("whois.example.net");
+		nameserver.setRarId(rarId);
+
+		// IpAddressStruct data
+		NameserverIpAddressesStruct ipAddresses = new NameserverIpAddressesStruct();
+
+		IpAddress ipv41 = new IpAddressDAO();
+		ipv41.setAddress(InetAddress.getByName("192.0.2.1"));
+		ipv41.setType(4);
+		ipAddresses.getIpv4Adresses().add(ipv41);
+
+		IpAddress ipv42 = new IpAddressDAO();
+		ipv42.setAddress(InetAddress.getByName("192.0.2.2"));
+		ipv42.setType(4);
+		ipAddresses.getIpv4Adresses().add(ipv42);
+
+		IpAddress ipv6 = new IpAddressDAO();
+		ipv6.setAddress(InetAddress.getByName("2001:db8::123"));
+		ipv6.setType(6);
+		ipAddresses.getIpv6Adresses().add(ipv6);
+		nameserver.setIpAddresses(ipAddresses);
+
+		// Status data
+		List<Status> statusList = new ArrayList<Status>();
+		statusList.add(Status.ACTIVE);
+		statusList.add(Status.ASSOCIATED);
+		nameserver.setStatus(statusList);
+
+		// Remarks data
+		List<Remark> remarks = new ArrayList<Remark>();
+		Remark remark = new RemarkDAO();
+		remark.setLanguage("ES");
+		remark.setTitle("Prueba");
+		remark.setType("PruebaType");
+
+		List<RemarkDescription> descriptions = new ArrayList<RemarkDescription>();
+		RemarkDescription description1 = new RemarkDescriptionDAO();
+		description1.setOrder(1);
+		description1.setDescription("She sells sea shells down by the sea shore.");
+
+		RemarkDescription description2 = new RemarkDescriptionDAO();
+		description2.setOrder(2);
+		description2.setDescription("Originally written by Terry Sullivan.");
+
+		descriptions.add(description1);
+		descriptions.add(description2);
+		remark.setDescriptions(descriptions);
+		remarks.add(remark);
+		nameserver.setRemarks(remarks);
+
+		// Links data
+		List<Link> links = new ArrayList<Link>();
+		Link link = new LinkDAO();
+		link.setValue("http://example.net/nameserver/xxxx");
+		link.setRel("self");
+		link.setHref("http://example.net/nameserver/xxxx");
+		link.setType("application/rdap+json");
+		links.add(link);
+		nameserver.setLinks(links);
+
+		// Events Data
+		List<Event> events = new ArrayList<Event>();
+		Event event1 = new EventDAO();
+		event1.setEventAction(EventAction.REGISTRATION);
+		event1.setEventDate(new Date());
+
+		Event event2 = new EventDAO();
+		event2.setEventAction(EventAction.LAST_CHANGED);
+		event2.setEventDate(new Date());
+		event2.setEventActor("joe@example.com");
+
+		// event links data
+		List<Link> eventLinks = new ArrayList<Link>();
+		Link eventLink = new LinkDAO();
+		eventLink.setValue("eventLink1");
+		eventLink.setRel("eventlink");
+		eventLink.setHref("http://example.net/eventlink/xxxx");
+		eventLink.setType("application/rdap+json");
+		eventLinks.add(eventLink);
+		event2.setLinks(eventLinks);
+
+		events.add(event1);
+		events.add(event2);
+		nameserver.setEvents(events);
+		try {
+			NameserverModel.storeToDatabase(nameserver);
+		} catch (IOException | SQLException | RequiredValueNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		nameservers.add(nameserver);
+		return nameservers;
+	}
+
+	public static Entity createDefaultEntity(Connection connection) {
+		// Entity base data
+
+		// Create local instances
+		Entity entity = createEntity(null, "ent_dhfelix", null, null, null);
+
+		try {
+			Entity byHandle = EntityModel.getByHandle(entity.getHandle(), connection);
+			return byHandle;
+		} catch (SQLException | IOException e) {
+			e.printStackTrace();
+			fail();
+		}
+		// Status data
+		List<Status> statusList = new ArrayList<Status>();
+		statusList.add(Status.ACTIVE);
+		statusList.add(Status.ASSOCIATED);
+		entity.setStatus(statusList);
+
+		// Remarks data
+		List<Remark> remarks = new ArrayList<Remark>();
+		Remark remark = new RemarkDAO();
+		remark.setLanguage("ES");
+		remark.setTitle("Prueba");
+		remark.setType("PruebaType");
+
+		List<RemarkDescription> descriptions = new ArrayList<RemarkDescription>();
+		RemarkDescription description1 = new RemarkDescriptionDAO();
+		description1.setOrder(1);
+		description1.setDescription("She sells sea shells down by the sea shore.");
+
+		RemarkDescription description2 = new RemarkDescriptionDAO();
+		description2.setOrder(2);
+		description2.setDescription("Originally written by Terry Sullivan.");
+
+		descriptions.add(description1);
+		descriptions.add(description2);
+		remark.setDescriptions(descriptions);
+		remarks.add(remark);
+		entity.getRemarks().addAll(remarks);
+
+		// Links data
+		List<Link> links = new ArrayList<Link>();
+		Link link = new LinkDAO();
+		link.setValue("http://example.net/nameserver/xxxx");
+		link.setRel("self");
+		link.setHref("http://example.net/nameserver/xxxx");
+		link.setType("application/rdap+json");
+		links.add(link);
+		entity.getLinks().addAll(links);
+
+		// Events Data
+		List<Event> events = new ArrayList<Event>();
+		Event event1 = new EventDAO();
+		event1.setEventAction(EventAction.REGISTRATION);
+		event1.setEventDate(new Timestamp(((new Date()).getTime())));
+
+		Event event2 = new EventDAO();
+		event2.setEventAction(EventAction.LAST_CHANGED);
+		event2.setEventDate(new Timestamp(((new Date()).getTime())));
+		event2.setEventActor("joe@example.com");
+
+		// event links data
+		List<Link> eventLinks = new ArrayList<Link>();
+		Link eventLink = new LinkDAO();
+		eventLink.setValue("eventLink1");
+		eventLink.setRel("eventlink");
+		eventLink.setHref("http://example.net/eventlink/xxxx");
+		eventLink.setType("application/rdap+json");
+		eventLinks.add(eventLink);
+		event2.setLinks(eventLinks);
+
+		events.add(event1);
+		events.add(event2);
+		entity.getEvents().addAll(events);
+
+		// PublicId data
+		List<PublicId> listPids = new ArrayList<>();
+		PublicId pid = new PublicIdDAO();
+		pid.setPublicId("dumy pid 1");
+		pid.setType("dummy iana");
+		PublicId pid2 = new PublicIdDAO();
+		pid.setPublicId("dumy pid 2");
+		pid.setType("dummy IETF");
+		listPids.add(pid);
+		listPids.add(pid2);
+
+		entity.getPublicIds().addAll(listPids);
+
+		List<Rol> listRoles = new ArrayList<>();
+		Rol rol = Rol.REGISTRAR;
+		listRoles.add(rol);
+		return entity;
+	}
+
+	public static EntityDAO createEntity(Long id, String handle, String port43, Long rarId, Long vCardId) {
+		EntityDAO e = new EntityDAO();
+		e.setId(id);
+		e.setHandle(handle);
+		e.setPort43(port43);
+		return e;
+	}
 }

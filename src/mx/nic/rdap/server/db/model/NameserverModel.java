@@ -72,6 +72,7 @@ public class NameserverModel {
 			result.next();
 			Long nameserverId = result.getLong(1);// The id of the nameserver
 													// inserted
+			nameserver.setId(nameserverId);
 			IpAddressModel.storeToDatabase(nameserver.getIpAddresses(), nameserverId, connection);
 			StatusModel.storeNameserverStatusToDatabase(nameserver.getStatus(), nameserverId, connection);
 			RemarkModel.storeNameserverRemarksToDatabase(nameserver.getRemarks(), nameserverId, connection);
@@ -83,18 +84,20 @@ public class NameserverModel {
 
 	public static void storeDomainNameserversToDatabase(List<Nameserver> nameservers, Long domainId,
 			Connection connection) throws SQLException, IOException, RequiredValueNotFoundException {
-		try (PreparedStatement statement = connection
-				.prepareStatement(queryGroup.getQuery("storeNameserverLinksToDatabase"))) {
-			for (Nameserver nameserver : nameservers) {
-				NameserverModel.storeToDatabase(nameserver);// TODO
-				// Check
-				// connection,
-				// connection);
-				statement.setLong(1, domainId);
-				statement.setLong(2, nameserver.getId());
-				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-				statement.executeUpdate();// TODO Validate if the
-				// insert was correct
+
+		if (nameservers.size() > 0) {
+			try (PreparedStatement statement = connection
+					.prepareStatement(queryGroup.getQuery("storeDomainNameserversToDatabase"))) {
+
+				Long nameserverId;
+				for (Nameserver nameserver : nameservers) {
+					statement.setLong(1, domainId);
+					nameserverId = nameserver.getId();
+					statement.setLong(2, nameserverId);
+					logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+					statement.executeUpdate();// TODO Validate if the
+					// insert was correct
+				}
 			}
 		}
 	}
@@ -129,13 +132,14 @@ public class NameserverModel {
 
 	public static List<Nameserver> getByDomainId(Long domainId, Connection connection)
 			throws SQLException, IOException {
+		System.out.println(connection.toString() + " " + domainId);
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByDomainId"))) {
+			System.out.println(statement.toString());
 			statement.setLong(1, domainId);
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
 				if (!resultSet.next()) {
-					// TODO a domain can not have nameservers?
-					// throw new ObjectNotFoundException("Object not found.");
+
 					return Collections.emptyList();
 
 				}
