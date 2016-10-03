@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.server.db.QueryGroup;
+import mx.nic.rdap.server.exception.ObjectNotFoundException;
 import mx.nix.rdap.core.catalog.Rol;
 
 /**
@@ -119,6 +120,63 @@ public class RolModel {
 				}
 			}
 		}
+	}
+
+	public static void storeMainEntityRol(List<Entity> nestedEntitiesId, Entity mainEntity, Connection connection)
+			throws SQLException {
+		if (nestedEntitiesId.isEmpty() || mainEntity.getRoles().isEmpty()) {
+			return;
+		}
+
+		String query = queryGroup.getQuery(STORE_ENTITY_ROLES);
+		try (PreparedStatement statement = connection.prepareStatement(query);) {
+			for (Rol rol : mainEntity.getRoles()) {
+				for (Entity nestedEntity : nestedEntitiesId) {
+					statement.setLong(1, nestedEntity.getId());
+					statement.setLong(2, mainEntity.getId());
+					statement.setInt(3, rol.getId());
+					logger.log(Level.INFO, "Executing QUERY" + statement.toString());
+					statement.execute();
+				}
+			}
+		}
+
+	}
+
+	public static List<Rol> getMainEntityRol(List<Entity> nestedEntitiesId, Entity mainEntity, Connection connection)
+			throws SQLException {
+		if (nestedEntitiesId.isEmpty()) {
+			return Collections.emptyList();
+		}
+		String query = queryGroup.getQuery("getMainEntityRol");
+
+		StringBuilder sb = new StringBuilder();
+		int i;
+		for (i = 0; i < nestedEntitiesId.size() - 1; i++) {
+			sb.append(nestedEntitiesId.get(i).getId() + ", ");
+		}
+		sb.append(nestedEntitiesId.get(i).getId());
+
+		List<Rol> resultRoles = null;
+		try (PreparedStatement statement = connection.prepareStatement(query);) {
+			statement.setLong(1, mainEntity.getId());
+			statement.setString(2, sb.toString());
+			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
+			ResultSet rs = statement.executeQuery();
+			if (!rs.next())
+				return Collections.emptyList();
+
+			resultRoles = new ArrayList<>();
+			do {
+				int rolId = rs.getInt(1);
+				if (rs.wasNull()) {
+					throw new ObjectNotFoundException("Return rows, but not valid rol id");
+				}
+				resultRoles.add(Rol.getById(rolId));
+			} while (rs.next());
+		}
+
+		return resultRoles;
 	}
 
 }

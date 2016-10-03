@@ -465,6 +465,51 @@ public class EntityTest {
 
 	}
 
+	@Test
+	public void createAndInsertRegistrar() {
+		Entity entity = createEntity(null, "rar_test", "whois.rar_test.com");
+		entity.getRoles().add(Rol.REGISTRAR);
+
+		Entity legal = createEntity(null, "legal_contact", null);
+		legal.getRoles().add(Rol.ADMINISTRATIVE);
+
+		Entity tech = createEntity(null, "tech_contact", null);
+		tech.getRoles().add(Rol.TECHNICAL);
+
+		entity.getEntities().add(tech);
+		entity.getEntities().add(legal);
+
+		// Store it in the database
+		Long entId = null;
+		try {
+			entId = EntityModel.storeToDatabase(entity, connection);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+
+		// Query the database
+		Entity byId = null;
+		try {
+			byId = EntityModel.getById(entId, connection);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+		Entity byHandle = null;
+		try {
+			byHandle = EntityModel.getByHandle(entity.getHandle(), connection);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+
+		// Compares the results
+		Assert.assertTrue("getById fails", entity.equals(byId));
+		Assert.assertTrue("getByHandle fails", entity.equals(byHandle));
+
+	}
+
 	/**
 	 * Create a new instance, and set the incoming parameters. (Does not store
 	 * the instance in the Database).

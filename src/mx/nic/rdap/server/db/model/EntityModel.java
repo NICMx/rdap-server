@@ -136,6 +136,9 @@ public class EntityModel {
 			storeToDatabase(ent, connection);
 		}
 		RolModel.storeEntityEntityRoles(entity.getEntities(), entity.getId(), connection);
+
+		if (!entity.getRoles().isEmpty() && !entity.getEntities().isEmpty())
+			RolModel.storeMainEntityRol(entity.getEntities(), entity, connection);
 	}
 
 	/**
@@ -221,6 +224,9 @@ public class EntityModel {
 
 		List<Entity> entitiesByEntityId = getEntitiesByEntityId(entityId, connection);
 		entity.getEntities().addAll(entitiesByEntityId);
+
+		List<Rol> mainEntityRol = RolModel.getMainEntityRol(entitiesByEntityId, entity, connection);
+		entity.getRoles().addAll(mainEntityRol);
 
 	}
 
