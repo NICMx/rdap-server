@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,11 +13,11 @@ import com.mysql.jdbc.Statement;
 
 import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.core.db.Entity;
+import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.server.db.DomainDAO;
 import mx.nic.rdap.server.db.QueryGroup;
 import mx.nic.rdap.server.exception.ObjectNotFoundException;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
-import mx.nix.rdap.core.catalog.Rol;
 
 /**
  * Model for the Domain Object
@@ -32,7 +31,7 @@ public class DomainModel {
 
 	private final static String QUERY_GROUP = "Domain";
 
-	protected static QueryGroup queryGroup = null;
+	private static QueryGroup queryGroup = null;
 
 	static {
 		try {
@@ -65,15 +64,29 @@ public class DomainModel {
 			domainId = resultSet.getLong(1);
 			domain.setId(domainId);
 		}
+
 		RemarkModel.storeDomainRemarksToDatabase(domain.getRemarks(), domainId, connection);
 		EventModel.storeDomainEventsToDatabase(domain.getEvents(), domainId, connection);
 		StatusModel.storeDomainStatusToDatabase(domain.getStatus(), domainId, connection);
 		LinkModel.storeDomainLinksToDatabase(domain.getLinks(), domainId, connection);
-		NameserverModel.storeDomainNameserversToDatabase(domain.getNameServers(), domainId, connection);
+
+		domain.getSecureDNS().setDomainId(domainId);
 		SecureDNSModel.storeToDatabase(domain.getSecureDNS(), connection);
-		// TODO Store Entity domain relation
-		// storeDomainEntityRoles(domain.getEntities(), domainId, connection);
-		domain.setId(domainId);
+
+		for (Nameserver ns : domain.getNameServers()) {
+			NameserverModel.storeToDatabase(ns, connection);
+		}
+		NameserverModel.storeDomainNameserversToDatabase(domain.getNameServers(), domainId, connection);
+
+		for (Entity ent : domain.getEntities()) {
+			EntityModel.storeToDatabase(ent, connection);
+		}
+		RolModel.storeDomainEntityRoles(domain.getEntities(), domainId, connection);
+
+		PublicIdModel.storePublicIdByDomain(domain.getPublicIds(), domain.getId(), connection);
+
+		VariantModel.storeAllToDatabase(domain.getVariants(), domain.getId(), connection);
+
 		return domainId;
 	}
 
@@ -96,7 +109,6 @@ public class DomainModel {
 																			// exception
 				}
 				Domain domain = new DomainDAO(resultSet);
-				System.out.println(domain.getId());
 				loadNestedObjects(domain, connection);
 				return domain;
 			}
@@ -122,42 +134,8 @@ public class DomainModel {
 																			// exception
 				}
 				Domain domain = new DomainDAO(resultSet);
-				System.out.println(domain.getId());
 				loadNestedObjects(domain, connection);
 				return domain;
-			}
-		}
-	}
-
-	/**
-	 * Stores all domain entity role relations into database on table
-	 * domain_entity_role
-	 * 
-	 * @param entities
-	 *            A list of entities from the domain
-	 * @param domainId
-	 *            Unique identifier of the domain
-	 * @param connection
-	 * @throws SQLException
-	 * @throws RequiredValueNotFoundException
-	 * @throws IOException
-	 */
-	public static void storeDomainEntityRoles(List<Entity> entities, Long domainId, Connection connection)
-			throws SQLException, IOException, RequiredValueNotFoundException {
-		for (Entity entity : entities) {
-			Long entityId = entity.getId();
-			List<Rol> roles = new ArrayList<Rol>();
-			System.out.println("" + entityId + " " + domainId);
-			System.out.println(entity.getRoles() + " " + entity.getRoles().get(0).getId());
-			try (PreparedStatement statement = connection
-					.prepareStatement(queryGroup.getQuery("storeDomainEntityRoles"))) {
-				statement.setLong(1, domainId);
-				statement.setLong(2, entityId);
-				for (Rol rol : roles) {
-					statement.setLong(3, rol.getId());
-					logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-					statement.executeUpdate();
-				}
 			}
 		}
 	}
@@ -174,9 +152,16 @@ public class DomainModel {
 		domain.setPublicIds(PublicIdModel.getByDomain(domainId, connection));
 		domain.setSecureDNS(SecureDNSModel.getByDomain(domainId, connection));
 		domain.setVariants(VariantModel.getByDomainId(domainId, connection));
-		domain.setZone(ZoneModel.getByZoneId(domain.getZoneId(), connection));
+		domain.setZone(ZoneModel.getByZoneId(domain.getZone().getId(), connection));
 		// TODO look for entity with domain
 		// domain.setEntities(EntityModel.getByDomainId(domainId, connection));
+
+		List<Nameserver> domainsNS = NameserverModel.getByDomainId(domainId, connection);
+		domain.getNameServers().addAll(domainsNS);
+
+		List<Entity> entitiesByDomainId = EntityModel.getEntitiesByDomainId(domainId, connection);
+		domain.setEntities(entitiesByDomainId);
+
 	}
 
 }

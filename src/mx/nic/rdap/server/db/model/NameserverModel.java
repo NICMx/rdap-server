@@ -32,7 +32,15 @@ public class NameserverModel {
 
 	private final static String QUERY_GROUP = "Nameserver";
 
-	protected static QueryGroup queryGroup = null;
+	private static QueryGroup queryGroup = null;
+
+	static {
+		try {
+			queryGroup = new QueryGroup(QUERY_GROUP);
+		} catch (IOException e) {
+			throw new RuntimeException("Error loading query group");
+		}
+	}
 
 	/**
 	 * Validate the required attributes for the nameserver
@@ -43,10 +51,6 @@ public class NameserverModel {
 	private static void isValidForStore(Nameserver nameserver) throws RequiredValueNotFoundException {
 		if (nameserver.getPunycodeName() == null || nameserver.getPunycodeName().isEmpty())
 			throw new RequiredValueNotFoundException("ldhName", "Nameserver");
-		if (nameserver.getRarId() == null) {// Never has to result true
-			throw new RequiredValueNotFoundException("rarId", "Nameserver");
-
-		}
 	}
 
 	/**
@@ -57,13 +61,12 @@ public class NameserverModel {
 	 * @throws SQLException
 	 * @throws RequiredValueNotFoundException
 	 */
-	public static void storeToDatabase(Nameserver nameserver)
+	public static void storeToDatabase(Nameserver nameserver, Connection connection)
 			throws IOException, SQLException, RequiredValueNotFoundException {
 		isValidForStore(nameserver);
 		NameserverModel.queryGroup = new QueryGroup(QUERY_GROUP);
-		try (Connection connection = DatabaseSession.getConnection();
-				PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"),
-						Statement.RETURN_GENERATED_KEYS)) {
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"),
+				Statement.RETURN_GENERATED_KEYS)) {
 			((NameserverDAO) nameserver).storeToDatabase(statement);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			statement.executeUpdate();// TODO Validate if the
@@ -132,16 +135,13 @@ public class NameserverModel {
 
 	public static List<Nameserver> getByDomainId(Long domainId, Connection connection)
 			throws SQLException, IOException {
-		System.out.println(connection.toString() + " " + domainId);
-		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByDomainId"))) {
-			System.out.println(statement.toString());
+		String query = queryGroup.getQuery("getByDomainId");
+		try (PreparedStatement statement = connection.prepareStatement(query)) {
 			statement.setLong(1, domainId);
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
 				if (!resultSet.next()) {
-
 					return Collections.emptyList();
-
 				}
 				List<Nameserver> nameservers = new ArrayList<Nameserver>();
 				do {

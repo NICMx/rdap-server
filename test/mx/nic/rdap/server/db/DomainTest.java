@@ -18,10 +18,13 @@ import java.util.Random;
 
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import mx.nic.rdap.core.db.Domain;
+import mx.nic.rdap.core.db.DsData;
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Event;
 import mx.nic.rdap.core.db.IpAddress;
@@ -30,14 +33,14 @@ import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.PublicId;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.core.db.RemarkDescription;
+import mx.nic.rdap.core.db.SecureDNS;
 import mx.nic.rdap.core.db.Variant;
 import mx.nic.rdap.core.db.VariantName;
+import mx.nic.rdap.core.db.Zone;
 import mx.nic.rdap.core.db.struct.NameserverIpAddressesStruct;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.model.DomainModel;
 import mx.nic.rdap.server.db.model.EntityModel;
-import mx.nic.rdap.server.db.model.NameserverModel;
-import mx.nic.rdap.server.db.model.ZoneModel;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
 import mx.nix.rdap.core.catalog.EventAction;
 import mx.nix.rdap.core.catalog.Rol;
@@ -107,6 +110,55 @@ public class DomainTest {
 	}
 
 	@Test
+	public void insertAndGetSimpleDomain() {
+		Entity registrar = new EntityDAO();
+		registrar.setHandle("rar_dhfelix");
+		registrar.setPort43("whois.dhfelixrar.mx");
+		registrar.getRoles().add(Rol.SPONSOR);
+
+		Entity ent = new EntityDAO();
+		ent.setHandle("usr_evaldez");
+		ent.getRoles().add(Rol.REGISTRANT);
+		ent.getRoles().add(Rol.ADMINISTRATIVE);
+		ent.getRoles().add(Rol.TECHNICAL);
+
+		Domain dom = new DomainDAO();
+		dom.getEntities().add(ent);
+		dom.getEntities().add(registrar);
+		dom.setHandle("dom_testdom");
+		dom.setLdhName("mydomaintest");
+		Zone zone = new Zone();
+		zone.setId(100);
+		zone.setZoneName("mx");
+		dom.setZone(zone);
+
+		SecureDNSDAO secureDNS = SecureDnsTest.getSecureDns(null, null, false, false, null);
+		dom.setSecureDNS(secureDNS);
+
+		Long domId = null;
+		try {
+			domId = DomainModel.storeToDatabase(dom, connection);
+		} catch (SQLException | IOException | RequiredValueNotFoundException e) {
+			e.printStackTrace();
+			fail();
+		}
+
+		Domain domainById = null;
+		Domain findByLdhName = null;
+		try {
+			domainById = DomainModel.getDomainById(domId, connection);
+			findByLdhName = DomainModel.findByLdhName(dom.getLdhName(), connection);
+		} catch (SQLException | IOException e) {
+			e.printStackTrace();
+			fail();
+		}
+
+		// Compares the results
+		Assert.assertTrue("getById fails", dom.equals(domainById));
+		Assert.assertTrue("findByLdhName fails", dom.equals(findByLdhName));
+	}
+
+	@Test
 	/**
 	 * TODO Unfinished Inserts a default domain
 	 * 
@@ -117,44 +169,38 @@ public class DomainTest {
 		Random random = new Random();
 		int randomInt = random.nextInt();
 		DomainDAO domain = new DomainDAO();
+
+		Entity registrar = new EntityDAO();
+		registrar.setHandle("rar_dhfelix");
+		registrar.setPort43("whois.dhfelixrar.mx");
+		registrar.getRoles().add(Rol.SPONSOR);
+
+		Entity ent = new EntityDAO();
+		ent.setHandle("usr_evaldez");
+		ent.getRoles().add(Rol.REGISTRANT);
+		ent.getRoles().add(Rol.ADMINISTRATIVE);
+		ent.getRoles().add(Rol.TECHNICAL);
+
+		domain.getEntities().add(ent);
+		domain.getEntities().add(registrar);
+
 		// TODO Insert with namesarvers
 		// Creates and inserts a default nameserver
-		// List<Nameserver> nameservers = new ArrayList<Nameserver>();
-		// try {
-		// nameservers = createDefaultNameservers(randomInt, regId);
-		// } catch (UnknownHostException e1) {
-		// e1.printStackTrace();
-		// }
-		//// domain.setNameServers(nameservers);
-
-		// TODO Insert with entity
-		// Creates and inserts a default entity
-		// Entity entity = createDefaultEntity(connection);
-		// entity.setRegistrar(registrar);
-		// List<Rol> roles = new ArrayList<Rol>();
-		//
-		// roles.add(Rol.TECHNICAL);
-		// entity.setRoles(roles);
-		// entity.getRoles().add(Rol.TECHNICAL);
-		// entity.getRoles().add(Rol.REGISTRANT);
-		// entity.getRoles().add(Rol.ADMINISTRATIVE);
-		// entity.getRoles().add(Rol.BILLING);
-		// domain.getEntities().add(entity);
+		List<Nameserver> nameservers = new ArrayList<Nameserver>();
+		try {
+			nameservers = createDefaultNameservers(randomInt);
+		} catch (UnknownHostException e1) {
+			e1.printStackTrace();
+		}
+		domain.setNameServers(nameservers);
 
 		// Creates and inserts a zone
-		ZoneDAO zone = new ZoneDAO();
-		zone.setZoneName("mx" + randomInt);
-
-		try {
-			ZoneModel.storeToDatabase(zone, connection);
-		} catch (IOException | SQLException e) {
-			e.printStackTrace();
-			fail();
-		}
+		Zone zone = new Zone();
+		zone.setId(100);
+		zone.setZoneName("mx");
 
 		domain.setLdhName("foo");
 		domain.setZone(zone);
-		domain.setZoneId(zone.getId());
 		domain.setSecureDNS(SecureDnsTest.createDefaultSDNS());
 
 		// Creates and inserts a list of variants into the domain
@@ -252,6 +298,16 @@ public class DomainTest {
 		domain.getEvents().addAll(events);
 
 		domain.setHandle("foo." + zone.getZoneName());
+
+		List<DsData> dsDataList = new ArrayList<>();
+		DsData dsData = SecureDnsTest.getDsData(null, null, 66612, 1, "ABCDEF1234", 1, null, null);
+		DsData dsData2 = SecureDnsTest.getDsData(null, null, 1234, 1, "abcd5432", 1, null, null);
+		dsDataList.add(dsData);
+		dsDataList.add(dsData2);
+
+		SecureDNS secureDns = SecureDnsTest.getSecureDns(null, null, true, true, dsDataList);
+		domain.setSecureDNS(secureDns);
+
 		Long domainId = null;
 		try {
 			domainId = DomainModel.storeToDatabase(domain, connection);
@@ -269,24 +325,28 @@ public class DomainTest {
 			e1.printStackTrace();
 		}
 		// Get domain By its id
-		System.out.println("" + domain.getSecureDNS().getId());
+		Domain domainById = null;
+		Domain findByLdhName = null;
 		try {
-			DomainModel.getDomainById(domainId, connection);
+			domainById = DomainModel.getDomainById(domainId, connection);
+			findByLdhName = DomainModel.findByLdhName(domain.getLdhName(), connection);
 		} catch (SQLException | IOException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
 
-		// TODO Get domain by it´s Id
+		// Compares the results
+		Assert.assertTrue("getById fails", domain.equals(domainById));
+		Assert.assertTrue("findByLdhName fails", domain.equals(findByLdhName));
+
 	}
 
-	public static List<Nameserver> createDefaultNameservers(int randomInt, Long rarId) throws UnknownHostException {
+	public static List<Nameserver> createDefaultNameservers(int randomInt) throws UnknownHostException {
 		List<Nameserver> nameservers = new ArrayList<Nameserver>();
 		Nameserver nameserver = new NameserverDAO();
 		nameserver.setHandle("XXXX73532" + randomInt);
 		nameserver.setPunycodeName("ns1.xn--fo-5ja" + randomInt + ".example");
 		nameserver.setPort43("whois.example.net");
-		nameserver.setRarId(rarId);
 
 		// IpAddressStruct data
 		NameserverIpAddressesStruct ipAddresses = new NameserverIpAddressesStruct();
@@ -369,12 +429,13 @@ public class DomainTest {
 		events.add(event1);
 		events.add(event2);
 		nameserver.setEvents(events);
-		try {
-			NameserverModel.storeToDatabase(nameserver);
-		} catch (IOException | SQLException | RequiredValueNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		// try {
+		// NameserverModel.storeToDatabase(nameserver, connection);
+		// } catch (IOException | SQLException | RequiredValueNotFoundException
+		// e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 		nameservers.add(nameserver);
 		return nameservers;
 	}

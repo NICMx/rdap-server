@@ -55,10 +55,6 @@ public class NameserverDAO extends Nameserver implements DatabaseObject, JsonPar
 		this.setHandle(resultSet.getString("nse_handle"));
 		this.setPunycodeName(resultSet.getString("nse_ldh_name"));
 		this.setPort43(resultSet.getString("nse_port43"));
-		long rarId = resultSet.getLong("rar_id");
-		if (!resultSet.wasNull())
-			this.setRarId(rarId);
-
 	}
 
 	/*
@@ -72,7 +68,6 @@ public class NameserverDAO extends Nameserver implements DatabaseObject, JsonPar
 		preparedStatement.setString(1, this.getHandle());
 		preparedStatement.setString(2, this.getLdhName());
 		preparedStatement.setString(3, this.getPort43());
-		preparedStatement.setLong(4, this.getRarId());
 	}
 
 	/*

@@ -1,5 +1,5 @@
 #storeToDatabase
-INSERT INTO rdap.nameserver VALUES(null,?,?,?,?);
+INSERT INTO rdap.nameserver VALUES(null,?,?,?);
 
 #storeDomainNameserversToDatabase
 INSERT INTO rdap.domain_nameservers VALUES(?,?);

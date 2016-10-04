@@ -14,12 +14,14 @@ import java.util.logging.Logger;
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.server.db.QueryGroup;
 import mx.nic.rdap.server.exception.ObjectNotFoundException;
+import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
 import mx.nix.rdap.core.catalog.Rol;
 
 /**
  * Model for roles of nested entities of main objects.
  * 
  * @author dhfelix
+ * @author evaldez
  *
  */
 public class RolModel {
@@ -97,6 +99,19 @@ public class RolModel {
 		storeEntitiesRoles(entities, nsId, connection, STORE_NS_ROLES);
 	}
 
+	/**
+	 * Stores all domain entity role relations into database on table
+	 * domain_entity_role
+	 * 
+	 * @param entities
+	 *            A list of entities from the domain
+	 * @param domainId
+	 *            Unique identifier of the domain
+	 * @param connection
+	 * @throws SQLException
+	 * @throws RequiredValueNotFoundException
+	 * @throws IOException
+	 */
 	public static void storeDomainEntityRoles(List<Entity> entities, Long domainId, Connection connection)
 			throws SQLException {
 		storeEntitiesRoles(entities, domainId, connection, STORE_DOMAIN_ROLES);
@@ -110,10 +125,10 @@ public class RolModel {
 		String query = queryGroup.getQuery(storeQuery);
 
 		try (PreparedStatement statement = connection.prepareStatement(query);) {
+			statement.setLong(1, ownerId);
 			for (Entity entity : entities) {
+				statement.setLong(2, entity.getId());
 				for (Rol rol : entity.getRoles()) {
-					statement.setLong(1, ownerId);
-					statement.setLong(2, entity.getId());
 					statement.setLong(3, rol.getId());
 					logger.log(Level.INFO, "Executing QUERY" + statement.toString());
 					statement.execute();
