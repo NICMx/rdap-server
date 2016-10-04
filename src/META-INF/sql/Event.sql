@@ -13,9 +13,6 @@ SELECT eve.eve_id,eve.eac_id,eve.eve_actor,eve.eve_date FROM rdap.event eve JOIN
 #getByEntityId
 SELECT eve.eve_id,eve.eac_id,eve.eve_actor,eve.eve_date FROM rdap.event eve JOIN rdap.entity_events ent ON ent.eve_id=eve.eve_id WHERE ent.ent_id=?;
 
-#getByRegistrarId
-SELECT eve.eve_id,eve.eac_id,eve.eve_actor,eve.eve_date FROM rdap.event eve JOIN rdap.registrar_events rar ON rar.eve_id=eve.eve_id WHERE rar.rar_id=?;
-
 #storeNameserverEventsToDatabase
 INSERT INTO rdap.nameserver_events values (?,?);
 
@@ -27,8 +24,5 @@ INSERT INTO rdap.ds_events values (?,?);
 
 #storeEntityEventsToDatabase
 INSERT INTO rdap.entity_events values (?,?);
-
-#storeRegistrarEventsToDatabase
-INSERT INTO rdap.registrar_events values (?,?);
 
 

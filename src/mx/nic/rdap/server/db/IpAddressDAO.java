@@ -1,5 +1,7 @@
 package mx.nic.rdap.server.db;
 
+import java.net.Inet4Address;
+import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.PreparedStatement;
@@ -50,6 +52,11 @@ public class IpAddressDAO extends IpAddress implements DatabaseObject {
 			// TODO manage the exception
 			// throw new InvalidValueException("iad_value",
 			// this.getClass().getName());
+		}
+		if (this.getAddress() instanceof Inet4Address) {
+			this.setType(4);
+		} else if (this.getAddress() instanceof Inet6Address) {
+			this.setType(6);
 		}
 
 	}

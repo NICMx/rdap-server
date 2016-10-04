@@ -227,11 +227,11 @@ public class NameserverTest {
 			e.printStackTrace();
 			fail();
 		}
-		System.out.println(nameserver);
+		// System.out.println(nameserver);
 
 		Nameserver byName = null;
 		try {
-			byName = NameserverModel.findByName("ns1.xn--fo-5ja.example");
+			byName = NameserverModel.findByName("ns1.xn--fo-5ja.example", connection);
 		} catch (IOException | SQLException e) {
 			e.printStackTrace();
 			fail();
@@ -246,7 +246,7 @@ public class NameserverTest {
 	public void findByName() {
 		Nameserver nameserver = new NameserverDAO();
 		try {
-			nameserver = NameserverModel.findByName("ns1.xn--fo-5ja.example");
+			nameserver = NameserverModel.findByName("ns1.xn--fo-5ja.example", connection);
 			System.out.println(nameserver.toString());
 		} catch (IOException | SQLException e) {
 			// TODO Auto-generated catch block

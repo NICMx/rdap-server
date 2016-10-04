@@ -31,10 +31,8 @@ public class PublicIdModel {
 
 	private static QueryGroup queryGroup = null;
 
-	private static final String REGISTRAR_GET_QUERY = "getByRegistrar";
 	private static final String ENTITY_GET_QUERY = "getByEntity";
 	private static final String DOMAIN_GET_QUERY = "getByDomain";
-	private static final String REGISTRAR_STORE_QUERY = "storeRegistrarPublicIdsToDatabase";
 	private static final String ENTITY_STORE_QUERY = "storeEntityPublicIdsToDatabase";
 	private static final String DOMAIN_STORE_QUERY = "storeDomainPublicIdsToDatabase";
 
@@ -119,11 +117,6 @@ public class PublicIdModel {
 		storeBy(publicIds, entityId, connection, ENTITY_STORE_QUERY);
 	}
 
-	public static void storePublicIdByRegistrar(List<PublicId> publicIds, Long registrarId, Connection connection)
-			throws SQLException, IOException {
-		storeBy(publicIds, registrarId, connection, REGISTRAR_STORE_QUERY);
-	}
-
 	/**
 	 * Get all publicIds from an specific type of Object
 	 * 
@@ -180,19 +173,6 @@ public class PublicIdModel {
 	 */
 	public static List<PublicId> getByEntity(Long entityId, Connection connection) throws SQLException, IOException {
 		return getBy(entityId, connection, ENTITY_GET_QUERY);
-	}
-
-	/**
-	 * Get all registrar's public identifiers
-	 * 
-	 * @param domainId
-	 * @return
-	 * @throws SQLException
-	 * @throws IOException
-	 */
-	public static List<PublicId> getByRegistrar(Long registrarId, Connection connection)
-			throws SQLException, IOException {
-		return getBy(registrarId, connection, REGISTRAR_GET_QUERY);
 	}
 
 	/**

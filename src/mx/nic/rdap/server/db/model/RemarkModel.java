@@ -35,12 +35,10 @@ public class RemarkModel {
 	private final static String NAMESERVER_STORE_QUERY = "storeNameserverRemarksToDatabase";
 	private final static String DOMAIN_STORE_QUERY = "storeDomainRemarksToDatabase";
 	private final static String ENTITY_STORE_QUERY = "storeEntityRemarksToDatabase";
-	private final static String REGISTRAR_STORE_QUERY = "storeRegistrarRemarksToDatabase";
 
 	private static final String NAMESERVER_GET_QUERY = "getByNameserverId";
 	private static final String DOMAIN_GET_QUERY = "getByDomainId";
 	private static final String ENTITY_GET_QUERY = "getByEntityId";
-	private static final String REGISTRAR_GET_QUERY = "getByRegistrarId";
 
 	protected static QueryGroup queryGroup = null;
 
@@ -140,16 +138,6 @@ public class RemarkModel {
 		storeRelationRemarksToDatabase(remarks, entityId, connection, ENTITY_STORE_QUERY);
 	}
 
-	/**
-	 * 
-	 * Stores the Registrar's remarks
-	 * 
-	 */
-	public static void storeRegistrarRemarksToDatabase(List<Remark> remarks, Long registrarId, Connection connection)
-			throws SQLException, IOException, RequiredValueNotFoundException {
-		storeRelationRemarksToDatabase(remarks, registrarId, connection, REGISTRAR_STORE_QUERY);
-	}
-
 	private static List<Remark> getByRelationId(Long id, Connection connection, String queryId)
 			throws IOException, SQLException {
 		String query = queryGroup.getQuery(queryId);
@@ -189,15 +177,6 @@ public class RemarkModel {
 	 */
 	public static List<Remark> getByEntityId(Long entityId, Connection connection) throws SQLException, IOException {
 		return getByRelationId(entityId, connection, ENTITY_GET_QUERY);
-	}
-
-	/**
-	 * Get all Registrar's remarks
-	 * 
-	 */
-	public static List<Remark> getByRegistrarId(Long registrarId, Connection connection)
-			throws SQLException, IOException {
-		return getByRelationId(registrarId, connection, REGISTRAR_GET_QUERY);
 	}
 
 	/**

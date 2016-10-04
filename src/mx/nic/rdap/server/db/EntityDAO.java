@@ -59,8 +59,6 @@ public class EntityDAO extends Entity implements DatabaseObject, JsonParser {
 		JsonObjectBuilder builder = Json.createObjectBuilder();
 		builder.add("objectClassName", "entity");
 
-		// builder.add("roles", getRoles());
-
 		// Get the common JsonObject of the rdap objects
 		JsonUtil.getCommonRdapJsonObject(builder, this);
 

@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Date;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -50,7 +51,7 @@ public class EventDAO extends Event implements DatabaseObject, JsonParser {
 		this.setId(resultSet.getLong("eve_id"));
 		this.setEventAction(EventAction.getById(resultSet.getInt("eac_id")));
 		this.setEventActor(resultSet.getString("eve_actor"));
-		this.setEventDate(resultSet.getTimestamp("eve_date"));
+		this.setEventDate(new Date(resultSet.getTimestamp("eve_date").getTime()));
 
 	}
 
