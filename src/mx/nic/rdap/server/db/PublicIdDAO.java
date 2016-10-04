@@ -62,9 +62,12 @@ public class PublicIdDAO extends mx.nic.rdap.core.db.PublicId implements Databas
 	public JsonObject toJson() {
 		JsonObjectBuilder builder = Json.createObjectBuilder();
 
-		builder.add("type", getType());
-		builder.add("identifier", getPublicId());
-
+		if (this.getType() != null && this.getType().isEmpty()) {
+			builder.add("type", getType());
+		}
+		if (this.getType() != null && this.getPublicId().isEmpty()) {
+			builder.add("identifier", getPublicId());
+		}
 		return builder.build();
 	}
 
