@@ -4,6 +4,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+
+import mx.nic.rdap.server.renderer.json.JsonParser;
+import mx.nic.rdap.server.renderer.json.JsonUtil;
+
 /**
  * Data access class for the DsData Object. The DsData is one of the
  * representations of the SecureDNS information that is not stored in the
@@ -12,7 +19,7 @@ import java.sql.SQLException;
  * @author evaldes
  *
  */
-public class DsDataDAO extends mx.nic.rdap.core.db.DsData implements DatabaseObject {
+public class DsDataDAO extends mx.nic.rdap.core.db.DsData implements DatabaseObject, JsonParser {
 
 	/**
 	 * Default constructor
@@ -62,6 +69,32 @@ public class DsDataDAO extends mx.nic.rdap.core.db.DsData implements DatabaseObj
 		preparedStatement.setString(4, this.getDigest());
 		preparedStatement.setInt(5, this.getDigestType());
 
+	}
+
+	public JsonObject toJson() {
+		JsonObjectBuilder builder = Json.createObjectBuilder();
+		if (this.getKeytag() != null) {
+			builder.add("keyTag", this.getKeytag());
+		}
+		if (this.getAlgorithm() != null) {
+			builder.add("algorithm", this.getAlgorithm());
+		}
+		if (this.getDigest() != null) {
+			builder.add("digest", this.getDigest());
+			if (this.getDigestType() != null) {
+				builder.add("digestType", this.getDigestType());
+			}
+		}
+
+		if (this.getEvents() != null && !this.getEvents().isEmpty()) {
+			builder.add("events", JsonUtil.getEventsJson(this.getEvents()));
+		}
+
+		if (this.getLinks() != null && !this.getLinks().isEmpty()) {
+			builder.add("links", JsonUtil.getLinksJson(this.getLinks()));
+		}
+
+		return builder.build();
 	}
 
 }

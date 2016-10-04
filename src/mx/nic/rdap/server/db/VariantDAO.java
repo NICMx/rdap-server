@@ -3,6 +3,17 @@ package mx.nic.rdap.server.db;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonValue;
+
+import mx.nic.rdap.core.db.VariantName;
+import mx.nic.rdap.server.renderer.json.JsonParser;
+import mx.nix.rdap.core.catalog.VariantRelation;
 
 /**
  * Data access class for the Variant object.
@@ -10,7 +21,7 @@ import java.sql.SQLException;
  * @author evaldes
  *
  */
-public class VariantDAO extends mx.nic.rdap.core.db.Variant implements DatabaseObject {
+public class VariantDAO extends mx.nic.rdap.core.db.Variant implements DatabaseObject, JsonParser {
 
 	/**
 	 * Default constructor
@@ -54,9 +65,50 @@ public class VariantDAO extends mx.nic.rdap.core.db.Variant implements DatabaseO
 	 */
 	@Override
 	public void storeToDatabase(PreparedStatement preparedStatement) throws SQLException {
-		// TODO Auto-generated method stub
 		preparedStatement.setString(1, this.getIdnTable());
 		preparedStatement.setLong(2, this.getDomainId());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see mx.nic.rdap.server.renderer.json.JsonParser#toJson()
+	 */
+	@Override
+	public JsonObject toJson() {
+		// TODO Auto-generated method stub
+		JsonObjectBuilder builder = Json.createObjectBuilder();
+
+		if (this.getRelations() != null && !this.getRelations().isEmpty()) {
+			builder.add("relation", this.getRelationsJson(this.getRelations()));
+		}
+		if (this.getIdnTable() != null && this.getIdnTable() != "") {
+			builder.add("idnTable", this.getIdnTable());
+		}
+		if (this.getVariantNames() != null && !this.getVariantNames().isEmpty()) {
+			builder.add("variantNames", this.getVariantNamesJson(this.getVariantNames()));
+		}
+		return builder.build();
+	}
+
+	private JsonValue getVariantNamesJson(List<VariantName> variantNames) {
+		JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+
+		for (VariantName variantName : variantNames) {
+			JsonObjectBuilder builder = Json.createObjectBuilder();
+			builder.add("ldhName", variantName.getLdhName());
+			builder.add("unicodeName", variantName.getUnicode());
+			arrayBuilder.add(builder);
+		}
+		return arrayBuilder.build();
+	}
+
+	private JsonValue getRelationsJson(List<VariantRelation> relations) {
+		JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+		for (VariantRelation relation : relations) {
+			arrayBuilder.add(relation.getValue());
+		}
+		return arrayBuilder.build();
 	}
 
 }

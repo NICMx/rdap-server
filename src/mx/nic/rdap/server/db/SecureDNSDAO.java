@@ -5,7 +5,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+
 import mx.nic.rdap.core.db.SecureDNS;
+import mx.nic.rdap.server.renderer.json.JsonParser;
 
 /**
  * Data access class for the SecureDNS object. It represents secure DNS
@@ -14,7 +19,7 @@ import mx.nic.rdap.core.db.SecureDNS;
  * @author evaldes
  *
  */
-public class SecureDNSDAO extends SecureDNS implements DatabaseObject {
+public class SecureDNSDAO extends SecureDNS implements DatabaseObject, JsonParser {
 
 	/**
 	 * Default constructor
@@ -68,6 +73,24 @@ public class SecureDNSDAO extends SecureDNS implements DatabaseObject {
 		}
 		preparedStatement.setLong(4, this.getDomainId());
 
+	}
+
+	public JsonObject toJson() {
+		JsonObjectBuilder builder = Json.createObjectBuilder();
+		if (this.getZoneSigned() != null) {
+			builder.add("zoneSigned", this.getZoneSigned());
+		}
+		if (this.getDelegationSigned() != null) {
+			builder.add("delegationSigned", this.getZoneSigned());
+		}
+		if (this.getMaxSigLife() != null) {
+			builder.add("maxSigLife", this.getZoneSigned());
+		}
+
+		if (this.getDsData() != null && this.getDsData().isEmpty()) {
+			builder.add("dsData", ((DsDataDAO) this.getDsData()).toJson());
+		}
+		return builder.build();
 	}
 
 }
