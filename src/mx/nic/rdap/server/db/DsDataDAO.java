@@ -8,6 +8,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
+import mx.nic.rdap.core.db.DsData;
 import mx.nic.rdap.server.renderer.json.JsonParser;
 import mx.nic.rdap.server.renderer.json.JsonUtil;
 
@@ -19,7 +20,7 @@ import mx.nic.rdap.server.renderer.json.JsonUtil;
  * @author evaldes
  *
  */
-public class DsDataDAO extends mx.nic.rdap.core.db.DsData implements DatabaseObject, JsonParser {
+public class DsDataDAO extends DsData implements DatabaseObject, JsonParser {
 
 	/**
 	 * Default constructor

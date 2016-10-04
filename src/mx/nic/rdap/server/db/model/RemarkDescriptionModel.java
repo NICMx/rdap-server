@@ -66,8 +66,7 @@ public class RemarkDescriptionModel {
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"))) {
 			((RemarkDescriptionDAO) remarkDescription).storeToDatabase(statement);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-			statement.executeUpdate();// TODO Validate if the
-										// insert was correct
+			statement.executeUpdate();
 		}
 	}
 
@@ -86,10 +85,7 @@ public class RemarkDescriptionModel {
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
 				if (!resultSet.next()) {
-					throw new ObjectNotFoundException("Object not found.");// TODO:
-																			// Managae
-																			// the
-																			// exception
+					throw new ObjectNotFoundException("Object not found.");
 				}
 				List<RemarkDescription> remarks = new ArrayList<RemarkDescription>();
 				do {

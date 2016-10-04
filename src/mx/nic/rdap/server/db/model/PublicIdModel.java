@@ -71,7 +71,7 @@ public class PublicIdModel {
 				Statement.RETURN_GENERATED_KEYS);) {
 			((PublicIdDAO) publicId).storeToDatabase(statement);
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
-			statement.executeUpdate();// TODO Validate if the insert was correct
+			statement.executeUpdate();
 			ResultSet result = statement.getGeneratedKeys();
 			result.next();
 			Long resultId = result.getLong(1);// The id of the link inserted
@@ -101,8 +101,7 @@ public class PublicIdModel {
 				statement.setLong(1, id);
 				statement.setLong(2, resultId);
 				logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
-				statement.executeUpdate(); // TODO Validate if insert was
-											// correct
+				statement.executeUpdate();
 			}
 		}
 	}
@@ -131,11 +130,7 @@ public class PublicIdModel {
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery(query))) {
 			statement.setLong(1, entityId);
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
-			try (ResultSet resultSet = statement.executeQuery()) { // TODO
-																	// Validate
-																	// if insert
-																	// was
-																	// correct
+			try (ResultSet resultSet = statement.executeQuery()) {
 				return processResultSet(resultSet);
 			}
 		}
@@ -144,9 +139,7 @@ public class PublicIdModel {
 	public static List<PublicId> getAll(Connection connection) throws SQLException {
 		try (PreparedStatement statement = connection.prepareStatement("getAll")) {
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
-			ResultSet resultSet = statement.executeQuery(); // TODO Validate if
-															// insert was
-															// correct
+			ResultSet resultSet = statement.executeQuery();
 			return processResultSet(resultSet);
 		}
 	}

@@ -53,20 +53,17 @@ public class IpAddressModel {
 				addressV4.setNameserverId(nameserverId);
 				((IpAddressDAO) addressV4).storeToDatabase(statement);
 				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-				statement.executeUpdate();// TODO Validate if the
+				statement.executeUpdate();
 				ResultSet generatedKeys = statement.getGeneratedKeys();
 				generatedKeys.next();
 				long id = generatedKeys.getLong(1);
 				addressV4.setId(id);
-
-				// insert was correct
 			}
 			for (IpAddress addressV6 : struct.getIpv6Adresses()) {
 				addressV6.setNameserverId(nameserverId);
 				((IpAddressDAO) addressV6).storeToDatabase(statement);
 				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-				statement.executeUpdate();// TODO Validate if the
-				// insert was correct
+				statement.executeUpdate();
 				ResultSet generatedKeys = statement.getGeneratedKeys();
 				generatedKeys.next();
 				long id = generatedKeys.getLong(1);
@@ -92,7 +89,6 @@ public class IpAddressModel {
 			ResultSet resultSet = statement.executeQuery();
 			if (!resultSet.next()) {
 				throw new ObjectNotFoundException("Object not found.");
-				// TODO: Managae the exception
 			}
 
 			// Process the resulset to construct the struct

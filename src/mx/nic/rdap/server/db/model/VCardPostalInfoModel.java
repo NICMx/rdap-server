@@ -117,7 +117,7 @@ public class VCardPostalInfoModel {
 	 */
 	private static VCardPostalInfo processResultSet(ResultSet resultSet, Connection connection) throws SQLException {
 		if (!resultSet.next()) {
-			throw new ObjectNotFoundException("Entity not found");
+			throw new ObjectNotFoundException("Object not found");
 		}
 		VCardPostalInfoDAO vCardPostalInfo = new VCardPostalInfoDAO();
 		vCardPostalInfo.loadFromDatabase(resultSet);
@@ -140,7 +140,7 @@ public class VCardPostalInfoModel {
 		List<VCardPostalInfo> result = new ArrayList<>();
 
 		if (!resultSet.next()) {
-			throw new ObjectNotFoundException("Entity not found");
+			throw new ObjectNotFoundException("Object not found");
 		}
 		do {
 			VCardPostalInfoDAO vCardPostalInfo = new VCardPostalInfoDAO();

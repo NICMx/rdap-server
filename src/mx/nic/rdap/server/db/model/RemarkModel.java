@@ -95,8 +95,7 @@ public class RemarkModel {
 				statement.setLong(1, id);
 				statement.setLong(2, remarkId);
 				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-				statement.executeUpdate();// TODO Validate if the
-				// insert was correct
+				statement.executeUpdate();
 			}
 		}
 	}

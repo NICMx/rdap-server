@@ -1,5 +1,7 @@
 package mx.nic.rdap.server.db;
 
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -79,8 +81,8 @@ public class RemarkTest {
 			try {
 				DatabaseSession.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				fail();
 			}
 		}
 
@@ -123,8 +125,8 @@ public class RemarkTest {
 			try {
 				DatabaseSession.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				fail();
 			}
 		}
 
@@ -145,8 +147,8 @@ public class RemarkTest {
 			try {
 				DatabaseSession.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				fail();
 			}
 		}
 

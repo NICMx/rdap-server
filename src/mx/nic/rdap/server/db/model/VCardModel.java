@@ -165,7 +165,7 @@ public class VCardModel {
 	 */
 	private static VCard processResultSet(ResultSet resultSet, Connection connection) throws SQLException {
 		if (!resultSet.next()) {
-			throw new ObjectNotFoundException("Entity not found");
+			throw new ObjectNotFoundException("Object not found");
 		}
 		VCardDAO vCard = new VCardDAO();
 		vCard.loadFromDatabase(resultSet);
@@ -185,7 +185,7 @@ public class VCardModel {
 	private static List<VCard> processListResultSet(ResultSet resultSet, Connection connection) throws SQLException {
 		List<VCard> result = new ArrayList<>();
 		if (!resultSet.next()) {
-			throw new ObjectNotFoundException("Entity not found");
+			throw new ObjectNotFoundException("Object not found");
 		}
 		do {
 			VCardDAO vCard = new VCardDAO();

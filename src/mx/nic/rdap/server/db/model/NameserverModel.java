@@ -70,8 +70,7 @@ public class NameserverModel {
 		try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 			((NameserverDAO) nameserver).storeToDatabase(statement);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-			statement.executeUpdate();// TODO Validate if the
-										// insert was correct
+			statement.executeUpdate();
 			ResultSet result = statement.getGeneratedKeys();
 			result.next();
 			nameserverId = result.getLong(1);// The id of the nameserver
@@ -105,8 +104,7 @@ public class NameserverModel {
 				nameserverId = nameserver.getId();
 				statement.setLong(2, nameserverId);
 				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-				statement.executeUpdate();// TODO Validate if the
-				// insert was correct
+				statement.executeUpdate();
 			}
 		}
 	}
@@ -126,10 +124,7 @@ public class NameserverModel {
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
 				if (!resultSet.next()) {
-					throw new ObjectNotFoundException("Object not found.");// TODO:
-																			// Managae
-																			// the
-																			// exception
+					throw new ObjectNotFoundException("Object not found.");
 				}
 				Nameserver nameserver = new NameserverDAO(resultSet);
 				NameserverModel.loadNestedObjects(nameserver, connection);

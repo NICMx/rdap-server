@@ -82,8 +82,7 @@ public class LinkModel {
 				Statement.RETURN_GENERATED_KEYS)) {
 			((LinkDAO) link).storeToDatabase(statement);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-			statement.executeUpdate();// TODO Validate if the
-										// insert was correct
+			statement.executeUpdate();
 			ResultSet result = statement.getGeneratedKeys();
 			result.next();
 			Long linkId = result.getLong(1);// The id of the link inserted
@@ -195,8 +194,7 @@ public class LinkModel {
 				statement.setLong(1, id);
 				statement.setLong(2, linkId);
 				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-				statement.executeUpdate();// TODO Validate if the
-				// insert was correct
+				statement.executeUpdate();
 			}
 		}
 	}

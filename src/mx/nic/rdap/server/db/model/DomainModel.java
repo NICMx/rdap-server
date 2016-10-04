@@ -57,8 +57,7 @@ public class DomainModel {
 		try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 			((DomainDAO) domain).storeToDatabase(statement);
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
-			statement.executeUpdate();// TODO Validate if insert was correct
-
+			statement.executeUpdate();
 			ResultSet resultSet = statement.getGeneratedKeys();
 			resultSet.next();
 			domainId = resultSet.getLong(1);
@@ -104,9 +103,7 @@ public class DomainModel {
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
 				if (!resultSet.next()) {
-					throw new ObjectNotFoundException("Object not found.");// TODO
-																			// Manage
-																			// exception
+					throw new ObjectNotFoundException("Object not found.");
 				}
 				Domain domain = new DomainDAO(resultSet);
 				loadNestedObjects(domain, connection);
@@ -129,9 +126,7 @@ public class DomainModel {
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
 				if (!resultSet.next()) {
-					throw new ObjectNotFoundException("Object not found.");// TODO
-																			// Manage
-																			// exception
+					throw new ObjectNotFoundException("Object not found.");
 				}
 				Domain domain = new DomainDAO(resultSet);
 				loadNestedObjects(domain, connection);
@@ -146,15 +141,11 @@ public class DomainModel {
 		domain.setEvents(EventModel.getByDomainId(domainId, connection));
 		domain.setLinks(LinkModel.getByDomainId(domainId, connection));
 		domain.setStatus(StatusModel.getByDomainId(domainId, connection));
-		// TODO domain.setNameServers(NameserverModel.getByDomainId(domainId,
-		// connection));
 		domain.setRemarks(RemarkModel.getByDomainId(domainId, connection));
 		domain.setPublicIds(PublicIdModel.getByDomain(domainId, connection));
 		domain.setSecureDNS(SecureDNSModel.getByDomain(domainId, connection));
 		domain.setVariants(VariantModel.getByDomainId(domainId, connection));
 		domain.setZone(ZoneModel.getByZoneId(domain.getZone().getId(), connection));
-		// TODO look for entity with domain
-		// domain.setEntities(EntityModel.getByDomainId(domainId, connection));
 
 		List<Nameserver> domainsNS = NameserverModel.getByDomainId(domainId, connection);
 		domain.getNameServers().addAll(domainsNS);

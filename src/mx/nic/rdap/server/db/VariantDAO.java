@@ -11,6 +11,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
+import mx.nic.rdap.core.db.Variant;
 import mx.nic.rdap.core.db.VariantName;
 import mx.nic.rdap.server.renderer.json.JsonParser;
 import mx.nix.rdap.core.catalog.VariantRelation;
@@ -21,7 +22,7 @@ import mx.nix.rdap.core.catalog.VariantRelation;
  * @author evaldes
  *
  */
-public class VariantDAO extends mx.nic.rdap.core.db.Variant implements DatabaseObject, JsonParser {
+public class VariantDAO extends Variant implements DatabaseObject, JsonParser {
 
 	/**
 	 * Default constructor
@@ -34,14 +35,11 @@ public class VariantDAO extends mx.nic.rdap.core.db.Variant implements DatabaseO
 	 * Constructor with result set
 	 * 
 	 * @param resultSet
+	 * @throws SQLException
 	 */
-	public VariantDAO(ResultSet resultSet) {
+	public VariantDAO(ResultSet resultSet) throws SQLException {
 		super();
-		try {
-			loadFromDatabase(resultSet);
-		} catch (SQLException e) {
-			// TODO manage exception
-		}
+		loadFromDatabase(resultSet);
 	}
 
 	/*
@@ -76,7 +74,6 @@ public class VariantDAO extends mx.nic.rdap.core.db.Variant implements DatabaseO
 	 */
 	@Override
 	public JsonObject toJson() {
-		// TODO Auto-generated method stub
 		JsonObjectBuilder builder = Json.createObjectBuilder();
 
 		if (this.getRelations() != null && !this.getRelations().isEmpty()) {

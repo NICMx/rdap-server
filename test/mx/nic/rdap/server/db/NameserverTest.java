@@ -1,6 +1,6 @@
 package mx.nic.rdap.server.db;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -132,7 +132,6 @@ public class NameserverTest {
 		try {
 			ipv41.setAddress(InetAddress.getByName("192.0.2.1"));
 		} catch (UnknownHostException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		ipv41.setType(4);
@@ -142,7 +141,6 @@ public class NameserverTest {
 		try {
 			ipv42.setAddress(InetAddress.getByName("192.0.2.2"));
 		} catch (UnknownHostException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		ipv42.setType(4);
@@ -152,7 +150,6 @@ public class NameserverTest {
 		try {
 			ipv6.setAddress(InetAddress.getByName("2001:db8::123"));
 		} catch (UnknownHostException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		ipv6.setType(6);
@@ -227,7 +224,6 @@ public class NameserverTest {
 			e.printStackTrace();
 			fail();
 		}
-		// System.out.println(nameserver);
 
 		Nameserver byName = null;
 		try {
@@ -249,8 +245,8 @@ public class NameserverTest {
 			nameserver = NameserverModel.findByName("ns1.xn--fo-5ja.example", connection);
 			System.out.println(nameserver.toString());
 		} catch (IOException | SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			fail();
 		}
 		assert true;
 	}

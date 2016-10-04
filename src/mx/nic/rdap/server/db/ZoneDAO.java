@@ -7,13 +7,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import mx.nic.rdap.core.db.Zone;
+
 /**
  * Data access for the zone object
  * 
  * @author evaldes
  *
  */
-public class ZoneDAO extends mx.nic.rdap.core.db.Zone implements DatabaseObject {
+public class ZoneDAO extends Zone implements DatabaseObject {
 
 	/**
 	 * Default Constructor
@@ -22,12 +24,8 @@ public class ZoneDAO extends mx.nic.rdap.core.db.Zone implements DatabaseObject 
 		super();
 	}
 
-	public ZoneDAO(ResultSet resultSet) {
-		try {
-			loadFromDatabase(resultSet);
-		} catch (SQLException e) {
-			// TODO
-		}
+	public ZoneDAO(ResultSet resultSet) throws SQLException {
+		loadFromDatabase(resultSet);
 	}
 
 	/*
@@ -50,7 +48,6 @@ public class ZoneDAO extends mx.nic.rdap.core.db.Zone implements DatabaseObject 
 	 */
 	@Override
 	public void storeToDatabase(PreparedStatement preparedStatement) throws SQLException {
-		// TODO Auto-generated method stub
 		preparedStatement.setString(1, this.getZoneName());
 	}
 

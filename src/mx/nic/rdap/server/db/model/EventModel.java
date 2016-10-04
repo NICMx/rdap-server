@@ -82,8 +82,7 @@ public class EventModel {
 				Statement.RETURN_GENERATED_KEYS)) {
 			((EventDAO) event).storeToDatabase(statement);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-			statement.executeUpdate();// TODO Validate if the
-										// insert was correct
+			statement.executeUpdate();
 			ResultSet result = statement.getGeneratedKeys();
 			result.next();
 			Long eventId = result.getLong(1);// The id of the link inserted
@@ -155,8 +154,7 @@ public class EventModel {
 				statement.setLong(1, id);
 				statement.setLong(2, eventId);
 				logger.log(Level.INFO, "Excuting QUERY:" + statement.toString());
-				statement.executeUpdate();// TODO Validate if the insert was
-											// correct
+				statement.executeUpdate();
 			}
 		}
 	}
