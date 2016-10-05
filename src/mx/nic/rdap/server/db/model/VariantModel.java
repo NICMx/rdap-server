@@ -73,7 +73,7 @@ public class VariantModel {
 				Statement.RETURN_GENERATED_KEYS)) {
 			((VariantDAO) variant).storeToDatabase(statement);
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
-			statement.executeUpdate();// TODO Validate if it was correct
+			statement.executeUpdate();
 			ResultSet resultSet = statement.getGeneratedKeys();
 			resultSet.next();
 			variantInsertedId = resultSet.getLong(1);

@@ -312,7 +312,6 @@ public class DomainTest {
 		try {
 			domainId = DomainModel.storeToDatabase(domain, connection);
 		} catch (SQLException | IOException | RequiredValueNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
@@ -321,7 +320,6 @@ public class DomainTest {
 			ResultSet resultSet = statement.executeQuery("SELECT * FROM rdap.domain_entity_roles");
 			resultSet.next();
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		// Get domain By its id
@@ -429,13 +427,6 @@ public class DomainTest {
 		events.add(event1);
 		events.add(event2);
 		nameserver.setEvents(events);
-		// try {
-		// NameserverModel.storeToDatabase(nameserver, connection);
-		// } catch (IOException | SQLException | RequiredValueNotFoundException
-		// e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
 		nameservers.add(nameserver);
 		return nameservers;
 	}

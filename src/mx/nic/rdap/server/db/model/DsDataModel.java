@@ -47,8 +47,7 @@ public class DsDataModel {
 		try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 			((DsDataDAO) dsData).storeToDatabase(statement);
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
-			statement.executeUpdate();// TODO Validate if it was correct
-
+			statement.executeUpdate();
 			ResultSet resultSet = statement.getGeneratedKeys();
 			resultSet.next();
 			Long dsDataId = resultSet.getLong(1);
@@ -83,8 +82,7 @@ public class DsDataModel {
 		try (PreparedStatement statement = connection.prepareStatement(query);) { // QUERY
 			statement.setLong(1, secureDnsId);
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
-			ResultSet resultSet = statement.executeQuery();// TODO Validate if
-															// it was correct
+			ResultSet resultSet = statement.executeQuery();
 			if (!resultSet.next()) {
 				return Collections.emptyList();
 			}

@@ -84,7 +84,6 @@ public class DomainDAO extends Domain implements DatabaseObject, JsonParser {
 	 */
 	@Override
 	public JsonObject toJson() {
-		// TODO Auto-generated method stub
 		this.getLinks().add(new LinkDAO("domain", this.getLdhName()));
 
 		JsonObjectBuilder builder = Json.createObjectBuilder();
@@ -108,7 +107,6 @@ public class DomainDAO extends Domain implements DatabaseObject, JsonParser {
 	}
 
 	private JsonArray getVariantsJson(List<Variant> variants) {
-		// TODO Finish VariantDAO.toJson()
 		JsonArrayBuilder arrB = Json.createArrayBuilder();
 		for (Variant variant : variants) {
 			JsonObject json = ((VariantDAO) variant).toJson();

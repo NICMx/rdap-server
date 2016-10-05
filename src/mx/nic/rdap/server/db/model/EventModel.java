@@ -39,13 +39,11 @@ public class EventModel {
 	private static final String DS_DATA_GET_QUERY = "getByDsDataId";
 	private static final String DOMAIN_GET_QUERY = "getByDomainId";
 	private static final String ENTITY_GET_QUERY = "getByEntityId";
-	private static final String REGISTRAR_GET_QUERY = "getByRegistrarId";
 
 	private static final String NS_STORE_QUERY = "storeNameserverEventsToDatabase";
 	private static final String DS_DATA_STORE_QUERY = "storeDsDataEventsToDatabase";
 	private static final String DOMAIN_STORE_QUERY = "storeDomainEventsToDatabase";
 	private static final String ENTITY_STORE_QUERY = "storeEntityEventsToDatabase";
-	private static final String REGISTRAR_STORE_QUERY = "storeRegistrarEventsToDatabase";
 
 	static {
 		try {
@@ -84,8 +82,7 @@ public class EventModel {
 				Statement.RETURN_GENERATED_KEYS)) {
 			((EventDAO) event).storeToDatabase(statement);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-			statement.executeUpdate();// TODO Validate if the
-										// insert was correct
+			statement.executeUpdate();
 			ResultSet result = statement.getGeneratedKeys();
 			result.next();
 			Long eventId = result.getLong(1);// The id of the link inserted
@@ -118,16 +115,6 @@ public class EventModel {
 	public static void storeEntityEventsToDatabase(List<Event> events, Long entityId, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
 		storeRelationEventsToDatabase(events, entityId, connection, ENTITY_STORE_QUERY);
-	}
-
-	/**
-	 *
-	 * Store the Registrar events
-	 * 
-	 */
-	public static void storeRegistrarEventsToDatabase(List<Event> events, Long registrarId, Connection connection)
-			throws SQLException, IOException, RequiredValueNotFoundException {
-		storeRelationEventsToDatabase(events, registrarId, connection, REGISTRAR_STORE_QUERY);
 	}
 
 	/**
@@ -167,8 +154,7 @@ public class EventModel {
 				statement.setLong(1, id);
 				statement.setLong(2, eventId);
 				logger.log(Level.INFO, "Excuting QUERY:" + statement.toString());
-				statement.executeUpdate();// TODO Validate if the insert was
-											// correct
+				statement.executeUpdate();
 			}
 		}
 	}
@@ -215,14 +201,6 @@ public class EventModel {
 	 */
 	public static List<Event> getByEntityId(Long entityId, Connection connection) throws SQLException, IOException {
 		return getByRelationId(entityId, connection, ENTITY_GET_QUERY);
-	}
-
-	/**
-	 * Get all events for a Registrar
-	 */
-	public static List<Event> getByRegistrarId(Long registrarId, Connection connection)
-			throws SQLException, IOException {
-		return getByRelationId(registrarId, connection, REGISTRAR_GET_QUERY);
 	}
 
 	private static List<Event> getByRelationId(Long id, Connection connection, String getQueryId)

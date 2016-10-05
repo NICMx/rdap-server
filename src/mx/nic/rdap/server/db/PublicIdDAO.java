@@ -8,6 +8,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
+import mx.nic.rdap.core.db.PublicId;
 import mx.nic.rdap.server.renderer.json.JsonParser;
 
 /**
@@ -17,7 +18,7 @@ import mx.nic.rdap.server.renderer.json.JsonParser;
  * @author evaldes
  *
  */
-public class PublicIdDAO extends mx.nic.rdap.core.db.PublicId implements DatabaseObject, JsonParser {
+public class PublicIdDAO extends PublicId implements DatabaseObject, JsonParser {
 
 	public PublicIdDAO() {
 		super();
@@ -26,11 +27,7 @@ public class PublicIdDAO extends mx.nic.rdap.core.db.PublicId implements Databas
 
 	public PublicIdDAO(ResultSet resultSet) throws SQLException {
 		super();
-		try {
-			this.loadFromDatabase(resultSet);
-		} catch (SQLException e) {
-			// TODO Manage exception
-		}
+		this.loadFromDatabase(resultSet);
 	}
 
 	/*

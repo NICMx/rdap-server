@@ -39,7 +39,6 @@ public class LinkModel {
 	private static final String DOMAIN_GET_QUERY = "getByDomainId";
 	private static final String REMARK_GET_QUERY = "getByRemarkId";
 	private static final String ENTITY_GET_QUERY = "getByEntityId";
-	private static final String REGISTRAR_GET_QUERY = "getByRegistrarId";
 
 	private static final String NS_STORE_QUERY = "storeNameserverLinksToDatabase";
 	private static final String EVENT_STORE_QUERY = "storeEventLinksToDatabase";
@@ -47,7 +46,6 @@ public class LinkModel {
 	private static final String DS_DATA_STORE_QUERY = "storeDsDataLinksToDatabase";
 	private static final String DOMAIN_STORE_QUERY = "storeDomainLinksToDatabase";
 	private static final String ENTITY_STORE_QUERY = "storeEntityLinksToDatabase";
-	private static final String REGISTRAR_STORE_QUERY = "storeRegistrarLinksToDatabase";
 
 	static {
 		try {
@@ -84,8 +82,7 @@ public class LinkModel {
 				Statement.RETURN_GENERATED_KEYS)) {
 			((LinkDAO) link).storeToDatabase(statement);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-			statement.executeUpdate();// TODO Validate if the
-										// insert was correct
+			statement.executeUpdate();
 			ResultSet result = statement.getGeneratedKeys();
 			result.next();
 			Long linkId = result.getLong(1);// The id of the link inserted
@@ -173,18 +170,6 @@ public class LinkModel {
 	}
 
 	/**
-	 * Store the registrar links
-	 * 
-	 * @throws SQLException
-	 * @throws IOException
-	 * @throws RequiredValueNotFoundException
-	 */
-	public static void storeRegistrarLinksToDatabase(List<Link> links, Long registrarId, Connection connection)
-			throws SQLException, IOException, RequiredValueNotFoundException {
-		storeLinkRelationToDatabase(links, registrarId, connection, REGISTRAR_STORE_QUERY);
-	}
-
-	/**
 	 * @param links
 	 *            The links to be stored in the relation.
 	 * @param id
@@ -209,8 +194,7 @@ public class LinkModel {
 				statement.setLong(1, id);
 				statement.setLong(2, linkId);
 				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-				statement.executeUpdate();// TODO Validate if the
-				// insert was correct
+				statement.executeUpdate();
 			}
 		}
 	}
@@ -284,14 +268,6 @@ public class LinkModel {
 	 */
 	public static List<Link> getByEntityId(Long entityId, Connection connection) throws IOException, SQLException {
 		return getByRelationId(entityId, connection, ENTITY_GET_QUERY);
-	}
-
-	/**
-	 * Get all links for a registrar.
-	 */
-	public static List<Link> getByRegistrarId(Long registrarId, Connection connection)
-			throws IOException, SQLException {
-		return getByRelationId(registrarId, connection, REGISTRAR_GET_QUERY);
 	}
 
 	/**

@@ -13,12 +13,13 @@ import java.util.logging.Logger;
 
 import com.mysql.jdbc.Statement;
 
+import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Nameserver;
-import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.db.NameserverDAO;
 import mx.nic.rdap.server.db.QueryGroup;
 import mx.nic.rdap.server.exception.ObjectNotFoundException;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
+import mx.nix.rdap.core.catalog.Rol;
 
 /**
  * Model for the Nameserver Object
@@ -64,43 +65,46 @@ public class NameserverModel {
 	public static void storeToDatabase(Nameserver nameserver, Connection connection)
 			throws IOException, SQLException, RequiredValueNotFoundException {
 		isValidForStore(nameserver);
-		NameserverModel.queryGroup = new QueryGroup(QUERY_GROUP);
-		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("storeToDatabase"),
-				Statement.RETURN_GENERATED_KEYS)) {
+		String query = queryGroup.getQuery("storeToDatabase");
+		Long nameserverId = null;
+		try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 			((NameserverDAO) nameserver).storeToDatabase(statement);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-			statement.executeUpdate();// TODO Validate if the
-										// insert was correct
+			statement.executeUpdate();
 			ResultSet result = statement.getGeneratedKeys();
 			result.next();
-			Long nameserverId = result.getLong(1);// The id of the nameserver
-													// inserted
+			nameserverId = result.getLong(1);// The id of the nameserver
+												// inserted
 			nameserver.setId(nameserverId);
-			IpAddressModel.storeToDatabase(nameserver.getIpAddresses(), nameserverId, connection);
-			StatusModel.storeNameserverStatusToDatabase(nameserver.getStatus(), nameserverId, connection);
-			RemarkModel.storeNameserverRemarksToDatabase(nameserver.getRemarks(), nameserverId, connection);
-			LinkModel.storeNameserverLinksToDatabase(nameserver.getLinks(), nameserverId, connection);
-			EventModel.storeNameserverEventsToDatabase(nameserver.getEvents(), nameserverId, connection);
 		}
-
+		IpAddressModel.storeToDatabase(nameserver.getIpAddresses(), nameserverId, connection);
+		StatusModel.storeNameserverStatusToDatabase(nameserver.getStatus(), nameserverId, connection);
+		RemarkModel.storeNameserverRemarksToDatabase(nameserver.getRemarks(), nameserverId, connection);
+		LinkModel.storeNameserverLinksToDatabase(nameserver.getLinks(), nameserverId, connection);
+		EventModel.storeNameserverEventsToDatabase(nameserver.getEvents(), nameserverId, connection);
+		if (nameserver.getEntities().size() > 0) {
+			for (Entity entity : nameserver.getEntities()) {
+				EntityModel.storeToDatabase(entity, connection);
+			}
+			RolModel.storeNameserverEntityRoles(nameserver.getEntities(), nameserverId, connection);
+		}
 	}
 
 	public static void storeDomainNameserversToDatabase(List<Nameserver> nameservers, Long domainId,
 			Connection connection) throws SQLException, IOException, RequiredValueNotFoundException {
+		if (nameservers.isEmpty()) {
+			return;
+		}
 
-		if (nameservers.size() > 0) {
-			try (PreparedStatement statement = connection
-					.prepareStatement(queryGroup.getQuery("storeDomainNameserversToDatabase"))) {
-
-				Long nameserverId;
-				for (Nameserver nameserver : nameservers) {
-					statement.setLong(1, domainId);
-					nameserverId = nameserver.getId();
-					statement.setLong(2, nameserverId);
-					logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
-					statement.executeUpdate();// TODO Validate if the
-					// insert was correct
-				}
+		String query = queryGroup.getQuery("storeDomainNameserversToDatabase");
+		try (PreparedStatement statement = connection.prepareStatement(query)) {
+			Long nameserverId;
+			for (Nameserver nameserver : nameservers) {
+				statement.setLong(1, domainId);
+				nameserverId = nameserver.getId();
+				statement.setLong(2, nameserverId);
+				logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+				statement.executeUpdate();
 			}
 		}
 	}
@@ -113,18 +117,14 @@ public class NameserverModel {
 	 * @throws IOException
 	 * @throws SQLException
 	 */
-	public static Nameserver findByName(String name) throws IOException, SQLException {
-		NameserverModel.queryGroup = new QueryGroup(QUERY_GROUP);
-		try (Connection connection = DatabaseSession.getConnection();
-				PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("findByName"))) {
+	public static Nameserver findByName(String name, Connection connection) throws IOException, SQLException {
+		String query = queryGroup.getQuery("findByName");
+		try (PreparedStatement statement = connection.prepareStatement(query)) {
 			statement.setString(1, name);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
 				if (!resultSet.next()) {
-					throw new ObjectNotFoundException("Object not found.");// TODO:
-																			// Managae
-																			// the
-																			// exception
+					throw new ObjectNotFoundException("Object not found.");
 				}
 				Nameserver nameserver = new NameserverDAO(resultSet);
 				NameserverModel.loadNestedObjects(nameserver, connection);
@@ -162,10 +162,9 @@ public class NameserverModel {
 	 * @throws IOException
 	 * @throws SQLException
 	 */
-	public static boolean existNameserverByName(String name) throws IOException, SQLException {
-		NameserverModel.queryGroup = new QueryGroup(QUERY_GROUP);
-		try (Connection connection = DatabaseSession.getConnection();
-				PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("existByName"))) {
+	public static boolean existNameserverByName(String name, Connection connection) throws IOException, SQLException {
+		String query = queryGroup.getQuery("existByName");
+		try (PreparedStatement statement = connection.prepareStatement(query)) {
 			statement.setString(1, name);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
@@ -200,6 +199,13 @@ public class NameserverModel {
 		nameserver.setLinks(LinkModel.getByNameServerId(nameserver.getId(), connection));
 		// Retrieve the events
 		nameserver.setEvents(EventModel.getByNameServerId(nameserver.getId(), connection));
+
+		List<Entity> entities = EntityModel.getEntitiesByNameserverId(nameserver.getId(), connection);
+		nameserver.setEntities(entities);
+		for (Entity entity : entities) {
+			List<Rol> roles = RolModel.getNameserverEntityRol(nameserver.getId(), entity.getId(), connection);
+			entity.setRoles(roles);
+		}
 
 	}
 }

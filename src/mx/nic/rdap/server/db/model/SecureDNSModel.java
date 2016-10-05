@@ -44,8 +44,7 @@ public class SecureDNSModel {
 		try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 			((SecureDNSDAO) secureDns).storeToDatabase(statement);
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
-			statement.executeUpdate();// TODO Validate if insert was correct
-
+			statement.executeUpdate();
 			ResultSet resultSet = statement.getGeneratedKeys();
 			resultSet.next();
 			Long secureDnsId = resultSet.getLong(1);

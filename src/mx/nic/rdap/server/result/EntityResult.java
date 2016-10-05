@@ -7,7 +7,7 @@ import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.db.EntityDAO;
 
 /**
- * A result from a Entity request
+ * A result from an Entity request
  * 
  * @author dhfelix
  *

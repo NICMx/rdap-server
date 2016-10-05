@@ -7,27 +7,27 @@ import java.sql.SQLException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
-import mx.nic.rdap.core.db.Entity;
+import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DatabaseSession;
-import mx.nic.rdap.server.db.model.EntityModel;
+import mx.nic.rdap.server.db.model.DomainModel;
 import mx.nic.rdap.server.exception.RequestHandleException;
-import mx.nic.rdap.server.result.EntityResult;
+import mx.nic.rdap.server.result.DomainResult;
 
 /**
- * Servlet that find an entity by its handle
+ * Servlet that find a domain by its name
  * 
- * @author dhfelix
+ * @author dalpuche
  *
  */
-@WebServlet(name = "entity", urlPatterns = { "/entity/*" })
-public class EntityServlet extends RdapServlet {
+@WebServlet(name = "domain", urlPatterns = { "/domain/*" })
+public class DomainServlet extends RdapServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	public EntityServlet() throws IOException {
+	public DomainServlet() throws IOException {
 		super();
 	}
 
@@ -40,12 +40,12 @@ public class EntityServlet extends RdapServlet {
 	@Override
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
-		EntityRequest request = new EntityRequest(Util.getRequestParams(httpRequest)[0]);
+		DomainRequest request = new DomainRequest(Util.getRequestParams(httpRequest)[0]);
 
 		RdapResult result = null;
 		try (Connection con = DatabaseSession.getConnection();) {
-			Entity entity = EntityModel.getByHandle(request.getHandle(), con);
-			result = new EntityResult(entity);
+			Domain domain = DomainModel.findByLdhName(request.getName(), con);
+			result = new DomainResult(domain);
 
 		}
 		return result;
@@ -63,20 +63,20 @@ public class EntityServlet extends RdapServlet {
 		throw new RequestHandleException(501, "Not implemented yet.");
 	}
 
-	private class EntityRequest {
+	private class DomainRequest {
 
-		private String handle;
+		private String name;
 
-		public EntityRequest(String handle) {
+		public DomainRequest(String name) {
 			super();
-			this.handle = handle;
+			this.name = name;
 		}
 
 		/**
 		 * @return the name
 		 */
-		public String getHandle() {
-			return handle;
+		public String getName() {
+			return name;
 		}
 
 	}

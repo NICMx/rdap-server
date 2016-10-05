@@ -84,8 +84,8 @@ public class EntityModel {
 	public static long storeToDatabase(Entity entity, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
 		Long entityId = existsByHandle(entity.getHandle(), connection);
-		// TODO check if the entity exists, we don't store the nested objects,
-		// we assume that nested objects already exist.
+		// TODO Validate if the entity exist then only store the entity's role,
+		// else insert the role and the entity
 		if (entityId != null) {
 			entity.setId(entityId);
 			return entityId;
@@ -241,7 +241,7 @@ public class EntityModel {
 	 */
 	private static Entity processResultSet(ResultSet resultSet, Connection connection) throws SQLException {
 		if (!resultSet.next()) {
-			throw new ObjectNotFoundException("Entity not found");
+			throw new ObjectNotFoundException("Object not found");
 		}
 
 		EntityDAO entity = new EntityDAO();
