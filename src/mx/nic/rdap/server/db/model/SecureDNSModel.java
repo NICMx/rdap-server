@@ -38,6 +38,16 @@ public class SecureDNSModel {
 		}
 	}
 
+	/**
+	 * Stores a SecureDNS Object to the database
+	 * 
+	 * @param secureDns
+	 * @param connection
+	 * @return
+	 * @throws SQLException
+	 * @throws IOException
+	 * @throws RequiredValueNotFoundException
+	 */
 	public static Long storeToDatabase(SecureDNS secureDns, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
 		String query = queryGroup.getQuery("storeToDatabase");
@@ -58,6 +68,15 @@ public class SecureDNSModel {
 		return secureDns.getId();
 	}
 
+	/**
+	 * Gets a Domain´s secure DNS
+	 * 
+	 * @param domainId
+	 * @param connection
+	 * @return
+	 * @throws SQLException
+	 * @throws IOException
+	 */
 	public static SecureDNS getByDomain(Long domainId, Connection connection) throws SQLException, IOException {
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByDomain"));) {
 			statement.setLong(1, domainId);

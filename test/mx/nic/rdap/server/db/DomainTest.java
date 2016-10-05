@@ -160,9 +160,7 @@ public class DomainTest {
 
 	@Test
 	/**
-	 * TODO Unfinished Inserts a default domain
-	 * 
-	 * @return
+	 * Inserts a domain and retrieves it
 	 */
 	public void insertDomainAndGet() {
 
@@ -183,9 +181,6 @@ public class DomainTest {
 
 		domain.getEntities().add(ent);
 		domain.getEntities().add(registrar);
-
-		// TODO Insert with namesarvers
-		// Creates and inserts a default nameserver
 		List<Nameserver> nameservers = new ArrayList<Nameserver>();
 		try {
 			nameservers = createDefaultNameservers(randomInt);

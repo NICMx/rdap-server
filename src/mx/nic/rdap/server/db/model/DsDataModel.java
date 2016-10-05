@@ -41,6 +41,16 @@ public class DsDataModel {
 		}
 	}
 
+	/**
+	 * Stores a DsData Object to the database
+	 * 
+	 * @param dsData
+	 * @param connection
+	 * @return
+	 * @throws SQLException
+	 * @throws IOException
+	 * @throws RequiredValueNotFoundException
+	 */
 	public static long storeToDatabase(DsData dsData, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
 		String query = queryGroup.getQuery("storeToDatabase");
@@ -74,6 +84,15 @@ public class DsDataModel {
 
 	}
 
+	/**
+	 * Finds a SercureDns´s DsData
+	 * 
+	 * @param secureDnsId
+	 * @param connection
+	 * @return
+	 * @throws SQLException
+	 * @throws IOException
+	 */
 	public static List<DsData> getBySecureDnsId(Long secureDnsId, Connection connection)
 			throws SQLException, IOException {
 		String query = queryGroup.getQuery("getBySecureDns");

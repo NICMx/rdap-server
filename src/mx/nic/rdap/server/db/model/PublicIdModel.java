@@ -82,7 +82,7 @@ public class PublicIdModel {
 	}
 
 	/**
-	 * Stores domain-public id relation
+	 * Stores relation of the Public Id
 	 * 
 	 * @param publicIds
 	 * @param id
@@ -136,6 +136,13 @@ public class PublicIdModel {
 		}
 	}
 
+	/**
+	 * Get all public Ids (Not Implemented)
+	 * 
+	 * @param connection
+	 * @return
+	 * @throws SQLException
+	 */
 	public static List<PublicId> getAll(Connection connection) throws SQLException {
 		try (PreparedStatement statement = connection.prepareStatement("getAll")) {
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());

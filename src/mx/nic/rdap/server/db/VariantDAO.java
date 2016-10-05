@@ -88,6 +88,11 @@ public class VariantDAO extends Variant implements DatabaseObject, JsonParser {
 		return builder.build();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see mx.nic.rdap.server.renderer.json.JsonParser#toJson()
+	 */
 	private JsonValue getVariantNamesJson(List<VariantName> variantNames) {
 		JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 

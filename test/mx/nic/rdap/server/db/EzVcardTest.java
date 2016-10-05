@@ -130,8 +130,7 @@ public class EzVcardTest {
 
 		for (VCardPostalInfo adr : postalInfoList) {
 			Address address = new Address();
-			address.getTypes().add(AddressType.WORK);// TODO verify how to
-														// change
+			address.getTypes().add(AddressType.WORK);
 
 			address.getStreetAddresses().add(adr.getStreet1());
 			address.getStreetAddresses().add(adr.getStreet2());

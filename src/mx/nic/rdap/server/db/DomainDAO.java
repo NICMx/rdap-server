@@ -30,12 +30,18 @@ import mx.nic.rdap.server.renderer.json.JsonUtil;
 public class DomainDAO extends Domain implements DatabaseObject, JsonParser {
 
 	/**
-	 * Default Constreuctor
+	 * Default Constructor
 	 */
 	public DomainDAO() {
 		super();
 	}
 
+	/**
+	 * Construct Domain with a ResultSet
+	 * 
+	 * @param resultSet
+	 * @throws SQLException
+	 */
 	public DomainDAO(ResultSet resultSet) throws SQLException {
 		loadFromDatabase(resultSet);
 	}

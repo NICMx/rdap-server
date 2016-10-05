@@ -20,11 +20,20 @@ import mx.nic.rdap.server.renderer.json.JsonParser;
  */
 public class PublicIdDAO extends PublicId implements DatabaseObject, JsonParser {
 
+	/**
+	 * Default Constructor
+	 */
 	public PublicIdDAO() {
 		super();
 
 	}
 
+	/**
+	 * Constructs PublicId with a ResultSet
+	 * 
+	 * @param resultSet
+	 * @throws SQLException
+	 */
 	public PublicIdDAO(ResultSet resultSet) throws SQLException {
 		super();
 		this.loadFromDatabase(resultSet);
@@ -55,6 +64,11 @@ public class PublicIdDAO extends PublicId implements DatabaseObject, JsonParser 
 		preparedStatement.setString(2, this.getPublicId());
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see mx.nic.rdap.server.renderer.json.JsonParser#toJson()
+	 */
 	@Override
 	public JsonObject toJson() {
 		JsonObjectBuilder builder = Json.createObjectBuilder();

@@ -75,6 +75,11 @@ public class SecureDNSDAO extends SecureDNS implements DatabaseObject, JsonParse
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see mx.nic.rdap.server.renderer.json.JsonParser#toJson()
+	 */
 	public JsonObject toJson() {
 		JsonObjectBuilder builder = Json.createObjectBuilder();
 		if (this.getZoneSigned() != null) {

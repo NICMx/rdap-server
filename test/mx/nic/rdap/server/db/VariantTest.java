@@ -138,7 +138,6 @@ public class VariantTest {
 		// Stores variants to database
 		try {
 			VariantModel.storeAllToDatabase(variants, domainId, connection);
-			// TODO check why variantId is not auto-incremental
 		} catch (SQLException | IOException e) {
 			e.printStackTrace();
 			fail(e.getMessage());

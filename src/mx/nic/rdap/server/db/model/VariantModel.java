@@ -156,7 +156,6 @@ public class VariantModel {
 			try (ResultSet resultSet = statement.executeQuery()) {
 				// Validate results
 				if (!resultSet.next()) {
-					// TODO is there any reason not to have variantRelations?
 					throw new ObjectNotFoundException("Object not found.");
 				}
 				List<VariantRelation> relations = variant.getRelations();
@@ -228,7 +227,6 @@ public class VariantModel {
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			ResultSet resultSet = statement.executeQuery();
 			if (!resultSet.next()) {
-				// TODO is there any reason not to have variantsName?
 				throw new ObjectNotFoundException("Object not found.");
 			}
 			List<VariantName> variantNames = variant.getVariantNames();
