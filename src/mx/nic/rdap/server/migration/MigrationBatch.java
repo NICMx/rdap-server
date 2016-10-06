@@ -3,16 +3,23 @@ package mx.nic.rdap.server.migration;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import mx.nic.rdap.server.db.DatabaseSession;
+import mx.nic.rdap.server.db.EntityDAO;
+import mx.nic.rdap.server.db.NameserverDAO;
 
 /**
- * @author L00000185
+ * Main class for the migration batch
+ * 
+ * @author dalpuche
  *
  */
 public class MigrationBatch {
@@ -22,22 +29,89 @@ public class MigrationBatch {
 	private HashMap<String, String> queries = new HashMap<>();
 
 	public MigrationBatch() {
-		MigrationInitializer.initDBConnection();
+		MigrationInitializer.initOriginDBConnection();
+		MigrationInitializer.initRDAPDBConnection();
 		try {
 			readMigrationFile();
-		} catch (IOException e) {
+			migrate();
+		} catch (IOException | SQLException e) {
+			MigrationInitializer.closeOriginDBConnection();
+			MigrationInitializer.closeRDAPDBConnection();
 			throw new RuntimeException(e);
 		}
 	}
 
+	/**
+	 * Migration process
+	 * 
+	 * @throws SQLException
+	 */
 	public void migrate() throws SQLException {
-		String query = queries.get("nameserver");
-		try (PreparedStatement statement = DatabaseSession.getConnection().prepareStatement(query)) {
-			logger.log(Level.INFO, "Excuting QUERY:" + statement.toString());
-			statement.executeQuery();
-		}
+		migrateEntities();
+		migrateNameservers();
 	}
 
+	/**
+	 * Execute the entities select stamements in the origin database and store
+	 * them in the RDAP databse
+	 * 
+	 * @throws SQLException
+	 */
+	private void migrateEntities() throws SQLException {
+		logger.log(Level.INFO, "******MIGRATING ENTITIES STARTING******");
+		try (Connection originConnection = MigrationDatabaseSession.getConnection();
+				PreparedStatement statement = originConnection.prepareStatement(queries.get("entity"));) {
+			logger.log(Level.INFO, "Excuting QUERY:" + statement.toString());
+			ResultSet entitiesResultSet = statement.executeQuery();
+			logger.log(Level.INFO, "Done!\n Processing Entities resultset");
+			List<EntityDAO> entities = EntityMigrator.getEntitiesFromResultSet(entitiesResultSet);
+			logger.log(Level.INFO, "Done!\n Entities retrived:" + entities.size()
+					+ "\n Starting to save in RDAP Database. Good luck :)");
+			MigrationDatabaseSession.close();
+			try (Connection rdapConnection = DatabaseSession.getConnection();) {
+				EntityMigrator.storeEntitiesInRDAPDatabase(entities, rdapConnection);
+			}
+
+		} finally {
+			MigrationDatabaseSession.close();
+			DatabaseSession.close();
+		}
+		logger.log(Level.INFO, "******MIGRATING ENTITIES SUCCEEDED******");
+	}
+
+	/**
+	 * Execute the namerserver select stamements in the origin database and
+	 * store them in the RDAP databse
+	 * 
+	 * @throws SQLException
+	 */
+	private void migrateNameservers() throws SQLException {
+		logger.log(Level.INFO, "******MIGRATING NAMESERVERS STARTING******");
+		try (Connection originConnection = MigrationDatabaseSession.getConnection();
+				PreparedStatement statement = originConnection.prepareStatement(queries.get("nameserver"));) {
+			logger.log(Level.INFO, "Excuting QUERY:" + statement.toString());
+			ResultSet nameserverResultSet = statement.executeQuery();
+			logger.log(Level.INFO, "Done!\n Processing Nameservers resultset");
+			List<NameserverDAO> nameservers = NameserverMigrator.getNameserversFromResultSet(nameserverResultSet);
+			logger.log(Level.INFO, "Done!\n Nameservers retrived:" + nameservers.size()
+					+ "\n Starting to save in RDAP Database. Good luck :)");
+			MigrationDatabaseSession.close();
+			try (Connection rdapConnection = DatabaseSession.getConnection();) {
+				NameserverMigrator.storeNameserversInRDAPDatabase(nameservers, rdapConnection);
+			}
+
+		} finally {
+			MigrationDatabaseSession.close();
+			DatabaseSession.close();
+		}
+		logger.log(Level.INFO, "******MIGRATING NAMESERVERS SUCCEEDED******");
+	}
+
+	/**
+	 * Read the migration.sql file and store the queries in the queries hashmap
+	 * 
+	 * @throws IOException
+	 */
 	private void readMigrationFile() throws IOException {
 		String migrationFilePath = "META-INF/migration/migration.sql";
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(

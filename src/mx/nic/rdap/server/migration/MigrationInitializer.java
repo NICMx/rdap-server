@@ -5,36 +5,78 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import mx.nic.rdap.server.Util;
+import mx.nic.rdap.server.db.DatabaseSession;
 
 /**
- * @author L00000185
+ * Class that manage the database connection for the migrator
+ * 
+ * @author dalpuche
  *
  */
 public class MigrationInitializer {
 
-	public static void initDBConnection() {
+	/** File from which we will load the database connection. */
+	private static final String RDAP_DATABASE_FILE = "database";
+	/** File from which we will load the database connection. */
+	private static final String ORIGIN_DATABASE_FILE = "migration/database";
+
+	/**
+	 * Initialize the origin db connection
+	 */
+	public static void initOriginDBConnection() {
 		try {
-			MigrationDatabaseSession.init(readProperties());
+			MigrationDatabaseSession.init(readProperties(ORIGIN_DATABASE_FILE));
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
 
-	private static Properties readProperties() throws IOException {
-		String propertiesFilePath = "META-INF/migration/database.properties";
-		Properties result = new Properties();
-		try (InputStream configStream = Util.class.getClassLoader().getResourceAsStream(propertiesFilePath)) {
-			result.load(configStream);
+	/**
+	 * Initialize the rdap db connection
+	 */
+	public static void initRDAPDBConnection() {
+		try {
+			DatabaseSession.init(readProperties(RDAP_DATABASE_FILE));
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
 		}
-		return result;
 	}
 
-	public static void closeDBConnection() {
+	/**
+	 * Close the DB connection
+	 */
+	public static void closeOriginDBConnection() {
 		try {
 			MigrationDatabaseSession.close();
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
+	}
+
+	/**
+	 * Close the DB connection
+	 */
+	public static void closeRDAPDBConnection() {
+		try {
+			DatabaseSession.close();
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	/**
+	 * Read the database properties for the migration
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
+	private static Properties readProperties(String propertiesFile) throws IOException {
+		String propertiesFilePath = "META-INF/" + propertiesFile + ".properties";
+		Properties result = new Properties();
+		try (InputStream configStream = Util.class.getClassLoader().getResourceAsStream(propertiesFilePath)) {
+			result.load(configStream);
+		}
+		return result;
 	}
 
 }

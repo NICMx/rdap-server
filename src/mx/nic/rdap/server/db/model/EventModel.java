@@ -18,7 +18,6 @@ import mx.nic.rdap.core.db.Event;
 import mx.nic.rdap.server.db.EventDAO;
 import mx.nic.rdap.server.db.QueryGroup;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
-import mx.nix.rdap.core.catalog.EventAction;
 
 /**
  * The model for the Event object
@@ -60,7 +59,7 @@ public class EventModel {
 	 * @throws RequiredValueNotFoundException
 	 */
 	private static void isValidForStore(Event event) throws RequiredValueNotFoundException {
-		if (event.getEventAction() == null || event.getEventAction().compareTo(EventAction.UNKNOWN) == 0)
+		if (event.getEventAction() == null)
 			throw new RequiredValueNotFoundException("eventAction", "Event");
 		if (event.getEventDate() == null)
 			throw new RequiredValueNotFoundException("eventDate", "Event");
