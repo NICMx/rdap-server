@@ -77,10 +77,17 @@ public class DomainModel {
 		}
 		NameserverModel.storeDomainNameserversToDatabase(domain.getNameServers(), domainId, connection);
 
-		for (Entity ent : domain.getEntities()) {
-			EntityModel.storeToDatabase(ent, connection);
+		if (domain.getEntities().size() > 0) {
+			for (Entity ent : domain.getEntities()) {
+				Long entId = EntityModel.existsByHandle(ent.getHandle(), connection);
+				if (entId == null) {
+					throw new NullPointerException(
+							"Entity: " + ent.getHandle() + " was not insert previously to the database");
+				}
+				ent.setId(entId);
+			}
+			RolModel.storeDomainEntityRoles(domain.getEntities(), domainId, connection);
 		}
-		RolModel.storeDomainEntityRoles(domain.getEntities(), domainId, connection);
 
 		PublicIdModel.storePublicIdByDomain(domain.getPublicIds(), domain.getId(), connection);
 

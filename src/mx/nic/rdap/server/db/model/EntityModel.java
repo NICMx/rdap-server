@@ -52,7 +52,7 @@ public class EntityModel {
 		}
 	}
 
-	private static Long existsByHandle(String entityHandle, Connection connection) throws SQLException {
+	public static Long existsByHandle(String entityHandle, Connection connection) throws SQLException {
 		String query = queryGroup.getQuery("getIdByHandle");
 		Long entId = null;
 		try (PreparedStatement statement = connection.prepareStatement(query);) {

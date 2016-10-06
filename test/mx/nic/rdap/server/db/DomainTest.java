@@ -122,6 +122,22 @@ public class DomainTest {
 		ent.getRoles().add(Rol.ADMINISTRATIVE);
 		ent.getRoles().add(Rol.TECHNICAL);
 
+		try {
+			EntityModel.storeToDatabase(registrar, connection);
+			EntityModel.storeToDatabase(ent, connection);
+		} catch (SQLException | IOException | RequiredValueNotFoundException e1) {
+			e1.printStackTrace();
+			fail();
+		}
+
+		try {
+			EntityModel.storeToDatabase(registrar, connection);
+			EntityModel.storeToDatabase(ent, connection);
+		} catch (SQLException | IOException | RequiredValueNotFoundException e1) {
+			e1.printStackTrace();
+			fail();
+		}
+
 		Domain dom = new DomainDAO();
 		dom.getEntities().add(ent);
 		dom.getEntities().add(registrar);
@@ -178,6 +194,22 @@ public class DomainTest {
 		ent.getRoles().add(Rol.REGISTRANT);
 		ent.getRoles().add(Rol.ADMINISTRATIVE);
 		ent.getRoles().add(Rol.TECHNICAL);
+
+		try {
+			EntityModel.storeToDatabase(registrar, connection);
+			EntityModel.storeToDatabase(ent, connection);
+		} catch (SQLException | IOException | RequiredValueNotFoundException e1) {
+			e1.printStackTrace();
+			fail();
+		}
+
+		try {
+			EntityModel.storeToDatabase(registrar, connection);
+			EntityModel.storeToDatabase(ent, connection);
+		} catch (SQLException | IOException | RequiredValueNotFoundException e1) {
+			e1.printStackTrace();
+			fail();
+		}
 
 		domain.getEntities().add(ent);
 		domain.getEntities().add(registrar);

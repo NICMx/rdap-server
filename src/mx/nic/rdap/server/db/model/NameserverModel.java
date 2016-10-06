@@ -84,7 +84,12 @@ public class NameserverModel {
 		EventModel.storeNameserverEventsToDatabase(nameserver.getEvents(), nameserverId, connection);
 		if (nameserver.getEntities().size() > 0) {
 			for (Entity entity : nameserver.getEntities()) {
-				EntityModel.storeToDatabase(entity, connection);
+				Long entityId = EntityModel.existsByHandle(entity.getHandle(), connection);
+				if (entityId == null) {
+					throw new NullPointerException(
+							"Entity: " + entity.getHandle() + " was not insert previously to the database");
+				}
+				entity.setId(entityId);
 			}
 			RolModel.storeNameserverEntityRoles(nameserver.getEntities(), nameserverId, connection);
 		}

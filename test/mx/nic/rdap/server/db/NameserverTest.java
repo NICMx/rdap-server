@@ -238,16 +238,4 @@ public class NameserverTest {
 		assert true;
 	}
 
-	@Test
-	public void findByName() {
-		Nameserver nameserver = new NameserverDAO();
-		try {
-			nameserver = NameserverModel.findByName("ns1.xn--fo-5ja.example", connection);
-			System.out.println(nameserver.toString());
-		} catch (IOException | SQLException e) {
-			e.printStackTrace();
-			fail();
-		}
-		assert true;
-	}
 }
