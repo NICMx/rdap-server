@@ -36,11 +36,11 @@ import mx.nic.rdap.core.db.RemarkDescription;
 import mx.nic.rdap.core.db.SecureDNS;
 import mx.nic.rdap.core.db.Variant;
 import mx.nic.rdap.core.db.VariantName;
-import mx.nic.rdap.core.db.Zone;
 import mx.nic.rdap.core.db.struct.NameserverIpAddressesStruct;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.model.DomainModel;
 import mx.nic.rdap.server.db.model.EntityModel;
+import mx.nic.rdap.server.db.model.ZoneModel;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
 import mx.nix.rdap.core.catalog.EventAction;
 import mx.nix.rdap.core.catalog.Rol;
@@ -143,10 +143,15 @@ public class DomainTest {
 		dom.getEntities().add(registrar);
 		dom.setHandle("dom_testdom");
 		dom.setLdhName("mydomaintest");
-		Zone zone = new Zone();
-		zone.setId(100);
-		zone.setZoneName("mx");
-		dom.setZone(zone);
+
+		Integer zoneId = null;
+		try {
+			zoneId = ZoneModel.storeToDatabase("mx", connection);
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+			fail(e1.toString());
+		}
+		dom.setZoneId(zoneId);
 
 		SecureDNSDAO secureDNS = SecureDnsTest.getSecureDns(null, null, false, false, null);
 		dom.setSecureDNS(secureDNS);
@@ -179,9 +184,10 @@ public class DomainTest {
 	 * Inserts a domain and retrieves it
 	 */
 	public void insertDomainAndGet() {
-
 		Random random = new Random();
 		int randomInt = random.nextInt();
+
+		String domainName = "foo" + randomInt;
 		DomainDAO domain = new DomainDAO();
 
 		Entity registrar = new EntityDAO();
@@ -222,12 +228,16 @@ public class DomainTest {
 		domain.setNameServers(nameservers);
 
 		// Creates and inserts a zone
-		Zone zone = new Zone();
-		zone.setId(100);
-		zone.setZoneName("mx");
+		Integer zoneId = null;
+		try {
+			zoneId = ZoneModel.storeToDatabase("mx", connection);
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+			fail(e1.toString());
+		}
 
-		domain.setLdhName("foo");
-		domain.setZone(zone);
+		domain.setZoneId(zoneId);
+		domain.setLdhName(domainName);
 		domain.setSecureDNS(SecureDnsTest.createDefaultSDNS());
 
 		// Creates and inserts a list of variants into the domain
@@ -237,14 +247,14 @@ public class DomainTest {
 		relations1.add(VariantRelation.REGISTERED);
 		relations1.add(VariantRelation.CONJOINED);
 		List<VariantName> variantNames1 = new ArrayList<VariantName>();
-		variantNames1.add(VariantTest.createVariantName("xn--fo-cka.mx"));
-		variantNames1.add(VariantTest.createVariantName("xn--fo-fka.mx"));
+		variantNames1.add(VariantTest.createVariantName("xn--fo-cka" + randomInt + ".mx"));
+		variantNames1.add(VariantTest.createVariantName("xn--fo-fka" + randomInt + ".mx"));
 
 		List<VariantRelation> relations2 = new ArrayList<VariantRelation>();
 		relations2.add(VariantRelation.UNREGISTERED);
 		relations2.add(VariantRelation.REGISTRATION_RESTRICTED);
 		List<VariantName> variantNames2 = new ArrayList<VariantName>();
-		variantNames2.add(VariantTest.createVariantName("xn--fo-8ja.mx"));
+		variantNames2.add(VariantTest.createVariantName("xn--fo-8ja" + randomInt + ".mx"));
 
 		variants.add(VariantTest.createVariant(null, relations1, variantNames1, null, null));
 		variants.add(VariantTest.createVariant(null, relations2, variantNames2, null, ".EXAMPLE Spanish"));
@@ -324,7 +334,7 @@ public class DomainTest {
 		events.add(event2);
 		domain.getEvents().addAll(events);
 
-		domain.setHandle("foo." + zone.getZoneName());
+		domain.setHandle(domainName + "." + ZoneModel.getZoneNameById(domain.getZoneId()));
 
 		List<DsData> dsDataList = new ArrayList<>();
 		DsData dsData = SecureDnsTest.getDsData(null, null, 66612, 1, "ABCDEF1234", 1, null, null);

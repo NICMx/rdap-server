@@ -8,7 +8,6 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
@@ -19,7 +18,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import mx.nic.rdap.core.db.Zone;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.model.ZoneModel;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
@@ -96,41 +94,19 @@ public class ZoneTest {
 		Random random = new Random();
 		int randomInt = random.nextInt();
 
-		Zone zone = createZone(null, "example" + randomInt + ".mx");
-		Integer zoneId;
-		System.out.println(zone.getZoneName() + zone.getId());
-		try {
-			zoneId = ZoneModel.storeToDatabase(zone, connection);
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-		System.out.println("" + zoneId);
-		Zone byId = new Zone();
+		String zoneName = "example" + randomInt + ".mx";
+		Integer zoneId = null;
 
 		try {
-			byId = ZoneModel.getByZoneId(zoneId, connection);
+			zoneId = ZoneModel.storeToDatabase(zoneName, connection);
 		} catch (SQLException e) {
 			e.printStackTrace();
-			fail(e.getMessage());
+			fail();
 		}
-		System.out.println(byId.getZoneName() + " " + byId.getId());
-		Assert.assertTrue("Get by Id fails", zone.equals(byId));
-	}
 
-	@Test
-	public void getAll() throws IOException, SQLException {
-		List<Zone> zones = ZoneModel.getAll(connection);
-		for (Zone zone : zones) {
-			System.out.println(zone.getId() + " " + zone.getZoneName());
-		}
-		System.out.print("\n\n");
-	}
+		String byId = ZoneModel.getZoneNameById(zoneId);
 
-	public ZoneDAO createZone(Integer id, String zoneName) {
-		ZoneDAO zone = new ZoneDAO();
-		zone.setId(id);
-		zone.setZoneName(zoneName);
-		return zone;
+		Assert.assertTrue("Get by Id fails", zoneName.equals(byId));
 	}
 
 }

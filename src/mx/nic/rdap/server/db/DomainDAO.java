@@ -16,7 +16,6 @@ import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.PublicId;
 import mx.nic.rdap.core.db.SecureDNS;
 import mx.nic.rdap.core.db.Variant;
-import mx.nic.rdap.core.db.Zone;
 import mx.nic.rdap.server.renderer.json.JsonParser;
 import mx.nic.rdap.server.renderer.json.JsonUtil;
 
@@ -64,8 +63,7 @@ public class DomainDAO extends Domain implements DatabaseObject, JsonParser {
 		this.setHandle(resultSet.getString("dom_handle"));
 		this.setLdhName(resultSet.getString("dom_ldh_name"));
 		this.setPort43(resultSet.getString("dom_port43"));
-		this.setZone(new Zone());
-		this.getZone().setId(resultSet.getInt("zone_id"));
+		this.setZoneId(resultSet.getInt("zone_id"));
 	}
 
 	/*
@@ -79,7 +77,7 @@ public class DomainDAO extends Domain implements DatabaseObject, JsonParser {
 		preparedStatement.setString(1, this.getHandle());
 		preparedStatement.setString(2, this.getLdhName());
 		preparedStatement.setString(3, this.getPort43());
-		preparedStatement.setInt(4, this.getZone().getId());
+		preparedStatement.setInt(4, this.getZoneId());
 
 	}
 

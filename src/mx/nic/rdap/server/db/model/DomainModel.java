@@ -152,7 +152,6 @@ public class DomainModel {
 		domain.setPublicIds(PublicIdModel.getByDomain(domainId, connection));
 		domain.setSecureDNS(SecureDNSModel.getByDomain(domainId, connection));
 		domain.setVariants(VariantModel.getByDomainId(domainId, connection));
-		domain.setZone(ZoneModel.getByZoneId(domain.getZone().getId(), connection));
 
 		List<Nameserver> domainsNS = NameserverModel.getByDomainId(domainId, connection);
 		domain.getNameServers().addAll(domainsNS);
