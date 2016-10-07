@@ -100,6 +100,8 @@ public class MigrationBatch {
 				NameserverMigrator.storeNameserversInRDAPDatabase(nameservers, rdapConnection);
 			}
 
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
 		} finally {
 			MigrationDatabaseSession.close();
 			DatabaseSession.close();

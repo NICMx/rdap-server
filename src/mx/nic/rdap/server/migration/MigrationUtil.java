@@ -10,6 +10,9 @@ import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Event;
 import mx.nic.rdap.server.db.EntityDAO;
 import mx.nic.rdap.server.db.EventDAO;
+import mx.nic.rdap.server.exception.InvalidValueException;
+import mx.nic.rdap.server.exception.InvalidadDataStructure;
+import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
 import mx.nix.rdap.core.catalog.EventAction;
 import mx.nix.rdap.core.catalog.Rol;
 import mx.nix.rdap.core.catalog.Status;
@@ -28,8 +31,9 @@ public class MigrationUtil {
 	 * @param resultSet
 	 *            must have the form: “rdap_status, rdap_status, …”
 	 * @return
+	 * @throws InvalidValueException
 	 */
-	public static List<Status> getRDAPStatusFromResultSet(String resultSet) {
+	public static List<Status> getRDAPStatusFromResultSet(String resultSet) throws InvalidValueException {
 		List<Status> statusList = new ArrayList<Status>();
 		if (resultSet != null && !resultSet.trim().isEmpty()) {
 			List<String> statusListString = Arrays.asList(resultSet.split(","));
@@ -37,6 +41,8 @@ public class MigrationUtil {
 				Status status = Status.getByName(statusString.trim());
 				if (status != null)
 					statusList.add(status);
+				else
+					throw new InvalidValueException("Value", "Status", statusString);
 			}
 		}
 		return statusList;
@@ -48,8 +54,9 @@ public class MigrationUtil {
 	 * @param resultSet
 	 *            must have the form: “epp_status, epp_status, …”
 	 * @return
+	 * @throws InvalidValueException
 	 */
-	public static List<Status> getRDAPStatusFromEPPStatusResultSet(String resultSet) {
+	public static List<Status> getRDAPStatusFromEPPStatusResultSet(String resultSet) throws InvalidValueException {
 		List<Status> statusList = new ArrayList<Status>();
 		if (resultSet != null && !resultSet.trim().isEmpty()) {
 			List<String> statusListString = Arrays.asList(resultSet.split(","));
@@ -57,6 +64,8 @@ public class MigrationUtil {
 				Status status = Status.getByEPPName(statusString.trim());
 				if (status != null)
 					statusList.add(status);
+				else
+					throw new InvalidValueException("Value", "Status", statusString);
 			}
 		}
 		return statusList;
@@ -71,37 +80,46 @@ public class MigrationUtil {
 	 *            eventActor”
 	 * 
 	 * @return
+	 * @throws RequiredValueNotFoundException
+	 * @throws InvalidValueException
+	 * @throws InvalidadDataStructure
 	 */
-	public static List<Event> getEventsFromResultSet(String resultSet) {
+	public static List<Event> getEventsFromResultSet(String resultSet)
+			throws RequiredValueNotFoundException, InvalidValueException, InvalidadDataStructure {
 		List<Event> eventList = new ArrayList<Event>();
 		if (resultSet != null && !resultSet.trim().isEmpty()) {
-			List<List<String>> eventDataStructureList = getDataStructureList(resultSet);
-			for (List<String> eventData : eventDataStructureList) {
-				EventDAO event = new EventDAO();
-				String eventActionString = eventData.get(0);
-				String eventDateString = eventData.get(1);
-				String eventActorString = eventData.get(2);
+			List<List<String>> eventDataStructureList;
+			try {
+				eventDataStructureList = getDataStructureList(resultSet, 3);
+				for (List<String> eventData : eventDataStructureList) {
+					EventDAO event = new EventDAO();
+					String eventActionString = eventData.get(0);
+					String eventDateString = eventData.get(1);
+					String eventActorString = eventData.get(2);
 
-				if (isResultSetValueValid(eventActionString)) {
-					EventAction action = EventAction.getByName(eventActionString.trim());
-					if (action == null) {
-						throw new RuntimeException("Invalidad event action:" + eventActionString);
+					if (isResultSetValueValid(eventActionString)) {
+						EventAction action = EventAction.getByName(eventActionString.trim());
+						if (action == null) {
+							throw new InvalidValueException("EventAction", "Event", eventActionString);
+						}
+						event.setEventAction(action);
+					} else {
+						throw new RequiredValueNotFoundException("EventAction", "Event");
 					}
-					event.setEventAction(action);
-				} else {
-					throw new RuntimeException("Invalidad event action:" + eventActionString);
-				}
 
-				if (isResultSetValueValid(eventDateString)) {
-					Date eventDate = Date.from(Instant.parse(eventDateString.trim()));
-					event.setEventDate(eventDate);
-				} else {
-					throw new RuntimeException("Invalidad event date:" + eventDateString);
+					if (isResultSetValueValid(eventDateString)) {
+						Date eventDate = Date.from(Instant.parse(eventDateString.trim()));
+						event.setEventDate(eventDate);
+					} else {
+						throw new RequiredValueNotFoundException("EventDate", "Event");
+					}
+					if (isResultSetValueValid(eventActorString)) {
+						event.setEventActor(eventActorString.trim());
+					}
+					eventList.add(event);
 				}
-				if (isResultSetValueValid(eventActorString)) {
-					event.setEventActor(eventActorString.trim());
-				}
-				eventList.add(event);
+			} catch (InvalidadDataStructure e) {
+				throw new InvalidadDataStructure("eventData", "“EventAction | eventDate | eventActor”");
 			}
 		}
 		return eventList;
@@ -115,31 +133,42 @@ public class MigrationUtil {
 	 *            "entityData" Must have the form: “handle | rol”
 	 * 
 	 * @return
+	 * @throws RequiredValueNotFoundException
+	 * @throws InvalidValueException
+	 * @throws InvalidadDataStructure
 	 */
-	public static List<Entity> getEntityAndRolesFromResultSet(String resultSet) {
+	public static List<Entity> getEntityAndRolesFromResultSet(String resultSet)
+			throws RequiredValueNotFoundException, InvalidValueException, InvalidadDataStructure {
 		List<Entity> entityList = new ArrayList<Entity>();
 		if (resultSet != null && !resultSet.trim().isEmpty()) {
-			List<List<String>> entityDataStructureList = getDataStructureList(resultSet);
-			for (List<String> entityData : entityDataStructureList) {
-				EntityDAO entity = new EntityDAO();
-				String handle = entityData.get(0);
-				String rolString = entityData.get(1);
-				if (isResultSetValueValid(handle)) {
-					entity.setHandle(handle);
-				} else {
-					throw new RuntimeException("Invalidad entity handle:" + handle);
-				}
-				if (isResultSetValueValid(rolString)) {
-					Rol rol = Rol.getByName(rolString.trim());
-					if (rol != null) {
-						entity.getRoles().add(rol);
+			try {
+				List<List<String>> entityDataStructureList = getDataStructureList(resultSet, 2);
+				for (List<String> entityData : entityDataStructureList) {
+					EntityDAO entity = new EntityDAO();
+					String handle = entityData.get(0);
+					String rolString = entityData.get(1);
+					if (isResultSetValueValid(handle)) {
+						entity.setHandle(handle);
+					} else {
+						throw new RequiredValueNotFoundException("Handle", "Entity");
 					}
-				} else {
-					throw new RuntimeException("Invalidad entity rol:" + rolString);
+					if (isResultSetValueValid(rolString)) {
+						Rol rol = Rol.getByName(rolString.trim());
+						if (rol != null) {
+							entity.getRoles().add(rol);
+						} else {
+							throw new InvalidValueException("Rol", "Entity", rolString);
+						}
+					} else {
+						throw new RequiredValueNotFoundException("Rol", "Entity");
+					}
+					entityList.add(entity);
 				}
-				entityList.add(entity);
+			} catch (InvalidadDataStructure e) {
+				throw new InvalidadDataStructure("entityData", "handle | rol");
 			}
 		}
+
 		return entityList;
 	}
 
@@ -149,15 +178,23 @@ public class MigrationUtil {
 	 * @param resultSet
 	 *            must have the form
 	 *            "dataStructura1Data1|dataStructura1Data2|...,dataStructura2Data1|dataStructura2Data2|...,..."
+	 * @param expectedStructureSize
+	 *            the number of string that it's expected to split the string
 	 * @return
+	 * @throws InvalidadDataStructure
 	 */
-	public static List<List<String>> getDataStructureList(String resultSet) {
+	public static List<List<String>> getDataStructureList(String resultSet, int expectedStructureSize)
+			throws InvalidadDataStructure {
 		List<List<String>> dataStructureList = new ArrayList<>();
-
+		resultSet = resultSet + " ";// To add a value if the last character is a
+									// pipe
 		if (resultSet != null && !resultSet.trim().isEmpty()) {
-			List<String> auxList = Arrays.asList(resultSet.trim().split(","));
+			List<String> auxList = Arrays.asList(resultSet.split(","));
 			for (String aux : auxList) {
-				List<String> dataList = Arrays.asList(aux.trim().split("|"));
+				List<String> dataList = Arrays.asList(aux.split("\\|"));
+				if (dataList.size() != expectedStructureSize) {
+					throw new InvalidadDataStructure();
+				}
 				dataStructureList.add(dataList);
 			}
 		}
@@ -175,4 +212,5 @@ public class MigrationUtil {
 			return false;
 		return true;
 	}
+
 }
