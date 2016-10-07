@@ -60,7 +60,7 @@ public class EventModel {
 	 * @throws RequiredValueNotFoundException
 	 */
 	private static void isValidForStore(Event event) throws RequiredValueNotFoundException {
-		if (event.getEventAction() == null || event.getEventAction().compareTo(EventAction.UNKNOWN) == 0)
+		if (event.getEventAction() == null)
 			throw new RequiredValueNotFoundException("eventAction", "Event");
 		if (event.getEventDate() == null)
 			throw new RequiredValueNotFoundException("eventDate", "Event");
