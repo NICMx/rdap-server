@@ -8,8 +8,10 @@ import java.util.List;
 
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Event;
+import mx.nic.rdap.core.db.PublicId;
 import mx.nic.rdap.server.db.EntityDAO;
 import mx.nic.rdap.server.db.EventDAO;
+import mx.nic.rdap.server.db.PublicIdDAO;
 import mx.nix.rdap.core.catalog.EventAction;
 import mx.nix.rdap.core.catalog.Rol;
 import mx.nix.rdap.core.catalog.Status;
@@ -141,6 +143,36 @@ public class MigrationUtil {
 			}
 		}
 		return entityList;
+	}
+
+	/**
+	 * Process the resultSet and return a list of PublicIds with their roles
+	 * 
+	 * @param resultSet
+	 *            must have the form: "publicId1, publicId2" and each
+	 *            "PublicIdData" must have the form: “publicId | type”
+	 * @return
+	 */
+	public static List<PublicId> getPublicIdsFromResultSet(String resultSet) {
+		// TODO
+		List<PublicId> publicIdList = new ArrayList<PublicId>();
+		if (isResultSetValueValid(resultSet)) {
+			List<List<String>> publicIdStructureList = getDataStructureList(resultSet);
+			for (List<String> publicIdData : publicIdStructureList) {
+				PublicIdDAO publicId = new PublicIdDAO();
+				String publicIdValue = publicIdData.get(0);
+				String type = publicIdData.get(1);
+				if (isResultSetValueValid(publicIdValue) || isResultSetValueValid(type)) {
+					publicId.setPublicId(publicIdValue.trim());
+					publicId.setType(type.trim());
+				} else {
+					throw new RuntimeException("Required value not found.");
+				}
+				publicIdList.add(publicId);
+
+			}
+		}
+		return publicIdList;
 	}
 
 	/**
