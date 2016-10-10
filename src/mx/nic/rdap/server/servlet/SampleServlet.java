@@ -1,6 +1,7 @@
 package mx.nic.rdap.server.servlet;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Connection;
@@ -39,10 +40,11 @@ public class SampleServlet extends RdapServlet {
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
 		SampleRequest request = parseRequest(httpRequest);
-		return doQuery( request);
+		return doQuery(request);
 	}
 
-	private SampleRequest parseRequest(HttpServletRequest httpRequest) throws RequestHandleException {
+	private SampleRequest parseRequest(HttpServletRequest httpRequest)
+			throws RequestHandleException, UnsupportedEncodingException {
 		String query[] = Util.getRequestParams(httpRequest);
 
 		InetAddress address;
@@ -64,9 +66,10 @@ public class SampleServlet extends RdapServlet {
 		return new SampleRequest(address, prefixLength);
 	}
 
-	private RdapResult doQuery( SampleRequest request) throws IOException, SQLException {
-		
-		try (Connection connection=DatabaseSession.getConnection();PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("find-domain"))) {
+	private RdapResult doQuery(SampleRequest request) throws IOException, SQLException {
+
+		try (Connection connection = DatabaseSession.getConnection();
+				PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("find-domain"))) {
 			statement.setString(1, request.address.getHostAddress());
 			ResultSet resultSet = statement.executeQuery();
 
