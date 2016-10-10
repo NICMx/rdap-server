@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import mx.nic.rdap.core.db.VCardPostalInfo;
 import mx.nic.rdap.server.db.EntityDAO;
 import mx.nic.rdap.server.db.VCardDAO;
+import mx.nic.rdap.server.db.VCardPostalInfoDAO;
 import mx.nic.rdap.server.db.model.EntityModel;
 import mx.nic.rdap.server.exception.InvalidValueException;
 import mx.nic.rdap.server.exception.InvalidadDataStructure;
@@ -127,7 +127,7 @@ public class EntityMigrator {
 			if (MigrationUtil.isResultSetValueValid(dataList.get(7)))
 				vcard.setJobTitle(dataList.get(7).trim());
 
-			VCardPostalInfo postalInfo = new VCardPostalInfo();
+			VCardPostalInfoDAO postalInfo = new VCardPostalInfoDAO();
 
 			if (MigrationUtil.isResultSetValueValid(dataList.get(8)))
 				postalInfo.setType(dataList.get(8).trim());
