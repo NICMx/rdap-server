@@ -8,6 +8,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import mx.nic.rdap.core.db.IpAddress;
 import mx.nic.rdap.core.db.struct.NameserverIpAddressesStruct;
@@ -26,6 +28,8 @@ import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
  */
 public class NameserverMigrator {
 
+	private final static Logger logger = Logger.getLogger(NameserverMigrator.class.getName());
+
 	/**
 	 * Process the resultSet of the select statement and return a list of
 	 * Nameservers
@@ -42,36 +46,81 @@ public class NameserverMigrator {
 		List<NameserverDAO> nameservers = new ArrayList<NameserverDAO>();
 		while (result.next()) {
 			NameserverDAO nameserver = new NameserverDAO();
-			if (MigrationUtil.isResultSetValueValid(result.getString("handle")))
-				nameserver.setHandle(result.getString("handle").trim());
-			else {
+			try {
+				if (MigrationUtil.isResultSetValueValid(result.getString("handle")))
+					nameserver.setHandle(result.getString("handle").trim());
+				else {
+					throw new RequiredValueNotFoundException("Handle", "Nameserver");
+				}
+			} catch (SQLException e) {
 				throw new RequiredValueNotFoundException("Handle", "Nameserver");
 			}
-			if (MigrationUtil.isResultSetValueValid(result.getString("ldh_name")))
-				nameserver.setPunycodeName(result.getString("ldh_name").trim());
-			else {
+			try {
+				if (MigrationUtil.isResultSetValueValid(result.getString("ldh_name")))
+					nameserver.setPunycodeName(result.getString("ldh_name").trim());
+				else {
+					throw new RequiredValueNotFoundException("LDHName", "Nameserver");
+				}
+			} catch (SQLException e) {
 				throw new RequiredValueNotFoundException("LDHName", "Nameserver");
 			}
-			if (MigrationUtil.isResultSetValueValid(result.getString("port43")))
-				nameserver.setPort43(result.getString("port43").trim());
-			else {
+			try {
+				if (MigrationUtil.isResultSetValueValid(result.getString("port43")))
+					nameserver.setPort43(result.getString("port43").trim());
+				else {
+					throw new RequiredValueNotFoundException("Port43", "Nameserver");
+				}
+			} catch (SQLException e) {
 				throw new RequiredValueNotFoundException("Port43", "Nameserver");
 			}
-			if (MigrationUtil.isResultSetValueValid(result.getString("rdap_status"))) {
-				nameserver.setStatus(MigrationUtil.getRDAPStatusFromResultSet(result.getString("rdap_status")));
+			try {
+				if (MigrationUtil.isResultSetValueValid(result.getString("rdap_status"))) {
+					nameserver.setStatus(MigrationUtil.getRDAPStatusFromResultSet(result.getString("rdap_status")));
+				}
+			} catch (SQLException e) {
+				logger.log(Level.WARNING, "rdap_status column not found");// Not
+																			// a
+																			// required
+																			// value
 			}
-			if (MigrationUtil.isResultSetValueValid(result.getString("epp_status"))) {
-				nameserver.getStatus()
-						.addAll(MigrationUtil.getRDAPStatusFromEPPStatusResultSet(result.getString("epp_status")));
+			try {
+				if (MigrationUtil.isResultSetValueValid(result.getString("epp_status"))) {
+					nameserver.getStatus()
+							.addAll(MigrationUtil.getRDAPStatusFromEPPStatusResultSet(result.getString("epp_status")));
+				}
+			} catch (SQLException e) {
+				logger.log(Level.WARNING, "epp_status column not found");// Not
+																			// a
+																			// required
+																			// value
 			}
-			if (MigrationUtil.isResultSetValueValid(result.getString("events"))) {
-				nameserver.setEvents(MigrationUtil.getEventsFromResultSet(result.getString("events")));
+			try {
+				if (MigrationUtil.isResultSetValueValid(result.getString("events"))) {
+					nameserver.setEvents(MigrationUtil.getEventsFromResultSet(result.getString("events")));
+				}
+			} catch (SQLException e) {
+				logger.log(Level.WARNING, "events column not found");// Not a
+																		// required
+																		// value
 			}
-			if (MigrationUtil.isResultSetValueValid(result.getString("ip_addresses"))) {
-				nameserver.setIpAddresses(getNameserverIpAddressesFromResultSet(result.getString("ip_addresses")));
+			try {
+				if (MigrationUtil.isResultSetValueValid(result.getString("ip_addresses"))) {
+					nameserver.setIpAddresses(getNameserverIpAddressesFromResultSet(result.getString("ip_addresses")));
+				}
+			} catch (SQLException e) {
+				logger.log(Level.WARNING, "ip_addresses column not found");// Not
+																			// a
+																			// required
+																			// value
 			}
-			if (MigrationUtil.isResultSetValueValid(result.getString("entities"))) {
-				nameserver.setEntities(MigrationUtil.getEntityAndRolesFromResultSet(result.getString("entities")));
+			try {
+				if (MigrationUtil.isResultSetValueValid(result.getString("entities"))) {
+					nameserver.setEntities(MigrationUtil.getEntityAndRolesFromResultSet(result.getString("entities")));
+				}
+			} catch (SQLException e) {
+				logger.log(Level.WARNING, "entities column not found");// Not a
+																		// required
+																		// value
 			}
 			nameservers.add(nameserver);
 		}

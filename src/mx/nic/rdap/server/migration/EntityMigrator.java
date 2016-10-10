@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import mx.nic.rdap.server.db.EntityDAO;
 import mx.nic.rdap.server.db.VCardDAO;
@@ -25,6 +27,8 @@ import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
  */
 public class EntityMigrator {
 
+	private final static Logger logger = Logger.getLogger(EntityMigrator.class.getName());
+
 	/**
 	 * Process the resultSet of the select statement and return a list of
 	 * Entities
@@ -41,34 +45,82 @@ public class EntityMigrator {
 		List<EntityDAO> entities = new ArrayList<EntityDAO>();
 		while (result.next()) {
 			EntityDAO entity = new EntityDAO();
-			if (MigrationUtil.isResultSetValueValid(result.getString("handle")))
-				entity.setHandle(result.getString("handle").trim());
-			else {
+			try {
+				if (MigrationUtil.isResultSetValueValid(result.getString("handle")))
+					entity.setHandle(result.getString("handle").trim());
+				else {
+					throw new RequiredValueNotFoundException("Handle", "Entity");
+				}
+			} catch (SQLException e) {
 				throw new RequiredValueNotFoundException("Handle", "Entity");
 			}
-			if (MigrationUtil.isResultSetValueValid(result.getString("port43")))
-				entity.setPort43(result.getString("port43").trim());
-			else {
+			try {
+				if (MigrationUtil.isResultSetValueValid(result.getString("port43")))
+					entity.setPort43(result.getString("port43").trim());
+				else {
+					throw new RequiredValueNotFoundException("Port43", "Entity");
+				}
+			} catch (SQLException e) {
 				throw new RequiredValueNotFoundException("Port43", "Entity");
 			}
-			if (MigrationUtil.isResultSetValueValid(result.getString("rdap_status"))) {
-				entity.setStatus(MigrationUtil.getRDAPStatusFromResultSet(result.getString("rdap_status")));
+			try {
+				if (MigrationUtil.isResultSetValueValid(result.getString("rdap_status"))) {
+					entity.setStatus(MigrationUtil.getRDAPStatusFromResultSet(result.getString("rdap_status")));
+				}
+			} catch (SQLException e) {
+				logger.log(Level.WARNING, "rdap_status column not found");// Not
+																			// a
+																			// required
+																			// value
 			}
-			if (MigrationUtil.isResultSetValueValid(result.getString("epp_status"))) {
-				entity.getStatus()
-						.addAll(MigrationUtil.getRDAPStatusFromEPPStatusResultSet(result.getString("epp_status")));
+			try {
+				if (MigrationUtil.isResultSetValueValid(result.getString("epp_status"))) {
+					entity.getStatus()
+							.addAll(MigrationUtil.getRDAPStatusFromEPPStatusResultSet(result.getString("epp_status")));
+				}
+			} catch (SQLException e) {
+				logger.log(Level.WARNING, "epp_status column not found");// Not
+																			// a
+																			// required
+																			// value
 			}
-			if (MigrationUtil.isResultSetValueValid(result.getString("events"))) {
-				entity.setEvents(MigrationUtil.getEventsFromResultSet(result.getString("events")));
+			try {
+				if (MigrationUtil.isResultSetValueValid(result.getString("events"))) {
+					entity.setEvents(MigrationUtil.getEventsFromResultSet(result.getString("events")));
+				}
+			} catch (SQLException e) {
+				logger.log(Level.WARNING, "events column not found");// Not a
+																		// required
+																		// value
 			}
-			if (MigrationUtil.isResultSetValueValid(result.getString("entities"))) {
-				entity.setEntities(MigrationUtil.getEntityAndRolesFromResultSet(result.getString("entities")));
+			try {
+				if (MigrationUtil.isResultSetValueValid(result.getString("entities"))) {
+					entity.setEntities(MigrationUtil.getEntityAndRolesFromResultSet(result.getString("entities")));
+				}
+			} catch (SQLException e) {
+				logger.log(Level.WARNING, "entities column not found");// Not a
+																		// required
+																		// value
 			}
-			if (MigrationUtil.isResultSetValueValid(result.getString("public_ids"))) {
-				entity.setPublicIds(MigrationUtil.getPublicIdsFromResultSet(result.getString("public_ids")));
+			try {
+				if (MigrationUtil.isResultSetValueValid(result.getString("public_ids"))) {
+					entity.setPublicIds(MigrationUtil.getPublicIdsFromResultSet(result.getString("public_ids")));
+				}
+			} catch (SQLException e) {
+				logger.log(Level.WARNING, "public_ids column not found");// Not
+																			// a
+																			// required
+																			// value
+
 			}
-			if (MigrationUtil.isResultSetValueValid(result.getString("vcard"))) {
-				entity.getVCardList().add(getVCardFromResultSet(result.getString("vcard")));
+			try {
+				if (MigrationUtil.isResultSetValueValid(result.getString("vcard"))) {
+					entity.getVCardList().add(getVCardFromResultSet(result.getString("vcard")));
+				}
+			} catch (SQLException e) {
+				logger.log(Level.WARNING, "vcard column not found");// Not a
+																	// required
+																	// value
 			}
 			entities.add(entity);
 		}

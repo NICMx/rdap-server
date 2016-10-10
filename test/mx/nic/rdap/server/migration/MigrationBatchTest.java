@@ -23,9 +23,9 @@ public class MigrationBatchTest {
 
 	private final static Logger logger = Logger.getLogger(MigrationBatchTest.class.getName());
 
-	private String entityQuery = "SELECT \"XXXX2\" AS handle ,\"whois.example.net\" AS port43 ,\"active,validated\" AS rdap_status ,\"linked,ok\" AS epp_status ,\"registration| 2011-12-31T23:59:59Z| XXX1, reregistration| 2012-12-01T23:59:59Z | XXX1\" AS events ,\"XXX1 |registrar, XXX2 |reseller\" AS entities ,\"1|IANA Registrar ID, 2|NIC ID \" AS public_ids ,\"Joe Jobs |Orange |www.orange.mx |jj@orange.mx |81 8818181 |81 8181818181 |248.697.0908 |Engineer |local |Mexico |Monterrey |Nuevo Leon |Altavista |100 |Av. Luis Elizondo |64000\" AS vcard FROM dual;";
+	private String entityQuery = "SELECT \"XXXX2\" AS handle ,\"whois.example.net\" AS port43 ,\"active,validated\" AS rdap_status  ,\"registration| 2011-12-31T23:59:59Z| XXX1, reregistration| 2012-12-01T23:59:59Z | XXX1\" AS events ,\"XXX1 |registrar, XXX2 |reseller\" AS entities ,\"1|IANA Registrar ID, 2|NIC ID \" AS public_ids ,\"Joe Jobs |Orange |www.orange.mx |jj@orange.mx |81 8818181 |81 8181818181 |248.697.0908 |Engineer |local |Mexico |Monterrey |Nuevo Leon |Altavista |100 |Av. Luis Elizondo |64000\" AS vcard FROM dual;";
 	private String nameserverQuery = "SELECT   'XXXX' AS handle,     'ns1.xn--fo-5ja.example' AS ldh_name,     'whois.example.net' AS port43,     'active,validated' AS rdap_status,     'linked,ok' AS epp_status,     'registration| 2011-12-31T23:59:59Z| XXX1, reregistration| 2012-12-01T23:59:59Z| XXX1' AS events,     '4| 192.0.2.1, 6| 2001:db8::2:1' AS ip_addresses,     'XXX1|registrar, XXX2|reseller' AS entities FROM DUAL UNION ALL SELECT     'XXX2' AS handle,     'ns2.xn--fo-5ja.example' AS ldh_name,     'whois.example.net' AS port43,     'active,validated' AS rdap_status,     'linked' AS epp_status,     'registration| 2011-12-31T23:59:59Z|' AS events,     '4| 192.0.2.1, 6| 2001:db8::2:1' AS ip_addresses,     'XXX3|registrar' AS entities FROM DUAL;";
-	private String domainQuery = "";
+	// private String domainQuery = "";
 
 	@Test
 	public void migrationTest() {
