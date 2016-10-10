@@ -31,7 +31,7 @@ public class Scheduler {
 		Timer timer = new Timer();
 
 		// Create task from class ScheduledTask
-		ScheduledTask task = new ScheduledTask();
+		MigrationBatch task = new MigrationBatch();
 
 		// Runs task at specified date then waits 24 hours to run again
 

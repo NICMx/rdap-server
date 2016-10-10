@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,22 +23,23 @@ import mx.nic.rdap.server.db.NameserverDAO;
  * @author dalpuche
  *
  */
-public class MigrationBatch {
+public class MigrationBatch extends TimerTask {
 
 	private final static Logger logger = Logger.getLogger(MigrationBatch.class.getName());
 	/** The queries, indexed by means of their names. */
 	private HashMap<String, String> queries = new HashMap<>();
 
-	public MigrationBatch() {
+	public void run() {
 		MigrationInitializer.initOriginDBConnection();
 		MigrationInitializer.initRDAPDBConnection();
 		try {
 			readMigrationFile();
 			migrate();
 		} catch (IOException | SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
 			MigrationInitializer.closeOriginDBConnection();
 			MigrationInitializer.closeRDAPDBConnection();
-			throw new RuntimeException(e);
 		}
 	}
 
