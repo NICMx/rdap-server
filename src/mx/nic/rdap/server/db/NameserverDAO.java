@@ -88,6 +88,7 @@ public class NameserverDAO extends Nameserver implements DatabaseObject, JsonPar
 														// JsonObject of the
 														// rdap objects
 		builder.add("ldhName", this.getLdhName());
+		builder.add("unicodeName", this.getUnicodeName());
 		if ((this.getIpAddresses().getIpv4Adresses() != null || this.getIpAddresses().getIpv6Adresses() != null)
 				&& (!this.getIpAddresses().getIpv6Adresses().isEmpty()
 						|| !this.getIpAddresses().getIpv4Adresses().isEmpty()))
