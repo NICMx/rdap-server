@@ -14,6 +14,9 @@ import mx.nic.rdap.server.db.DomainDAO;
 import mx.nic.rdap.server.db.DsDataDAO;
 import mx.nic.rdap.server.db.NameserverDAO;
 import mx.nic.rdap.server.db.SecureDNSDAO;
+import mx.nic.rdap.server.exception.InvalidValueException;
+import mx.nic.rdap.server.exception.InvalidadDataStructure;
+import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
 
 /**
  * Class used to process the domains from the client´s database and stores them
@@ -31,8 +34,12 @@ public class DomainMigrator {
 	 * @param resultSet
 	 * @return
 	 * @throws SQLException
+	 * @throws InvalidValueException
+	 * @throws InvalidadDataStructure
+	 * @throws RequiredValueNotFoundException
 	 */
-	public static List<DomainDAO> getDomainsFromResultSet(ResultSet resultSet) throws SQLException {
+	public static List<DomainDAO> getDomainsFromResultSet(ResultSet resultSet)
+			throws SQLException, InvalidValueException, RequiredValueNotFoundException, InvalidadDataStructure {
 		List<DomainDAO> domains = new ArrayList<DomainDAO>();
 		while (resultSet.next()) {
 			DomainDAO domain = new DomainDAO();
@@ -40,7 +47,7 @@ public class DomainMigrator {
 			if (MigrationUtil.isResultSetValueValid(resultSet.getString("handle"))) {
 				domain.setHandle(resultSet.getString("handle").trim());
 			} else {
-				throw new RuntimeException("Domain's hanle can't be null.");
+				throw new RuntimeException("Domain's handle can't be null.");
 			}
 			if (MigrationUtil.isResultSetValueValid("ldh_name")) {
 				domain.setLdhName(resultSet.getString("ldh_name").trim());

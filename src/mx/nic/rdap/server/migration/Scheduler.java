@@ -2,8 +2,6 @@ package mx.nic.rdap.server.migration;
 
 import java.util.Calendar;
 import java.util.Timer;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,8 +18,6 @@ public class Scheduler {
 	public static void main(String args[]) throws InterruptedException {
 
 		Logger logger = Logger.getLogger(Scheduler.class.getName());
-
-		ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 
 		Calendar date = Calendar.getInstance();
 

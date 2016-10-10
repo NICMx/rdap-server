@@ -11,13 +11,10 @@ import mx.nic.rdap.core.db.Event;
 import mx.nic.rdap.core.db.PublicId;
 import mx.nic.rdap.server.db.EntityDAO;
 import mx.nic.rdap.server.db.EventDAO;
-<<<<<<< HEAD
+import mx.nic.rdap.server.db.PublicIdDAO;
 import mx.nic.rdap.server.exception.InvalidValueException;
 import mx.nic.rdap.server.exception.InvalidadDataStructure;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
-=======
-import mx.nic.rdap.server.db.PublicIdDAO;
->>>>>>> branch 'migration' of ssh://git@200.34.22.164:2222/opt/git/rdap-server.git
 import mx.nix.rdap.core.catalog.EventAction;
 import mx.nix.rdap.core.catalog.Rol;
 import mx.nix.rdap.core.catalog.Status;
@@ -184,24 +181,31 @@ public class MigrationUtil {
 	 *            must have the form: "publicId1, publicId2" and each
 	 *            "PublicIdData" must have the form: “publicId | type”
 	 * @return
+	 * @throws InvalidadDataStructure
 	 */
-	public static List<PublicId> getPublicIdsFromResultSet(String resultSet) {
+	public static List<PublicId> getPublicIdsFromResultSet(String resultSet) throws InvalidadDataStructure {
 		// TODO
 		List<PublicId> publicIdList = new ArrayList<PublicId>();
 		if (isResultSetValueValid(resultSet)) {
-			List<List<String>> publicIdStructureList = getDataStructureList(resultSet);
-			for (List<String> publicIdData : publicIdStructureList) {
-				PublicIdDAO publicId = new PublicIdDAO();
-				String publicIdValue = publicIdData.get(0);
-				String type = publicIdData.get(1);
-				if (isResultSetValueValid(publicIdValue) || isResultSetValueValid(type)) {
-					publicId.setPublicId(publicIdValue.trim());
-					publicId.setType(type.trim());
-				} else {
-					throw new RuntimeException("Required value not found.");
-				}
-				publicIdList.add(publicId);
+			List<List<String>> publicIdStructureList;
+			try {
+				publicIdStructureList = getDataStructureList(resultSet, 2);
 
+				for (List<String> publicIdData : publicIdStructureList) {
+					PublicIdDAO publicId = new PublicIdDAO();
+					String publicIdValue = publicIdData.get(0);
+					String type = publicIdData.get(1);
+					if (isResultSetValueValid(publicIdValue) || isResultSetValueValid(type)) {
+						publicId.setPublicId(publicIdValue.trim());
+						publicId.setType(type.trim());
+					} else {
+						throw new RuntimeException("Required value not found.");
+					}
+					publicIdList.add(publicId);
+
+				}
+			} catch (InvalidadDataStructure e) {
+				throw new InvalidadDataStructure("publicIdData", "PublicId | Type");
 			}
 		}
 		return publicIdList;
