@@ -67,14 +67,12 @@ public class MigrationBatch {
 			List<EntityDAO> entities = EntityMigrator.getEntitiesFromResultSet(entitiesResultSet);
 			logger.log(Level.INFO, "Done!\n Entities retrived:" + entities.size()
 					+ "\n Starting to save in RDAP Database. Good luck :)");
-			MigrationDatabaseSession.close();
 			try (Connection rdapConnection = DatabaseSession.getConnection();) {
 				EntityMigrator.storeEntitiesInRDAPDatabase(entities, rdapConnection);
 			}
 
-		} finally {
-			MigrationDatabaseSession.close();
-			DatabaseSession.close();
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
 		}
 		logger.log(Level.INFO, "******MIGRATING ENTITIES SUCCEEDED******");
 	}
@@ -95,16 +93,12 @@ public class MigrationBatch {
 			List<NameserverDAO> nameservers = NameserverMigrator.getNameserversFromResultSet(nameserverResultSet);
 			logger.log(Level.INFO, "Done!\n Nameservers retrived:" + nameservers.size()
 					+ "\n Starting to save in RDAP Database. Good luck :)");
-			MigrationDatabaseSession.close();
 			try (Connection rdapConnection = DatabaseSession.getConnection();) {
 				NameserverMigrator.storeNameserversInRDAPDatabase(nameservers, rdapConnection);
 			}
 
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
-		} finally {
-			MigrationDatabaseSession.close();
-			DatabaseSession.close();
 		}
 		logger.log(Level.INFO, "******MIGRATING NAMESERVERS SUCCEEDED******");
 	}
