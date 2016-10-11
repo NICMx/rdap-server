@@ -79,7 +79,6 @@ public class Scheduler {
 			timer.scheduleAtFixedRate(task, firstTimeExecutionDate, timeBetweenExecution);
 		} catch (RuntimeException e) {
 			logger.log(Level.SEVERE, e.getMessage());
-			Scheduler.main(args);
 		}
 
 	}
