@@ -16,6 +16,9 @@ import java.util.logging.Logger;
 import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.db.EntityDAO;
 import mx.nic.rdap.server.db.NameserverDAO;
+import mx.nic.rdap.server.exception.InvalidValueException;
+import mx.nic.rdap.server.exception.InvalidadDataStructure;
+import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
 
 /**
  * Main class for the migration batch
@@ -29,13 +32,32 @@ public class MigrationBatch extends TimerTask {
 	/** The queries, indexed by means of their names. */
 	private HashMap<String, String> queries = new HashMap<>();
 
+	public MigrationBatch() {
+		try {
+			readMigrationFile();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public void run() {
+		logger.log(Level.INFO, "******INITIALIZING DATABASE CONNECTIONS******");
 		MigrationInitializer.initOriginDBConnection();
 		MigrationInitializer.initRDAPDBConnection();
 		try {
-			readMigrationFile();
 			migrate();
-		} catch (IOException | SQLException e) {
+			logger.log(Level.INFO, "******MIGRATION SUCCESS******");
+			try (Connection rdapConnection = DatabaseSession.getConnection();) {
+				rdapConnection.commit();
+			}
+		} catch (IOException | SQLException | RequiredValueNotFoundException | InvalidValueException
+				| InvalidadDataStructure e) {
+			logger.log(Level.INFO, "******MIGRATION FAILED******");
+			try (Connection rdapConnection = DatabaseSession.getConnection();) {
+				rdapConnection.rollback();
+			} catch (SQLException e1) {
+				throw new RuntimeException(e);
+			}
 			throw new RuntimeException(e);
 		} finally {
 			MigrationInitializer.closeOriginDBConnection();
@@ -47,10 +69,16 @@ public class MigrationBatch extends TimerTask {
 	 * Migration process
 	 * 
 	 * @throws SQLException
+	 * @throws InvalidadDataStructure
+	 * @throws InvalidValueException
+	 * @throws RequiredValueNotFoundException
+	 * @throws IOException
 	 */
-	public void migrate() throws SQLException {
+	public void migrate() throws SQLException, RequiredValueNotFoundException, InvalidValueException,
+			InvalidadDataStructure, IOException {
 		migrateEntities();
 		migrateNameservers();
+
 	}
 
 	/**
@@ -58,8 +86,13 @@ public class MigrationBatch extends TimerTask {
 	 * them in the RDAP databse
 	 * 
 	 * @throws SQLException
+	 * @throws InvalidadDataStructure
+	 * @throws InvalidValueException
+	 * @throws RequiredValueNotFoundException
+	 * @throws IOException
 	 */
-	private void migrateEntities() throws SQLException {
+	private void migrateEntities() throws SQLException, RequiredValueNotFoundException, InvalidValueException,
+			InvalidadDataStructure, IOException {
 		logger.log(Level.INFO, "******MIGRATING ENTITIES STARTING******");
 		try (Connection originConnection = MigrationDatabaseSession.getConnection();
 				PreparedStatement statement = originConnection.prepareStatement(queries.get("entity"));) {
@@ -73,8 +106,6 @@ public class MigrationBatch extends TimerTask {
 				EntityMigrator.storeEntitiesInRDAPDatabase(entities, rdapConnection);
 			}
 
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage());
 		}
 		logger.log(Level.INFO, "******MIGRATING ENTITIES SUCCEEDED******");
 	}
@@ -84,8 +115,13 @@ public class MigrationBatch extends TimerTask {
 	 * store them in the RDAP databse
 	 * 
 	 * @throws SQLException
+	 * @throws InvalidadDataStructure
+	 * @throws InvalidValueException
+	 * @throws RequiredValueNotFoundException
+	 * @throws IOException
 	 */
-	private void migrateNameservers() throws SQLException {
+	private void migrateNameservers() throws SQLException, RequiredValueNotFoundException, InvalidValueException,
+			InvalidadDataStructure, IOException {
 		logger.log(Level.INFO, "******MIGRATING NAMESERVERS STARTING******");
 		try (Connection originConnection = MigrationDatabaseSession.getConnection();
 				PreparedStatement statement = originConnection.prepareStatement(queries.get("nameserver"));) {
@@ -99,8 +135,6 @@ public class MigrationBatch extends TimerTask {
 				NameserverMigrator.storeNameserversInRDAPDatabase(nameservers, rdapConnection);
 			}
 
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage());
 		}
 		logger.log(Level.INFO, "******MIGRATING NAMESERVERS SUCCEEDED******");
 	}
@@ -111,6 +145,7 @@ public class MigrationBatch extends TimerTask {
 	 * @throws IOException
 	 */
 	private void readMigrationFile() throws IOException {
+		logger.log(Level.INFO, "******READING MIGRATION FILE******");
 		String migrationFilePath = "META-INF/migration/migration.sql";
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(
 				MigrationBatchTest.class.getClassLoader().getResourceAsStream(migrationFilePath)))) {

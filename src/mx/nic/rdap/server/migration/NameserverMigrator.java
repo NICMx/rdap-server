@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import mx.nic.rdap.core.db.IpAddress;
 import mx.nic.rdap.core.db.struct.NameserverIpAddressesStruct;
+import mx.nic.rdap.server.db.IpAddressDAO;
 import mx.nic.rdap.server.db.NameserverDAO;
 import mx.nic.rdap.server.db.model.NameserverModel;
 import mx.nic.rdap.server.exception.InvalidValueException;
@@ -132,14 +132,14 @@ public class NameserverMigrator {
 	 * 
 	 * @param nameservers
 	 * @param con
+	 * @throws RequiredValueNotFoundException
+	 * @throws SQLException
+	 * @throws IOException
 	 */
-	public static void storeNameserversInRDAPDatabase(List<NameserverDAO> nameservers, Connection con) {
+	public static void storeNameserversInRDAPDatabase(List<NameserverDAO> nameservers, Connection con)
+			throws IOException, SQLException, RequiredValueNotFoundException {
 		for (NameserverDAO nameserver : nameservers) {
-			try {
-				NameserverModel.storeToDatabase(nameserver, con);
-			} catch (IOException | SQLException | RequiredValueNotFoundException e) {
-				throw new RuntimeException(e.getMessage());
-			}
+			NameserverModel.storeToDatabase(nameserver, con);
 		}
 	}
 
@@ -161,7 +161,7 @@ public class NameserverMigrator {
 			for (List<String> ipAddressesData : ipAddressesList) {
 				String ipAddressType = ipAddressesData.get(0);
 				String ipAddressValue = ipAddressesData.get(1);
-				IpAddress ipAddress = new IpAddress();
+				IpAddressDAO ipAddress = new IpAddressDAO();
 				try {
 					if (MigrationUtil.isResultSetValueValid(ipAddressType)) {
 						ipAddress.setType(Integer.parseInt(ipAddressType.trim()));
