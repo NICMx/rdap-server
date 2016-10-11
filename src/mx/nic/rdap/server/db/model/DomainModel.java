@@ -1,6 +1,7 @@
 package mx.nic.rdap.server.db.model;
 
 import java.io.IOException;
+import java.net.IDN;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -98,8 +99,9 @@ public class DomainModel {
 	 * @throws IOException
 	 */
 	public static Domain findByLdhName(String name, Connection connection) throws SQLException, IOException {
+		// TODO use also zone for the search
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByLdhName"))) {
-			statement.setString(1, name);
+			statement.setString(1, IDN.toASCII(name));
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
 				if (!resultSet.next()) {

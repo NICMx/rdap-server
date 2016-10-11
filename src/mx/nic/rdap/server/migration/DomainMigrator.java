@@ -5,18 +5,23 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import mx.nic.rdap.core.db.DsData;
 import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.SecureDNS;
 import mx.nic.rdap.core.db.Variant;
+import mx.nic.rdap.core.db.VariantName;
 import mx.nic.rdap.server.db.DomainDAO;
 import mx.nic.rdap.server.db.DsDataDAO;
 import mx.nic.rdap.server.db.NameserverDAO;
 import mx.nic.rdap.server.db.SecureDNSDAO;
+import mx.nic.rdap.server.db.VariantDAO;
 import mx.nic.rdap.server.exception.InvalidValueException;
 import mx.nic.rdap.server.exception.InvalidadDataStructure;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
+import mx.nix.rdap.core.catalog.VariantRelation;
 
 /**
  * Class used to process the domains from the client´s database and stores them
@@ -26,6 +31,8 @@ import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
  *
  */
 public class DomainMigrator {
+
+	static Logger logger = Logger.getLogger(DomainMigrator.class.getName());
 
 	/**
 	 * Process the resultSet of the select statement and returns a list of
@@ -44,48 +51,122 @@ public class DomainMigrator {
 		while (resultSet.next()) {
 			DomainDAO domain = new DomainDAO();
 
-			if (MigrationUtil.isResultSetValueValid(resultSet.getString("handle"))) {
-				domain.setHandle(resultSet.getString("handle").trim());
-			} else {
-				throw new RuntimeException("Domain's handle can't be null.");
+			try {
+				if (MigrationUtil.isResultSetValueValid(resultSet.getString("handle"))) {
+					domain.setHandle(resultSet.getString("handle").trim());
+				} else {
+					throw new RequiredValueNotFoundException("Handle", "Domain");
+				}
+			} catch (SQLException e) {
+				throw new RequiredValueNotFoundException("Handle", "Domain");
 			}
-			if (MigrationUtil.isResultSetValueValid("ldh_name")) {
-				domain.setLdhName(resultSet.getString("ldh_name").trim());
-			} else {
-				throw new RuntimeException("Domain's ldh_name can't be null.");
+			try {
+				if (MigrationUtil.isResultSetValueValid("ldh_name")) {
+					domain.setLdhName(resultSet.getString("ldh_name").trim());
+				} else {
+					throw new RequiredValueNotFoundException("LDHName", "Domain");
+				}
+			} catch (SQLException e) {
+				throw new RequiredValueNotFoundException("LDHName", "Domain");
 			}
-			if (MigrationUtil.isResultSetValueValid(resultSet.getString("port43"))) {
-				domain.setPort43(resultSet.getString("port43").trim());
-			} else {
-				throw new RuntimeException("Domain´s port43 can't be null.");
+
+			try {
+				if (MigrationUtil.isResultSetValueValid(resultSet.getString("port43"))) {
+					domain.setPort43(resultSet.getString("port43").trim());
+				} else {
+					throw new RequiredValueNotFoundException("port43", "Domain");
+				}
+			} catch (SQLException e) {
+				throw new RequiredValueNotFoundException("port43", "Domain");
 			}
-			if (MigrationUtil.isResultSetValueValid(resultSet.getString("rdap_status"))) {
-				domain.setStatus(MigrationUtil.getRDAPStatusFromResultSet(resultSet.getString("rdap_status")));
+
+			try {
+				if (MigrationUtil.isResultSetValueValid(resultSet.getString("rdap_status"))) {
+					domain.setStatus(MigrationUtil.getRDAPStatusFromResultSet(resultSet.getString("rdap_status")));
+				}
+			} catch (SQLException e) {
+				logger.log(Level.WARNING, "rdap_status column not found");// Not
+																			// a
+																			// required
+																			// value.
 			}
-			if (MigrationUtil.isResultSetValueValid(resultSet.getString("epp_status"))) {
-				domain.getStatus().addAll(MigrationUtil.getRDAPStatusFromResultSet(resultSet.getString("epp_status")));
+
+			try {
+				if (MigrationUtil.isResultSetValueValid(resultSet.getString("epp_status"))) {
+					domain.getStatus()
+							.addAll(MigrationUtil.getRDAPStatusFromResultSet(resultSet.getString("epp_status")));
+				}
+			} catch (SQLException e) {
+				logger.log(Level.WARNING, "epp_status column not found");// Not
+																			// a
+																			// required
+																			// value.
 			}
-			if (MigrationUtil.isResultSetValueValid(resultSet.getString("events"))) {
-				domain.setEvents(MigrationUtil.getEventsFromResultSet(resultSet.getString("events")));
+			try {
+				if (MigrationUtil.isResultSetValueValid(resultSet.getString("events"))) {
+					domain.setEvents(MigrationUtil.getEventsFromResultSet(resultSet.getString("events")));
+				}
+			} catch (SQLException e) {
+				logger.log(Level.WARNING, "events column not found");// Not
+																		// a
+																		// required
+																		// value.
 			}
-			if (MigrationUtil.isResultSetValueValid(resultSet.getString("entities"))) {
-				domain.setEntities(MigrationUtil.getEntityAndRolesFromResultSet(resultSet.getString("entities")));
+			try {
+				if (MigrationUtil.isResultSetValueValid(resultSet.getString("entities"))) {
+					domain.setEntities(MigrationUtil.getEntityAndRolesFromResultSet(resultSet.getString("entities")));
+				}
+			} catch (SQLException e) {
+				logger.log(Level.WARNING, "entities column not found");// Not
+																		// a
+																		// required
+																		// value.
 			}
-			if (MigrationUtil.isResultSetValueValid(resultSet.getString("variants"))) {
-				domain.setVariants(getVariantsFromResultSet(resultSet.getString("variants")));
+			try {
+				if (MigrationUtil.isResultSetValueValid(resultSet.getString("variants"))) {
+					domain.setVariants(getVariantsFromResultSet(resultSet.getString("variants")));
+				}
+			} catch (SQLException e) {
+				logger.log(Level.WARNING, "variants column not found");// Not
+																		// a
+																		// required
+																		// value.
 			}
-			if (MigrationUtil.isResultSetValueValid(resultSet.getString("nameservers"))) {
-				domain.setNameServers(getNameserversFromResultSet(resultSet.getString("nameservers")));
+			try {
+				if (MigrationUtil.isResultSetValueValid(resultSet.getString("nameservers"))) {
+					domain.setNameServers(getNameserversFromResultSet(resultSet.getString("nameservers")));
+				}
+			} catch (SQLException e) {
+				logger.log(Level.WARNING, "nameservers column not found");// Not
+																			// a
+																			// required
+																			// value.
 			}
-			if (MigrationUtil.isResultSetValueValid(resultSet.getString("secure_dns"))) {
-				domain.setSecureDNS(
-						getSecureDnsFromResultSet(resultSet.getString("secure_dns"), resultSet.getString("dsData")));
+			try {
+				if (MigrationUtil.isResultSetValueValid(resultSet.getString("secure_dns"))) {
+					domain.setSecureDNS(getSecureDnsFromResultSet(resultSet.getString("secure_dns"),
+							resultSet.getString("dsData")));
+				}
+			} catch (SQLException e) {
+				logger.log(Level.WARNING, "secure_dns column not found");// Not
+																			// a
+																			// required
+																			// value.
 			}
-			if (MigrationUtil.isResultSetValueValid(resultSet.getString("public_ids"))) {
-				domain.setPublicIds(MigrationUtil.getPublicIdsFromResultSet(resultSet.getString("public_ids")));
+			try {
+				if (MigrationUtil.isResultSetValueValid(resultSet.getString("public_ids"))) {
+					domain.setPublicIds(MigrationUtil.getPublicIdsFromResultSet(resultSet.getString("public_ids")));
+				}
+			} catch (SQLException e) {
+				logger.log(Level.WARNING, "public_ids column not found");// Not
+																			// a
+																			// required
+																			// value.
 			}
+
 		}
 		return domains;
+
 	}
 
 	/**
@@ -98,26 +179,58 @@ public class DomainMigrator {
 	 * @param stringDsData
 	 *            must have the form “keyTag|algorithm|digest|digestType”
 	 * @return
+	 * @throws InvalidValueException
+	 * @throws InvalidadDataStructure
 	 */
-	private static SecureDNS getSecureDnsFromResultSet(String stringSecureDns, String stringDsData) {
+	private static SecureDNS getSecureDnsFromResultSet(String stringSecureDns, String stringDsData)
+			throws InvalidadDataStructure, InvalidValueException {
 		SecureDNSDAO secureDns = new SecureDNSDAO();
-		if (countPipes(stringSecureDns) == 2) {
 
-			List<String> secureDnsData = Arrays.asList(stringSecureDns.trim().split("|"));
-			String zoneSigned = secureDnsData.get(0);
-			String delegationSigned = secureDnsData.get(1);
-			String maxSigLife = secureDnsData.get(2);
+		List<String> secureDnsData = Arrays.asList(stringSecureDns.trim().split("\\|"));
 
-			// TODO validate parse
-			secureDns.setZoneSigned(Boolean.parseBoolean(zoneSigned));
-			secureDns.setDelegationSigned(Boolean.parseBoolean(delegationSigned));
-			secureDns.setMaxSigLife(Integer.parseInt(maxSigLife));
+		if (secureDnsData.size() != 3) {
+			throw new InvalidadDataStructure();
+		}
 
-			if (MigrationUtil.isResultSetValueValid(stringDsData)) {
-				secureDns.setDsData(getDsDataFromResultSet(stringDsData));
+		String zoneSigned = secureDnsData.get(0);
+		String delegationSigned = secureDnsData.get(1);
+		String maxSigLife = secureDnsData.get(2);
+
+		if (MigrationUtil.isResultSetValueValid(zoneSigned)) {
+			try {
+				secureDns.setZoneSigned(Boolean.parseBoolean(zoneSigned));
+			} catch (NumberFormatException e) {
+				throw new InvalidValueException("Keytag", "DsData", zoneSigned);
 			}
 		} else {
-			throw new RuntimeException("Required value not found.");
+			secureDns.setZoneSigned(false);
+		}
+
+		if (MigrationUtil.isResultSetValueValid(delegationSigned)) {
+			try {
+				secureDns.setDelegationSigned(Boolean.parseBoolean(delegationSigned));
+			} catch (NumberFormatException e) {
+				throw new InvalidValueException("Keytag", "DsData", delegationSigned);
+			}
+		} else {
+			secureDns.setDelegationSigned(false);
+		}
+
+		if (MigrationUtil.isResultSetValueValid(maxSigLife)) {
+			try {
+				secureDns.setMaxSigLife(Integer.parseInt(maxSigLife));
+			} catch (NumberFormatException e) {
+				throw new InvalidValueException("Keytag", "DsData", maxSigLife);
+			}
+		}
+
+		// TODO validate parse
+		secureDns.setZoneSigned(Boolean.parseBoolean(zoneSigned));
+		secureDns.setDelegationSigned(Boolean.parseBoolean(delegationSigned));
+		secureDns.setMaxSigLife(Integer.parseInt(maxSigLife));
+
+		if (MigrationUtil.isResultSetValueValid(stringDsData)) {
+			secureDns.setDsData(getDsDataFromResultSet(stringDsData));
 		}
 
 		return secureDns;
@@ -129,25 +242,54 @@ public class DomainMigrator {
 	 * @param stringDsData
 	 *            must have the form “keyTag|algorithm|digest|digestType”
 	 * @return
+	 * @throws InvalidadDataStructure
+	 * @throws InvalidValueException
 	 */
-	private static List<DsData> getDsDataFromResultSet(String stringDsData) {
-		List<DsData> dsDatas = new ArrayList<DsData>();
-		if (countPipes(stringDsData) == 3) {
-			DsDataDAO dsData = new DsDataDAO();
-			List<String> dsDataData = Arrays.asList(stringDsData.trim().split("|"));
-			String keytag = dsDataData.get(0);
-			String algorithm = dsDataData.get(1);
-			String digest = dsDataData.get(2);
-			String digestType = dsDataData.get(3);
-			// TODO validate parseInt
-			dsData.setKeytag(Integer.parseInt(keytag));
-			dsData.setAlgorithm(Integer.parseInt(algorithm));
-			dsData.setDigest(digest);
-			dsData.setDigestType(Integer.parseInt(digestType));
+	private static List<DsData> getDsDataFromResultSet(String stringDsData)
+			throws InvalidadDataStructure, InvalidValueException {
 
-		} else {
-			throw new RuntimeException("Required value not found.");
+		List<DsData> dsDatas = new ArrayList<DsData>();
+		stringDsData = stringDsData + "";// Add value if last character was a
+											// pipe
+		DsDataDAO dsData = new DsDataDAO();
+
+		List<String> dsDataData = Arrays.asList(stringDsData.trim().split("\\|"));
+		if (dsDataData.size() != 4) {
+			throw new InvalidadDataStructure();
 		}
+		String keytag = dsDataData.get(0);
+		String algorithm = dsDataData.get(1);
+		String digest = dsDataData.get(2);
+		String digestType = dsDataData.get(3);
+
+		if (MigrationUtil.isResultSetValueValid(keytag)) {
+			try {
+				dsData.setKeytag(Integer.parseInt(keytag));
+			} catch (NumberFormatException e) {
+				throw new InvalidValueException("Keytag", "DsData", keytag);
+			}
+		}
+
+		if (MigrationUtil.isResultSetValueValid(algorithm)) {
+			try {
+				dsData.setAlgorithm(Integer.parseInt(algorithm));
+			} catch (NumberFormatException e) {
+				throw new InvalidValueException("Algorithm", "DsData", algorithm);
+			}
+		}
+
+		if (MigrationUtil.isResultSetValueValid(digest)) {
+			dsData.setDigest(digest);
+		}
+
+		if (MigrationUtil.isResultSetValueValid(digestType)) {
+			try {
+				dsData.setAlgorithm(Integer.parseInt(digestType));
+			} catch (NumberFormatException e) {
+				throw new InvalidValueException("DigestType", "DsData", digestType);
+			}
+		}
+		dsDatas.add(dsData);
 		return dsDatas;
 	}
 
@@ -172,20 +314,88 @@ public class DomainMigrator {
 		return nameservers;
 	}
 
-	private static List<Variant> getVariantsFromResultSet(String string) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	/**
-	 * Counts pipes ("|") in a string, used to validate if the result set had
-	 * the correct string format
+	 * Process a ResultSet of Variants and gets all of it's values
 	 * 
 	 * @param string
+	 *            String containing the Variants list, the structure must have
+	 *            the form: "idnTable | {variantName1,variantName2}|
+	 *            {variantRelation1,variantRelation2}"
 	 * @return
+	 * @throws InvalidadDataStructure
+	 * @throws RequiredValueNotFoundException
+	 * @throws InvalidValueException
 	 */
-	private static Integer countPipes(String string) {
-		Integer count = string.length() - string.replaceAll("|", "").length();
-		return count;
+	private static List<Variant> getVariantsFromResultSet(String string)
+			throws InvalidadDataStructure, RequiredValueNotFoundException, InvalidValueException {
+		List<Variant> variants = new ArrayList<Variant>();
+		string = string.replaceAll("} ", "}") + " "; // make
+														// sures
+														// all
+														// variants
+														// will
+														// split
+		if (string != null && !string.trim().isEmpty()) {
+			List<String> variantsData = Arrays.asList(string.split("},"));
+			for (String variantDataString : variantsData) {
+				VariantDAO variant = new VariantDAO();
+				List<String> variantData = Arrays.asList(variantDataString.split("\\|"));
+				if (variantData.size() != 3) {
+					throw new InvalidadDataStructure("variantData",
+							"idnTable | {variantName1,variantName2}| {variantRelation1,variantRelation2}");
+				}
+
+				String idnTable = variantData.get(0);
+				String variantNamesData = variantData.get(1);
+
+				VariantName variantName = new VariantName();
+				variantNamesData = variantNamesData.replaceAll("{", "").replaceAll("}", "");// removes
+																							// braces
+				String variantRelationsData = variantData.get(2);
+				variantRelationsData = variantRelationsData.replaceAll("{", "").replaceAll("}", "");// removes
+																									// braces
+
+				if (MigrationUtil.isResultSetValueValid(idnTable)) {
+					variant.setIdnTable(idnTable);
+				} else {
+					throw new RequiredValueNotFoundException("IdnTable", "Variant");
+				}
+
+				if (MigrationUtil.isResultSetValueValid(variantNamesData)) {
+					List<String> variantNames = Arrays.asList(variantNamesData.split(","));
+
+					for (String variantNameString : variantNames) {
+						if (MigrationUtil.isResultSetValueValid(variantNameString)) {
+							variantName.setLdhName(variantNameString);
+							variant.getVariantNames().add(variantName);
+						} else {
+							throw new RequiredValueNotFoundException("VariantName", "Variant");
+						}
+					}
+
+				} else {
+					throw new RequiredValueNotFoundException("VariantNames", "Variant");
+				}
+
+				List<String> variantRelations = Arrays.asList(variantRelationsData.split(","));
+				for (String relationData : variantRelations) {
+					if (MigrationUtil.isResultSetValueValid(variantRelationsData)) {
+						VariantRelation relation = VariantRelation.getById(Integer.parseInt(relationData));
+						if (relation != null) {
+							variant.getRelations().add(relation);
+						} else {
+							throw new InvalidValueException("Relation", "Variant", relation);
+						}
+					} else {
+						throw new RequiredValueNotFoundException("VariantRelation", "Variant");
+					}
+				}
+
+			}
+
+		}
+		return variants;
+
 	}
+
 }

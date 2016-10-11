@@ -182,8 +182,10 @@ public class MigrationUtil {
 	 *            "PublicIdData" must have the form: “publicId | type”
 	 * @return
 	 * @throws InvalidadDataStructure
+	 * @throws RequiredValueNotFoundException
 	 */
-	public static List<PublicId> getPublicIdsFromResultSet(String resultSet) throws InvalidadDataStructure {
+	public static List<PublicId> getPublicIdsFromResultSet(String resultSet)
+			throws InvalidadDataStructure, RequiredValueNotFoundException {
 		// TODO
 		List<PublicId> publicIdList = new ArrayList<PublicId>();
 		if (isResultSetValueValid(resultSet)) {
@@ -195,11 +197,17 @@ public class MigrationUtil {
 					PublicIdDAO publicId = new PublicIdDAO();
 					String publicIdValue = publicIdData.get(0);
 					String type = publicIdData.get(1);
-					if (isResultSetValueValid(publicIdValue) || isResultSetValueValid(type)) {
+					if (isResultSetValueValid(publicIdValue)) {
 						publicId.setPublicId(publicIdValue.trim());
+					} else {
+						throw new RequiredValueNotFoundException("PublicId", "PublicId");
+					}
+
+					if (isResultSetValueValid(type)) {
+
 						publicId.setType(type.trim());
 					} else {
-						throw new RuntimeException("Required value not found.");
+						throw new RequiredValueNotFoundException("Type", "PublicId");
 					}
 					publicIdList.add(publicId);
 
@@ -208,6 +216,7 @@ public class MigrationUtil {
 				throw new InvalidadDataStructure("publicIdData", "PublicId | Type");
 			}
 		}
+
 		return publicIdList;
 	}
 

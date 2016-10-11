@@ -1,5 +1,6 @@
 package mx.nic.rdap.server.db;
 
+import java.net.IDN;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -38,10 +39,6 @@ public class DomainDAO extends Domain implements DatabaseObject, JsonParser {
 
 	public DomainDAO(ResultSet resultSet) throws SQLException {
 		loadFromDatabase(resultSet);
-	}
-
-	public String getUnicodeName() {
-		return "";
 	}
 
 	/**
@@ -91,7 +88,7 @@ public class DomainDAO extends Domain implements DatabaseObject, JsonParser {
 		builder.add("objectClassName", "domain");
 		JsonUtil.getCommonRdapJsonObject(builder, this);
 		builder.add("ldhName", this.getLdhName());
-		builder.add("unicodeName", this.getUnicodeName());
+		builder.add("unicodeName", IDN.toUnicode(this.getLdhName()));
 		if (this.getVariants() != null && !this.getVariants().isEmpty()) {
 			builder.add("variants", this.getVariantsJson(this.getVariants()));
 		}
