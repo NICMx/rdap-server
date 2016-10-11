@@ -36,6 +36,7 @@ public class MigrationBatch extends TimerTask {
 		try {
 			readMigrationFile();
 		} catch (IOException e) {
+			logger.log(Level.SEVERE, "******ERROR READING SQL FILE******");
 			throw new RuntimeException(e);
 		}
 	}
@@ -52,7 +53,7 @@ public class MigrationBatch extends TimerTask {
 			}
 		} catch (IOException | SQLException | RequiredValueNotFoundException | InvalidValueException
 				| InvalidadDataStructure e) {
-			logger.log(Level.INFO, "******MIGRATION FAILED******");
+			logger.log(Level.SEVERE, "******MIGRATION FAILED******");
 			try (Connection rdapConnection = DatabaseSession.getConnection();) {
 				rdapConnection.rollback();
 			} catch (SQLException e1) {
@@ -60,6 +61,7 @@ public class MigrationBatch extends TimerTask {
 			}
 			throw new RuntimeException(e);
 		} finally {
+			logger.log(Level.INFO, "******CLOSING DATABASE CONNECTIONS******");
 			MigrationInitializer.closeOriginDBConnection();
 			MigrationInitializer.closeRDAPDBConnection();
 		}

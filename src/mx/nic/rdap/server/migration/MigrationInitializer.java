@@ -1,8 +1,7 @@
 package mx.nic.rdap.server.migration;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DatabaseSession;
@@ -15,6 +14,7 @@ import mx.nic.rdap.server.db.DatabaseSession;
  */
 public class MigrationInitializer {
 
+	private final static Logger logger = Logger.getLogger(MigrationInitializer.class.getName());
 	/** File from which we will load the database connection. */
 	private static final String RDAP_DATABASE_FILE = "database";
 	/** File from which we will load the database connection. */
@@ -25,8 +25,9 @@ public class MigrationInitializer {
 	 */
 	public static void initOriginDBConnection() {
 		try {
-			MigrationDatabaseSession.init(readProperties(ORIGIN_DATABASE_FILE));
+			MigrationDatabaseSession.init(Util.loadProperties(ORIGIN_DATABASE_FILE));
 		} catch (Exception e) {
+			logger.log(Level.SEVERE, "******ERROR INITIALIZING ORIGIN DATABASE CONNECTION******");
 			throw new IllegalArgumentException(e);
 		}
 	}
@@ -36,8 +37,10 @@ public class MigrationInitializer {
 	 */
 	public static void initRDAPDBConnection() {
 		try {
-			DatabaseSession.init(readProperties(RDAP_DATABASE_FILE));
+			DatabaseSession.init(Util.loadProperties(RDAP_DATABASE_FILE));
 		} catch (Exception e) {
+			logger.log(Level.SEVERE, "******ERROR INITIALIZING RDAP DATABASE CONNECTION******");
+
 			throw new IllegalArgumentException(e);
 		}
 	}
@@ -62,21 +65,6 @@ public class MigrationInitializer {
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
-	}
-
-	/**
-	 * Read the database properties for the migration
-	 * 
-	 * @return
-	 * @throws IOException
-	 */
-	private static Properties readProperties(String propertiesFile) throws IOException {
-		String propertiesFilePath = "META-INF/" + propertiesFile + ".properties";
-		Properties result = new Properties();
-		try (InputStream configStream = Util.class.getClassLoader().getResourceAsStream(propertiesFilePath)) {
-			result.load(configStream);
-		}
-		return result;
 	}
 
 }
