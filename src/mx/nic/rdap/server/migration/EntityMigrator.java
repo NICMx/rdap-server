@@ -130,14 +130,15 @@ public class EntityMigrator {
 	/**
 	 * @param entities
 	 * @param rdapConnection
+	 * @throws RequiredValueNotFoundException
+	 * @throws IOException
+	 * @throws SQLException
 	 */
-	public static void storeEntitiesInRDAPDatabase(List<EntityDAO> entities, Connection con) {
+	public static void storeEntitiesInRDAPDatabase(List<EntityDAO> entities, Connection con)
+			throws SQLException, IOException, RequiredValueNotFoundException {
 		for (EntityDAO entity : entities) {
-			try {
-				EntityModel.storeToDatabase(entity, con);
-			} catch (IOException | SQLException | RequiredValueNotFoundException e) {
-				throw new RuntimeException(e.getMessage());
-			}
+			EntityModel.storeToDatabase(entity, con);
+
 		}
 
 	}
