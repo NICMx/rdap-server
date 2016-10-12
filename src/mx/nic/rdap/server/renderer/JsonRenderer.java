@@ -1,12 +1,16 @@
 package mx.nic.rdap.server.renderer;
 
 import java.io.PrintWriter;
+import java.util.Map.Entry;
 
 import javax.json.Json;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonValue;
 import javax.json.JsonWriter;
 
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.Renderer;
+import mx.nic.rdap.server.renderer.json.JsonUtil;
 
 public class JsonRenderer implements Renderer {
 
@@ -26,7 +30,12 @@ public class JsonRenderer implements Renderer {
 	@Override
 	public void render(RdapResult result, PrintWriter writer) {
 		JsonWriter jsonWriter = Json.createWriter(writer);
-		jsonWriter.writeObject(result.toJson());
+		JsonObjectBuilder object = Json.createObjectBuilder();
+		object.add("rdapConformance", JsonUtil.getRdapConformance());
+		for (Entry<String, JsonValue> entry : result.toJson().entrySet()) {
+			object.add(entry.getKey(), entry.getValue());
+		}
+		jsonWriter.writeObject(object.build());
 	}
 
 }
