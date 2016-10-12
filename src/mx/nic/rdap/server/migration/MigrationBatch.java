@@ -50,9 +50,10 @@ public class MigrationBatch extends TimerTask {
 			logger.log(Level.INFO, "******MIGRATION SUCCESS******");
 			try (Connection rdapConnection = DatabaseSession.getConnection();) {
 				rdapConnection.commit();
+			} catch (SQLException e) {
+				throw new RuntimeException("Error in the execution of a SQL Statement", e);
 			}
-		} catch (IOException | SQLException | RequiredValueNotFoundException | InvalidValueException
-				| InvalidadDataStructure e) {
+		} catch (IOException | RequiredValueNotFoundException | InvalidValueException | InvalidadDataStructure e) {
 			logger.log(Level.SEVERE, "******MIGRATION FAILED******");
 			try (Connection rdapConnection = DatabaseSession.getConnection();) {
 				rdapConnection.rollback();
@@ -76,10 +77,14 @@ public class MigrationBatch extends TimerTask {
 	 * @throws RequiredValueNotFoundException
 	 * @throws IOException
 	 */
-	public void migrate() throws SQLException, RequiredValueNotFoundException, InvalidValueException,
-			InvalidadDataStructure, IOException {
-		migrateEntities();
-		migrateNameservers();
+	public void migrate()
+			throws RequiredValueNotFoundException, InvalidValueException, InvalidadDataStructure, IOException {
+		try {
+			migrateEntities();
+			migrateNameservers();
+		} catch (SQLException e) {
+			throw new RuntimeException("Error in the execution of a SQL Statement", e);
+		}
 
 	}
 
