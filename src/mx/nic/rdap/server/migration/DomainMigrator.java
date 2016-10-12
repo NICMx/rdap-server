@@ -339,7 +339,7 @@ public class DomainMigrator {
 														// will
 														// split
 		if (string != null && !string.trim().isEmpty()) {
-			List<String> variantsData = Arrays.asList(string.split("},"));
+			List<String> variantsData = Arrays.asList(string.split("\\},"));
 			for (String variantDataString : variantsData) {
 				VariantDAO variant = new VariantDAO();
 				List<String> variantData = Arrays.asList(variantDataString.split("\\|"));
@@ -352,11 +352,11 @@ public class DomainMigrator {
 				String variantNamesData = variantData.get(1);
 
 				VariantName variantName = new VariantName();
-				variantNamesData = variantNamesData.replaceAll("{", "").replaceAll("}", "");// removes
-																							// braces
+				variantNamesData = variantNamesData.replaceAll("\\{", "").replaceAll("\\}", "");// removes
+				// braces
 				String variantRelationsData = variantData.get(2);
-				variantRelationsData = variantRelationsData.replaceAll("{", "").replaceAll("}", "");// removes
-																									// braces
+				variantRelationsData = variantRelationsData.replaceAll("\\{", "").replaceAll("\\}", "");// removes
+				// braces
 
 				if (MigrationUtil.isResultSetValueValid(idnTable)) {
 					variant.setIdnTable(idnTable);
@@ -383,7 +383,7 @@ public class DomainMigrator {
 				List<String> variantRelations = Arrays.asList(variantRelationsData.split(","));
 				for (String relationData : variantRelations) {
 					if (MigrationUtil.isResultSetValueValid(variantRelationsData)) {
-						VariantRelation relation = VariantRelation.getById(Integer.parseInt(relationData));
+						VariantRelation relation = VariantRelation.getByName(relationData);
 						if (relation != null) {
 							variant.getRelations().add(relation);
 						} else {
