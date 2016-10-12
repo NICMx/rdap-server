@@ -1,5 +1,7 @@
 package mx.nic.rdap.server.migration;
 
+import java.io.IOException;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ import mx.nic.rdap.server.db.DsDataDAO;
 import mx.nic.rdap.server.db.NameserverDAO;
 import mx.nic.rdap.server.db.SecureDNSDAO;
 import mx.nic.rdap.server.db.VariantDAO;
+import mx.nic.rdap.server.db.model.DomainModel;
 import mx.nic.rdap.server.exception.InvalidValueException;
 import mx.nic.rdap.server.exception.InvalidadDataStructure;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
@@ -396,6 +399,22 @@ public class DomainMigrator {
 		}
 		return variants;
 
+	}
+
+	/**
+	 * Store the domains in the RDAP database
+	 * 
+	 * @param domains
+	 * @param con
+	 * @throws RequiredValueNotFoundException
+	 * @throws SQLException
+	 * @throws IOException
+	 */
+	public static void storeDomainsInRDAPDatabase(List<DomainDAO> domains, Connection con)
+			throws IOException, SQLException, RequiredValueNotFoundException {
+		for (DomainDAO domain : domains) {
+			DomainModel.storeToDatabase(domain, con);
+		}
 	}
 
 }

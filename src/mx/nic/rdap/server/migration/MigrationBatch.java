@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import mx.nic.rdap.server.db.DatabaseSession;
+import mx.nic.rdap.server.db.DomainDAO;
 import mx.nic.rdap.server.db.EntityDAO;
 import mx.nic.rdap.server.db.NameserverDAO;
 import mx.nic.rdap.server.exception.InvalidValueException;
@@ -82,6 +83,7 @@ public class MigrationBatch extends TimerTask {
 		try {
 			migrateEntities();
 			migrateNameservers();
+			migrateDomains();
 		} catch (SQLException e) {
 			throw new RuntimeException("Error in the execution of a SQL Statement", e);
 		}
@@ -144,6 +146,35 @@ public class MigrationBatch extends TimerTask {
 
 		}
 		logger.log(Level.INFO, "******MIGRATING NAMESERVERS SUCCEEDED******");
+	}
+
+	/**
+	 * Execute the namerserver select stamements in the origin database and
+	 * store them in the RDAP databse
+	 * 
+	 * @throws SQLException
+	 * @throws InvalidadDataStructure
+	 * @throws InvalidValueException
+	 * @throws RequiredValueNotFoundException
+	 * @throws IOException
+	 */
+	private void migrateDomains() throws SQLException, RequiredValueNotFoundException, InvalidValueException,
+			InvalidadDataStructure, IOException {
+		logger.log(Level.INFO, "******MIGRATING DOMAINS STARTING******");
+		try (Connection originConnection = MigrationDatabaseSession.getConnection();
+				PreparedStatement statement = originConnection.prepareStatement(queries.get("domain"));) {
+			logger.log(Level.INFO, "Excuting QUERY:" + statement.toString());
+			ResultSet domainResultSet = statement.executeQuery();
+			logger.log(Level.INFO, "Done!\n Processing DOMAINS resultset");
+			List<DomainDAO> domains = DomainMigrator.getDomainsFromResultSet(domainResultSet);
+			logger.log(Level.INFO, "Done!\n DOMAINS retrived:" + domains.size()
+					+ "\n Starting to save in RDAP Database. Good luck :)");
+			try (Connection rdapConnection = DatabaseSession.getConnection();) {
+				DomainMigrator.storeDomainsInRDAPDatabase(domains, rdapConnection);
+			}
+
+		}
+		logger.log(Level.INFO, "******MIGRATING DOMAINS SUCCEEDED******");
 	}
 
 	/**
