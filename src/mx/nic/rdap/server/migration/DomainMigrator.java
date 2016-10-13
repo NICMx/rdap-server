@@ -96,8 +96,8 @@ public class DomainMigrator {
 
 			try {
 				if (MigrationUtil.isResultSetValueValid(resultSet.getString("epp_status"))) {
-					domain.getStatus()
-							.addAll(MigrationUtil.getRDAPStatusFromResultSet(resultSet.getString("epp_status")));
+					domain.getStatus().addAll(
+							MigrationUtil.getRDAPStatusFromEPPStatusResultSet(resultSet.getString("epp_status")));
 				}
 			} catch (SQLException e) {
 				logger.log(Level.WARNING, "epp_status column not found");// Not
@@ -166,7 +166,7 @@ public class DomainMigrator {
 																			// required
 																			// value.
 			}
-
+			domains.add(domain);
 		}
 		return domains;
 
@@ -201,7 +201,7 @@ public class DomainMigrator {
 
 		if (MigrationUtil.isResultSetValueValid(zoneSigned)) {
 			try {
-				secureDns.setZoneSigned(Boolean.parseBoolean(zoneSigned));
+				secureDns.setZoneSigned(Boolean.parseBoolean(zoneSigned.trim()));
 			} catch (NumberFormatException e) {
 				throw new InvalidValueException("Keytag", "DsData", zoneSigned);
 			}
@@ -211,7 +211,7 @@ public class DomainMigrator {
 
 		if (MigrationUtil.isResultSetValueValid(delegationSigned)) {
 			try {
-				secureDns.setDelegationSigned(Boolean.parseBoolean(delegationSigned));
+				secureDns.setDelegationSigned(Boolean.parseBoolean(delegationSigned.trim()));
 			} catch (NumberFormatException e) {
 				throw new InvalidValueException("Keytag", "DsData", delegationSigned);
 			}
@@ -221,16 +221,15 @@ public class DomainMigrator {
 
 		if (MigrationUtil.isResultSetValueValid(maxSigLife)) {
 			try {
-				secureDns.setMaxSigLife(Integer.parseInt(maxSigLife));
+				secureDns.setMaxSigLife(Integer.parseInt(maxSigLife.trim()));
 			} catch (NumberFormatException e) {
 				throw new InvalidValueException("Keytag", "DsData", maxSigLife);
 			}
 		}
 
-		// TODO validate parse
-		secureDns.setZoneSigned(Boolean.parseBoolean(zoneSigned));
-		secureDns.setDelegationSigned(Boolean.parseBoolean(delegationSigned));
-		secureDns.setMaxSigLife(Integer.parseInt(maxSigLife));
+		secureDns.setZoneSigned(Boolean.parseBoolean(zoneSigned.trim()));
+		secureDns.setDelegationSigned(Boolean.parseBoolean(delegationSigned.trim()));
+		secureDns.setMaxSigLife(Integer.parseInt(maxSigLife.trim()));
 
 		if (MigrationUtil.isResultSetValueValid(stringDsData)) {
 			secureDns.setDsData(getDsDataFromResultSet(stringDsData));
@@ -267,7 +266,7 @@ public class DomainMigrator {
 
 		if (MigrationUtil.isResultSetValueValid(keytag)) {
 			try {
-				dsData.setKeytag(Integer.parseInt(keytag));
+				dsData.setKeytag(Integer.parseInt(keytag.trim()));
 			} catch (NumberFormatException e) {
 				throw new InvalidValueException("Keytag", "DsData", keytag);
 			}
@@ -275,19 +274,19 @@ public class DomainMigrator {
 
 		if (MigrationUtil.isResultSetValueValid(algorithm)) {
 			try {
-				dsData.setAlgorithm(Integer.parseInt(algorithm));
+				dsData.setAlgorithm(Integer.parseInt(algorithm.trim()));
 			} catch (NumberFormatException e) {
 				throw new InvalidValueException("Algorithm", "DsData", algorithm);
 			}
 		}
 
 		if (MigrationUtil.isResultSetValueValid(digest)) {
-			dsData.setDigest(digest);
+			dsData.setDigest(digest.trim());
 		}
 
 		if (MigrationUtil.isResultSetValueValid(digestType)) {
 			try {
-				dsData.setAlgorithm(Integer.parseInt(digestType));
+				dsData.setAlgorithm(Integer.parseInt(digestType.trim()));
 			} catch (NumberFormatException e) {
 				throw new InvalidValueException("DigestType", "DsData", digestType);
 			}
@@ -311,7 +310,7 @@ public class DomainMigrator {
 		List<String> handlers = Arrays.asList(stringNameserver.trim().split(","));
 		for (String handle : handlers) {
 			NameserverDAO nameserver = new NameserverDAO();
-			nameserver.setHandle(handle);
+			nameserver.setHandle(handle.trim());
 			return nameservers;
 		}
 		return nameservers;
@@ -359,7 +358,7 @@ public class DomainMigrator {
 				// braces
 
 				if (MigrationUtil.isResultSetValueValid(idnTable)) {
-					variant.setIdnTable(idnTable);
+					variant.setIdnTable(idnTable.trim());
 				} else {
 					throw new RequiredValueNotFoundException("IdnTable", "Variant");
 				}
@@ -369,7 +368,7 @@ public class DomainMigrator {
 
 					for (String variantNameString : variantNames) {
 						if (MigrationUtil.isResultSetValueValid(variantNameString)) {
-							variantName.setLdhName(variantNameString);
+							variantName.setLdhName(variantNameString.trim());
 							variant.getVariantNames().add(variantName);
 						} else {
 							throw new RequiredValueNotFoundException("VariantName", "Variant");
@@ -383,11 +382,11 @@ public class DomainMigrator {
 				List<String> variantRelations = Arrays.asList(variantRelationsData.split(","));
 				for (String relationData : variantRelations) {
 					if (MigrationUtil.isResultSetValueValid(variantRelationsData)) {
-						VariantRelation relation = VariantRelation.getByName(relationData);
+						VariantRelation relation = VariantRelation.getByName(relationData.trim());
 						if (relation != null) {
 							variant.getRelations().add(relation);
 						} else {
-							throw new InvalidValueException("Relation", "Variant", relation);
+							throw new InvalidValueException("Relation", "Variant", relationData);
 						}
 					} else {
 						throw new RequiredValueNotFoundException("VariantRelation", "Variant");

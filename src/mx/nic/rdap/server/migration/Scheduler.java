@@ -48,8 +48,11 @@ public class Scheduler {
 				if (firstTimeExecutionDate.before(Calendar.getInstance().getTime())) {
 					logger.log(Level.INFO,
 							"First time execution date is in the past. The migration will be starting now");
+					firstTimeExecutionDate = Calendar.getInstance().getTime();
+				} else {
+					logger.log(Level.INFO, "The migration will be starting the " + firstTimeExecutionDate);
 				}
-				logger.log(Level.INFO, "The migration will be starting the " + firstTimeExecutionDate);
+
 			} catch (ParseException e) {
 				throw new RuntimeException("Invalid value for first time execution date in configuration.properties");
 			}
