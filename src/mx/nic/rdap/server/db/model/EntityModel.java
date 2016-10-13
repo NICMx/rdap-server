@@ -15,9 +15,7 @@ import com.mysql.jdbc.Statement;
 
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Event;
-import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.PublicId;
-import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.core.db.VCard;
 import mx.nic.rdap.server.db.EntityDAO;
 import mx.nic.rdap.server.db.QueryGroup;
@@ -204,29 +202,46 @@ public class EntityModel {
 			List<VCard> vCardList = VCardModel.getByEntityId(entityId, connection);
 			entity.getVCardList().addAll(vCardList);
 		} catch (ObjectNotFoundException e) {
-			// Could not have a VCard.
+			// Do nothing, vcard is not required
 		}
-
-		List<Status> statusList = StatusModel.getByEntityId(entityId, connection);
-		entity.getStatus().addAll(statusList);
-
-		List<Link> linkList = LinkModel.getByEntityId(entityId, connection);
-		entity.getLinks().addAll(linkList);
-
-		List<Remark> remarkList = RemarkModel.getByEntityId(entityId, connection);
-		entity.getRemarks().addAll(remarkList);
-
-		List<Event> eventList = EventModel.getByEntityId(entityId, connection);
-		entity.getEvents().addAll(eventList);
-
-		List<PublicId> pidList = PublicIdModel.getByEntity(entityId, connection);
-		entity.getPublicIds().addAll(pidList);
-
-		List<Entity> entitiesByEntityId = getEntitiesByEntityId(entityId, connection);
-		entity.getEntities().addAll(entitiesByEntityId);
-
-		List<Rol> mainEntityRol = RolModel.getMainEntityRol(entitiesByEntityId, entity, connection);
-		entity.getRoles().addAll(mainEntityRol);
+		// Retrieve the status
+		try {
+			entity.getStatus().addAll(StatusModel.getByEntityId(entityId, connection));
+		} catch (ObjectNotFoundException onfe) {
+			// Do nothing, status is not required
+		}
+		// Retrieve the links
+		try {
+			entity.getLinks().addAll(LinkModel.getByEntityId(entityId, connection));
+		} catch (ObjectNotFoundException onfe) {
+			// Do nothing, links is not required
+		}
+		// Retrive the remarks
+		try {
+			entity.getRemarks().addAll(RemarkModel.getByEntityId(entityId, connection));
+		} catch (ObjectNotFoundException onfe) {
+			// Do nothing, remarks is not required
+		}
+		// Retrieve the events
+		try {
+			entity.getEvents().addAll(EventModel.getByEntityId(entityId, connection));
+		} catch (ObjectNotFoundException onfe) {
+			// Do nothing, events is not required
+		}
+		// Retrieve the public ids
+		try {
+			entity.getPublicIds().addAll(PublicIdModel.getByEntity(entityId, connection));
+		} catch (ObjectNotFoundException onfe) {
+			// Do nothing, public ids is not required
+		}
+		// Retrieve the entities
+		try {
+			List<Entity> entitiesByEntityId = getEntitiesByEntityId(entityId, connection);
+			entity.getEntities().addAll(entitiesByEntityId);
+			entity.getRoles().addAll(RolModel.getMainEntityRol(entitiesByEntityId, entity, connection));
+		} catch (ObjectNotFoundException onfe) {
+			// Do nothing, entities is not required
+		}
 
 	}
 

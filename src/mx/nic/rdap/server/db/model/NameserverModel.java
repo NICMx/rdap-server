@@ -193,24 +193,41 @@ public class NameserverModel {
 			throws IOException, SQLException {
 
 		// Retrieve the ipAddress
-		nameserver.setIpAddresses(IpAddressModel.getIpAddressStructByNameserverId(nameserver.getId(), connection));
-		// Retrieve the entities
-		nameserver.setEntities(null);
-		// Retrieve the status
-		nameserver.setStatus(StatusModel.getByNameServerId(nameserver.getId(), connection));
-		// Retrieve the remarks
-		nameserver.setRemarks(RemarkModel.getByNameserverId(nameserver.getId(), connection));
-		// Retrieve the links
-		nameserver.setLinks(LinkModel.getByNameServerId(nameserver.getId(), connection));
-		// Retrieve the events
-		nameserver.setEvents(EventModel.getByNameServerId(nameserver.getId(), connection));
-
-		List<Entity> entities = EntityModel.getEntitiesByNameserverId(nameserver.getId(), connection);
-		nameserver.setEntities(entities);
-		for (Entity entity : entities) {
-			List<Rol> roles = RolModel.getNameserverEntityRol(nameserver.getId(), entity.getId(), connection);
-			entity.setRoles(roles);
+		try {
+			nameserver.setIpAddresses(IpAddressModel.getIpAddressStructByNameserverId(nameserver.getId(), connection));
+		} catch (ObjectNotFoundException onfe) {
+			// Do nothing, ipaddresses is not required
 		}
-
+		// Retrieve the status
+		try {
+			nameserver.getStatus().addAll(StatusModel.getByNameServerId(nameserver.getId(), connection));
+		} catch (ObjectNotFoundException onfe) {
+			// Do nothing, status is not required
+		}
+		// Retrieve the remarks
+		try {
+			nameserver.getRemarks().addAll(RemarkModel.getByNameserverId(nameserver.getId(), connection));
+		} catch (ObjectNotFoundException onfe) {
+			// Do nothing, remarks is not required
+		}
+		// Retrieve the links
+		try {
+			nameserver.getLinks().addAll(LinkModel.getByNameServerId(nameserver.getId(), connection));
+		} catch (ObjectNotFoundException onfe) {
+			// Do nothing, links is not required
+		}
+		// Retrieve the events
+		nameserver.getEvents().addAll(EventModel.getByNameServerId(nameserver.getId(), connection));
+		// Retrieve the entities
+		try {
+			List<Entity> entities = EntityModel.getEntitiesByNameserverId(nameserver.getId(), connection);
+			nameserver.getEntities().addAll(entities);
+			for (Entity entity : entities) {
+				List<Rol> roles = RolModel.getNameserverEntityRol(nameserver.getId(), entity.getId(), connection);
+				entity.setRoles(roles);
+			}
+		} catch (ObjectNotFoundException onfe) {
+			// Do nothing, entitys is not required
+		}
 	}
 }

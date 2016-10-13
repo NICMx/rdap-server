@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,6 +15,7 @@ import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.server.db.DomainDAO;
 import mx.nic.rdap.server.db.QueryGroup;
+import mx.nic.rdap.server.exception.InvalidValueException;
 import mx.nic.rdap.server.exception.ObjectNotFoundException;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
 
@@ -103,9 +103,12 @@ public class DomainModel {
 	 * @param connection
 	 * @throws SQLException
 	 * @throws IOException
+	 * @throws InvalidValueException
 	 */
-	public static Domain findByLdhName(String name, Connection connection) throws SQLException, IOException {
+	public static Domain findByLdhName(String name, Connection connection)
+			throws SQLException, IOException, InvalidValueException {
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByLdhName"))) {
+			validateDomainZone(name);
 			statement.setString(1, name);
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
@@ -142,23 +145,84 @@ public class DomainModel {
 		}
 	}
 
+	/**
+	 * Load the nested object of the domain
+	 * 
+	 * @param domain
+	 * @param connection
+	 * @throws SQLException
+	 * @throws IOException
+	 */
 	public static void loadNestedObjects(Domain domain, Connection connection) throws SQLException, IOException {
 		Long domainId = domain.getId();
 
-		domain.setEvents(EventModel.getByDomainId(domainId, connection));
-		domain.setLinks(LinkModel.getByDomainId(domainId, connection));
-		domain.setStatus(StatusModel.getByDomainId(domainId, connection));
-		domain.setRemarks(RemarkModel.getByDomainId(domainId, connection));
-		domain.setPublicIds(PublicIdModel.getByDomain(domainId, connection));
-		domain.setSecureDNS(SecureDNSModel.getByDomain(domainId, connection));
-		domain.setVariants(VariantModel.getByDomainId(domainId, connection));
-
-		List<Nameserver> domainsNS = NameserverModel.getByDomainId(domainId, connection);
-		domain.getNameServers().addAll(domainsNS);
-
-		List<Entity> entitiesByDomainId = EntityModel.getEntitiesByDomainId(domainId, connection);
-		domain.setEntities(entitiesByDomainId);
-
+		// Retrieve the events
+		try {
+			domain.getEvents().addAll(EventModel.getByDomainId(domainId, connection));
+		} catch (ObjectNotFoundException onfe) {
+			// Do nothing, events is not required
+		}
+		// Retrieve the links
+		try {
+			domain.getLinks().addAll(LinkModel.getByDomainId(domainId, connection));
+		} catch (ObjectNotFoundException onfe) {
+			// Do nothing, links is not required
+		}
+		// Retrieve the status
+		try {
+			domain.getStatus().addAll(StatusModel.getByDomainId(domainId, connection));
+		} catch (ObjectNotFoundException onfe) {
+			// Do nothing, status is not required
+		}
+		// Retrieve the remarks
+		try {
+			domain.getRemarks().addAll(RemarkModel.getByDomainId(domainId, connection));
+		} catch (ObjectNotFoundException onfe) {
+			// Do nothing, remarks is not required
+		}
+		// Retrieve the public ids
+		try {
+			domain.setPublicIds(PublicIdModel.getByDomain(domainId, connection));
+		} catch (ObjectNotFoundException onfe) {
+			// Do nothing, public ids is not required
+		}
+		// Retrieve the secure dns
+		try {
+			domain.setSecureDNS(SecureDNSModel.getByDomain(domainId, connection));
+		} catch (ObjectNotFoundException onfe) {
+			// Do nothing, secure dns is not required
+		}
+		// Retrieve the variants
+		try {
+			domain.setVariants(VariantModel.getByDomainId(domainId, connection));
+		} catch (ObjectNotFoundException onfe) {
+			// Do nothing, variants is not required
+		}
+		// Retrieve the domainsNs
+		try {
+			domain.getNameServers().addAll(NameserverModel.getByDomainId(domainId, connection));
+		} catch (ObjectNotFoundException onfe) {
+			// Do nothing, nameservers is not required
+		}
+		// Retrieve the entities
+		try {
+			domain.getEntities().addAll(EntityModel.getEntitiesByDomainId(domainId, connection));
+		} catch (ObjectNotFoundException onfe) {
+			// Do nothing, entities is not required
+		}
 	}
 
+	/**
+	 * Validate if the zone of the request domain is managed by the server
+	 * 
+	 * @param domainName
+	 * @throws InvalidValueException
+	 */
+	public static void validateDomainZone(String domainName) throws InvalidValueException {
+		String[] domainData = domainName.split("\\.");
+		String domainZone = domainName.substring(domainData[0].length() + 1);
+		if (!ZoneModel.existsZone(domainZone)) {
+			throw new InvalidValueException("Zone", "Domain");
+		}
+	}
 }
