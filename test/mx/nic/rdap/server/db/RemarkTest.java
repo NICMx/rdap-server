@@ -137,7 +137,10 @@ public class RemarkTest {
 		try {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
 			try (Connection connection = DatabaseSession.getConnection()) {
-				RemarkModel.getAll(connection);
+				List<Remark> remarks = RemarkModel.getAll(connection);
+				for (Remark remark : remarks) {
+					System.out.println(((RemarkDAO) remark).toJson());
+				}
 				assert true;
 			}
 		} catch (SQLException | IOException e) {
