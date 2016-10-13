@@ -18,7 +18,6 @@ import mx.nic.rdap.core.db.Event;
 import mx.nic.rdap.server.db.EventDAO;
 import mx.nic.rdap.server.db.QueryGroup;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
-import mx.nix.rdap.core.catalog.EventAction;
 
 /**
  * The model for the Event object
