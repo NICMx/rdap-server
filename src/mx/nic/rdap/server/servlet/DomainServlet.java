@@ -13,6 +13,8 @@ import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.db.model.DomainModel;
+import mx.nic.rdap.server.exception.InvalidValueException;
+import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.DomainResult;
 
@@ -44,7 +46,12 @@ public class DomainServlet extends RdapServlet {
 
 		RdapResult result = null;
 		try (Connection con = DatabaseSession.getConnection();) {
-			Domain domain = DomainModel.findByLdhName(request.getName(), con);
+			Domain domain;
+			try {
+				domain = DomainModel.findByLdhName(request.getName(), con);
+			} catch (InvalidValueException e) {
+				throw new MalformedRequestException(e);
+			}
 			result = new DomainResult(domain);
 
 		}

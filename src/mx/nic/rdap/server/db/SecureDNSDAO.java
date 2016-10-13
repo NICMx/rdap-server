@@ -92,7 +92,7 @@ public class SecureDNSDAO extends SecureDNS implements DatabaseObject, JsonParse
 			builder.add("maxSigLife", this.getZoneSigned());
 		}
 
-		if (this.getDsData() != null && this.getDsData().isEmpty()) {
+		if (this.getDsData() != null && !this.getDsData().isEmpty()) {
 			builder.add("dsData", ((DsDataDAO) this.getDsData()).toJson());
 		}
 		return builder.build();

@@ -42,6 +42,7 @@ public class DomainDAO extends Domain implements DatabaseObject, JsonParser {
 	 * @throws SQLException
 	 */
 	public DomainDAO(ResultSet resultSet) throws SQLException {
+		super();
 		loadFromDatabase(resultSet);
 	}
 

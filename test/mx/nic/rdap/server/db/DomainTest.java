@@ -41,6 +41,7 @@ import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.model.DomainModel;
 import mx.nic.rdap.server.db.model.EntityModel;
 import mx.nic.rdap.server.db.model.ZoneModel;
+import mx.nic.rdap.server.exception.InvalidValueException;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
 import mx.nix.rdap.core.catalog.EventAction;
 import mx.nix.rdap.core.catalog.Rol;
@@ -112,8 +113,8 @@ public class DomainTest {
 	@Test
 	public void insertAndGetSimpleDomain() {
 		Entity registrar = new EntityDAO();
-		registrar.setHandle("rar_dhfelix");
-		registrar.setPort43("whois.dhfelixrar.mx");
+		registrar.setHandle("whois");
+		registrar.setPort43("whois.mx");
 		registrar.getRoles().add(Rol.SPONSOR);
 
 		Entity ent = new EntityDAO();
@@ -141,8 +142,8 @@ public class DomainTest {
 		Domain dom = new DomainDAO();
 		dom.getEntities().add(ent);
 		dom.getEntities().add(registrar);
-		dom.setHandle("dom_testdom");
-		dom.setLdhName("mydomaintest");
+		dom.setHandle("domcommx");
+		dom.setLdhName("mydomaintest.com.mx");
 
 		Integer zoneId = null;
 		try {
@@ -169,7 +170,7 @@ public class DomainTest {
 		try {
 			domainById = DomainModel.getDomainById(domId, connection);
 			findByLdhName = DomainModel.findByLdhName(dom.getLdhName(), connection);
-		} catch (SQLException | IOException e) {
+		} catch (SQLException | IOException | InvalidValueException e) {
 			e.printStackTrace();
 			fail();
 		}
@@ -365,7 +366,7 @@ public class DomainTest {
 		try {
 			domainById = DomainModel.getDomainById(domainId, connection);
 			findByLdhName = DomainModel.findByLdhName(domain.getLdhName(), connection);
-		} catch (SQLException | IOException e) {
+		} catch (SQLException | IOException | InvalidValueException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
