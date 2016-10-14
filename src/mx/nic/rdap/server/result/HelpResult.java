@@ -178,9 +178,12 @@ public class HelpResult implements RdapResult {
 						do {
 							description = description.trim() + " " + line;
 							line = iterator.next().trim();
+							description = description.trim();
 						} while (!line.isEmpty() && !line.startsWith("link1"));
-						descriptions.add(description);
-						description = "";
+						if (description != " " || !description.isEmpty()) {
+							descriptions.add(description);
+							description = "";
+						}
 					} while (!line.startsWith("link1"));
 				}
 				if (line.trim().startsWith("link1")) {
@@ -190,6 +193,7 @@ public class HelpResult implements RdapResult {
 					links.add(line.substring(line.indexOf("=") + 1).trim());
 				}
 			}
+			descriptions.removeAll(Arrays.asList(" ", "", null));
 			notice.add(title);
 			notice.add(descriptions);
 			notice.add(links);
