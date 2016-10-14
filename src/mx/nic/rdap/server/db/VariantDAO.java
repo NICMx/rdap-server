@@ -1,5 +1,6 @@
 package mx.nic.rdap.server.db;
 
+import java.net.IDN;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -99,7 +100,7 @@ public class VariantDAO extends Variant implements DatabaseObject, JsonParser {
 		for (VariantName variantName : variantNames) {
 			JsonObjectBuilder builder = Json.createObjectBuilder();
 			builder.add("ldhName", variantName.getLdhName());
-			builder.add("unicodeName", variantName.getUnicode());
+			builder.add("unicodeName", IDN.toUnicode(variantName.getLdhName()));
 			arrayBuilder.add(builder);
 		}
 		return arrayBuilder.build();

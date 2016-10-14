@@ -2,6 +2,8 @@ package mx.nic.rdap.server;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Properties;
 
@@ -45,9 +47,11 @@ public class Util {
 	 * @return request arguments.
 	 * @throws RequestHandleException
 	 *             <code>request</code> is not a valid RDAP URI.
+	 * @throws UnsupportedEncodingException
 	 */
-	public static String[] getRequestParams(HttpServletRequest request) throws RequestHandleException {
-		String[] labels = request.getRequestURI().split("/");
+	public static String[] getRequestParams(HttpServletRequest request)
+			throws RequestHandleException, UnsupportedEncodingException {
+		String[] labels = URLDecoder.decode(request.getRequestURI(), "UTF-8").split("/");
 
 		if (labels.length < 4) {
 			throw new RequestHandleException(404, "I need more arguments than that. Try /rdap/sample/192.0.2.1");

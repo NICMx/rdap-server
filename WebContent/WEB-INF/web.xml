@@ -9,4 +9,7 @@
     <welcome-file>default.htm</welcome-file>
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
+  <error-page>
+  	<location>/exception</location>
+  </error-page>
 </web-app>

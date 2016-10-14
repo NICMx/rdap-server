@@ -1,6 +1,7 @@
 package mx.nic.rdap.server.db.model;
 
 import java.io.IOException;
+import java.net.IDN;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -107,9 +108,11 @@ public class DomainModel {
 	 */
 	public static Domain findByLdhName(String name, Connection connection)
 			throws SQLException, IOException, InvalidValueException {
+		// TODO use also zone for the search
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByLdhName"))) {
 			validateDomainZone(name);
 			statement.setString(1, name);
+			statement.setString(1, IDN.toASCII(name));
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
 				if (!resultSet.next()) {
@@ -222,7 +225,7 @@ public class DomainModel {
 		String[] domainData = domainName.split("\\.");
 		String domainZone = domainName.substring(domainData[0].length() + 1);
 		if (!ZoneModel.existsZone(domainZone)) {
-			throw new InvalidValueException("Zone", "Domain");
+			throw new InvalidValueException("Zone", "ZoneModel", "Domain");
 		}
 	}
 }

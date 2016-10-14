@@ -1,6 +1,7 @@
 package mx.nic.rdap.server.db.model;
 
 import java.io.IOException;
+import java.net.IDN;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -125,7 +126,7 @@ public class NameserverModel {
 	public static Nameserver findByName(String name, Connection connection) throws IOException, SQLException {
 		String query = queryGroup.getQuery("findByName");
 		try (PreparedStatement statement = connection.prepareStatement(query)) {
-			statement.setString(1, name);
+			statement.setString(1, IDN.toASCII(name));
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
 				if (!resultSet.next()) {

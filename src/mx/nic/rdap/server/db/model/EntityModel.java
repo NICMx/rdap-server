@@ -55,6 +55,7 @@ public class EntityModel {
 		Long entId = null;
 		try (PreparedStatement statement = connection.prepareStatement(query);) {
 			statement.setString(1, entityHandle);
+			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			ResultSet rs = statement.executeQuery();
 			if (!rs.next()) {
 				return null;

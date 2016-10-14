@@ -17,8 +17,8 @@ public class InvalidValueException extends Exception {
 	 * @param className
 	 *            the class
 	 */
-	public InvalidValueException(String attributeName, String className) {
-		super("Invalid value: " + attributeName + " in Class: " + className);
+	public InvalidValueException(String attributeName, String className, Object value) {
+		super("Invalid value of " + className + "." + attributeName + ": " + value.toString());
 	}
 
 }
