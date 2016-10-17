@@ -48,8 +48,9 @@ public class DomainServlet extends RdapServlet {
 		try (Connection con = DatabaseSession.getConnection();) {
 			Domain domain;
 			try {
+				DomainModel.validateDomainZone(request.getName());
 				domain = DomainModel.findByLdhName(request.getName(), con);
-			} catch (InvalidValueException e) {
+			} catch (InvalidValueException | SQLException e) {
 				throw new MalformedRequestException(e);
 			}
 			result = new DomainResult(domain);

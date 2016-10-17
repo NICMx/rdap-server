@@ -106,17 +106,15 @@ public class DomainModel {
 	 * @throws IOException
 	 * @throws InvalidValueException
 	 */
-	public static Domain findByLdhName(String name, Connection connection)
-			throws SQLException, IOException, InvalidValueException {
+	public static Domain findByLdhName(String name, Connection connection) throws SQLException, IOException {
 		// TODO use also zone for the search
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByLdhName"))) {
-			validateDomainZone(name);
 			statement.setString(1, name);
 			statement.setString(1, IDN.toASCII(name));
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
 				if (!resultSet.next()) {
-					throw new ObjectNotFoundException("Object not found.");
+					throw new SQLException("Object not found.");
 				}
 				Domain domain = new DomainDAO(resultSet);
 				loadNestedObjects(domain, connection);

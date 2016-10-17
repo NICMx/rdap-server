@@ -41,7 +41,6 @@ import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.model.DomainModel;
 import mx.nic.rdap.server.db.model.EntityModel;
 import mx.nic.rdap.server.db.model.ZoneModel;
-import mx.nic.rdap.server.exception.InvalidValueException;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
 import mx.nix.rdap.core.catalog.EventAction;
 import mx.nix.rdap.core.catalog.Rol;
@@ -170,7 +169,7 @@ public class DomainTest {
 		try {
 			domainById = DomainModel.getDomainById(domId, connection);
 			findByLdhName = DomainModel.findByLdhName(dom.getLdhName(), connection);
-		} catch (SQLException | IOException | InvalidValueException e) {
+		} catch (SQLException | IOException e) {
 			e.printStackTrace();
 			fail();
 		}
@@ -366,7 +365,7 @@ public class DomainTest {
 		try {
 			domainById = DomainModel.getDomainById(domainId, connection);
 			findByLdhName = DomainModel.findByLdhName(domain.getLdhName(), connection);
-		} catch (SQLException | IOException | InvalidValueException e) {
+		} catch (SQLException | IOException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}

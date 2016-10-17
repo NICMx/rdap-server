@@ -59,6 +59,8 @@ public class ExceptionResult implements RdapResult {
 			object.add("title", errorTitle);
 		}
 		if (errorCode != null && errorDescription != null) {
+			if (errorCode.compareTo("500") != 0)
+				object.add("description", errorDescription);
 			logger.log(Level.WARNING, errorCode + ":" + errorDescription);
 		}
 		return object.build();
