@@ -3,6 +3,7 @@ package mx.nic.rdap.server;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.IDN;
 import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Properties;
@@ -10,6 +11,7 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.server.exception.RequestHandleException;
+import mx.nic.rdap.server.exception.UnprocessableEntityException;
 
 /**
  * Random miscellaneous functions useful anywhere.
@@ -61,4 +63,39 @@ public class Util {
 		return Arrays.copyOfRange(labels, 3, labels.length);
 	}
 
+	/**
+	 * Validate if the search parameters are valid
+	 * 
+	 * @param request
+	 * @throws UnprocessableEntityException
+	 */
+	public static void validateSearchRequestParameters(HttpServletRequest request, String... params)
+			throws UnprocessableEntityException {
+		// Only accept one parameter in the request
+		if (request.getParameterMap().size() != 1) {
+			throw new UnprocessableEntityException("The request must contain one parameter");
+		}
+		// Validating if is a partial search and if it is, only can contain
+		// ASCII
+		String parameter = request.getParameterNames().nextElement();
+		String value = request.getParameter(parameter);
+		boolean partialSearch = false;
+		partialSearch = value.contains("*");
+		if (partialSearch && IDN.toASCII(value).compareTo(IDN.toUnicode(value)) != 0) {
+			throw new UnprocessableEntityException("Partial search must contain only ASCII values");
+		}
+		// Validate if the parameter if a valid parameter for the request
+		String validParametersMessage = "";
+		for (String paramName : params) {
+			if (paramName.compareTo(parameter) == 0) {
+				return;
+			}
+			if (!validParametersMessage.isEmpty()) {
+				validParametersMessage = validParametersMessage.concat(" or " + paramName);
+			} else {
+				validParametersMessage = paramName;
+			}
+		}
+		throw new UnprocessableEntityException("Valid parameters:" + validParametersMessage);
+	}
 }

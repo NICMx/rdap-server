@@ -96,6 +96,16 @@ public class NameserverModel {
 		}
 	}
 
+	/**
+	 * Store a list of nameservers that belong from a domain
+	 * 
+	 * @param nameservers
+	 * @param domainId
+	 * @param connection
+	 * @throws SQLException
+	 * @throws IOException
+	 * @throws RequiredValueNotFoundException
+	 */
 	public static void storeDomainNameserversToDatabase(List<Nameserver> nameservers, Long domainId,
 			Connection connection) throws SQLException, IOException, RequiredValueNotFoundException {
 		if (nameservers.isEmpty()) {
@@ -139,6 +149,35 @@ public class NameserverModel {
 		}
 	}
 
+	/**
+	 * Search nameservers by a namePattern
+	 * 
+	 * @param namePattern
+	 * @return
+	 */
+	public static List<NameserverDAO> searchByName(String namePattern) {
+		return null;
+	}
+
+	/**
+	 * Search nameservers by a ipaddressPattern
+	 * 
+	 * @param ipaddressPattern
+	 * @return
+	 */
+	public static List<NameserverDAO> searchByIp(String ipaddressPattern) {
+		return null;
+	}
+
+	/**
+	 * Find nameservers that belongs from a domain by the domain's id
+	 * 
+	 * @param domainId
+	 * @param connection
+	 * @return
+	 * @throws SQLException
+	 * @throws IOException
+	 */
 	public static List<Nameserver> getByDomainId(Long domainId, Connection connection)
 			throws SQLException, IOException {
 		String query = queryGroup.getQuery("getByDomainId");
