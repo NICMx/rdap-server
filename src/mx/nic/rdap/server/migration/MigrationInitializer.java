@@ -1,5 +1,6 @@
 package mx.nic.rdap.server.migration;
 
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,7 +38,9 @@ public class MigrationInitializer {
 	 */
 	public static void initRDAPDBConnection() {
 		try {
-			DatabaseSession.init(Util.loadProperties(RDAP_DATABASE_FILE));
+			Properties properties = Util.loadProperties(RDAP_DATABASE_FILE);
+			properties.setProperty("autoCommit", "false");
+			DatabaseSession.init(properties);
 		} catch (Exception e) {
 			logger.log(Level.SEVERE, "******ERROR INITIALIZING RDAP DATABASE CONNECTION******");
 
