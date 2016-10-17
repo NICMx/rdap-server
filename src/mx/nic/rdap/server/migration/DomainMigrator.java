@@ -21,6 +21,7 @@ import mx.nic.rdap.server.db.NameserverDAO;
 import mx.nic.rdap.server.db.SecureDNSDAO;
 import mx.nic.rdap.server.db.VariantDAO;
 import mx.nic.rdap.server.db.model.DomainModel;
+import mx.nic.rdap.server.db.model.ZoneModel;
 import mx.nic.rdap.server.exception.InvalidValueException;
 import mx.nic.rdap.server.exception.InvalidadDataStructure;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
@@ -64,7 +65,7 @@ public class DomainMigrator {
 				throw new RequiredValueNotFoundException("Handle", "Domain");
 			}
 			try {
-				if (MigrationUtil.isResultSetValueValid("ldh_name")) {
+				if (MigrationUtil.isResultSetValueValid(resultSet.getString("ldh_name"))) {
 					domain.setLdhName(resultSet.getString("ldh_name").trim());
 				} else {
 					throw new RequiredValueNotFoundException("LDHName", "Domain");
@@ -72,7 +73,20 @@ public class DomainMigrator {
 			} catch (SQLException e) {
 				throw new RequiredValueNotFoundException("LDHName", "Domain");
 			}
-
+			String[] domainData = domain.getLdhName().split("\\.");
+			try {
+				String domainZone = domain.getLdhName().substring(domainData[0].length() + 1);
+				if (MigrationUtil.isResultSetValueValid(domainZone)) {
+					domain.setZoneId(ZoneModel.getIdByZoneName(domainZone));
+				} else {
+					throw new RequiredValueNotFoundException("Zone", "Domain");
+				}
+				if (domain.getZoneId() == null) {
+					throw new InvalidValueException("Zone", "Domain", domainZone);
+				}
+			} catch (IndexOutOfBoundsException iobe) {
+				throw new RequiredValueNotFoundException("Zone", "Domain");
+			}
 			try {
 				if (MigrationUtil.isResultSetValueValid(resultSet.getString("port43"))) {
 					domain.setPort43(resultSet.getString("port43").trim());
