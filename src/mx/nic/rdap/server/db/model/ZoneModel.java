@@ -102,7 +102,6 @@ public class ZoneModel {
 			ResultSet resultSet = statement.getGeneratedKeys();
 			resultSet.next();
 			Integer zoneId = resultSet.getInt(1);// Inserted Zone's Id
-
 			zoneById.put(zoneId, zoneName);
 			idByZone.put(zoneName, zoneId);
 

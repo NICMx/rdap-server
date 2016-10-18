@@ -69,9 +69,10 @@ public class DomainModel {
 		EventModel.storeDomainEventsToDatabase(domain.getEvents(), domainId, connection);
 		StatusModel.storeDomainStatusToDatabase(domain.getStatus(), domainId, connection);
 		LinkModel.storeDomainLinksToDatabase(domain.getLinks(), domainId, connection);
-
-		domain.getSecureDNS().setDomainId(domainId);
-		SecureDNSModel.storeToDatabase(domain.getSecureDNS(), connection);
+		if (domain.getSecureDNS() != null) {
+			domain.getSecureDNS().setDomainId(domainId);
+			SecureDNSModel.storeToDatabase(domain.getSecureDNS(), connection);
+		}
 
 		for (Nameserver ns : domain.getNameServers()) {
 			NameserverModel.storeToDatabase(ns, connection);

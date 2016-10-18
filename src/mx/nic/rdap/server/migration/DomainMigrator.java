@@ -74,15 +74,10 @@ public class DomainMigrator {
 				throw new RequiredValueNotFoundException("LDHName", "Domain");
 			}
 			String[] domainData = domain.getLdhName().split("\\.");
-			try {
+			try {// Validate that the zone is not null
 				String domainZone = domain.getLdhName().substring(domainData[0].length() + 1);
-				if (MigrationUtil.isResultSetValueValid(domainZone)) {
-					domain.setZoneId(ZoneModel.getIdByZoneName(domainZone));
-				} else {
+				if (!MigrationUtil.isResultSetValueValid(domainZone)) {
 					throw new RequiredValueNotFoundException("Zone", "Domain");
-				}
-				if (domain.getZoneId() == null) {
-					throw new InvalidValueException("Zone", "Domain", domainZone);
 				}
 			} catch (IndexOutOfBoundsException iobe) {
 				throw new RequiredValueNotFoundException("Zone", "Domain");
@@ -422,11 +417,39 @@ public class DomainMigrator {
 	 * @throws RequiredValueNotFoundException
 	 * @throws SQLException
 	 * @throws IOException
+	 * @throws InvalidValueException
 	 */
 	public static void storeDomainsInRDAPDatabase(List<DomainDAO> domains, Connection con)
-			throws IOException, SQLException, RequiredValueNotFoundException {
+			throws IOException, SQLException, RequiredValueNotFoundException, InvalidValueException {
 		for (DomainDAO domain : domains) {
+			setZoneId(domain, con);
 			DomainModel.storeToDatabase(domain, con);
+		}
+	}
+
+	/**
+	 * Set the zone id to the domain, store the zone if not existe
+	 * 
+	 * @param domain
+	 * @throws RequiredValueNotFoundException
+	 * @throws SQLException
+	 * @throws InvalidValueException
+	 */
+	private static void setZoneId(DomainDAO domain, Connection con)
+			throws RequiredValueNotFoundException, SQLException, InvalidValueException {
+		String[] domainData = domain.getLdhName().split("\\.");
+		try {
+			String domainZone = domain.getLdhName().substring(domainData[0].length() + 1);
+			if (MigrationUtil.isResultSetValueValid(domainZone)) {
+				domain.setZoneId(ZoneModel.storeToDatabase(domainZone, con));
+			} else {
+				throw new RequiredValueNotFoundException("Zone", "Domain");
+			}
+			if (domain.getZoneId() == null) {
+				throw new InvalidValueException("Zone", "Domain", domainZone);
+			}
+		} catch (IndexOutOfBoundsException iobe) {
+			throw new RequiredValueNotFoundException("Zone", "Domain");
 		}
 	}
 
