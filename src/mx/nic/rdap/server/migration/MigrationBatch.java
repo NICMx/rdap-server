@@ -47,20 +47,22 @@ public class MigrationBatch extends TimerTask {
 		MigrationInitializer.initOriginDBConnection();
 		MigrationInitializer.initRDAPDBConnection();
 		try {
-			migrate();
-			logger.log(Level.INFO, "******MIGRATION SUCCESS******");
-			try (Connection rdapConnection = DatabaseSession.getConnection();) {
+			try (Connection rdapConnection = DatabaseSession.getConnection();
+					Connection originConnection = MigrationDatabaseSession.getConnection()) {
+				migrate(rdapConnection, originConnection);
+				logger.log(Level.INFO, "******MIGRATION SUCCESS******");
 				rdapConnection.commit();
-			} catch (SQLException e) {
-				throw new RuntimeException("Error in the execution of a SQL Statement", e);
 			}
-		} catch (IOException | RequiredValueNotFoundException | InvalidValueException | InvalidadDataStructure e) {
+		} catch (IOException | RequiredValueNotFoundException | InvalidValueException | InvalidadDataStructure
+				| SQLException e) {
 			logger.log(Level.SEVERE, "******MIGRATION FAILED******");
 			try (Connection rdapConnection = DatabaseSession.getConnection();) {
 				rdapConnection.rollback();
 			} catch (SQLException e1) {
-				throw new RuntimeException(e);
+				logger.log(Level.SEVERE, e1.getMessage());
+				throw new RuntimeException("Error in execution of rollback ", e1);
 			}
+			logger.log(Level.SEVERE, e.getMessage());
 			throw new RuntimeException(e);
 		} finally {
 			logger.log(Level.INFO, "******CLOSING DATABASE CONNECTIONS******");
@@ -78,15 +80,11 @@ public class MigrationBatch extends TimerTask {
 	 * @throws RequiredValueNotFoundException
 	 * @throws IOException
 	 */
-	public void migrate()
-			throws RequiredValueNotFoundException, InvalidValueException, InvalidadDataStructure, IOException {
-		try {
-			migrateEntities();
-			migrateNameservers();
-			migrateDomains();
-		} catch (SQLException e) {
-			throw new RuntimeException("Error in the execution of a SQL Statement", e);
-		}
+	public void migrate(Connection rdapConnection, Connection originConnection) throws RequiredValueNotFoundException,
+			InvalidValueException, InvalidadDataStructure, IOException, SQLException {
+		migrateEntities(rdapConnection, originConnection);
+		migrateNameservers(rdapConnection, originConnection);
+		migrateDomains(rdapConnection, originConnection);
 
 	}
 
@@ -100,20 +98,17 @@ public class MigrationBatch extends TimerTask {
 	 * @throws RequiredValueNotFoundException
 	 * @throws IOException
 	 */
-	private void migrateEntities() throws SQLException, RequiredValueNotFoundException, InvalidValueException,
-			InvalidadDataStructure, IOException {
+	private void migrateEntities(Connection rdapConnection, Connection originConnection) throws SQLException,
+			RequiredValueNotFoundException, InvalidValueException, InvalidadDataStructure, IOException {
 		logger.log(Level.INFO, "******MIGRATING ENTITIES STARTING******");
-		try (Connection originConnection = MigrationDatabaseSession.getConnection();
-				PreparedStatement statement = originConnection.prepareStatement(queries.get("entity"));) {
+		try (PreparedStatement statement = originConnection.prepareStatement(queries.get("entity"));) {
 			logger.log(Level.INFO, "Excuting QUERY:" + statement.toString());
 			ResultSet entitiesResultSet = statement.executeQuery();
 			logger.log(Level.INFO, "Done!\n Processing Entities resultset");
 			List<EntityDAO> entities = EntityMigrator.getEntitiesFromResultSet(entitiesResultSet);
 			logger.log(Level.INFO, "Done!\n Entities retrived:" + entities.size()
 					+ "\n Starting to save in RDAP Database. Good luck :)");
-			try (Connection rdapConnection = DatabaseSession.getConnection();) {
-				EntityMigrator.storeEntitiesInRDAPDatabase(entities, rdapConnection);
-			}
+			EntityMigrator.storeEntitiesInRDAPDatabase(entities, rdapConnection);
 
 		}
 		logger.log(Level.INFO, "******MIGRATING ENTITIES SUCCEEDED******");
@@ -129,20 +124,17 @@ public class MigrationBatch extends TimerTask {
 	 * @throws RequiredValueNotFoundException
 	 * @throws IOException
 	 */
-	private void migrateNameservers() throws SQLException, RequiredValueNotFoundException, InvalidValueException,
-			InvalidadDataStructure, IOException {
+	private void migrateNameservers(Connection rdapConnection, Connection originConnection) throws SQLException,
+			RequiredValueNotFoundException, InvalidValueException, InvalidadDataStructure, IOException {
 		logger.log(Level.INFO, "******MIGRATING NAMESERVERS STARTING******");
-		try (Connection originConnection = MigrationDatabaseSession.getConnection();
-				PreparedStatement statement = originConnection.prepareStatement(queries.get("nameserver"));) {
+		try (PreparedStatement statement = originConnection.prepareStatement(queries.get("nameserver"));) {
 			logger.log(Level.INFO, "Excuting QUERY:" + statement.toString());
 			ResultSet nameserverResultSet = statement.executeQuery();
 			logger.log(Level.INFO, "Done!\n Processing Nameservers resultset");
 			List<NameserverDAO> nameservers = NameserverMigrator.getNameserversFromResultSet(nameserverResultSet);
 			logger.log(Level.INFO, "Done!\n Nameservers retrived:" + nameservers.size()
 					+ "\n Starting to save in RDAP Database. Good luck :)");
-			try (Connection rdapConnection = DatabaseSession.getConnection();) {
-				NameserverMigrator.storeNameserversInRDAPDatabase(nameservers, rdapConnection);
-			}
+			NameserverMigrator.storeNameserversInRDAPDatabase(nameservers, rdapConnection);
 
 		}
 		logger.log(Level.INFO, "******MIGRATING NAMESERVERS SUCCEEDED******");
@@ -158,20 +150,17 @@ public class MigrationBatch extends TimerTask {
 	 * @throws RequiredValueNotFoundException
 	 * @throws IOException
 	 */
-	private void migrateDomains() throws SQLException, RequiredValueNotFoundException, InvalidValueException,
-			InvalidadDataStructure, IOException {
+	private void migrateDomains(Connection rdapConnection, Connection originConnection) throws SQLException,
+			RequiredValueNotFoundException, InvalidValueException, InvalidadDataStructure, IOException {
 		logger.log(Level.INFO, "******MIGRATING DOMAINS STARTING******");
-		try (Connection originConnection = MigrationDatabaseSession.getConnection();
-				PreparedStatement statement = originConnection.prepareStatement(queries.get("domain"));) {
+		try (PreparedStatement statement = originConnection.prepareStatement(queries.get("domain"));) {
 			logger.log(Level.INFO, "Excuting QUERY:" + statement.toString());
 			ResultSet domainResultSet = statement.executeQuery();
 			logger.log(Level.INFO, "Done!\n Processing DOMAINS resultset");
 			List<DomainDAO> domains = DomainMigrator.getDomainsFromResultSet(domainResultSet);
 			logger.log(Level.INFO, "Done!\n DOMAINS retrived:" + domains.size()
 					+ "\n Starting to save in RDAP Database. Good luck :)");
-			try (Connection rdapConnection = DatabaseSession.getConnection();) {
-				DomainMigrator.storeDomainsInRDAPDatabase(domains, rdapConnection);
-			}
+			DomainMigrator.storeDomainsInRDAPDatabase(domains, rdapConnection);
 
 		}
 		logger.log(Level.INFO, "******MIGRATING DOMAINS SUCCEEDED******");
