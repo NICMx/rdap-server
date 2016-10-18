@@ -4,12 +4,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.IDN;
+import java.net.Inet4Address;
+import java.net.Inet6Address;
+import java.net.InetAddress;
 import java.net.URLDecoder;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
+import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.exception.UnprocessableEntityException;
 
@@ -97,5 +102,26 @@ public class Util {
 			}
 		}
 		throw new UnprocessableEntityException("Valid parameters:" + validParametersMessage);
+	}
+
+	/**
+	 * Validates if an ip address is valid
+	 * 
+	 * @param addr
+	 * @return
+	 * @throws MalformedRequestException
+	 *             Throws error 400 Bad request
+	 */
+	public static void validateIpAddress(String addr) throws MalformedRequestException {
+		try {
+			InetAddress address = InetAddress.getByName(addr);
+			if (address instanceof Inet6Address) {
+				System.out.println("Is  v6");
+			} else if (address instanceof Inet4Address) {
+				System.out.println("Is  v4");
+			}
+		} catch (UnknownHostException e) {
+			throw new MalformedRequestException("Requested ip is invalid.");
+		}
 	}
 }

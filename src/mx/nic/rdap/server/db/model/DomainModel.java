@@ -2,10 +2,15 @@ package mx.nic.rdap.server.db.model;
 
 import java.io.IOException;
 import java.net.IDN;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -144,6 +149,94 @@ public class DomainModel {
 				return domain;
 			}
 		}
+	}
+
+	/**
+	 * searches a domain by it´s name
+	 * 
+	 * @param name
+	 * @param connection
+	 * @return
+	 * @throws SQLException
+	 * @throws InvalidValueException
+	 */
+	public static List<Domain> searchByName(String name, Connection connection)
+			throws SQLException, InvalidValueException {
+		// TODO query and searches by *, also needs to check zone
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("searchByName"))) {
+			validateDomainZone(name);
+			statement.setString(1, name);
+			logger.log(Level.INFO, "Executing query" + statement.toString());
+			ResultSet resultSet = statement.executeQuery();
+
+			if (!resultSet.next()) {
+				return Collections.emptyList();
+			}
+			List<Domain> domains = new ArrayList<Domain>();
+			do {
+				DomainDAO domain = new DomainDAO(resultSet);
+				domains.add(domain);
+			} while (resultSet.next());
+
+			return domains;
+		}
+	}
+
+	/**
+	 * Searches all domains with a nameserver by name
+	 * 
+	 * @param name
+	 * @param connection
+	 * @return
+	 * @throws SQLException
+	 */
+	public static List<Domain> searchByNsLdhName(String name, Connection connection) throws SQLException {
+		// TODO query and searches by *, also needs to check zone
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("searchByNsLdhName"))) {
+			logger.log(Level.INFO, "Executing query" + statement.toString());
+			ResultSet resultSet = statement.executeQuery();
+
+			if (!resultSet.next()) {
+				return Collections.emptyList();
+			}
+			List<Domain> domains = new ArrayList<Domain>();
+			do {
+				DomainDAO domain = new DomainDAO(resultSet);
+				domains.add(domain);
+			} while (resultSet.next());
+			return domains;
+		}
+	}
+
+	/**
+	 * searches all domains with a nameserver by address
+	 * 
+	 * @param ip
+	 * @param connection
+	 * @return
+	 * @throws SQLException
+	 * @throws UnknownHostException
+	 */
+	public static List<Domain> searchByNsIp(String ip, Connection connection)
+			throws SQLException, UnknownHostException {
+		// TODO query and validate if v4 or v6
+		InetAddress address = InetAddress.getByName(ip);
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("searchByNsIp"))) {
+			statement.setString(1, ip);
+			logger.log(Level.INFO, "Executing query" + statement.toString());
+			ResultSet resultSet = statement.executeQuery();
+
+			if (!resultSet.next()) {
+				return Collections.emptyList();
+			}
+			List<Domain> domains = new ArrayList<Domain>();
+			do {
+				DomainDAO domain = new DomainDAO();
+				domains.add(domain);
+			} while (resultSet.next());
+			return null;
+		}
+
 	}
 
 	/**
