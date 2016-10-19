@@ -224,7 +224,12 @@ public class DomainModel {
 	 */
 	public static void validateDomainZone(String domainName) throws InvalidValueException {
 		String[] domainData = domainName.split("\\.");
-		String domainZone = domainName.substring(domainData[0].length() + 1);
+		String domainZone = "";
+		try {
+			domainZone = domainName.substring(domainData[0].length() + 1);
+		} catch (IndexOutOfBoundsException iobe) {
+			throw new InvalidValueException("Zone", "ZoneModel", "Domain");
+		}
 		if (!ZoneModel.existsZone(domainZone)) {
 			throw new InvalidValueException("Zone", "ZoneModel", "Domain");
 		}

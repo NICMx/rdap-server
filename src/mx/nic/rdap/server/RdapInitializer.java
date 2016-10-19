@@ -13,12 +13,15 @@ public class RdapInitializer implements ServletContextListener {
 	private static final String RENDERERS_FILE = "renderers";
 	/** File from which we will load the database connection. */
 	private static final String DATABASE_FILE = "database";
+	/** File from which we will load the rdap server configuration. */
+	private static final String CONFIGURATION_FILE = "configuration";
 
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
 		try {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
 			RendererPool.loadRenderers(Util.loadProperties(RENDERERS_FILE));
+			RdapConfiguration.loadSystemProperties(Util.loadProperties(CONFIGURATION_FILE));
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}

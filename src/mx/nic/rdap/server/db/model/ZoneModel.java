@@ -10,12 +10,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.db.QueryGroup;
+import mx.nic.rdap.server.exception.ObjectNotFoundException;
 
 /**
  * Model for the Zone table, read all zones in the zone_table and keeps it in
@@ -77,6 +80,28 @@ public class ZoneModel {
 			idByZone.put(zoneName, zoneId);
 		} while (rs.next());
 
+	}
+
+	/**
+	 * Validate if the configurated zones are in the database
+	 * 
+	 * @throws ObjectNotFoundException
+	 */
+	public static void validateConfiguratedZones() throws ObjectNotFoundException {
+		List<String> configuratedZones = RdapConfiguration.getServerZones();
+		Map<Integer, String> zoneByIdForServer = new HashMap<Integer, String>();
+		Map<String, Integer> idByZoneForServer = new HashMap<String, Integer>();
+		for (String zone : configuratedZones) {
+			if (idByZone.get(zone) == null) {
+				logger.log(Level.SEVERE, "Configurated zone not found in database:" + zone);
+				throw new ObjectNotFoundException("Configurated zone not found in database:" + zone);
+			}
+			zoneByIdForServer.put(idByZone.get(zone), zone);
+			idByZoneForServer.put(zone, getIdByZoneName(zone));
+		}
+		// Ovewrite the hashmaps to only use the configurated zones
+		zoneById = zoneByIdForServer;
+		idByZone = idByZoneForServer;
 	}
 
 	/**
