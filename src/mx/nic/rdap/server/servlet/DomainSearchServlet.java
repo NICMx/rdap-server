@@ -2,25 +2,30 @@ package mx.nic.rdap.server.servlet;
 
 import java.io.IOException;
 import java.sql.Connection;
-/**
- * Servlet that finds domain 
- * 
- * @author evaldes
- * 
- */
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DatabaseSession;
+import mx.nic.rdap.server.db.model.DomainModel;
 import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.exception.UnprocessableEntityException;
+import mx.nic.rdap.server.result.DomainSearchResult;
 
+/**
+ * Servlet that searches domains
+ * 
+ * @author evaldes
+ * 
+ */
 @WebServlet(name = "domains", urlPatterns = { "/domains" })
 public class DomainSearchServlet extends RdapServlet {
 
@@ -41,18 +46,28 @@ public class DomainSearchServlet extends RdapServlet {
 			throws RequestHandleException, IOException, SQLException {
 		DomainSearchRequest request = new DomainSearchRequest(httpRequest);
 		RdapResult result = null;
-		try (Connection con = DatabaseSession.getConnection()) {
+
+		try (Connection connection = DatabaseSession.getConnection()) {
+			List<Domain> domains = new ArrayList<Domain>();
+
 			if (request.getParameter() == "name") {
-				// TODO search by name
+				if (request.getValue().contains("\\.")) {
+					String domain = request.getValue().split("\\.", 2)[0];
+					String zone = request.getValue().split("\\.", 2)[1];
+					domains = DomainModel.searchByName(domain, zone, connection);
+				} else {
+					domains = DomainModel.searchByName(request.getValue(), connection);
+				}
 			}
+
 			if (request.getParameter() == "nsLdhName") {
-				// TODO search by name server name
+				domains = DomainModel.searchByNsLdhName(request.getValue(), connection);
 			}
+
 			if (request.getParameter() == "nsIp") {
-				// TODO search by name server Ip
+				domains = DomainModel.searchByNsIp(request.getValue(), connection);
 			}
-		} catch (SQLException e) {
-			throw new MalformedRequestException(e);
+			result = new DomainSearchResult(domains);
 		}
 		return result;
 	}

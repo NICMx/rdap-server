@@ -2,8 +2,8 @@ package mx.nic.rdap.server.db.model;
 
 import java.io.IOException;
 import java.net.IDN;
+import java.net.Inet4Address;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,6 +20,7 @@ import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.server.db.DomainDAO;
+import mx.nic.rdap.server.db.IpAddressDAO;
 import mx.nic.rdap.server.db.QueryGroup;
 import mx.nic.rdap.server.exception.InvalidValueException;
 import mx.nic.rdap.server.exception.ObjectNotFoundException;
@@ -152,19 +153,58 @@ public class DomainModel {
 	}
 
 	/**
-	 * searches a domain by it´s name
+	 * Searches a domain by it´s name and TLD
+	 * 
+	 * @param name
+	 * @param zone
+	 * @param connection
+	 * @return
+	 * @throws SQLException
+	 * @throws InvalidValueException
+	 * @throws IOException
+	 */
+	public static List<Domain> searchByName(String name, String zone, Connection connection)
+			throws SQLException, IOException {
+		// TODOquery with and without zone
+		name.replaceAll("*", "%");
+
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("searchByNameWZone"))) {
+			Integer zoneId = ZoneModel.getIdByZoneName(zone);
+
+			statement.setString(1, name);
+			statement.setInt(2, zoneId);
+
+			logger.log(Level.INFO, "Executing query" + statement.toString());
+			ResultSet resultSet = statement.executeQuery();
+
+			if (!resultSet.next()) {
+				return Collections.emptyList();
+			}
+			List<Domain> domains = new ArrayList<Domain>();
+			do {
+				DomainDAO domain = new DomainDAO(resultSet);
+				loadNestedObjects(domain, connection);
+				domains.add(domain);
+			} while (resultSet.next());
+
+			return domains;
+		}
+	}
+
+	/**
+	 * Searches a domain by it's name when user don´t care about the TLD
 	 * 
 	 * @param name
 	 * @param connection
 	 * @return
 	 * @throws SQLException
 	 * @throws InvalidValueException
+	 * @throws IOException
 	 */
-	public static List<Domain> searchByName(String name, Connection connection)
-			throws SQLException, InvalidValueException {
-		// TODO query and searches by *, also needs to check zone
-		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("searchByName"))) {
-			validateDomainZone(name);
+	public static List<Domain> searchByName(String name, Connection connection) throws SQLException, IOException {
+		// TODOquery with and without zone
+		name.replaceAll("*", "%");
+		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("searchByNameWOutZone"))) {
 			statement.setString(1, name);
 			logger.log(Level.INFO, "Executing query" + statement.toString());
 			ResultSet resultSet = statement.executeQuery();
@@ -175,6 +215,7 @@ public class DomainModel {
 			List<Domain> domains = new ArrayList<Domain>();
 			do {
 				DomainDAO domain = new DomainDAO(resultSet);
+				loadNestedObjects(domain, connection);
 				domains.add(domain);
 			} while (resultSet.next());
 
@@ -189,10 +230,13 @@ public class DomainModel {
 	 * @param connection
 	 * @return
 	 * @throws SQLException
+	 * @throws IOException
 	 */
-	public static List<Domain> searchByNsLdhName(String name, Connection connection) throws SQLException {
+	public static List<Domain> searchByNsLdhName(String name, Connection connection) throws SQLException, IOException {
 		// TODO query and searches by *, also needs to check zone
+		name = name.replace("\\*", "%");
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("searchByNsLdhName"))) {
+			statement.setString(1, name);
 			logger.log(Level.INFO, "Executing query" + statement.toString());
 			ResultSet resultSet = statement.executeQuery();
 
@@ -202,6 +246,7 @@ public class DomainModel {
 			List<Domain> domains = new ArrayList<Domain>();
 			do {
 				DomainDAO domain = new DomainDAO(resultSet);
+				loadNestedObjects(domain, connection);
 				domains.add(domain);
 			} while (resultSet.next());
 			return domains;
@@ -215,14 +260,23 @@ public class DomainModel {
 	 * @param connection
 	 * @return
 	 * @throws SQLException
-	 * @throws UnknownHostException
+	 * @throws IOException
 	 */
-	public static List<Domain> searchByNsIp(String ip, Connection connection)
-			throws SQLException, UnknownHostException {
+	public static List<Domain> searchByNsIp(String ip, Connection connection) throws SQLException, IOException {
 		// TODO query and validate if v4 or v6
+		IpAddressDAO ipAddress = new IpAddressDAO();
 		InetAddress address = InetAddress.getByName(ip);
+		ipAddress.setAddress(address);
+		if (ipAddress.getAddress() instanceof Inet4Address) {
+			ipAddress.setType(4);
+
+		} else if (ipAddress.getAddress() instanceof Inet4Address) {
+			ipAddress.setType(6);
+		}
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("searchByNsIp"))) {
-			statement.setString(1, ip);
+			statement.setInt(1, ipAddress.getType());
+			statement.setString(2, ipAddress.getAddress().getHostAddress());
+			statement.setString(3, ipAddress.getAddress().getHostAddress());
 			logger.log(Level.INFO, "Executing query" + statement.toString());
 			ResultSet resultSet = statement.executeQuery();
 
@@ -232,6 +286,7 @@ public class DomainModel {
 			List<Domain> domains = new ArrayList<Domain>();
 			do {
 				DomainDAO domain = new DomainDAO();
+				loadNestedObjects(domain, connection);
 				domains.add(domain);
 			} while (resultSet.next());
 			return null;
