@@ -109,9 +109,10 @@ public class DomainModel {
 	 */
 	public static Domain findByLdhName(String name, Connection connection)
 			throws SQLException, IOException, InvalidValueException {
-		// TODO use also zone for the search
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByLdhName"))) {
-			validateDomainZone(name);
+			// if is a reverse address,dont validate the zone
+			if (!ZoneModel.isReverseAddress(name))
+				validateDomainZone(name);
 			statement.setString(1, name);
 			statement.setString(1, IDN.toASCII(name));
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());

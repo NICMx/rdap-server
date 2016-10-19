@@ -143,7 +143,7 @@ public class DomainTest {
 		dom.getEntities().add(ent);
 		dom.getEntities().add(registrar);
 		dom.setHandle("domcommx");
-		dom.setLdhName("mydomaintest.com.mx");
+		dom.setLdhName("mydomaintest.mx");
 
 		Integer zoneId = null;
 		try {
@@ -188,7 +188,7 @@ public class DomainTest {
 		Random random = new Random();
 		int randomInt = random.nextInt();
 
-		String domainName = "foo" + randomInt;
+		String domainName = "foo" + randomInt + ".mx";
 		DomainDAO domain = new DomainDAO();
 
 		Entity registrar = new EntityDAO();

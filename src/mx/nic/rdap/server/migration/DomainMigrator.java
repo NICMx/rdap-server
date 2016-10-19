@@ -437,20 +437,33 @@ public class DomainMigrator {
 	 */
 	private static void setZoneId(DomainDAO domain, Connection con)
 			throws RequiredValueNotFoundException, SQLException, InvalidValueException {
-		String[] domainData = domain.getLdhName().split("\\.");
-		try {
-			String domainZone = domain.getLdhName().substring(domainData[0].length() + 1);
-			if (MigrationUtil.isResultSetValueValid(domainZone)) {
-				domain.setZoneId(ZoneModel.storeToDatabase(domainZone, con));
+		String[] domainData;
+		String domainZone = null;
+		// Validate if is reverse address
+		if (ZoneModel.isReverseAddress(domain.getLdhName())) {
+			if (domain.getLdhName().endsWith(ZoneModel.REVERSE_IP_V4)) {
+				domainZone = ZoneModel.REVERSE_IP_V4;
 			} else {
+				domainZone = ZoneModel.REVERSE_IP_V6;
+			}
+		} else {
+			domainData = domain.getLdhName().split("\\.");
+			try {
+				domainZone = domain.getLdhName().substring(domainData[0].length() + 1);
+			} catch (IndexOutOfBoundsException iobe) {
 				throw new RequiredValueNotFoundException("Zone", "Domain");
 			}
-			if (domain.getZoneId() == null) {
-				throw new InvalidValueException("Zone", "Domain", domainZone);
-			}
-		} catch (IndexOutOfBoundsException iobe) {
+		}
+
+		if (MigrationUtil.isResultSetValueValid(domainZone)) {
+			domain.setZoneId(ZoneModel.storeToDatabase(domainZone, con));
+		} else {
 			throw new RequiredValueNotFoundException("Zone", "Domain");
 		}
+		if (domain.getZoneId() == null) {
+			throw new InvalidValueException("Zone", "Domain", domainZone);
+		}
+
 	}
 
 }

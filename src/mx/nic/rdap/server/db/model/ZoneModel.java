@@ -38,6 +38,8 @@ public class ZoneModel {
 
 	private static Map<Integer, String> zoneById;
 	private static Map<String, Integer> idByZone;
+	public static String REVERSE_IP_V4 = "in-addr.arpa";
+	public static String REVERSE_IP_V6 = "ip6.arpa";
 
 	static {
 		try {
@@ -170,4 +172,14 @@ public class ZoneModel {
 		return zoneById.containsKey(zoneId);
 	}
 
+	/**
+	 * validate if a address is in reverse lookup
+	 * 
+	 * @param address
+	 * @return
+	 */
+	public static boolean isReverseAddress(String address) {
+		return address.trim().endsWith(REVERSE_IP_V4) || address.trim().endsWith(REVERSE_IP_V6);
+
+	}
 }
