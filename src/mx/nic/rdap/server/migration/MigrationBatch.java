@@ -19,6 +19,7 @@ import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.db.DomainDAO;
 import mx.nic.rdap.server.db.EntityDAO;
 import mx.nic.rdap.server.db.NameserverDAO;
+import mx.nic.rdap.server.db.model.ZoneModel;
 import mx.nic.rdap.server.exception.InvalidValueException;
 import mx.nic.rdap.server.exception.InvalidadDataStructure;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
@@ -152,6 +153,8 @@ public class MigrationBatch extends TimerTask {
 	private void migrateDomains(Connection rdapConnection, Connection originConnection) throws SQLException,
 			RequiredValueNotFoundException, InvalidValueException, InvalidadDataStructure, IOException {
 		logger.log(Level.INFO, "******STARTING DOMAINS MIGRATION******");
+		ZoneModel.cleanZoneTables();// clean zone table in memory before the
+									// insert
 		try (PreparedStatement statement = originConnection.prepareStatement(selectQueries.get("domain"));) {
 			logger.log(Level.INFO, "Excuting QUERY:" + statement.toString());
 			ResultSet domainResultSet = statement.executeQuery();
