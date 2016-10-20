@@ -84,9 +84,10 @@ public class Util {
 		// ASCII
 		String parameter = request.getParameterNames().nextElement();
 		String value = request.getParameter(parameter);
+
 		boolean partialSearch = false;
 		partialSearch = value.contains("*");
-		if (partialSearch && IDN.toASCII(value).compareTo(IDN.toUnicode(value)) != 0) {
+		if (partialSearch && value.compareTo(IDN.toASCII(value)) != 0) {
 			throw new UnprocessableEntityException("Partial search must contain only ASCII values");
 		}
 		// Validate if the parameter if a valid parameter for the request

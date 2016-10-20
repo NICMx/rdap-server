@@ -1,7 +1,10 @@
 package mx.nic.rdap.server.servlet;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -9,6 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.Util;
+import mx.nic.rdap.server.db.DatabaseSession;
+import mx.nic.rdap.server.db.NameserverDAO;
+import mx.nic.rdap.server.db.model.NameserverModel;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.exception.UnprocessableEntityException;
 import mx.nic.rdap.server.result.NameserverSeachResult;
@@ -37,11 +43,16 @@ public class NameserverSearchServlet extends RdapServlet {
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
 		NameserverSearchRequest request = new NameserverSearchRequest(httpRequest);
-		// Nameserver nameserver = null;
-		// try (Connection con = DatabaseSession.getConnection();) {
-		// nameserver = NameserverModel.findByName(request.getName(), con);
-		// }
-		return new NameserverSeachResult();
+		List<NameserverDAO> nameservers = new ArrayList<NameserverDAO>();
+		try (Connection connection = DatabaseSession.getConnection();) {
+			if (request.getParameter().compareTo(NameserverSearchRequest.NAME_PARAMETER_KEY) == 0) {
+				nameservers = NameserverModel.searchByName(request.getValue().trim(), connection);
+				return new NameserverSeachResult(nameservers);
+			} else {
+
+			}
+		}
+		return null;
 	}
 
 	/*
@@ -58,8 +69,8 @@ public class NameserverSearchServlet extends RdapServlet {
 
 	private class NameserverSearchRequest {
 
-		public final String IP_PARAMETER_KEY = "ip";
-		public final String NAME_PARAMETER_KEY = "name";
+		public static final String IP_PARAMETER_KEY = "ip";
+		public static final String NAME_PARAMETER_KEY = "name";
 		private String parameter;
 		private String value;
 

@@ -20,6 +20,7 @@ import mx.nic.rdap.server.db.NameserverDAO;
 import mx.nic.rdap.server.db.QueryGroup;
 import mx.nic.rdap.server.exception.ObjectNotFoundException;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
+import mx.nic.rdap.server.exception.UnprocessableEntityException;
 import mx.nix.rdap.core.catalog.Rol;
 
 /**
@@ -154,9 +155,39 @@ public class NameserverModel {
 	 * 
 	 * @param namePattern
 	 * @return
+	 * @throws UnprocessableEntityException
+	 * @throws SQLException
+	 * @throws IOException
 	 */
-	public static List<NameserverDAO> searchByName(String namePattern) {
-		return null;
+	public static List<NameserverDAO> searchByName(String namePattern, Connection connection)
+			throws UnprocessableEntityException, SQLException, IOException {
+		String query = "";
+		String criteria = "";
+		List<NameserverDAO> nameservers = new ArrayList<NameserverDAO>();
+		if (namePattern.contains("*")) {// check if is a partial search
+
+			if (namePattern.compareTo(IDN.toASCII(namePattern)) != 0) {
+				throw new UnprocessableEntityException("Partial search must contain only ASCII values");
+			}
+			query = queryGroup.getQuery("findByPartialName");
+			criteria = namePattern.replace('*', '%');
+		} else {
+			query = queryGroup.getQuery("findByName");
+			criteria = namePattern;
+		}
+		try (PreparedStatement statement = connection.prepareStatement(query)) {
+			statement.setString(1, criteria);
+			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+			try (ResultSet resultSet = statement.executeQuery()) {
+				while (resultSet.next()) {
+					NameserverDAO nameserver = new NameserverDAO(resultSet);
+					NameserverModel.loadNestedObjects(nameserver, connection);
+					nameservers.add(nameserver);
+				}
+
+				return nameservers;
+			}
+		}
 	}
 
 	/**

@@ -12,3 +12,7 @@ SELECT nse.* FROM rdap.nameserver nse JOIN rdap.domain_nameservers dom ON dom.ns
 
 #existByName
 SELECT 1 FROM rdap.nameserver nse WHERE nse.nse_ldh_name=?;
+
+
+#findByPartialName
+SELECT * FROM rdap.nameserver nse WHERE nse.nse_ldh_name like ?;
