@@ -10,12 +10,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.db.QueryGroup;
+import mx.nic.rdap.server.exception.ObjectNotFoundException;
 
 /**
  * Model for the Zone table, read all zones in the zone_table and keeps it in
@@ -35,6 +38,8 @@ public class ZoneModel {
 
 	private static Map<Integer, String> zoneById;
 	private static Map<String, Integer> idByZone;
+	public static String REVERSE_IP_V4 = "in-addr.arpa";
+	public static String REVERSE_IP_V6 = "ip6.arpa";
 
 	static {
 		try {
@@ -80,6 +85,28 @@ public class ZoneModel {
 	}
 
 	/**
+	 * Validate if the configurated zones are in the database
+	 * 
+	 * @throws ObjectNotFoundException
+	 */
+	public static void validateConfiguratedZones() throws ObjectNotFoundException {
+		List<String> configuratedZones = RdapConfiguration.getServerZones();
+		Map<Integer, String> zoneByIdForServer = new HashMap<Integer, String>();
+		Map<String, Integer> idByZoneForServer = new HashMap<String, Integer>();
+		for (String zone : configuratedZones) {
+			if (idByZone.get(zone) == null) {
+				logger.log(Level.SEVERE, "Configurated zone not found in database:" + zone);
+				throw new ObjectNotFoundException("Configurated zone not found in database:" + zone);
+			}
+			zoneByIdForServer.put(idByZone.get(zone), zone);
+			idByZoneForServer.put(zone, getIdByZoneName(zone));
+		}
+		// Ovewrite the hashmaps to only use the configurated zones
+		zoneById = zoneByIdForServer;
+		idByZone = idByZoneForServer;
+	}
+
+	/**
 	 * Stores a zone into the database
 	 * 
 	 * @param zoneName
@@ -102,7 +129,6 @@ public class ZoneModel {
 			ResultSet resultSet = statement.getGeneratedKeys();
 			resultSet.next();
 			Integer zoneId = resultSet.getInt(1);// Inserted Zone's Id
-
 			zoneById.put(zoneId, zoneName);
 			idByZone.put(zoneName, zoneId);
 
@@ -146,4 +172,14 @@ public class ZoneModel {
 		return zoneById.containsKey(zoneId);
 	}
 
+	/**
+	 * validate if a address is in reverse lookup
+	 * 
+	 * @param address
+	 * @return
+	 */
+	public static boolean isReverseAddress(String address) {
+		return address.trim().endsWith(REVERSE_IP_V4) || address.trim().endsWith(REVERSE_IP_V6);
+
+	}
 }

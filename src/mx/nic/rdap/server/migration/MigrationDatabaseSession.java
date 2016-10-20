@@ -23,7 +23,7 @@ public class MigrationDatabaseSession {
 		ds.setUrl(config.getProperty("url"));
 		ds.setUsername(config.getProperty("userName"));
 		ds.setPassword(config.getProperty("password"));
-		ds.setDefaultAutoCommit(Boolean.parseBoolean(config.getProperty("autoCommit")));
+		ds.setDefaultAutoCommit(false);
 
 		testDatabase();
 	}
@@ -31,23 +31,24 @@ public class MigrationDatabaseSession {
 	private static void testDatabase() throws SQLException {
 		// http://stackoverflow.com/questions/3668506
 		final String TEST_QUERY = "select 1";
-		try(Connection connection = getConnection();Statement statement = connection.createStatement();){
-		ResultSet resultSet = statement.executeQuery(TEST_QUERY);
+		try (Connection connection = getConnection(); Statement statement = connection.createStatement();) {
+			ResultSet resultSet = statement.executeQuery(TEST_QUERY);
 
-		if (!resultSet.next()) {
-			throw new SQLException("'" + TEST_QUERY + "' returned no rows.");
+			if (!resultSet.next()) {
+				throw new SQLException("'" + TEST_QUERY + "' returned no rows.");
+			}
+			int result = resultSet.getInt(1);
+			if (result != 1) {
+				throw new SQLException("'" + TEST_QUERY + "' returned " + result);
+			}
 		}
-		int result = resultSet.getInt(1);
-		if (result != 1) {
-			throw new SQLException("'" + TEST_QUERY + "' returned " + result);
-		}}
 	}
 
 	public static Connection getConnection() throws SQLException {
 		return ds.getConnection();
 	}
 
-	public static void close() throws SQLException{
+	public static void close() throws SQLException {
 		ds.close();
 	}
 }

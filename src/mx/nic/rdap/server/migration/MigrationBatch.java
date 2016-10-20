@@ -9,7 +9,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.SortedSet;
 import java.util.TimerTask;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,11 +33,15 @@ public class MigrationBatch extends TimerTask {
 
 	private final static Logger logger = Logger.getLogger(MigrationBatch.class.getName());
 	/** The queries, indexed by means of their names. */
-	private HashMap<String, String> queries = new HashMap<>();
+	private HashMap<String, String> selectQueries = new HashMap<>();
+	private HashMap<String, String> deleteQueries = new HashMap<>();
+	private final String MIGRATION_STATEMENTS_FILEPATH = "META-INF/migration/migration.sql";
+	private final String DELETE_STATEMENTS_FILEPATH = "META-INF/sql/Delete.sql";
 
 	public MigrationBatch() {
 		try {
-			readMigrationFile();
+			logger.log(Level.INFO, "******READING MIGRATION FILE******");
+			readQueryFile(MIGRATION_STATEMENTS_FILEPATH, selectQueries);
 		} catch (IOException e) {
 			logger.log(Level.SEVERE, "******ERROR READING SQL FILE******");
 			throw new RuntimeException(e);
@@ -46,21 +52,16 @@ public class MigrationBatch extends TimerTask {
 		logger.log(Level.INFO, "******INITIALIZING DATABASE CONNECTIONS******");
 		MigrationInitializer.initOriginDBConnection();
 		MigrationInitializer.initRDAPDBConnection();
-		try {
-			migrate();
+		try (Connection rdapConnection = DatabaseSession.getConnection();
+				Connection originConnection = MigrationDatabaseSession.getConnection()) {
+			cleanServerDatabase(rdapConnection);
+			migrate(rdapConnection, originConnection);
 			logger.log(Level.INFO, "******MIGRATION SUCCESS******");
-			try (Connection rdapConnection = DatabaseSession.getConnection();) {
-				rdapConnection.commit();
-			} catch (SQLException e) {
-				throw new RuntimeException("Error in the execution of a SQL Statement", e);
-			}
-		} catch (IOException | RequiredValueNotFoundException | InvalidValueException | InvalidadDataStructure e) {
+			rdapConnection.commit();
+		} catch (IOException | RequiredValueNotFoundException | InvalidValueException | InvalidadDataStructure
+				| SQLException e) {
 			logger.log(Level.SEVERE, "******MIGRATION FAILED******");
-			try (Connection rdapConnection = DatabaseSession.getConnection();) {
-				rdapConnection.rollback();
-			} catch (SQLException e1) {
-				throw new RuntimeException(e);
-			}
+			logger.log(Level.SEVERE, e.getMessage());
 			throw new RuntimeException(e);
 		} finally {
 			logger.log(Level.INFO, "******CLOSING DATABASE CONNECTIONS******");
@@ -78,15 +79,11 @@ public class MigrationBatch extends TimerTask {
 	 * @throws RequiredValueNotFoundException
 	 * @throws IOException
 	 */
-	public void migrate()
-			throws RequiredValueNotFoundException, InvalidValueException, InvalidadDataStructure, IOException {
-		try {
-			migrateEntities();
-			migrateNameservers();
-			migrateDomains();
-		} catch (SQLException e) {
-			throw new RuntimeException("Error in the execution of a SQL Statement", e);
-		}
+	public void migrate(Connection rdapConnection, Connection originConnection) throws RequiredValueNotFoundException,
+			InvalidValueException, InvalidadDataStructure, IOException, SQLException {
+		migrateEntities(rdapConnection, originConnection);
+		migrateNameservers(rdapConnection, originConnection);
+		migrateDomains(rdapConnection, originConnection);
 
 	}
 
@@ -100,23 +97,20 @@ public class MigrationBatch extends TimerTask {
 	 * @throws RequiredValueNotFoundException
 	 * @throws IOException
 	 */
-	private void migrateEntities() throws SQLException, RequiredValueNotFoundException, InvalidValueException,
-			InvalidadDataStructure, IOException {
-		logger.log(Level.INFO, "******MIGRATING ENTITIES STARTING******");
-		try (Connection originConnection = MigrationDatabaseSession.getConnection();
-				PreparedStatement statement = originConnection.prepareStatement(queries.get("entity"));) {
+	private void migrateEntities(Connection rdapConnection, Connection originConnection) throws SQLException,
+			RequiredValueNotFoundException, InvalidValueException, InvalidadDataStructure, IOException {
+		logger.log(Level.INFO, "******STARTING ENTITIES MIGRATION******");
+		try (PreparedStatement statement = originConnection.prepareStatement(selectQueries.get("entity"));) {
 			logger.log(Level.INFO, "Excuting QUERY:" + statement.toString());
 			ResultSet entitiesResultSet = statement.executeQuery();
 			logger.log(Level.INFO, "Done!\n Processing Entities resultset");
 			List<EntityDAO> entities = EntityMigrator.getEntitiesFromResultSet(entitiesResultSet);
 			logger.log(Level.INFO, "Done!\n Entities retrived:" + entities.size()
 					+ "\n Starting to save in RDAP Database. Good luck :)");
-			try (Connection rdapConnection = DatabaseSession.getConnection();) {
-				EntityMigrator.storeEntitiesInRDAPDatabase(entities, rdapConnection);
-			}
+			EntityMigrator.storeEntitiesInRDAPDatabase(entities, rdapConnection);
 
 		}
-		logger.log(Level.INFO, "******MIGRATING ENTITIES SUCCEEDED******");
+		logger.log(Level.INFO, "******MIGRATING ENTITIES SUCCESSFUL******");
 	}
 
 	/**
@@ -129,23 +123,20 @@ public class MigrationBatch extends TimerTask {
 	 * @throws RequiredValueNotFoundException
 	 * @throws IOException
 	 */
-	private void migrateNameservers() throws SQLException, RequiredValueNotFoundException, InvalidValueException,
-			InvalidadDataStructure, IOException {
-		logger.log(Level.INFO, "******MIGRATING NAMESERVERS STARTING******");
-		try (Connection originConnection = MigrationDatabaseSession.getConnection();
-				PreparedStatement statement = originConnection.prepareStatement(queries.get("nameserver"));) {
+	private void migrateNameservers(Connection rdapConnection, Connection originConnection) throws SQLException,
+			RequiredValueNotFoundException, InvalidValueException, InvalidadDataStructure, IOException {
+		logger.log(Level.INFO, "******STARTING NAMESERVERS MIGRATION******");
+		try (PreparedStatement statement = originConnection.prepareStatement(selectQueries.get("nameserver"));) {
 			logger.log(Level.INFO, "Excuting QUERY:" + statement.toString());
 			ResultSet nameserverResultSet = statement.executeQuery();
 			logger.log(Level.INFO, "Done!\n Processing Nameservers resultset");
 			List<NameserverDAO> nameservers = NameserverMigrator.getNameserversFromResultSet(nameserverResultSet);
 			logger.log(Level.INFO, "Done!\n Nameservers retrived:" + nameservers.size()
 					+ "\n Starting to save in RDAP Database. Good luck :)");
-			try (Connection rdapConnection = DatabaseSession.getConnection();) {
-				NameserverMigrator.storeNameserversInRDAPDatabase(nameservers, rdapConnection);
-			}
+			NameserverMigrator.storeNameserversInRDAPDatabase(nameservers, rdapConnection);
 
 		}
-		logger.log(Level.INFO, "******MIGRATING NAMESERVERS SUCCEEDED******");
+		logger.log(Level.INFO, "******MIGRATING NAMESERVERS SUCCESSFUL******");
 	}
 
 	/**
@@ -158,35 +149,53 @@ public class MigrationBatch extends TimerTask {
 	 * @throws RequiredValueNotFoundException
 	 * @throws IOException
 	 */
-	private void migrateDomains() throws SQLException, RequiredValueNotFoundException, InvalidValueException,
-			InvalidadDataStructure, IOException {
-		logger.log(Level.INFO, "******MIGRATING DOMAINS STARTING******");
-		try (Connection originConnection = MigrationDatabaseSession.getConnection();
-				PreparedStatement statement = originConnection.prepareStatement(queries.get("domain"));) {
+	private void migrateDomains(Connection rdapConnection, Connection originConnection) throws SQLException,
+			RequiredValueNotFoundException, InvalidValueException, InvalidadDataStructure, IOException {
+		logger.log(Level.INFO, "******STARTING DOMAINS MIGRATION******");
+		try (PreparedStatement statement = originConnection.prepareStatement(selectQueries.get("domain"));) {
 			logger.log(Level.INFO, "Excuting QUERY:" + statement.toString());
 			ResultSet domainResultSet = statement.executeQuery();
 			logger.log(Level.INFO, "Done!\n Processing DOMAINS resultset");
 			List<DomainDAO> domains = DomainMigrator.getDomainsFromResultSet(domainResultSet);
 			logger.log(Level.INFO, "Done!\n DOMAINS retrived:" + domains.size()
 					+ "\n Starting to save in RDAP Database. Good luck :)");
-			try (Connection rdapConnection = DatabaseSession.getConnection();) {
-				DomainMigrator.storeDomainsInRDAPDatabase(domains, rdapConnection);
-			}
+			DomainMigrator.storeDomainsInRDAPDatabase(domains, rdapConnection);
 
 		}
-		logger.log(Level.INFO, "******MIGRATING DOMAINS SUCCEEDED******");
+		logger.log(Level.INFO, "******MIGRATING DOMAINS SUCCESSFUL******");
 	}
 
 	/**
-	 * Read the migration.sql file and store the queries in the queries hashmap
+	 * Clean the database of the server
+	 * 
+	 * @param rdapConnection
+	 * @throws IOException
+	 * @throws SQLException
+	 */
+	public void cleanServerDatabase(Connection rdapConnection) throws IOException, SQLException {
+		logger.log(Level.INFO, "******CLEANING RDAP DATABASE******");
+		readQueryFile(DELETE_STATEMENTS_FILEPATH, deleteQueries);
+		SortedSet<String> keys = new TreeSet<String>(deleteQueries.keySet());// Order
+																				// the
+																				// querys
+		for (String queryName : keys) {
+			try (PreparedStatement statement = rdapConnection.prepareStatement(deleteQueries.get(queryName));) {
+				logger.log(Level.INFO, "Excuting QUERY" + queryName);
+				statement.executeUpdate();
+			}
+
+		}
+		logger.log(Level.INFO, "******CLEANING RDAP DATABASE SUCCESSFUL******");
+	}
+
+	/**
+	 * Read the querys file and store the statements in the queries hashmap
 	 * 
 	 * @throws IOException
 	 */
-	private void readMigrationFile() throws IOException {
-		logger.log(Level.INFO, "******READING MIGRATION FILE******");
-		String migrationFilePath = "META-INF/migration/migration.sql";
-		try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-				MigrationBatchTest.class.getClassLoader().getResourceAsStream(migrationFilePath)))) {
+	private void readQueryFile(String filePath, HashMap<String, String> queryMap) throws IOException {
+		try (BufferedReader reader = new BufferedReader(
+				new InputStreamReader(MigrationBatchTest.class.getClassLoader().getResourceAsStream(filePath)))) {
 
 			StringBuilder queryString = new StringBuilder();
 			String objectName = null;
@@ -200,7 +209,7 @@ public class MigrationBatch extends TimerTask {
 					if (currentLine.trim().endsWith(";")) {
 						// If the query has no name, it will be ignored.
 						if (objectName != null) {
-							String oldQuery = queries.put(objectName, queryString.toString());
+							String oldQuery = queryMap.put(objectName, queryString.toString());
 							if (oldQuery != null) {
 								throw new IllegalArgumentException(
 										"There is more than one '" + objectName + "' query.");

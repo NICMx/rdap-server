@@ -75,9 +75,10 @@ public class DomainModel {
 		EventModel.storeDomainEventsToDatabase(domain.getEvents(), domainId, connection);
 		StatusModel.storeDomainStatusToDatabase(domain.getStatus(), domainId, connection);
 		LinkModel.storeDomainLinksToDatabase(domain.getLinks(), domainId, connection);
-
-		domain.getSecureDNS().setDomainId(domainId);
-		SecureDNSModel.storeToDatabase(domain.getSecureDNS(), connection);
+		if (domain.getSecureDNS() != null) {
+			domain.getSecureDNS().setDomainId(domainId);
+			SecureDNSModel.storeToDatabase(domain.getSecureDNS(), connection);
+		}
 
 		for (Nameserver ns : domain.getNameServers()) {
 			NameserverModel.storeToDatabase(ns, connection);
@@ -112,10 +113,11 @@ public class DomainModel {
 	 * @throws IOException
 	 * @throws InvalidValueException
 	 */
-	public static Domain findByLdhName(String name, Connection connection) throws SQLException, IOException {
-		// TODO use also zone for the search
+	public static Domain findByLdhName(String name, Connection connection) throws SQLException, IOException, InvalidValueException {
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByLdhName"))) {
-			statement.setString(1, name);
+			// if is a reverse address,dont validate the zone
+			if (!ZoneModel.isReverseAddress(name))
+				validateDomainZone(name);
 			statement.setString(1, IDN.toASCII(name));
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
@@ -369,7 +371,12 @@ public class DomainModel {
 	 */
 	public static void validateDomainZone(String domainName) throws InvalidValueException {
 		String[] domainData = domainName.split("\\.");
-		String domainZone = domainName.substring(domainData[0].length() + 1);
+		String domainZone = "";
+		try {
+			domainZone = domainName.substring(domainData[0].length() + 1);
+		} catch (IndexOutOfBoundsException iobe) {
+			throw new InvalidValueException("Zone", "ZoneModel", "Domain");
+		}
 		if (!ZoneModel.existsZone(domainZone)) {
 			throw new InvalidValueException("Zone", "ZoneModel", "Domain");
 		}
