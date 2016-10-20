@@ -116,4 +116,18 @@ public class MigrationBatchTest {
 
 	}
 
+	@Test
+	public void cleanRdapDbTest() {
+		MigrationInitializer.initRDAPDBConnection();
+		try (Connection rdapConnection = DatabaseSession.getConnection();) {
+			MigrationBatch batch = new MigrationBatch();
+			batch.cleanServerDatabase(rdapConnection);
+			rdapConnection.commit();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			MigrationInitializer.closeRDAPDBConnection();
+		}
+	}
+
 }
