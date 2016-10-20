@@ -136,6 +136,11 @@ public class ZoneModel {
 		}
 	}
 
+	public static void cleanZoneTables() {
+		zoneById = new HashMap<Integer, String>();
+		idByZone = new HashMap<String, Integer>();
+	}
+
 	/**
 	 * Get zoneName from an id
 	 * 
