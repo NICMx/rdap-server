@@ -2,6 +2,10 @@ package mx.nic.rdap.server.db.model;
 
 import java.io.IOException;
 import java.net.IDN;
+import java.net.Inet4Address;
+import java.net.Inet6Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -169,7 +173,7 @@ public class NameserverModel {
 			if (namePattern.compareTo(IDN.toASCII(namePattern)) != 0) {
 				throw new UnprocessableEntityException("Partial search must contain only ASCII values");
 			}
-			query = queryGroup.getQuery("findByPartialName");
+			query = queryGroup.getQuery("searchByPartialName");
 			criteria = namePattern.replace('*', '%');
 		} else {
 			query = queryGroup.getQuery("findByName");
@@ -199,9 +203,41 @@ public class NameserverModel {
 	 * 
 	 * @param ipaddressPattern
 	 * @return
+	 * @throws UnprocessableEntityException
+	 * @throws SQLException
+	 * @throws IOException
 	 */
-	public static List<NameserverDAO> searchByIp(String ipaddressPattern) {
-		return null;
+	public static List<NameserverDAO> searchByIp(String ipaddressPattern, Connection connection)
+			throws UnprocessableEntityException, SQLException, IOException {
+		String query = "";
+		List<NameserverDAO> nameservers = new ArrayList<NameserverDAO>();
+		try {
+			InetAddress address = InetAddress.getByName(ipaddressPattern);
+			if (address instanceof Inet6Address) {
+				query = queryGroup.getQuery("searchByIp6");
+			} else if (address instanceof Inet4Address) {
+				query = queryGroup.getQuery("searchByIp4");
+			}
+		} catch (UnknownHostException e) {
+			throw new UnprocessableEntityException("Requested ip is invalid.");
+		}
+		try (PreparedStatement statement = connection.prepareStatement(query)) {
+			statement.setString(1, ipaddressPattern);
+			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+			try (ResultSet resultSet = statement.executeQuery()) {
+
+				if (!resultSet.next()) {
+					throw new ObjectNotFoundException("Object not found");
+				}
+				do {
+					NameserverDAO nameserver = new NameserverDAO(resultSet);
+					NameserverModel.loadNestedObjects(nameserver, connection);
+					nameservers.add(nameserver);
+				} while (resultSet.next());
+
+				return nameservers;
+			}
+		}
 	}
 
 	/**

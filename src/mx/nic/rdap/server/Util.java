@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.IDN;
-import java.net.Inet4Address;
-import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.URLDecoder;
 import java.net.UnknownHostException;
@@ -69,43 +67,32 @@ public class Util {
 	}
 
 	/**
-	 * Validate if the search parameters are valid
+	 * Validate if the request is valid
 	 * 
 	 * @param request
+	 * @param params
 	 * @throws UnprocessableEntityException
 	 */
-	public static void validateSearchRequestParameters(HttpServletRequest request, String... params)
+	public static void validateSearchRequest(HttpServletRequest request, String... params)
 			throws UnprocessableEntityException {
 		// Only accept one parameter in the request
 		if (request.getParameterMap().size() != 1) {
 			throw new UnprocessableEntityException("The request must contain one parameter");
 		}
-		// Validating if is a partial search and if it is, only can contain
-		// ASCII
 		String parameter = request.getParameterNames().nextElement();
-		String value = request.getParameter(parameter);
-		if (value.length() < RdapConfiguration.getMinimumSearchPatternLength()) {// Validate
-																					// if
-																					// the
-																					// lenght
-																					// of
-																					// the
-																					// pattern
-																					// is
-																					// valid
-			throw new UnprocessableEntityException("Search pattern must be at least "
-					+ RdapConfiguration.getMinimumSearchPatternLength() + " characters");
-		}
-		boolean partialSearch = false;
-		partialSearch = value.contains("*");
-		if (partialSearch && value.compareTo(IDN.toASCII(value)) != 0) {// Validate
-																		// if is
-																		// a
-																		// valid
-																		// partial
-																		// search
-			throw new UnprocessableEntityException("Partial search must contain only ASCII values");
-		}
+		String pattern = request.getParameter(parameter);
+		validateSearchRequestParameters(parameter, params);
+		validateSearchPatterns(pattern);
+	}
+
+	/**
+	 * Validate if the search parameters are valid
+	 * 
+	 * @param request
+	 * @throws UnprocessableEntityException
+	 */
+	public static void validateSearchRequestParameters(String parameter, String... params)
+			throws UnprocessableEntityException {
 		// Validate if the parameter if a valid parameter for the request
 		String validParametersMessage = "";
 		for (String paramName : params) {
@@ -122,6 +109,40 @@ public class Util {
 	}
 
 	/**
+	 * Validate if the search patterns are valid
+	 * 
+	 * @param pattern
+	 * @throws UnprocessableEntityException
+	 */
+	public static void validateSearchPatterns(String pattern) throws UnprocessableEntityException {
+		// Validating if is a partial search and if it is, only can contain
+		// ASCII
+
+		if (pattern.length() < RdapConfiguration.getMinimumSearchPatternLength()) {// Validate
+																					// if
+																					// the
+																					// lenght
+																					// of
+																					// the
+																					// pattern
+																					// is
+																					// valid
+			throw new UnprocessableEntityException("Search pattern must be at least "
+					+ RdapConfiguration.getMinimumSearchPatternLength() + " characters");
+		}
+		boolean partialSearch = false;
+		partialSearch = pattern.contains("*");
+		if (partialSearch && pattern.compareTo(IDN.toASCII(pattern)) != 0) {// Validate
+			// if is
+			// a
+			// valid
+			// partial
+			// search
+			throw new UnprocessableEntityException("Partial search must contain only ASCII values");
+		}
+	}
+
+	/**
 	 * Validates if an ip address is valid
 	 * 
 	 * @param addr
@@ -131,12 +152,7 @@ public class Util {
 	 */
 	public static void validateIpAddress(String addr) throws MalformedRequestException {
 		try {
-			InetAddress address = InetAddress.getByName(addr);
-			if (address instanceof Inet6Address) {
-				System.out.println("Is  v6");
-			} else if (address instanceof Inet4Address) {
-				System.out.println("Is  v4");
-			}
+			InetAddress.getByName(addr);
 		} catch (UnknownHostException e) {
 			throw new MalformedRequestException("Requested ip is invalid.");
 		}

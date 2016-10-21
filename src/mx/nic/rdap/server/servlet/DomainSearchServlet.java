@@ -108,7 +108,7 @@ public class DomainSearchServlet extends RdapServlet {
 		public DomainSearchRequest(HttpServletRequest httpRequest)
 				throws UnprocessableEntityException, MalformedRequestException {
 			super();
-			Util.validateSearchRequestParameters(httpRequest, DOMAIN_NAME, NAMESERVER_NAME, NAMESERVER_IP);
+			Util.validateSearchRequest(httpRequest, DOMAIN_NAME, NAMESERVER_NAME, NAMESERVER_IP);
 			this.parameter = httpRequest.getParameterNames().nextElement();
 			this.value = httpRequest.getParameter(parameter);
 			if (this.parameter.equals(NAMESERVER_IP)) {
