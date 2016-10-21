@@ -15,6 +15,7 @@ import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.db.model.DomainModel;
+import mx.nic.rdap.server.exception.InvalidValueException;
 import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.exception.UnprocessableEntityException;
@@ -50,21 +51,29 @@ public class DomainSearchServlet extends RdapServlet {
 		try (Connection connection = DatabaseSession.getConnection()) {
 			List<Domain> domains = new ArrayList<Domain>();
 
-			if (request.getParameter() == "name") {
+			if (request.getParameter().equals("name")) {
+
+				// Gets domain by its name with zone
 				if (request.getValue().contains("\\.")) {
 					String domain = request.getValue().split("\\.", 2)[0];
 					String zone = request.getValue().split("\\.", 2)[1];
-					domains = DomainModel.searchByName(domain, zone, connection);
+					try {
+						domains = DomainModel.searchByName(domain, zone, connection);
+					} catch (InvalidValueException e) {
+						e.printStackTrace();
+					}
+					// Gets domain by it´s name without zone, needs "*" as a
+					// wildcard
 				} else {
 					domains = DomainModel.searchByName(request.getValue(), connection);
 				}
 			}
-
-			if (request.getParameter() == "nsLdhName") {
+			// Gets´s domain by it´s Nameserver name
+			if (request.getParameter().equals("nsLdhName")) {
 				domains = DomainModel.searchByNsLdhName(request.getValue(), connection);
 			}
-
-			if (request.getParameter() == "nsIp") {
+			// Get´s domain by it´s Nameserver Ip
+			if (request.getParameter().equals("nsIp")) {
 				domains = DomainModel.searchByNsIp(request.getValue(), connection);
 			}
 			result = new DomainSearchResult(domains);
@@ -102,7 +111,7 @@ public class DomainSearchServlet extends RdapServlet {
 			Util.validateSearchRequestParameters(httpRequest, DOMAIN_NAME, NAMESERVER_NAME, NAMESERVER_IP);
 			this.parameter = httpRequest.getParameterNames().nextElement();
 			this.value = httpRequest.getParameter(parameter);
-			if (this.parameter == NAMESERVER_IP) {
+			if (this.parameter.equals(NAMESERVER_IP)) {
 				Util.validateIpAddress(value);
 			}
 		}

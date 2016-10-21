@@ -11,13 +11,13 @@ SELECT * FROM rdap.domain WHERE dom_ldh_name=?;
 SELECT * FROM rdap.domain WHERE dom_id=?;
 
 #searchByNameWZone
-SELECT domain.* FROM domain dom WHERE domain.dom_ldh_name LIKE ? AND dom.zone_id = ?; 
+SELECT domain.* FROM rdap.domain WHERE domain.dom_ldh_name LIKE ? AND domain.zone_id = ?; 
 
 #searchByNameWOutZone
-SELECT domain.* FROM domain WHERE domain.dom_ldh_name LIKE ?;
+SELECT domain.* FROM rdap.domain WHERE domain.dom_ldh_name LIKE ?;
 
 #searchByNsLdhName
-SELECT DISTINCT domain.* FROM   domain dom JOIN domain_nameservers dom_ns ON dom_ns.dom_id = dom.dom_id JOIN nameserver ns ON ns.nse_id = dom_ns.nse_id WHERE  ns.nse_ldh_name LIKE ?;
+SELECT DISTINCT dom.* FROM rdap.domain dom JOIN rdap.domain_nameservers dom_ns ON dom_ns.dom_id = dom.dom_id JOIN rdap.nameserver ns ON ns.nse_id = dom_ns.nse_id WHERE  ns.nse_ldh_name LIKE ?;
 
 #searchByNsIp
-SELECT domain.* FROM domain dom JOIN domain_nameservers dom_ns ON dom_ns.dom_id = dom.dom_id JOIN nameserver ns ON ns.nse_id = dom_ns.nse_id JOIN ip_address ip	ON ip.nse_id = ns.nse_id WHERE IF(?=4, INET_ATON(?),INET6_ATON(?)) = ip.iad_value; 
+SELECT dom.* FROM rdap.domain dom JOIN rdap.domain_nameservers dom_ns ON dom_ns.dom_id = dom.dom_id JOIN rdap.nameserver ns ON ns.nse_id = dom_ns.nse_id JOIN rdap.ip_address ip	ON ip.nse_id = ns.nse_id WHERE IF(?=4, INET_ATON(?),INET6_ATON(?)) = ip.iad_value; 

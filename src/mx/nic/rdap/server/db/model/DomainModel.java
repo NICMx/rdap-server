@@ -9,7 +9,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,7 +17,6 @@ import com.mysql.jdbc.Statement;
 
 import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.core.db.Entity;
-import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.server.db.DomainDAO;
 import mx.nic.rdap.server.db.IpAddressDAO;
 import mx.nic.rdap.server.db.QueryGroup;
@@ -80,9 +78,6 @@ public class DomainModel {
 			SecureDNSModel.storeToDatabase(domain.getSecureDNS(), connection);
 		}
 
-		for (Nameserver ns : domain.getNameServers()) {
-			NameserverModel.storeToDatabase(ns, connection);
-		}
 		NameserverModel.storeDomainNameserversToDatabase(domain.getNameServers(), domainId, connection);
 
 		if (domain.getEntities().size() > 0) {
@@ -113,7 +108,8 @@ public class DomainModel {
 	 * @throws IOException
 	 * @throws InvalidValueException
 	 */
-	public static Domain findByLdhName(String name, Connection connection) throws SQLException, IOException, InvalidValueException {
+	public static Domain findByLdhName(String name, Connection connection)
+			throws SQLException, IOException, InvalidValueException {
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("getByLdhName"))) {
 			// if is a reverse address,dont validate the zone
 			if (!ZoneModel.isReverseAddress(name))
@@ -166,9 +162,9 @@ public class DomainModel {
 	 * @throws IOException
 	 */
 	public static List<Domain> searchByName(String name, String zone, Connection connection)
-			throws SQLException, IOException {
-		// TODOquery with and without zone
-		name.replaceAll("*", "%");
+			throws SQLException, IOException, InvalidValueException {
+		DomainModel.validateDomainZone(name + "." + zone);
+		name.replace("*", "%");
 
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("searchByNameWZone"))) {
 			Integer zoneId = ZoneModel.getIdByZoneName(zone);
@@ -180,7 +176,7 @@ public class DomainModel {
 			ResultSet resultSet = statement.executeQuery();
 
 			if (!resultSet.next()) {
-				return Collections.emptyList();
+				throw new ObjectNotFoundException("Object not found.");
 			}
 			List<Domain> domains = new ArrayList<Domain>();
 			do {
@@ -204,15 +200,14 @@ public class DomainModel {
 	 * @throws IOException
 	 */
 	public static List<Domain> searchByName(String name, Connection connection) throws SQLException, IOException {
-		// TODOquery with and without zone
-		name.replaceAll("*", "%");
+		name = name.replaceAll("\\*", "%");
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("searchByNameWOutZone"))) {
 			statement.setString(1, name);
 			logger.log(Level.INFO, "Executing query" + statement.toString());
 			ResultSet resultSet = statement.executeQuery();
 
 			if (!resultSet.next()) {
-				return Collections.emptyList();
+				throw new ObjectNotFoundException("Object not found.");
 			}
 			List<Domain> domains = new ArrayList<Domain>();
 			do {
@@ -235,7 +230,6 @@ public class DomainModel {
 	 * @throws IOException
 	 */
 	public static List<Domain> searchByNsLdhName(String name, Connection connection) throws SQLException, IOException {
-		// TODO query and searches by *, also needs to check zone
 		name = name.replace("\\*", "%");
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("searchByNsLdhName"))) {
 			statement.setString(1, name);
@@ -243,7 +237,7 @@ public class DomainModel {
 			ResultSet resultSet = statement.executeQuery();
 
 			if (!resultSet.next()) {
-				return Collections.emptyList();
+				throw new ObjectNotFoundException("Object not found.");
 			}
 			List<Domain> domains = new ArrayList<Domain>();
 			do {
@@ -283,7 +277,7 @@ public class DomainModel {
 			ResultSet resultSet = statement.executeQuery();
 
 			if (!resultSet.next()) {
-				return Collections.emptyList();
+				throw new ObjectNotFoundException("Object not found.");
 			}
 			List<Domain> domains = new ArrayList<Domain>();
 			do {
@@ -368,8 +362,9 @@ public class DomainModel {
 	 * 
 	 * @param domainName
 	 * @throws InvalidValueException
+	 * @throws ObjectNotFoundException
 	 */
-	public static void validateDomainZone(String domainName) throws InvalidValueException {
+	public static void validateDomainZone(String domainName) throws InvalidValueException, ObjectNotFoundException {
 		String[] domainData = domainName.split("\\.");
 		String domainZone = "";
 		try {
@@ -378,7 +373,7 @@ public class DomainModel {
 			throw new InvalidValueException("Zone", "ZoneModel", "Domain");
 		}
 		if (!ZoneModel.existsZone(domainZone)) {
-			throw new InvalidValueException("Zone", "ZoneModel", "Domain");
+			throw new ObjectNotFoundException("Zone not found.");
 		}
 	}
 }
