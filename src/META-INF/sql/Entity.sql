@@ -24,3 +24,12 @@ SELECT DISTINCT ent.* FROM rdap.entity ent JOIN rdap.nameserver_entity_roles rol
 
 #getIdByHandle
 SELECT ent_id FROM rdap.entity ent WHERE ent.ent_handle = ?;
+
+#searchByPartialHandle
+SELECT * FROM rdap.entity e WHERE e.ent_handle LIKE ?;
+
+#searchByPartialName
+SELECT DISTINCT (ent.ent_id),  ent.ent_handle, ent.ent_port43 FROM rdap.entity ent JOIN rdap.entity_contact eco ON eco.ent_id=ent.ent_id JOIN rdap.vcard vca ON vca.vca_id=eco.vca_id WHERE vca.vca_name LIKE ?;
+
+#getByName
+SELECT * FROM rdap.entity ent JOIN rdap.entity_contact eco ON eco.ent_id=ent.ent_id JOIN rdap.vcard vca ON vca.vca_id=eco.vca_id WHERE vca.vca_name = ?;

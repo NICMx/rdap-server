@@ -1,6 +1,7 @@
 package mx.nic.rdap.server.db.model;
 
 import java.io.IOException;
+import java.net.IDN;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,6 +22,7 @@ import mx.nic.rdap.server.db.EntityDAO;
 import mx.nic.rdap.server.db.QueryGroup;
 import mx.nic.rdap.server.exception.ObjectNotFoundException;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
+import mx.nic.rdap.server.exception.UnprocessableEntityException;
 import mx.nix.rdap.core.catalog.Rol;
 import mx.nix.rdap.core.catalog.Status;
 
@@ -345,6 +347,51 @@ public class EntityModel {
 		}
 
 		return;
+	}
+
+	public static List<Entity> searchByHandle(String handle, Connection connection)
+			throws UnprocessableEntityException, SQLException, IOException {
+		return searchBy(handle, connection, queryGroup.getQuery("searchByPartialHandle"),
+				queryGroup.getQuery("getByHandle"));
+	}
+
+	public static List<Entity> searchByVCardName(String handle, Connection connection)
+			throws UnprocessableEntityException, SQLException, IOException {
+		return searchBy(handle, connection, queryGroup.getQuery("searchByPartialName"),
+				queryGroup.getQuery("getByName"));
+	}
+
+	private static List<Entity> searchBy(String handle, Connection connection, String searchByPartialQuery,
+			String getByQuery) throws UnprocessableEntityException, SQLException, IOException {
+		String query;
+		String criteria;
+		List<Entity> entities = new ArrayList<>();
+		if (handle.contains("*")) {
+			if (!handle.equals(IDN.toASCII(handle))) {
+				throw new UnprocessableEntityException("Partial search must contain only ASCII values");
+			}
+
+			query = searchByPartialQuery;
+			criteria = handle.replace('*', '%');
+		} else {
+			query = getByQuery;
+			criteria = handle;
+		}
+
+		try (PreparedStatement statement = connection.prepareStatement(query);) {
+			statement.setString(1, criteria);
+			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+			ResultSet rs = statement.executeQuery();
+
+			while (rs.next()) {
+				EntityDAO ent = new EntityDAO();
+				ent.loadFromDatabase(rs);
+				getNestedObjects(ent, connection);
+				entities.add(ent);
+			}
+		}
+
+		return entities;
 	}
 
 }
