@@ -179,11 +179,15 @@ public class NameserverModel {
 			statement.setString(1, criteria);
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
-				while (resultSet.next()) {
+
+				if (!resultSet.next()) {
+					throw new SQLException("Object not found.");
+				}
+				do {
 					NameserverDAO nameserver = new NameserverDAO(resultSet);
 					NameserverModel.loadNestedObjects(nameserver, connection);
 					nameservers.add(nameserver);
-				}
+				} while (resultSet.next());
 
 				return nameservers;
 			}
