@@ -181,7 +181,7 @@ public class NameserverModel {
 			try (ResultSet resultSet = statement.executeQuery()) {
 
 				if (!resultSet.next()) {
-					throw new SQLException("Object not found.");
+					throw new ObjectNotFoundException("Object not found");
 				}
 				do {
 					NameserverDAO nameserver = new NameserverDAO(resultSet);
