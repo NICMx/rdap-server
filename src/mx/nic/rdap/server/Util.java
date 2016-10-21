@@ -84,10 +84,26 @@ public class Util {
 		// ASCII
 		String parameter = request.getParameterNames().nextElement();
 		String value = request.getParameter(parameter);
-
+		if (value.length() < RdapConfiguration.getMinimumSearchPatternLength()) {// Validate
+																					// if
+																					// the
+																					// lenght
+																					// of
+																					// the
+																					// pattern
+																					// is
+																					// valid
+			throw new UnprocessableEntityException("Search pattern must be at least "
+					+ RdapConfiguration.getMinimumSearchPatternLength() + " characters");
+		}
 		boolean partialSearch = false;
 		partialSearch = value.contains("*");
-		if (partialSearch && value.compareTo(IDN.toASCII(value)) != 0) {
+		if (partialSearch && value.compareTo(IDN.toASCII(value)) != 0) {// Validate
+																		// if is
+																		// a
+																		// valid
+																		// partial
+																		// search
 			throw new UnprocessableEntityException("Partial search must contain only ASCII values");
 		}
 		// Validate if the parameter if a valid parameter for the request

@@ -3,6 +3,8 @@ package mx.nic.rdap.server;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import mx.nic.rdap.server.db.model.ZoneModel;
 import mx.nic.rdap.server.exception.ObjectNotFoundException;
@@ -14,10 +16,11 @@ import mx.nic.rdap.server.exception.ObjectNotFoundException;
  *
  */
 public class RdapConfiguration {
-
+	private final static Logger logger = Logger.getLogger(RdapConfiguration.class.getName());
 	private static Properties systemProperties;
 	private static final String LANGUAGE_KEY = "language";
 	private static final String ZONE_KEY = "zones";
+	private static final String MINIMUN_SEARCH_PATTERN_LENGTH = "minimum.search.pattern.length";
 
 	public RdapConfiguration() {
 	}
@@ -49,7 +52,10 @@ public class RdapConfiguration {
 	public static String getServerLanguage() {
 		String lang = "en";// defualt langua English
 		if (systemProperties.containsKey(LANGUAGE_KEY))
-			systemProperties.getProperty(LANGUAGE_KEY);
+			lang = systemProperties.getProperty(LANGUAGE_KEY);
+		else {
+			logger.log(Level.WARNING, "Language not found in configuration file. Using default: English");
+		}
 		return lang.trim();
 	}
 
@@ -66,8 +72,27 @@ public class RdapConfiguration {
 				trimmedZones.add(zone.trim());
 			}
 			return trimmedZones;
+		} else {
+			logger.log(Level.SEVERE, "Zones not found in configuration file");
+			throw new RuntimeException("MUST defined zones in configuration file");
 		}
-		return null;
+	}
+
+	/**
+	 * Return the minimum search pattern length defined in configuration file
+	 * 
+	 * @return
+	 */
+	public static int getMinimumSearchPatternLength() {
+		int length = 5;// defualt 5
+		if (systemProperties.containsKey(MINIMUN_SEARCH_PATTERN_LENGTH))
+			try {
+				length = Integer.parseInt(systemProperties.getProperty(MINIMUN_SEARCH_PATTERN_LENGTH).trim());
+			} catch (NumberFormatException nfe) {
+				logger.log(Level.WARNING,
+						"Minimum search pattern length not found in configuration file. Using default: 5");
+			}
+		return length;
 	}
 
 	/**
