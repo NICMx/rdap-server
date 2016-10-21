@@ -14,5 +14,11 @@ SELECT nse.* FROM rdap.nameserver nse JOIN rdap.domain_nameservers dom ON dom.ns
 SELECT 1 FROM rdap.nameserver nse WHERE nse.nse_ldh_name=?;
 
 
-#findByPartialName
+#searchByPartialName
 SELECT * FROM rdap.nameserver nse WHERE nse.nse_ldh_name like ?;
+
+#searchByIp4
+SELECT nse.* FROM rdap.nameserver nse join rdap.ip_address ipa on ipa.nse_id=nse.nse_id where ipa.iad_value=INET_ATON(?);
+
+#searchByIp6
+SELECT nse.* FROM rdap.nameserver nse join rdap.ip_address ipa on ipa.nse_id=nse.nse_id where ipa.iad_value=INET6_ATON(?);

@@ -49,10 +49,12 @@ public class NameserverSearchServlet extends RdapServlet {
 				nameservers = NameserverModel.searchByName(request.getValue().trim(), connection);
 				return new NameserverSeachResult(nameservers);
 			} else {
-
+				String ipAddress = request.getValue().trim();
+				Util.validateIpAddress(ipAddress);
+				nameservers = NameserverModel.searchByIp(ipAddress, connection);
+				return new NameserverSeachResult(nameservers);
 			}
 		}
-		return null;
 	}
 
 	/*
@@ -76,7 +78,7 @@ public class NameserverSearchServlet extends RdapServlet {
 
 		public NameserverSearchRequest(HttpServletRequest httpRequest) throws UnprocessableEntityException {
 			super();
-			Util.validateSearchRequestParameters(httpRequest, IP_PARAMETER_KEY, NAME_PARAMETER_KEY);
+			Util.validateSearchRequest(httpRequest, IP_PARAMETER_KEY, NAME_PARAMETER_KEY);
 			this.parameter = httpRequest.getParameterNames().nextElement();
 			this.value = httpRequest.getParameter(this.parameter);
 		}
