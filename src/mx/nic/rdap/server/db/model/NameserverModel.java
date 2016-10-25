@@ -20,6 +20,7 @@ import com.mysql.jdbc.Statement;
 
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Nameserver;
+import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.NameserverDAO;
 import mx.nic.rdap.server.db.QueryGroup;
 import mx.nic.rdap.server.exception.ObjectNotFoundException;
@@ -176,11 +177,12 @@ public class NameserverModel {
 			query = queryGroup.getQuery("searchByPartialName");
 			criteria = namePattern.replace('*', '%');
 		} else {
-			query = queryGroup.getQuery("findByName");
+			query = queryGroup.getQuery("searchByName");
 			criteria = namePattern;
 		}
 		try (PreparedStatement statement = connection.prepareStatement(query)) {
 			statement.setString(1, criteria);
+			statement.setInt(2, Util.getMaxNumberOfResultsForUser());
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
 
@@ -223,6 +225,7 @@ public class NameserverModel {
 		}
 		try (PreparedStatement statement = connection.prepareStatement(query)) {
 			statement.setString(1, ipaddressPattern);
+			statement.setInt(2, Util.getMaxNumberOfResultsForUser());
 			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
 

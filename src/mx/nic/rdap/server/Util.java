@@ -157,4 +157,37 @@ public class Util {
 			throw new MalformedRequestException("Requested ip is invalid.");
 		}
 	}
+
+	/**
+	 * Get the max search results number allowed for the user
+	 * 
+	 * @return
+	 */
+	public static Integer getMaxNumberOfResultsForUser() {
+		boolean isAuthenticatedUser = isAuthenticatedUser();
+		if (isAuthenticatedUser) {
+			Integer limit = getAuthenticatedUserMaxSearchResults();
+			if (limit != null)
+				return limit;
+			else
+				return RdapConfiguration.getMaxNumberOfResultsForAuthenticatedUser();
+		}
+		return RdapConfiguration.getMaxNumberOfResultsForUnauthenticatedUser();
+	}
+
+	/**
+	 * Get the max search results number allowed for the authenticated user
+	 * 
+	 * @return
+	 */
+	private static Integer getAuthenticatedUserMaxSearchResults() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static boolean isAuthenticatedUser() {
+		// TODO: get from request if the
+		// user is authenticated
+		return false;
+	}
 }

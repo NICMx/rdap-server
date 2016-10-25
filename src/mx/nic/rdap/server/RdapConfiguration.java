@@ -20,7 +20,9 @@ public class RdapConfiguration {
 	private static Properties systemProperties;
 	private static final String LANGUAGE_KEY = "language";
 	private static final String ZONE_KEY = "zones";
-	private static final String MINIMUN_SEARCH_PATTERN_LENGTH = "minimum.search.pattern.length";
+	private static final String MINIMUN_SEARCH_PATTERN_LENGTH_KEY = "minimum.search.pattern.length";
+	private static final String MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER = "max.number.result.authenticated.user";
+	private static final String MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER = "max.number.result.unauthenticated.user";
 
 	public RdapConfiguration() {
 	}
@@ -50,7 +52,7 @@ public class RdapConfiguration {
 	 * @return
 	 */
 	public static String getServerLanguage() {
-		String lang = "en";// defualt langua English
+		String lang = "en";// default:English
 		if (systemProperties.containsKey(LANGUAGE_KEY))
 			lang = systemProperties.getProperty(LANGUAGE_KEY);
 		else {
@@ -84,15 +86,51 @@ public class RdapConfiguration {
 	 * @return
 	 */
 	public static int getMinimumSearchPatternLength() {
-		int length = 5;// defualt 5
-		if (systemProperties.containsKey(MINIMUN_SEARCH_PATTERN_LENGTH))
+		int length = 5;// default 5
+		if (systemProperties.containsKey(MINIMUN_SEARCH_PATTERN_LENGTH_KEY))
 			try {
-				length = Integer.parseInt(systemProperties.getProperty(MINIMUN_SEARCH_PATTERN_LENGTH).trim());
+				length = Integer.parseInt(systemProperties.getProperty(MINIMUN_SEARCH_PATTERN_LENGTH_KEY).trim());
 			} catch (NumberFormatException nfe) {
 				logger.log(Level.WARNING,
 						"Minimum search pattern length not found in configuration file. Using default: 5");
 			}
 		return length;
+	}
+
+	/**
+	 * Return the max number of results for the authenticated user
+	 * 
+	 * @return
+	 */
+	public static int getMaxNumberOfResultsForAuthenticatedUser() {
+		int maxResults = 20;// default 20
+		if (systemProperties.containsKey(MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER))
+			try {
+				maxResults = Integer
+						.parseInt(systemProperties.getProperty(MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER).trim());
+			} catch (NumberFormatException nfe) {
+				logger.log(Level.WARNING,
+						"Max number of results for the authenticated user not found in configuration file. Using default: 20");
+			}
+		return maxResults;
+	}
+
+	/**
+	 * Return the max number of results for the authenticated user
+	 * 
+	 * @return
+	 */
+	public static int getMaxNumberOfResultsForUnauthenticatedUser() {
+		int maxResults = 10;// default 10
+		if (systemProperties.containsKey(MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER))
+			try {
+				maxResults = Integer
+						.parseInt(systemProperties.getProperty(MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER).trim());
+			} catch (NumberFormatException nfe) {
+				logger.log(Level.WARNING,
+						"Max number of results for the unauthenticated user not found in configuration file. Using default: 10");
+			}
+		return maxResults;
 	}
 
 	/**
