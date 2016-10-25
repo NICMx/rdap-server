@@ -151,9 +151,13 @@ public class Util {
 	 *             Throws error 400 Bad request
 	 */
 	public static void validateIpAddress(String addr) throws MalformedRequestException {
-		try {
-			InetAddress.getByName(addr);
-		} catch (UnknownHostException e) {
+		if (addr.contains(".") || addr.contains(":")) {
+			try {
+				InetAddress.getByName(addr);
+			} catch (UnknownHostException e) {
+				throw new MalformedRequestException("Requested ip is invalid.");
+			}
+		} else {
 			throw new MalformedRequestException("Requested ip is invalid.");
 		}
 	}

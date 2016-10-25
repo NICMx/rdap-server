@@ -17,7 +17,7 @@ SELECT domain.* FROM rdap.domain WHERE domain.dom_ldh_name LIKE ? AND domain.zon
 SELECT domain.* FROM rdap.domain WHERE domain.dom_ldh_name LIKE ?;
 
 #searchByNsLdhName
-SELECT DISTINCT dom.* FROM rdap.domain dom JOIN rdap.domain_nameservers dom_ns ON dom_ns.dom_id = dom.dom_id JOIN rdap.nameserver ns ON ns.nse_id = dom_ns.nse_id WHERE  ns.nse_ldh_name LIKE ?;
+SELECT DISTINCT (dom.dom_id), dom.dom_ldh_name, dom.dom_handle, dom.dom_port43 FROM rdap.domain dom JOIN rdap.domain_nameservers dom_ns ON dom_ns.dom_id = dom.dom_id JOIN rdap.nameserver ns ON ns.nse_id = dom_ns.nse_id WHERE  ns.nse_ldh_name LIKE ?;
 
 #searchByNsIp
 SELECT dom.* FROM rdap.domain dom JOIN rdap.domain_nameservers dom_ns ON dom_ns.dom_id = dom.dom_id JOIN rdap.nameserver ns ON ns.nse_id = dom_ns.nse_id JOIN rdap.ip_address ip	ON ip.nse_id = ns.nse_id WHERE IF(?=4, INET_ATON(?),INET6_ATON(?)) = ip.iad_value; 
