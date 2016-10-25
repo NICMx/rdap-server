@@ -25,3 +25,6 @@ SELECT DISTINCT(nse.nse_id), nse.nse_handle,nse.nse_ldh_name, nse.nse_port43 FRO
 
 #searchByIp6
 SELECT DISTINCT(nse.nse_id), nse.nse_handle,nse.nse_ldh_name, nse.nse_port43 FROM rdap.nameserver nse join rdap.ip_address ipa on ipa.nse_id=nse.nse_id WHERE ipa.iad_value=INET6_ATON(?) ORDER BY 1 LIMIT ?;
+
+#getAll
+SELECT * FROM rdap.nameserver nse;

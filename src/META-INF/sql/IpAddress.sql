@@ -3,3 +3,6 @@ SELECT iad.iad_id,iad.nse_id,iad.iad_type, IF(iad.iad_type=4,INET_NTOA(iad.iad_v
 
 #storeToDatabase
 INSERT INTO rdap.ip_address  VALUES (null,?,?,IF(?=4,INET_ATON(?),INET6_ATON(?)));
+
+#getAll
+SELECT * FROM rdap.ip_address ORDER BY 1 ASC;

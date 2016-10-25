@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -102,6 +104,32 @@ public class IpAddressModel {
 				}
 			} while (resultSet.next());
 			return struct;
+		}
+	}
+
+	/**
+	 * Unused. Getall the ipAddress from DB
+	 * 
+	 * @return
+	 * @throws IOException
+	 * @throws SQLException
+	 */
+	public static List<IpAddressDAO> getAll(Connection connection) throws IOException, SQLException {
+		String query = queryGroup.getQuery("getAll");
+		try (PreparedStatement statement = connection.prepareStatement(query)) {
+			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+			ResultSet resultSet = statement.executeQuery();
+			if (!resultSet.next()) {
+				throw new ObjectNotFoundException("Object not found.");
+			}
+
+			// Process the resulset to construct the struct
+			List<IpAddressDAO> addresses = new ArrayList<IpAddressDAO>();
+			do {
+				IpAddressDAO ipAddressDAO = new IpAddressDAO(resultSet);
+				addresses.add(ipAddressDAO);
+			} while (resultSet.next());
+			return addresses;
 		}
 	}
 }

@@ -1,6 +1,9 @@
 #storeToDatabase
 INSERT INTO rdap.link VALUES(null,?,?,?,?,?,?,?);
 
+#getAll
+SELECT lin.* FROM rdap.link lin ORDER BY 1 ASC;
+
 #getByNameServerId
 SELECT lin.* FROM rdap.link lin JOIN rdap.nameserver_links nse ON nse.lin_id=lin.lin_id WHERE nse.nse_id=?;
 

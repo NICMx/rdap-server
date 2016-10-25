@@ -344,4 +344,31 @@ public class NameserverModel {
 			// Do nothing, entitys is not required
 		}
 	}
+
+	/**
+	 * Unused. Get all nameservers from db
+	 * 
+	 * @param name
+	 * @return
+	 * @throws IOException
+	 * @throws SQLException
+	 */
+	public static List<Nameserver> getAll(Connection connection) throws IOException, SQLException {
+		String query = queryGroup.getQuery("getAll");
+		try (PreparedStatement statement = connection.prepareStatement(query)) {
+			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
+			try (ResultSet resultSet = statement.executeQuery()) {
+				if (!resultSet.next()) {
+					return Collections.emptyList();
+				}
+				List<Nameserver> nameservers = new ArrayList<Nameserver>();
+				do {
+					Nameserver nameserver = new NameserverDAO(resultSet);
+					NameserverModel.loadNestedObjects(nameserver, connection);
+					nameservers.add(nameserver);
+				} while (resultSet.next());
+				return nameservers;
+			}
+		}
+	}
 }

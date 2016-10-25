@@ -25,4 +25,5 @@ INSERT INTO rdap.ds_events values (?,?);
 #storeEntityEventsToDatabase
 INSERT INTO rdap.entity_events values (?,?);
 
-
+#getAll
+SELECT * FROM rdap.event;

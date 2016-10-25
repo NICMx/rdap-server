@@ -10,13 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import mx.nic.rdap.core.db.Event;
@@ -44,65 +38,22 @@ public class NameserverTest {
 	private static final String DATABASE_FILE = "database";
 
 	/**
-	 * Connection for this tests
-	 */
-	private static Connection connection = null;
-
-	/**
 	 * To see if autoCommit is set in the connection.
 	 */
-	private static boolean autoCommit = false;
-
-	@BeforeClass
-	public static void init() {
-		try {
-			Properties properties = Util.loadProperties(DATABASE_FILE);
-			autoCommit = Boolean.parseBoolean(properties.getProperty("autoCommit"));
-
-			DatabaseSession.init(properties);
-		} catch (SQLException | IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@Before
-	public void before() {
-		try {
-			connection = DatabaseSession.getConnection();
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@After
-	public void after() {
-		try {
-			if (!autoCommit)
-				connection.rollback();
-			connection.close();
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@AfterClass
-	public static void end() {
-		try {
-			DatabaseSession.close();
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
 
 	@Test
 	public void insertMinimunNameServer() {
+
 		try {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
-			// Nameserver base data
-			Nameserver nameserver = new NameserverDAO();
-			nameserver.setPunycodeName("ns.xn--test-minumun.example");
-			NameserverModel.storeToDatabase(nameserver, connection);
-			System.out.println(nameserver);
+			try (Connection connection = DatabaseSession.getConnection()) {
+				// Nameserver base data
+				Nameserver nameserver = new NameserverDAO();
+				nameserver.setPunycodeName("ns.xn--test-minumun.example");
+				NameserverModel.storeToDatabase(nameserver, connection);
+				System.out.println(nameserver);
+
+			}
 			assert true;
 		} catch (RequiredValueNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
@@ -121,7 +72,7 @@ public class NameserverTest {
 
 		// Nameserver base data
 		Nameserver nameserver = new NameserverDAO();
-		nameserver.setHandle("XXXX7");
+		nameserver.setHandle("XXX6");
 		nameserver.setPunycodeName("ns1.xn--fo-5ja.example");
 		nameserver.setPort43("whois.example.net");
 
@@ -219,23 +170,43 @@ public class NameserverTest {
 		events.add(event2);
 		nameserver.setEvents(events);
 		try {
+			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
+		} catch (IOException | SQLException e) {
+			e.printStackTrace();
+			fail();
+		}
+		try (Connection connection = DatabaseSession.getConnection()) {
 			NameserverModel.storeToDatabase(nameserver, connection);
 		} catch (IOException | SQLException | RequiredValueNotFoundException e) {
 			e.printStackTrace();
 			fail();
 		}
 
-		Nameserver byName = null;
-		try {
-			byName = NameserverModel.findByName("ns1.xn--fo-5ja.example", connection);
-		} catch (IOException | SQLException e) {
-			e.printStackTrace();
-			fail();
-		}
-
-		Assert.assertTrue(nameserver.equals(byName));
-
 		assert true;
+	}
+
+	@Test
+	public void getAll() {
+		try {
+			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
+			try (Connection connection = DatabaseSession.getConnection()) {
+				List<Nameserver> nameservers = NameserverModel.getAll(connection);
+				for (Nameserver nameserver : nameservers) {
+					System.out.println(((NameserverDAO) nameserver).toJson());
+				}
+			}
+			assert true;
+		} catch (SQLException | IOException e) {
+			e.printStackTrace();
+			assert false;
+		} finally {
+			try {
+				DatabaseSession.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				fail();
+			}
+		}
 	}
 
 }

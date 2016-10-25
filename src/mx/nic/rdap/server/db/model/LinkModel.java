@@ -302,4 +302,33 @@ public class LinkModel {
 
 		return result;
 	}
+
+	/**
+	 * Unused. Get all the ipAddress from DB
+	 * 
+	 * @return
+	 * @throws IOException
+	 * @throws SQLException
+	 */
+	public static List<Link> getAll(Connection connection) throws SQLException {
+		String query = queryGroup.getQuery("getAll");
+		List<Link> result = null;
+
+		try (PreparedStatement statement = connection.prepareStatement(query)) {
+			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+			try (ResultSet resultSet = statement.executeQuery()) {
+				if (!resultSet.next()) {
+					return Collections.emptyList(); // A Data can have no links
+				}
+				List<Link> links = new ArrayList<Link>();
+				do {
+					LinkDAO link = new LinkDAO(resultSet);
+					links.add(link);
+				} while (resultSet.next());
+				result = links;
+			}
+		}
+
+		return result;
+	}
 }

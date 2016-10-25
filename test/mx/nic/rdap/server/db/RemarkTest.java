@@ -89,50 +89,6 @@ public class RemarkTest {
 	}
 
 	@Test
-	/**
-	 * Test the insert of nameserver's remarks
-	 */
-	public void insertNameserverRemarks() {
-		try {
-			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
-
-			RemarkDAO remark = new RemarkDAO();
-			Double testId = Math.random();
-			remark.setTitle("Nameserver remarks test" + testId);
-			remark.setType("Nameserver remark");
-			RemarkDescriptionDAO description1 = new RemarkDescriptionDAO();
-			description1.setDescription("First description of the ns remark " + testId);
-			description1.setRemarkId(remark.getId());
-			description1.setOrder(1);
-			RemarkDescriptionDAO description2 = new RemarkDescriptionDAO();
-			description2.setDescription("Second description of the ns remark" + testId);
-			description2.setRemarkId(remark.getId());
-			description2.setOrder(2);
-			List<RemarkDescription> descriptions = new ArrayList<RemarkDescription>();
-			descriptions.add(description1);
-			descriptions.add(description2);
-			remark.setDescriptions(descriptions);
-			List<Remark> remarks = new ArrayList<Remark>();
-			remarks.add(remark);
-			try (Connection connection = DatabaseSession.getConnection()) {
-				RemarkModel.storeNameserverRemarksToDatabase(remarks, 1L, connection);
-			}
-			assert true;
-		} catch (RequiredValueNotFoundException | SQLException | IOException e) {
-			e.printStackTrace();
-			assert false;
-		} finally {
-			try {
-				DatabaseSession.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-				fail();
-			}
-		}
-
-	}
-
-	@Test
 	public void getAll() {
 		try {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));

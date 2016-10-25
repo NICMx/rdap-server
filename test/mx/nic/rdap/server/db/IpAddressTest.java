@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -57,16 +58,14 @@ public class IpAddressTest {
 	}
 
 	@Test
-	/**
-	 * Test that retrieve a nameserverIpAddressesStruct from a Nameserver id
-	 */
-	public void getByNameserverId() {
+	public void getAll() {
 		try {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
 			try (Connection connection = DatabaseSession.getConnection()) {
-				NameserverIpAddressesStruct struct = IpAddressModel.getIpAddressStructByNameserverId(1L, connection);
-				System.out.println("IPV4 array size:" + struct.getIpv4Adresses().size());
-				System.out.println("IPV6 array size:" + struct.getIpv6Adresses().size());
+				List<IpAddressDAO> addresses = IpAddressModel.getAll(connection);
+				for (IpAddressDAO ip : addresses) {
+					System.out.println(ip.toString());
+				}
 				assert true;
 			}
 		} catch (SQLException | IOException e) {

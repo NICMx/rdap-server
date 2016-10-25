@@ -227,4 +227,32 @@ public class EventModel {
 		return result;
 	}
 
+	/**
+	 * Unused. Get all the Events from DB
+	 * 
+	 * @return
+	 * @throws IOException
+	 * @throws SQLException
+	 */
+	public static List<Event> getAll(Connection connection) throws SQLException, IOException {
+		String query = queryGroup.getQuery("getAll");
+		List<Event> result = null;
+		try (PreparedStatement statement = connection.prepareStatement(query)) {
+			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
+			try (ResultSet resultSet = statement.executeQuery()) {
+				if (!resultSet.next()) {
+					return Collections.emptyList();
+				}
+				List<Event> events = new ArrayList<Event>();
+				do {
+					EventDAO event = new EventDAO(resultSet);
+					event.setLinks(LinkModel.getByEventId(event.getId(), connection));
+					events.add(event);
+				} while (resultSet.next());
+				result = events;
+			}
+		}
+
+		return result;
+	}
 }

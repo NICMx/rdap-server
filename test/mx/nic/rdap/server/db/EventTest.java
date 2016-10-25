@@ -5,7 +5,6 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -42,6 +41,7 @@ public class EventTest {
 			event.setEventActor("dalpuche");
 			Link link = new LinkDAO();
 			link.setValue("linkofevent.com");
+			link.setHref("lele");
 			event.getLinks().add(link);
 			try (Connection connection = DatabaseSession.getConnection()) {
 				EventModel.storeToDatabase(event, connection);
@@ -62,46 +62,15 @@ public class EventTest {
 
 	@Test
 	/**
-	 * Store am event in the database
+	 * Test that retrieve an array of events from the DB
 	 */
-	public void insertNameserverEvent() {
-		try {
-			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
-			Event event = new EventDAO();
-			event.setEventAction(EventAction.EXPIRATION);
-			event.setEventDate(new Date());
-			event.setEventActor("dalpuche");
-			List<Event> events = new ArrayList<Event>();
-			events.add(event);
-			try (Connection connection = DatabaseSession.getConnection()) {
-				EventModel.storeNameserverEventsToDatabase(events, 5L, connection);
-			}
-			assert true;
-		} catch (RequiredValueNotFoundException | SQLException | IOException e) {
-			e.printStackTrace();
-			assert false;
-		} finally {
-			try {
-				DatabaseSession.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-				fail();
-			}
-		}
-
-	}
-
-	@Test
-	/**
-	 * Test that retrieve an array of events from a Nameserver id
-	 */
-	public void getByNameserverId() {
+	public void getAll() {
 		try {
 			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
 			try (Connection connection = DatabaseSession.getConnection()) {
-				List<Event> events = EventModel.getByNameServerId(5L, connection);
+				List<Event> events = EventModel.getAll(connection);
 				for (Event event : events) {
-					System.out.println(event);
+					System.out.println(((EventDAO) event).toJson());
 				}
 			}
 			assert true;
