@@ -11,8 +11,9 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
-# Prevents developers from accidentally uploading the password to the repository.
+# These prevent developers from accidentally uploading passwords to the repository.
 database.properties
+WebContent/META-INF/context.xml
 
 /build/
 

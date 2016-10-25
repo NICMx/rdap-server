@@ -198,7 +198,7 @@ public class MigrationBatch extends TimerTask {
 	 */
 	private void readQueryFile(String filePath, HashMap<String, String> queryMap) throws IOException {
 		try (BufferedReader reader = new BufferedReader(
-				new InputStreamReader(MigrationBatchTest.class.getClassLoader().getResourceAsStream(filePath)))) {
+				new InputStreamReader(MigrationBatch.class.getClassLoader().getResourceAsStream(filePath)))) {
 
 			StringBuilder queryString = new StringBuilder();
 			String objectName = null;
