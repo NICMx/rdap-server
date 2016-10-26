@@ -26,19 +26,20 @@ public class IpAddressTest extends DatabaseTest {
 	 */
 	public void insert() {
 		try {
+			Long nameserverId = 1590L;
 			NameserverIpAddressesStruct struct = new NameserverIpAddressesStruct();
 			IpAddress ipv4 = new IpAddressDAO();
 			ipv4.setType(4);
-			ipv4.setNameserverId(1l);
+			ipv4.setNameserverId(nameserverId);
 			ipv4.setAddress(InetAddress.getByName("127.0.0.4"));
 			IpAddress ipv6 = new IpAddressDAO();
 			ipv6.setType(6);
-			ipv6.setNameserverId(1l);
+			ipv6.setNameserverId(nameserverId);
 			ipv6.setAddress(InetAddress.getByName("2001:db8::1"));
 			struct.getIpv4Adresses().add(ipv4);
 			struct.getIpv6Adresses().add(ipv6);
 			try (Connection connection = DatabaseSession.getRdapConnection()) {
-				IpAddressModel.storeToDatabase(struct, 1L, connection);
+				IpAddressModel.storeToDatabase(struct, nameserverId, connection);
 			}
 			assert true;
 		} catch (SQLException | IOException e) {

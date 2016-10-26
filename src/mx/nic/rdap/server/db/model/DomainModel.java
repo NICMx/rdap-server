@@ -119,7 +119,7 @@ public class DomainModel {
 			logger.log(Level.INFO, "Executing QUERY: " + statement.toString());
 			try (ResultSet resultSet = statement.executeQuery()) {
 				if (!resultSet.next()) {
-					throw new SQLException("Object not found.");
+					throw new ObjectNotFoundException("Object not found.");
 				}
 				Domain domain = new DomainDAO(resultSet);
 				loadNestedObjects(domain, connection);

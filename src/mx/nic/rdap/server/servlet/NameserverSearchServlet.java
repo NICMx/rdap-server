@@ -45,6 +45,7 @@ public class NameserverSearchServlet extends RdapServlet {
 		NameserverSearchRequest request = new NameserverSearchRequest(httpRequest);
 		List<NameserverDAO> nameservers = new ArrayList<NameserverDAO>();
 		try (Connection connection = DatabaseSession.getRdapConnection()) {
+			Util.fillSearchDataForUser(httpRequest, connection);
 			if (request.getParameter().compareTo(NameserverSearchRequest.NAME_PARAMETER_KEY) == 0) {
 				nameservers = NameserverModel.searchByName(request.getValue().trim(), connection);
 				return new NameserverSeachResult(nameservers);
