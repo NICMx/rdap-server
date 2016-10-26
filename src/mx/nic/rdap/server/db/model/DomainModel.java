@@ -17,6 +17,7 @@ import com.mysql.jdbc.Statement;
 
 import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.core.db.Entity;
+import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DomainDAO;
 import mx.nic.rdap.server.db.IpAddressDAO;
 import mx.nic.rdap.server.db.QueryGroup;
@@ -171,6 +172,7 @@ public class DomainModel {
 
 			statement.setString(1, name);
 			statement.setInt(2, zoneId);
+			statement.setInt(3, Util.getMaxNumberOfResultsForUser());
 
 			logger.log(Level.INFO, "Executing query" + statement.toString());
 			ResultSet resultSet = statement.executeQuery();
@@ -203,6 +205,7 @@ public class DomainModel {
 		name = name.replaceAll("\\*", "%");
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("searchByNameWOutZone"))) {
 			statement.setString(1, name);
+			statement.setInt(2, Util.getMaxNumberOfResultsForUser());
 			logger.log(Level.INFO, "Executing query" + statement.toString());
 			ResultSet resultSet = statement.executeQuery();
 
@@ -233,6 +236,7 @@ public class DomainModel {
 		name = name.replace("\\*", "%");
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("searchByNsLdhName"))) {
 			statement.setString(1, name);
+			statement.setInt(2, Util.getMaxNumberOfResultsForUser());
 			logger.log(Level.INFO, "Executing query" + statement.toString());
 			ResultSet resultSet = statement.executeQuery();
 
@@ -259,7 +263,6 @@ public class DomainModel {
 	 * @throws IOException
 	 */
 	public static List<Domain> searchByNsIp(String ip, Connection connection) throws SQLException, IOException {
-		// TODO query and validate if v4 or v6
 		IpAddressDAO ipAddress = new IpAddressDAO();
 		InetAddress address = InetAddress.getByName(ip);
 		ipAddress.setAddress(address);
@@ -273,6 +276,7 @@ public class DomainModel {
 			statement.setInt(1, ipAddress.getType());
 			statement.setString(2, ipAddress.getAddress().getHostAddress());
 			statement.setString(3, ipAddress.getAddress().getHostAddress());
+			statement.setInt(4, Util.getMaxNumberOfResultsForUser());
 			logger.log(Level.INFO, "Executing query" + statement.toString());
 			ResultSet resultSet = statement.executeQuery();
 
