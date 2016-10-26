@@ -1,5 +1,6 @@
 package mx.nic.rdap.server.renderer.json;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.json.Json;
@@ -13,10 +14,12 @@ import mx.nic.rdap.core.db.Event;
 import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.RdapObject;
 import mx.nic.rdap.core.db.Remark;
+import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.EntityDAO;
 import mx.nic.rdap.server.db.EventDAO;
 import mx.nic.rdap.server.db.LinkDAO;
 import mx.nic.rdap.server.db.RemarkDAO;
+import mx.nix.rdap.core.catalog.Rol;
 import mx.nix.rdap.core.catalog.Status;
 
 /**
@@ -24,6 +27,11 @@ import mx.nix.rdap.core.catalog.Status;
  *
  */
 public class JsonUtil {
+
+	public static HashMap<String, UserAccessLevel> loadAttributesLevel() {
+		HashMap<String, UserAccessLevel> attributesLevels = new HashMap<>();
+		return attributesLevels;
+	}
 
 	public static JsonArray getRdapConformance(String... others) {
 		JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
@@ -128,4 +136,41 @@ public class JsonUtil {
 		return arrayBuilder.build();
 	}
 
+	/**
+	 * True is a user has authorization to see the attribute
+	 * 
+	 * @param userLevel
+	 * @param attributeLevelRequired
+	 * @return
+	 */
+	public static boolean isAttributeVisibleForUserLevel(UserAccessLevel userLevel,
+			UserAccessLevel attributeLevelRequired) {
+		if (attributeLevelRequired == UserAccessLevel.ANY) {
+			return true;
+		} else if (attributeLevelRequired == UserAccessLevel.AUTHENTICATED) {
+			return userLevel == UserAccessLevel.AUTHENTICATED || userLevel == UserAccessLevel.OWNER;
+		} else if (attributeLevelRequired == UserAccessLevel.OWNER) {
+			return userLevel == UserAccessLevel.OWNER;
+		}
+		return false;
+	}
+
+	/**
+	 * Retrieve the user accessLevel respect to an object
+	 * 
+	 * @param object
+	 * @return
+	 */
+	public static UserAccessLevel getUserAccessLevel(RdapObject object) {
+		if (Util.isAuthenticatedUser()) {
+			// Validate is the user is the owner of the object
+			List<Rol> rols = Util.getConfiguratedOwnerRols();
+			if (true) {
+				// TODO:The magic stuff
+				return UserAccessLevel.OWNER;
+			}
+			return UserAccessLevel.AUTHENTICATED;
+		}
+		return UserAccessLevel.ANY;
+	}
 }

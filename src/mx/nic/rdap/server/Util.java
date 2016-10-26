@@ -7,7 +7,9 @@ import java.net.IDN;
 import java.net.InetAddress;
 import java.net.URLDecoder;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.exception.UnprocessableEntityException;
+import mx.nix.rdap.core.catalog.Rol;
 
 /**
  * Random miscellaneous functions useful anywhere.
@@ -189,9 +192,24 @@ public class Util {
 		return null;
 	}
 
+	/**
+	 * True if the user is authenticated
+	 * 
+	 * @return
+	 */
 	public static boolean isAuthenticatedUser() {
 		// TODO: get from request if the
 		// user is authenticated
 		return false;
+	}
+
+	/**
+	 * Get the roles that can own a object
+	 * 
+	 * @return
+	 */
+	public static List<Rol> getConfiguratedOwnerRols() {
+		List<Rol> rols = new ArrayList<Rol>();
+		return rols;
 	}
 }
