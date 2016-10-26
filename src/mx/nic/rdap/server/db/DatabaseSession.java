@@ -1,10 +1,12 @@
 package mx.nic.rdap.server.db;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Properties;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
 import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
 
@@ -15,39 +17,30 @@ import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
  */
 public class DatabaseSession {
 
-	private static BasicDataSource ds;
+	private static DataSource dataSource;
 
-	public static void init(Properties config) throws SQLException {
-		ds = new BasicDataSource();
-		ds.setDriverClassName(config.getProperty("driverClassName"));
-		ds.setUrl(config.getProperty("url"));
-		ds.setUsername(config.getProperty("userName"));
-		ds.setPassword(config.getProperty("password"));
-		ds.setDefaultAutoCommit(Boolean.parseBoolean(config.getProperty("autoCommit")));
-
-		testDatabase();
-	}
-
-	private static void testDatabase() throws SQLException {
-		// http://stackoverflow.com/questions/3668506
-		final String TEST_QUERY = "select 1";
-		try(Connection connection = getConnection();Statement statement = connection.createStatement();){
-		ResultSet resultSet = statement.executeQuery(TEST_QUERY);
-
-		if (!resultSet.next()) {
-			throw new SQLException("'" + TEST_QUERY + "' returned no rows.");
+	public static void init() throws SQLException {
+		try {
+			Context initContext = new InitialContext();
+			Context envContext = (Context) initContext.lookup("java:/comp/env");
+			dataSource = (DataSource) envContext.lookup("jdbc/rdapdb");
+		} catch (NamingException e) {
+			throw new IllegalArgumentException(e);
 		}
-		int result = resultSet.getInt(1);
-		if (result != 1) {
-			throw new SQLException("'" + TEST_QUERY + "' returned " + result);
-		}}
 	}
 
 	public static Connection getConnection() throws SQLException {
-		return ds.getConnection();
+		return dataSource.getConnection();
 	}
 
-	public static void close() throws SQLException{
-		ds.close();
+	public static void close() throws SQLException {
+		// TODO this is likely not the right way to do this.
+		// But DataSource lacks a close() method... WTF?
+		// I really have no idea.
+		// If you remove this, you will notice several memory leak warnings
+		// whenever tomcat republishes the service.
+		if (dataSource instanceof BasicDataSource) {
+			((BasicDataSource) dataSource).close();
+		}
 	}
 }
