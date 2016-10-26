@@ -4,8 +4,6 @@ import javax.json.JsonObject;
 
 /**
  * A response to the user.
- * 
- * @author aleiva
  */
 public interface RdapResult {
 

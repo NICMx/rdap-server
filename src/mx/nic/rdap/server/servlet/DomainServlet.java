@@ -45,7 +45,7 @@ public class DomainServlet extends RdapServlet {
 		DomainRequest request = new DomainRequest(Util.getRequestParams(httpRequest)[0]);
 
 		RdapResult result = null;
-		try (Connection con = DatabaseSession.getConnection();) {
+		try (Connection con = DatabaseSession.getRdapConnection()) {
 			Domain domain;
 			try {
 				DomainModel.validateDomainZone(request.getName());

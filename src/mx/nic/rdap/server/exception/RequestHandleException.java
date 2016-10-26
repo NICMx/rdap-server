@@ -2,8 +2,6 @@ package mx.nic.rdap.server.exception;
 
 /**
  * Generic problems found handling RDAP requests.
- * 
- * @author aleiva
  */
 public class RequestHandleException extends Exception {
 

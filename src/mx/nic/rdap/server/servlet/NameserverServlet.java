@@ -42,7 +42,7 @@ public class NameserverServlet extends RdapServlet {
 			throws RequestHandleException, IOException, SQLException {
 		NameserverRequest request = new NameserverRequest(Util.getRequestParams(httpRequest)[0]);
 		Nameserver nameserver = null;
-		try (Connection con = DatabaseSession.getConnection();) {
+		try (Connection con = DatabaseSession.getRdapConnection()) {
 			nameserver = NameserverModel.findByName(request.getName(), con);
 		}
 		return new NameserverResult(nameserver);

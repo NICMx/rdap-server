@@ -7,8 +7,6 @@ import java.util.HashMap;
 
 /**
  * A bunch of queries read from a .sql file.
- * 
- * @author aleiva
  */
 public class QueryGroup {
 

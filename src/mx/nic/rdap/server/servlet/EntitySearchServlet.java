@@ -43,7 +43,7 @@ public class EntitySearchServlet extends RdapServlet {
 		String parameter = request.getParameterNames().nextElement();
 		String value = request.getParameter(parameter);
 
-		try (Connection con = DatabaseSession.getConnection()) {
+		try (Connection con = DatabaseSession.getRdapConnection()) {
 			switch (parameter) {
 			case FULL_NAME:
 				entities = EntityModel.searchByVCardName(value.trim(), con);

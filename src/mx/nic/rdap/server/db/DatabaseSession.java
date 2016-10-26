@@ -8,39 +8,27 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
-
-/**
- * Just a container of the database connections pool.
- *
- * @author aleiva
- */
 public class DatabaseSession {
 
-	private static DataSource dataSource;
+	private static final String RDAP_DB = "jdbc/rdap";
+	private static final String MIGRATION_DB = "jdbc/migration";
 
-	public static void init() throws SQLException {
+	private static DataSource getEnvironmentDataSource(String name) {
 		try {
 			Context initContext = new InitialContext();
 			Context envContext = (Context) initContext.lookup("java:/comp/env");
-			dataSource = (DataSource) envContext.lookup("jdbc/rdapdb");
+			return (DataSource) envContext.lookup(name);
 		} catch (NamingException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
 
-	public static Connection getConnection() throws SQLException {
-		return dataSource.getConnection();
+	public static Connection getRdapConnection() throws SQLException {
+		return getEnvironmentDataSource(RDAP_DB).getConnection();
+	}
+	
+	public static Connection getMigrationConnection() throws SQLException {
+		return getEnvironmentDataSource(MIGRATION_DB).getConnection();
 	}
 
-	public static void close() throws SQLException {
-		// TODO this is likely not the right way to do this.
-		// But DataSource lacks a close() method... WTF?
-		// I really have no idea.
-		// If you remove this, you will notice several memory leak warnings
-		// whenever tomcat republishes the service.
-		if (dataSource instanceof BasicDataSource) {
-			((BasicDataSource) dataSource).close();
-		}
-	}
 }

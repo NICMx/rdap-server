@@ -5,8 +5,6 @@ import java.sql.SQLException;
 /**
  * An error signaling that the object the user requested was not found in the
  * database. Going to become an HTTP 404.
- * 
- * @author aleiva
  */
 public class ObjectNotFoundException extends SQLException {
 

@@ -44,7 +44,7 @@ public class NameserverSearchServlet extends RdapServlet {
 			throws RequestHandleException, IOException, SQLException {
 		NameserverSearchRequest request = new NameserverSearchRequest(httpRequest);
 		List<NameserverDAO> nameservers = new ArrayList<NameserverDAO>();
-		try (Connection connection = DatabaseSession.getConnection();) {
+		try (Connection connection = DatabaseSession.getRdapConnection()) {
 			if (request.getParameter().compareTo(NameserverSearchRequest.NAME_PARAMETER_KEY) == 0) {
 				nameservers = NameserverModel.searchByName(request.getValue().trim(), connection);
 				return new NameserverSeachResult(nameservers);

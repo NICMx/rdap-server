@@ -48,7 +48,7 @@ public class ZoneModel {
 			throw new RuntimeException("Error loading query group", e);
 		}
 
-		try (Connection con = DatabaseSession.getConnection();) {
+		try (Connection con = DatabaseSession.getRdapConnection()) {
 			loadAllFromDatabase(con);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);

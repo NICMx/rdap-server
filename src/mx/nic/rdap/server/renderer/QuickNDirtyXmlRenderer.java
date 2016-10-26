@@ -11,8 +11,6 @@ import mx.nic.rdap.server.Renderer;
 
 /**
  * Just a placeholder so I can test the Renderer framework.
- * 
- * @author aleiva
  */
 public class QuickNDirtyXmlRenderer implements Renderer {
 

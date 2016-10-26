@@ -43,7 +43,7 @@ public class EntityServlet extends RdapServlet {
 		EntityRequest request = new EntityRequest(Util.getRequestParams(httpRequest)[0]);
 
 		RdapResult result = null;
-		try (Connection con = DatabaseSession.getConnection();) {
+		try (Connection con = DatabaseSession.getRdapConnection()) {
 			Entity entity = EntityModel.getByHandle(request.getHandle(), con);
 			result = new EntityResult(entity);
 

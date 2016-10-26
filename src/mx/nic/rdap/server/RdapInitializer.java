@@ -4,8 +4,6 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
-import mx.nic.rdap.server.db.DatabaseSession;
-
 @WebListener
 public class RdapInitializer implements ServletContextListener {
 
@@ -17,7 +15,6 @@ public class RdapInitializer implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
 		try {
-			DatabaseSession.init();
 			RendererPool.loadRenderers(Util.loadProperties(RENDERERS_FILE));
 			RdapConfiguration.loadSystemProperties(Util.loadProperties(CONFIGURATION_FILE));
 		} catch (Exception e) {
@@ -27,11 +24,7 @@ public class RdapInitializer implements ServletContextListener {
 
 	@Override
 	public void contextDestroyed(ServletContextEvent event) {
-		try {
-			DatabaseSession.close();
-		} catch (Exception e) {
-			throw new IllegalArgumentException(e);
-		}
+		// Nothing needed.
 	}
 
 }

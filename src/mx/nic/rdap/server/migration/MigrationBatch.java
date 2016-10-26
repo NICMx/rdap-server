@@ -51,10 +51,9 @@ public class MigrationBatch extends TimerTask {
 
 	public void run() {
 		logger.log(Level.INFO, "******INITIALIZING DATABASE CONNECTIONS******");
-		MigrationInitializer.initOriginDBConnection();
-		MigrationInitializer.initRDAPDBConnection();
-		try (Connection rdapConnection = DatabaseSession.getConnection();
-				Connection originConnection = MigrationDatabaseSession.getConnection()) {
+		try (Connection rdapConnection = DatabaseSession.getRdapConnection();
+				Connection originConnection = DatabaseSession.getMigrationConnection()) {
+			rdapConnection.setAutoCommit(false);
 			cleanServerDatabase(rdapConnection);
 			migrate(rdapConnection, originConnection);
 			logger.log(Level.INFO, "******MIGRATION SUCCESS******");
@@ -64,10 +63,6 @@ public class MigrationBatch extends TimerTask {
 			logger.log(Level.SEVERE, "******MIGRATION FAILED******");
 			logger.log(Level.SEVERE, e.getMessage());
 			throw new RuntimeException(e);
-		} finally {
-			logger.log(Level.INFO, "******CLOSING DATABASE CONNECTIONS******");
-			MigrationInitializer.closeOriginDBConnection();
-			MigrationInitializer.closeRDAPDBConnection();
 		}
 	}
 

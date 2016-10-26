@@ -22,8 +22,6 @@ import mx.nix.rdap.core.catalog.Rol;
 
 /**
  * Random miscellaneous functions useful anywhere.
- *
- * @author aleiva
  */
 public class Util {
 
@@ -57,7 +55,7 @@ public class Util {
 		}
 		return result;
 	}
-
+	
 	/**
 	 * If the request's URI is /rdap/ip/192.0.2.0/24, then this returns
 	 * ["192.0.2.0", "24"].

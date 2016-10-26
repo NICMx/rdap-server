@@ -7,8 +7,6 @@ import java.util.Properties;
 
 /**
  * The singleton that keeps track of the loaded {@link Renderer}s.
- *
- * @author aleiva
  */
 public class RendererPool {
 

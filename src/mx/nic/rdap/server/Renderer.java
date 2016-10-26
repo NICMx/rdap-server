@@ -5,8 +5,6 @@ import java.io.PrintWriter;
 /**
  * A response formatter. Transforms a {@link RdapResult} to something the user
  * can parse.
- *
- * @author aleiva
  */
 public interface Renderer {
 
