@@ -9,14 +9,11 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 import java.util.Random;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import mx.nic.rdap.core.db.Entity;
@@ -27,7 +24,6 @@ import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.core.db.RemarkDescription;
 import mx.nic.rdap.core.db.VCard;
 import mx.nic.rdap.core.db.VCardPostalInfo;
-import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.model.EntityModel;
 import mx.nic.rdap.server.exception.ObjectNotFoundException;
 import mx.nix.rdap.core.catalog.EventAction;
@@ -40,60 +36,22 @@ import mx.nix.rdap.core.catalog.Status;
  * @author dhfelix
  *
  */
-public class EntityTest {
-
-	/** File from which we will load the database connection. */
-	private static final String DATABASE_FILE = "database";
+public class EntityTest extends DatabaseTest {
 
 	/**
 	 * Connection for this tests
 	 */
 	private static Connection connection = null;
 
-	/**
-	 * To see if autoCommit is set in the connection.
-	 */
-	private static boolean autoCommit = false;
-
-	@BeforeClass
-	public static void init() {
-		try {
-			Properties properties = Util.loadProperties(DATABASE_FILE);
-			autoCommit = Boolean.parseBoolean(properties.getProperty("autoCommit"));
-
-			DatabaseSession.init(properties);
-		} catch (SQLException | IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 	@Before
-	public void before() {
-		try {
-			connection = DatabaseSession.getConnection();
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
+	public void before() throws SQLException {
+		connection = DatabaseSession.getRdapConnection();
 	}
 
 	@After
-	public void after() {
-		try {
-			if (!autoCommit)
-				connection.rollback();
-			connection.close();
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@AfterClass
-	public static void end() {
-		try {
-			DatabaseSession.close();
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
+	public void after() throws SQLException {
+		connection.rollback();
+		connection.close();
 	}
 
 	/**

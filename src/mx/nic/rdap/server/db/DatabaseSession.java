@@ -10,14 +10,13 @@ import javax.sql.DataSource;
 
 public class DatabaseSession {
 
-	private static final String RDAP_DB = "jdbc/rdap";
-	private static final String MIGRATION_DB = "jdbc/migration";
+	public static final String RDAP_DB = "rdap";
+	public static final String MIGRATION_DB = "migration";
 
 	private static DataSource getEnvironmentDataSource(String name) {
 		try {
 			Context initContext = new InitialContext();
-			Context envContext = (Context) initContext.lookup("java:/comp/env");
-			return (DataSource) envContext.lookup(name);
+			return (DataSource) initContext.lookup("java:/comp/env/jdbc/" + name);
 		} catch (NamingException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -26,7 +25,7 @@ public class DatabaseSession {
 	public static Connection getRdapConnection() throws SQLException {
 		return getEnvironmentDataSource(RDAP_DB).getConnection();
 	}
-	
+
 	public static Connection getMigrationConnection() throws SQLException {
 		return getEnvironmentDataSource(MIGRATION_DB).getConnection();
 	}

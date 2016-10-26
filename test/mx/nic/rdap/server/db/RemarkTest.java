@@ -1,7 +1,5 @@
 package mx.nic.rdap.server.db;
 
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -13,7 +11,6 @@ import org.junit.Test;
 import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.core.db.RemarkDescription;
-import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.model.RemarkModel;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
 
@@ -23,10 +20,7 @@ import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
  * @author dalpuche
  *
  */
-public class RemarkTest {
-
-	/** File from which we will load the database connection. */
-	private static final String DATABASE_FILE = "database";
+public class RemarkTest extends DatabaseTest {
 
 	@Test
 	/**
@@ -34,8 +28,6 @@ public class RemarkTest {
 	 */
 	public void insert() {
 		try {
-			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
-
 			RemarkDAO remark = new RemarkDAO();
 			Double testId = Math.random();
 			remark.setTitle("Test " + testId);
@@ -69,7 +61,7 @@ public class RemarkTest {
 			links.add(link2);
 
 			remark.setLinks(links);
-			try (Connection connection = DatabaseSession.getConnection()) {
+			try (Connection connection = DatabaseSession.getRdapConnection()) {
 				RemarkModel.storeToDatabase(remark, connection);
 				System.out.println(remark);
 			}
@@ -77,13 +69,6 @@ public class RemarkTest {
 		} catch (RequiredValueNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
 			assert false;
-		} finally {
-			try {
-				DatabaseSession.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-				fail();
-			}
 		}
 
 	}
@@ -91,8 +76,7 @@ public class RemarkTest {
 	@Test
 	public void getAll() {
 		try {
-			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
-			try (Connection connection = DatabaseSession.getConnection()) {
+			try (Connection connection = DatabaseSession.getRdapConnection()) {
 				List<Remark> remarks = RemarkModel.getAll(connection);
 				for (Remark remark : remarks) {
 					System.out.println(((RemarkDAO) remark).toJson());
@@ -102,13 +86,6 @@ public class RemarkTest {
 		} catch (SQLException | IOException e) {
 			e.printStackTrace();
 			assert false;
-		} finally {
-			try {
-				DatabaseSession.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-				fail();
-			}
 		}
 
 	}

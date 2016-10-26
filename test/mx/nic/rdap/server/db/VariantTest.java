@@ -7,74 +7,33 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import mx.nic.rdap.core.db.Variant;
 import mx.nic.rdap.core.db.VariantName;
-import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.model.VariantModel;
 import mx.nix.rdap.core.catalog.VariantRelation;
 
-public class VariantTest {
-
-	/** File from which we will load the database connection. */
-	private static final String DATABASE_FILE = "database";
+public class VariantTest extends DatabaseTest {
 
 	/**
 	 * Connection for this tests
 	 */
 	private static Connection connection = null;
 
-	/**
-	 * To see if autoCommit is set in the connection.
-	 */
-	private static boolean autoCommit = false;
-
-	@BeforeClass
-	public static void init() {
-		try {
-			Properties properties = Util.loadProperties(DATABASE_FILE);
-			autoCommit = Boolean.parseBoolean(properties.getProperty("autoCommit"));
-			DatabaseSession.init(properties);
-		} catch (SQLException | IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 	@Before
-	public void before() {
-		try {
-			connection = DatabaseSession.getConnection();
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
+	public void before() throws SQLException {
+		connection = DatabaseSession.getRdapConnection();
 	}
 
 	@After
-	public void after() {
-		try {
-			if (!autoCommit)
-				connection.rollback();
-			connection.close();
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@AfterClass
-	public static void end() {
-		try {
-			DatabaseSession.close();
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
+	public void after() throws SQLException {
+		connection.rollback();
+		connection.close();
 	}
 
 	@Test

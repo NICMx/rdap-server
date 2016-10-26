@@ -20,7 +20,6 @@ import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.core.db.RemarkDescription;
 import mx.nic.rdap.core.db.struct.NameserverIpAddressesStruct;
-import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.model.NameserverModel;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
 import mx.nix.rdap.core.catalog.EventAction;
@@ -32,21 +31,13 @@ import mx.nix.rdap.core.catalog.Status;
  * @author dalpuche
  *
  */
-public class NameserverTest {
-
-	/** File from which we will load the database connection. */
-	private static final String DATABASE_FILE = "database";
-
-	/**
-	 * To see if autoCommit is set in the connection.
-	 */
+public class NameserverTest extends DatabaseTest {
 
 	@Test
 	public void insertMinimunNameServer() {
 
 		try {
-			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
-			try (Connection connection = DatabaseSession.getConnection()) {
+			try (Connection connection = DatabaseSession.getRdapConnection()) {
 				// Nameserver base data
 				Nameserver nameserver = new NameserverDAO();
 				nameserver.setPunycodeName("ns.xn--test-minumun.example");
@@ -58,12 +49,6 @@ public class NameserverTest {
 		} catch (RequiredValueNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
 			assert false;
-		} finally {
-			try {
-				DatabaseSession.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 
@@ -169,13 +154,7 @@ public class NameserverTest {
 		events.add(event1);
 		events.add(event2);
 		nameserver.setEvents(events);
-		try {
-			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
-		} catch (IOException | SQLException e) {
-			e.printStackTrace();
-			fail();
-		}
-		try (Connection connection = DatabaseSession.getConnection()) {
+		try (Connection connection = DatabaseSession.getRdapConnection()) {
 			NameserverModel.storeToDatabase(nameserver, connection);
 		} catch (IOException | SQLException | RequiredValueNotFoundException e) {
 			e.printStackTrace();
@@ -188,8 +167,7 @@ public class NameserverTest {
 	@Test
 	public void getAll() {
 		try {
-			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
-			try (Connection connection = DatabaseSession.getConnection()) {
+			try (Connection connection = DatabaseSession.getRdapConnection()) {
 				List<Nameserver> nameservers = NameserverModel.getAll(connection);
 				for (Nameserver nameserver : nameservers) {
 					System.out.println(((NameserverDAO) nameserver).toJson());
@@ -199,13 +177,6 @@ public class NameserverTest {
 		} catch (SQLException | IOException e) {
 			e.printStackTrace();
 			assert false;
-		} finally {
-			try {
-				DatabaseSession.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-				fail();
-			}
 		}
 	}
 

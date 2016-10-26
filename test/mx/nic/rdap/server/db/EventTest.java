@@ -1,7 +1,5 @@
 package mx.nic.rdap.server.db;
 
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -12,7 +10,6 @@ import org.junit.Test;
 
 import mx.nic.rdap.core.db.Event;
 import mx.nic.rdap.core.db.Link;
-import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.model.EventModel;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
 import mx.nix.rdap.core.catalog.EventAction;
@@ -23,10 +20,7 @@ import mx.nix.rdap.core.catalog.EventAction;
  * @author dalpuche
  *
  */
-public class EventTest {
-
-	/** File from which we will load the database connection. */
-	private static final String DATABASE_FILE = "database";
+public class EventTest extends DatabaseTest {
 
 	@Test
 	/**
@@ -34,7 +28,6 @@ public class EventTest {
 	 */
 	public void insert() {
 		try {
-			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
 			Event event = new EventDAO();
 			event.setEventAction(EventAction.DELETION);
 			event.setEventDate(new Date());
@@ -43,19 +36,13 @@ public class EventTest {
 			link.setValue("linkofevent.com");
 			link.setHref("lele");
 			event.getLinks().add(link);
-			try (Connection connection = DatabaseSession.getConnection()) {
+			try (Connection connection = DatabaseSession.getRdapConnection()) {
 				EventModel.storeToDatabase(event, connection);
 			}
 			assert true;
 		} catch (RequiredValueNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
 			assert false;
-		} finally {
-			try {
-				DatabaseSession.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
 		}
 
 	}
@@ -66,8 +53,7 @@ public class EventTest {
 	 */
 	public void getAll() {
 		try {
-			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
-			try (Connection connection = DatabaseSession.getConnection()) {
+			try (Connection connection = DatabaseSession.getRdapConnection()) {
 				List<Event> events = EventModel.getAll(connection);
 				for (Event event : events) {
 					System.out.println(((EventDAO) event).toJson());
@@ -77,13 +63,6 @@ public class EventTest {
 		} catch (SQLException | IOException e) {
 			e.printStackTrace();
 			assert false;
-		} finally {
-			try {
-				DatabaseSession.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-				fail();
-			}
 		}
 	}
 }

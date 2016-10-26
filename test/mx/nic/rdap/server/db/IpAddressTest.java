@@ -10,7 +10,6 @@ import org.junit.Test;
 
 import mx.nic.rdap.core.db.IpAddress;
 import mx.nic.rdap.core.db.struct.NameserverIpAddressesStruct;
-import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.model.IpAddressModel;
 
 /**
@@ -19,9 +18,7 @@ import mx.nic.rdap.server.db.model.IpAddressModel;
  * @author dalpuche
  *
  */
-public class IpAddressTest {
-	/** File from which we will load the database connection. */
-	private static final String DATABASE_FILE = "database";
+public class IpAddressTest extends DatabaseTest {
 
 	@Test
 	/**
@@ -29,7 +26,6 @@ public class IpAddressTest {
 	 */
 	public void insert() {
 		try {
-			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
 			NameserverIpAddressesStruct struct = new NameserverIpAddressesStruct();
 			IpAddress ipv4 = new IpAddressDAO();
 			ipv4.setType(4);
@@ -41,27 +37,20 @@ public class IpAddressTest {
 			ipv6.setAddress(InetAddress.getByName("2001:db8::1"));
 			struct.getIpv4Adresses().add(ipv4);
 			struct.getIpv6Adresses().add(ipv6);
-			try (Connection connection = DatabaseSession.getConnection()) {
+			try (Connection connection = DatabaseSession.getRdapConnection()) {
 				IpAddressModel.storeToDatabase(struct, 1L, connection);
 			}
 			assert true;
 		} catch (SQLException | IOException e) {
 			assert false;
 			e.printStackTrace();
-		} finally {
-			try {
-				DatabaseSession.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 
 	@Test
 	public void getAll() {
 		try {
-			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
-			try (Connection connection = DatabaseSession.getConnection()) {
+			try (Connection connection = DatabaseSession.getRdapConnection()) {
 				List<IpAddressDAO> addresses = IpAddressModel.getAll(connection);
 				for (IpAddressDAO ip : addresses) {
 					System.out.println(ip.toString());
@@ -71,12 +60,6 @@ public class IpAddressTest {
 		} catch (SQLException | IOException e) {
 			assert false;
 			e.printStackTrace();
-		} finally {
-			try {
-				DatabaseSession.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
 		}
 
 	}

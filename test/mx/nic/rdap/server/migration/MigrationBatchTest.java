@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import org.junit.Test;
 
 import mx.nic.rdap.server.db.DatabaseSession;
+import mx.nic.rdap.server.db.DatabaseTest;
 import mx.nic.rdap.server.db.DomainDAO;
 import mx.nic.rdap.server.db.EntityDAO;
 import mx.nic.rdap.server.db.NameserverDAO;
@@ -20,7 +21,7 @@ import mx.nic.rdap.server.db.NameserverDAO;
  * @author dalpuche
  *
  */
-public class MigrationBatchTest {
+public class MigrationBatchTest extends DatabaseTest {
 
 	private final static Logger logger = Logger.getLogger(MigrationBatchTest.class.getName());
 
@@ -36,72 +37,60 @@ public class MigrationBatchTest {
 
 	@Test
 	public void migrateEntitiesTest() {
-		MigrationInitializer.initOriginDBConnection();
-		MigrationInitializer.initRDAPDBConnection();
 		logger.log(Level.INFO, "******MIGRATING ENTITIES STARTING******");
-		try (Connection originConnection = MigrationDatabaseSession.getConnection();
-				PreparedStatement statement = originConnection.prepareStatement(entityQuery);) {
+		try (Connection originConnection = DatabaseSession.getMigrationConnection();
+				PreparedStatement statement = originConnection.prepareStatement(entityQuery)) {
 			logger.log(Level.INFO, "Excuting QUERY:" + statement.toString());
 			ResultSet entitiesResultSet = statement.executeQuery();
 			logger.log(Level.INFO, "Done!\n Processing Entities resultset");
 			List<EntityDAO> entities = EntityMigrator.getEntitiesFromResultSet(entitiesResultSet);
 			logger.log(Level.INFO, "Done!\n Entities retrived:" + entities.size()
 					+ "\n Starting to save in RDAP Database. Good luck :)");
-			try (Connection rdapConnection = DatabaseSession.getConnection();) {
+			try (Connection rdapConnection = DatabaseSession.getRdapConnection();) {
 				EntityMigrator.storeEntitiesInRDAPDatabase(entities, rdapConnection);
 				rdapConnection.commit();
 			}
 			logger.log(Level.INFO, "******MIGRATING ENTITIES SUCCEEDED******");
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
-		} finally {
-			MigrationInitializer.closeOriginDBConnection();
-			MigrationInitializer.closeRDAPDBConnection();
 		}
 
 	}
 
 	@Test
 	public void migrateNameserversTest() {
-		MigrationInitializer.initOriginDBConnection();
-		MigrationInitializer.initRDAPDBConnection();
 		logger.log(Level.INFO, "******MIGRATING NAMESERVERS STARTING******");
-		try (Connection originConnection = MigrationDatabaseSession.getConnection();
-				PreparedStatement statement = originConnection.prepareStatement(nameserverQuery);) {
+		try (Connection originConnection = DatabaseSession.getMigrationConnection();
+				PreparedStatement statement = originConnection.prepareStatement(nameserverQuery)) {
 			logger.log(Level.INFO, "Excuting QUERY:" + statement.toString());
 			ResultSet nameserverResultSet = statement.executeQuery();
 			logger.log(Level.INFO, "Done!\n Processing Nameservers resultset");
 			List<NameserverDAO> nameservers = NameserverMigrator.getNameserversFromResultSet(nameserverResultSet);
 			logger.log(Level.INFO, "Done!\n Nameservers retrived:" + nameservers.size()
 					+ "\n Starting to save in RDAP Database. Good luck :)");
-			try (Connection rdapConnection = DatabaseSession.getConnection();) {
+			try (Connection rdapConnection = DatabaseSession.getRdapConnection()) {
 				NameserverMigrator.storeNameserversInRDAPDatabase(nameservers, rdapConnection);
 				rdapConnection.commit();
 			}
 			logger.log(Level.INFO, "******MIGRATING NAMESERVERS SUCCEEDED******");
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
-		} finally {
-			MigrationInitializer.closeOriginDBConnection();
-			MigrationInitializer.closeRDAPDBConnection();
 		}
 
 	}
 
 	@Test
 	public void migrateDomainsTest() {
-		MigrationInitializer.initOriginDBConnection();
-		MigrationInitializer.initRDAPDBConnection();
 		logger.log(Level.INFO, "******MIGRATING DOMAINS STARTING******");
-		try (Connection originConnection = MigrationDatabaseSession.getConnection();
-				PreparedStatement statement = originConnection.prepareStatement(domainQuery);) {
+		try (Connection originConnection = DatabaseSession.getMigrationConnection();
+				PreparedStatement statement = originConnection.prepareStatement(domainQuery)) {
 			logger.log(Level.INFO, "Excuting QUERY:" + statement.toString());
 			ResultSet domainResultSet = statement.executeQuery();
 			logger.log(Level.INFO, "Done!\n Processing DOMAINS resultset");
 			List<DomainDAO> nameservers = DomainMigrator.getDomainsFromResultSet(domainResultSet);
 			logger.log(Level.INFO, "Done!\n DOMAINS retrived:" + nameservers.size()
 					+ "\n Starting to save in RDAP Database. Good luck :)");
-			try (Connection rdapConnection = DatabaseSession.getConnection();) {
+			try (Connection rdapConnection = DatabaseSession.getRdapConnection()) {
 				DomainMigrator.storeDomainsInRDAPDatabase(nameservers, rdapConnection);
 				rdapConnection.commit();
 			}
@@ -109,24 +98,18 @@ public class MigrationBatchTest {
 			logger.log(Level.INFO, "******MIGRATING DOMAINS SUCCEEDED******");
 		} catch (Exception e) {
 			throw new RuntimeException(e);
-		} finally {
-			MigrationInitializer.closeOriginDBConnection();
-			MigrationInitializer.closeRDAPDBConnection();
 		}
 
 	}
 
 	@Test
 	public void cleanRdapDbTest() {
-		MigrationInitializer.initRDAPDBConnection();
-		try (Connection rdapConnection = DatabaseSession.getConnection();) {
+		try (Connection rdapConnection = DatabaseSession.getRdapConnection()) {
 			MigrationBatch batch = new MigrationBatch();
 			batch.cleanServerDatabase(rdapConnection);
 			rdapConnection.commit();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
-		} finally {
-			MigrationInitializer.closeRDAPDBConnection();
 		}
 	}
 

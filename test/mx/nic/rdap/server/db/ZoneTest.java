@@ -8,17 +8,13 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Properties;
 import java.util.Random;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.model.ZoneModel;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
 
@@ -28,61 +24,22 @@ import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
  * @author evaldes
  *
  */
-
-public class ZoneTest {
-	/**
-	 * File from which we will load the database connection.
-	 */
-	private static final String DATABASE_FILE = "database";
+public class ZoneTest extends DatabaseTest {
 
 	/**
 	 * Connection for these tests
 	 */
 	private static Connection connection = null;
 
-	/**
-	 * To verify autoCommit is in the connection
-	 */
-	private static boolean autoCommit = false;
-
-	@BeforeClass
-	public static void init() {
-		try {
-			Properties properties = Util.loadProperties(DATABASE_FILE);
-			autoCommit = Boolean.parseBoolean(properties.getProperty("autoCommit"));
-			DatabaseSession.init(properties);
-		} catch (SQLException | IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 	@Before
-	public void before() {
-		try {
-			connection = DatabaseSession.getConnection();
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
+	public void before() throws SQLException {
+		connection = DatabaseSession.getRdapConnection();
 	}
 
 	@After
-	public void after() {
-		try {
-			if (!autoCommit)
-				connection.rollback();
-			connection.close();
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@AfterClass
-	public static void end() {
-		try {
-			DatabaseSession.close();
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
+	public void after() throws SQLException {
+		connection.rollback();
+		connection.close();
 	}
 
 	@Test
