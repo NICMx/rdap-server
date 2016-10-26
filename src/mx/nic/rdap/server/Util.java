@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,6 +26,17 @@ import mx.nix.rdap.core.catalog.Rol;
  * @author aleiva
  */
 public class Util {
+
+	// This regex match with XXX.XXX.# or XXX.# or #, where XXX. is 000 or 0 to
+	// 255, and # is any integer number
+	private static String IP4_GENERIC_REGEX = "(((0|1)?[0-9]{0,2}|2[0-4][0-9]|25[0-5])\\.){0,2}\\d*[^\\.]";
+
+	// this regex will match with a valid IPv4 from 0.0.0.0 or 000.000.000.000
+	// to 255.255.255.255
+	private static String IP4_EXACT_REGEX = "(((0|1)?[0-9]{0,2}|2[0-4][0-9]|25[0-5])\\.){3}((0|1)?[0-9]{0,2}|2[0-4][0-9]|25[0-5])";
+
+	private static String IP4_REGEX = "(" + IP4_EXACT_REGEX + "|" + IP4_GENERIC_REGEX + ")";
+	private static Pattern IP4_PATTERN = Pattern.compile(IP4_REGEX);
 
 	/**
 	 * Loads the properties configuration file
@@ -146,23 +158,33 @@ public class Util {
 	}
 
 	/**
-	 * Validates if an ip address is valid
+	 * Validates if IpAddress is valid
 	 * 
-	 * @param addr
-	 * @return
+	 * @param ipAddress
 	 * @throws MalformedRequestException
-	 *             Throws error 400 Bad request
 	 */
-	public static void validateIpAddress(String addr) throws MalformedRequestException {
-		if (addr.contains(".") || addr.contains(":")) {
+	public static void validateIpAddress(String ipAddress) throws MalformedRequestException {
+		// if the ipAddress contains ':' then InetAddress will try to parse it
+		// like IPv6 address without doing a lookup to DNS.
+		if (ipAddress.contains(":")) {
 			try {
-				InetAddress.getByName(addr);
+				InetAddress.getByName(ipAddress);
 			} catch (UnknownHostException e) {
 				throw new MalformedRequestException("Requested ip is invalid.");
 			}
-		} else {
+			return;
+		}
+
+		if (!IP4_PATTERN.matcher(ipAddress).matches()) {
 			throw new MalformedRequestException("Requested ip is invalid.");
 		}
+
+		try {
+			InetAddress.getByName(ipAddress);
+		} catch (UnknownHostException e) {
+			throw new MalformedRequestException("Requested ip is invalid.");
+		}
+
 	}
 
 	/**
