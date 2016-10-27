@@ -36,6 +36,7 @@ import mx.nic.rdap.core.db.VariantName;
 import mx.nic.rdap.core.db.struct.NameserverIpAddressesStruct;
 import mx.nic.rdap.server.db.model.DomainModel;
 import mx.nic.rdap.server.db.model.EntityModel;
+import mx.nic.rdap.server.db.model.NameserverModel;
 import mx.nic.rdap.server.db.model.ZoneModel;
 import mx.nic.rdap.server.exception.InvalidValueException;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
@@ -434,6 +435,12 @@ public class DomainTest extends DatabaseTest {
 		events.add(event2);
 		nameserver.setEvents(events);
 		nameservers.add(nameserver);
+		try {
+			NameserverModel.storeToDatabase(nameserver, connection);
+		} catch (SQLException | IOException | RequiredValueNotFoundException e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
 		return nameservers;
 	}
 
