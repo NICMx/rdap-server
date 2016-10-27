@@ -49,6 +49,7 @@ public class DomainSearchServlet extends RdapServlet {
 		RdapResult result = null;
 
 		try (Connection connection = DatabaseSession.getRdapConnection()) {
+			Util.fillSearchDataForUser(httpRequest, connection);
 			List<Domain> domains = new ArrayList<Domain>();
 
 			if (request.getParameter().equals("name")) {

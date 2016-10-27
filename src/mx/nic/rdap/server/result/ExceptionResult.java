@@ -33,15 +33,21 @@ public class ExceptionResult implements RdapResult {
 		errorCode = httpRequest.getAttribute("javax.servlet.error.status_code").toString();
 		if (errorCode != null) {
 			switch (errorCode) {
+			case "401":
+				errorTitle = "Forbidden request";
+				errorDescription = "Must loggin to process the request";
+				break;
 			case "404":
 				errorTitle = "Object not found";
+				errorDescription = httpRequest.getAttribute("javax.servlet.error.message").toString();
 				break;
 			case "500":
 				errorTitle = "Internal server error";
+				errorDescription = httpRequest.getAttribute("javax.servlet.error.message").toString();
 				break;
 			}
 		}
-		errorDescription = httpRequest.getAttribute("javax.servlet.error.message").toString();
+
 	}
 
 	/*

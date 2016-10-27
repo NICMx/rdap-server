@@ -7,6 +7,8 @@ import java.net.IDN;
 import java.net.InetAddress;
 import java.net.URLDecoder;
 import java.net.UnknownHostException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +17,7 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import mx.nic.rdap.server.db.model.RdapUserModel;
 import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.exception.UnprocessableEntityException;
@@ -36,6 +39,9 @@ public class Util {
 	private static String IP4_REGEX = "(" + IP4_EXACT_REGEX + "|" + IP4_GENERIC_REGEX + ")";
 	private static Pattern IP4_PATTERN = Pattern.compile(IP4_REGEX);
 
+	private static Integer AUTHENTICATED_USER_MAX_SEARCH_RESULT = null;
+	private static String AUTHENTICATED_USER;
+
 	/**
 	 * Loads the properties configuration file
 	 * <code>META-INF/fileName.properties</code> and returns it.
@@ -55,7 +61,7 @@ public class Util {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * If the request's URI is /rdap/ip/192.0.2.0/24, then this returns
 	 * ["192.0.2.0", "24"].
@@ -191,11 +197,12 @@ public class Util {
 	 * @return
 	 */
 	public static Integer getMaxNumberOfResultsForUser() {
-		boolean isAuthenticatedUser = isAuthenticatedUser();
+		boolean isAuthenticatedUser = getAUTHENTICATED_USER() != null;
 		if (isAuthenticatedUser) {
-			Integer limit = getAuthenticatedUserMaxSearchResults();
-			if (limit != null)
+			Integer limit = getAUTHENTICATED_USER_MAX_SEARCH_RESULT();
+			if (limit != null && limit != 0)
 				return limit;
+
 			else
 				return RdapConfiguration.getMaxNumberOfResultsForAuthenticatedUser();
 		}
@@ -203,24 +210,51 @@ public class Util {
 	}
 
 	/**
-	 * Get the max search results number allowed for the authenticated user
-	 * 
-	 * @return
+	 * @return the aUTHENTICATED_USER_MAX_SEARCH_RESULT
 	 */
-	private static Integer getAuthenticatedUserMaxSearchResults() {
-		// TODO Auto-generated method stub
-		return null;
+	public static Integer getAUTHENTICATED_USER_MAX_SEARCH_RESULT() {
+		return AUTHENTICATED_USER_MAX_SEARCH_RESULT;
 	}
 
 	/**
-	 * True if the user is authenticated
-	 * 
-	 * @return
+	 * @param aUTHENTICATED_USER_MAX_SEARCH_RESULT
+	 *            the aUTHENTICATED_USER_MAX_SEARCH_RESULT to set
 	 */
-	public static boolean isAuthenticatedUser() {
-		// TODO: get from request if the
-		// user is authenticated
-		return false;
+	public static void setAUTHENTICATED_USER_MAX_SEARCH_RESULT(Integer aUTHENTICATED_USER_MAX_SEARCH_RESULT) {
+		AUTHENTICATED_USER_MAX_SEARCH_RESULT = aUTHENTICATED_USER_MAX_SEARCH_RESULT;
+	}
+
+	/**
+	 * @return the aUTHENTICATED_USER
+	 */
+	public static String getAUTHENTICATED_USER() {
+		return AUTHENTICATED_USER;
+	}
+
+	/**
+	 * @param aUTHENTICATED_USER
+	 *            the aUTHENTICATED_USER to set
+	 */
+	public static void setAUTHENTICATED_USER(String aUTHENTICATED_USER) {
+		AUTHENTICATED_USER = aUTHENTICATED_USER;
+	}
+
+	/**
+	 * Read the request and fill the search data for the authenticated user
+	 * 
+	 * @param httpRequest
+	 * @param connection
+	 * @throws IOException
+	 * @throws SQLException
+	 */
+	public static void fillSearchDataForUser(HttpServletRequest httpRequest, Connection connection)
+			throws IOException, SQLException {
+		String username = httpRequest.getRemoteUser();
+		if (username != null) {
+			Util.setAUTHENTICATED_USER(username);
+			Util.setAUTHENTICATED_USER_MAX_SEARCH_RESULT(
+					RdapUserModel.getMaxSearchResultsForAuthenticatedUser(username, connection));
+		}
 	}
 
 	/**

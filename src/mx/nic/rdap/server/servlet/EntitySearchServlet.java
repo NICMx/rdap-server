@@ -34,22 +34,23 @@ public class EntitySearchServlet extends RdapServlet {
 	public static final String HANDLE = "handle";
 
 	@Override
-	protected RdapResult doRdapGet(HttpServletRequest request)
+	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
 
-		validateRequestParameter(request);
+		validateRequestParameter(httpRequest);
 
 		List<Entity> entities = null;
-		String parameter = request.getParameterNames().nextElement();
-		String value = request.getParameter(parameter);
+		String parameter = httpRequest.getParameterNames().nextElement();
+		String value = httpRequest.getParameter(parameter);
 
-		try (Connection con = DatabaseSession.getRdapConnection()) {
+		try (Connection connection = DatabaseSession.getRdapConnection()) {
+			Util.fillSearchDataForUser(httpRequest, connection);
 			switch (parameter) {
 			case FULL_NAME:
-				entities = EntityModel.searchByVCardName(value.trim(), con);
+				entities = EntityModel.searchByVCardName(value.trim(), connection);
 				break;
 			case HANDLE:
-				entities = EntityModel.searchByHandle(value.trim(), con);
+				entities = EntityModel.searchByHandle(value.trim(), connection);
 				break;
 			}
 		}

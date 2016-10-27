@@ -25,6 +25,8 @@ import mx.nix.rdap.core.catalog.Rol;
 import mx.nix.rdap.core.catalog.Status;
 
 /**
+ * Utilities for json renderer
+ * 
  * @author dalpuche
  *
  */
@@ -164,7 +166,7 @@ public class JsonUtil {
 	 * @return
 	 */
 	public static UserAccessLevel getUserAccessLevel(RdapObject object) {
-		if (Util.isAuthenticatedUser()) {
+		if (Util.getAUTHENTICATED_USER() != null) {
 			// Validate is the user is the owner of the object
 			List<Rol> rols = Util.getConfiguratedOwnerRols();
 			if (true) {
