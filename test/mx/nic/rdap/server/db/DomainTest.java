@@ -212,17 +212,17 @@ public class DomainTest extends DatabaseTest {
 		relations1.add(VariantRelation.REGISTERED);
 		relations1.add(VariantRelation.CONJOINED);
 		List<VariantName> variantNames1 = new ArrayList<VariantName>();
-		variantNames1.add(VariantTest.createVariantName("xn--fo-cka" + randomInt + ".mx"));
-		variantNames1.add(VariantTest.createVariantName("xn--fo-fka" + randomInt + ".mx"));
+		variantNames1.add(DomainTest.createVariantName("xn--fo-cka" + randomInt + ".mx"));
+		variantNames1.add(DomainTest.createVariantName("xn--fo-fka" + randomInt + ".mx"));
 
 		List<VariantRelation> relations2 = new ArrayList<VariantRelation>();
 		relations2.add(VariantRelation.UNREGISTERED);
 		relations2.add(VariantRelation.REGISTRATION_RESTRICTED);
 		List<VariantName> variantNames2 = new ArrayList<VariantName>();
-		variantNames2.add(VariantTest.createVariantName("xn--fo-8ja" + randomInt + ".mx"));
+		variantNames2.add(DomainTest.createVariantName("xn--fo-8ja" + randomInt + ".mx"));
 
-		variants.add(VariantTest.createVariant(null, relations1, variantNames1, null, null));
-		variants.add(VariantTest.createVariant(null, relations2, variantNames2, null, ".EXAMPLE Spanish"));
+		variants.add(DomainTest.createVariant(null, relations1, variantNames1, null, null));
+		variants.add(DomainTest.createVariant(null, relations2, variantNames2, null, ".EXAMPLE Spanish"));
 
 		domain.getVariants().addAll(variants);
 
@@ -545,5 +545,22 @@ public class DomainTest extends DatabaseTest {
 		e.setHandle(handle);
 		e.setPort43(port43);
 		return e;
+	}
+
+	public static VariantDAO createVariant(Long id, List<VariantRelation> relations, List<VariantName> variantNames,
+			Long domainId, String idnTable) {
+		VariantDAO variant = new VariantDAO();
+		variant.setId(id);
+		variant.setIdnTable(idnTable);
+		variant.getRelations().addAll(relations);
+		variant.getVariantNames().addAll(variantNames);
+		variant.setDomainId(domainId);
+		return variant;
+	}
+
+	public static VariantName createVariantName(String punycode) {
+		VariantName variantName = new VariantName();
+		variantName.setLdhName(punycode);
+		return variantName;
 	}
 }
