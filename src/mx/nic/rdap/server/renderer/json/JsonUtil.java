@@ -1,7 +1,9 @@
 package mx.nic.rdap.server.renderer.json;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -173,4 +175,20 @@ public class JsonUtil {
 		}
 		return UserAccessLevel.ANY;
 	}
+
+	public static HashMap<String, UserAccessLevel> loadObjectPrivacyHash(String object) {
+		HashMap<String, UserAccessLevel> privacyMap = new HashMap<String, UserAccessLevel>();
+		Properties properties = new Properties();
+		try {
+			properties = Util.loadProperties("privacy/" + object);
+		} catch (IOException e) {
+			throw new RuntimeException("Failed at loading files.");
+		}
+		for (String key : properties.stringPropertyNames()) {
+			UserAccessLevel privacyLevel = UserAccessLevel.getByName(properties.getProperty(key));
+			privacyMap.put(key, privacyLevel);
+		}
+		return privacyMap;
+	}
+
 }

@@ -8,8 +8,13 @@ import mx.nic.rdap.server.exception.MalformedRequestException;
 
 public class ValidateIpTest extends TestCase {
 
+	/**
+	 * Several ip validations
+	 * 
+	 * @throws MalformedRequestException
+	 */
 	@Test
-	public void validateIpAddressTest() throws MalformedRequestException {
+	public void testValidateIpAddress() throws MalformedRequestException {
 		testIpAddress("1.2", true);
 		testIpAddress("192.168.001.004", true);
 		testIpAddress("4000000000", true);
