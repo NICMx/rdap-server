@@ -33,7 +33,7 @@ public class RdapUserTest extends DatabaseTest {
 				RdapUserRoleDAO role = new RdapUserRoleDAO();
 				role.setRoleName(roleName);
 				user.setUserRole(role);
-				RdapUserModel.storeRdapUserToDatabase(user, connection);
+				RdapUserModel.storeToDatabase(user, connection);
 				connection.commit();
 			}
 			assert true;

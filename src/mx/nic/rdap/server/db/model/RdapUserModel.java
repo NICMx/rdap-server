@@ -83,7 +83,7 @@ public class RdapUserModel {
 	 * @throws RequiredValueNotFoundException
 	 */
 
-	public static void storeRdapUserToDatabase(RdapUserDAO user, Connection connection)
+	public static void storeToDatabase(RdapUserDAO user, Connection connection)
 			throws SQLException, IOException, RequiredValueNotFoundException {
 		isValidForStore(user);
 		String query = queryGroup.getQuery("storeToDatabase");
