@@ -45,7 +45,35 @@ public class ValidateIpTest extends TestCase {
 		testIpAddress("6::123.co", false);
 
 		testIpAddress("0.1.2.2.", false);
+		testIpAddress("255.255.255.255", true);
+		testIpAddress("255.255.65535", true);
+		testIpAddress("255.16777215", true);
+		testIpAddress("255.+1", false);
 
+		// for (Long i = 0L ; i <= FIRST_OCTECT_LIMIT.longValue(); i++) {
+		// testIpAddress("255.255.255." + i, true);
+		// }
+		//
+		// for (Long i = 0L ; i <= SECOND_OCTECT_LIMIT.longValue(); i++) {
+		// testIpAddress("255.255." + i, true);
+		// }
+		//
+		// for (Long i = 0L ; i <= THIRD_OCTECT_LIMIT.longValue(); i++) {
+		// testIpAddress("255." + i, true);
+		// }
+		//
+		testIpAddress("4294967295", true);
+		testIpAddress("4294967296", false);
+		testIpAddress(".255", false);
+		testIpAddress("0.255", true);
+		testIpAddress("0.0.255", true);
+		testIpAddress("0.0.0.255", true);
+		testIpAddress("1.255", true);
+		testIpAddress("1.1.255", true);
+		testIpAddress("1.1.1.255", true);
+		testIpAddress("12.255", true);
+		testIpAddress("12.12.255", true);
+		testIpAddress("12.12.12.255", true);
 	}
 
 	private static void testIpAddress(String ipAddress, boolean isValid) {
