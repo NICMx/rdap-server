@@ -103,7 +103,11 @@ public class RdapUserDAO implements DatabaseObject {
 	public void storeToDatabase(PreparedStatement preparedStatement) throws SQLException {
 		preparedStatement.setString(1, this.getName());
 		preparedStatement.setString(2, this.getPass());
-		preparedStatement.setInt(3, this.getMaxSearchResults());
+		if (this.getMaxSearchResults() != null)
+			preparedStatement.setInt(3, this.getMaxSearchResults());
+		else
+			preparedStatement.setNull(3, java.sql.Types.INTEGER);
+		;
 
 	}
 

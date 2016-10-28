@@ -17,7 +17,10 @@ import mx.nic.rdap.server.exception.InvalidadDataStructure;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
 
 /**
- * @author L00000185
+ * Class used to process the users from the client´s database and stores them
+ * into the RDAP's database
+ * 
+ * @author dalpuche
  *
  */
 public class UserMigrator {
@@ -25,8 +28,7 @@ public class UserMigrator {
 	private static Logger logger = Logger.getLogger(DomainMigrator.class.getName());
 
 	/**
-	 * Process the resultSet of the select statement and returns a list of
-	 * Domains
+	 * Process the resultSet of the select statement and returns a list of users
 	 * 
 	 * @param resultSet
 	 * @return
@@ -80,7 +82,7 @@ public class UserMigrator {
 					throw new RequiredValueNotFoundException("Role", "RdapUser");
 				}
 			} catch (SQLException e) {
-				throw new RequiredValueNotFoundException("port43", "Domain");
+				throw new RequiredValueNotFoundException("Role", "RdapUser");
 			}
 			users.add(user);
 		}

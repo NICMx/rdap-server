@@ -7,9 +7,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.SortedSet;
+import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -19,6 +21,8 @@ import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.db.DomainDAO;
 import mx.nic.rdap.server.db.EntityDAO;
 import mx.nic.rdap.server.db.NameserverDAO;
+import mx.nic.rdap.server.db.RdapUserDAO;
+import mx.nic.rdap.server.db.model.RdapUserModel;
 import mx.nic.rdap.server.db.model.ZoneModel;
 import mx.nic.rdap.server.exception.InvalidValueException;
 import mx.nic.rdap.server.exception.InvalidadDataStructure;
@@ -38,6 +42,25 @@ public class MigrationBatch extends TimerTask {
 	private HashMap<String, String> deleteQueries = new HashMap<>();
 	private final String MIGRATION_STATEMENTS_FILEPATH = "META-INF/migration/migration.sql";
 	private final String DELETE_STATEMENTS_FILEPATH = "META-INF/sql/Delete.sql";
+
+	public static void main(String args[]) throws InterruptedException {
+
+		Date firstTimeExecutionDate = MigratorConfiguration.getFirstTimeExecutionDate();
+
+		Long timeBetweenExecution = MigratorConfiguration.getTimeBetweenExecution();
+		// Creates Timer which runs the tasks
+		Timer timer = new Timer();
+
+		// Create task from class ScheduledTask
+		MigrationBatch task = new MigrationBatch();
+
+		try {
+			timer.scheduleAtFixedRate(task, firstTimeExecutionDate, timeBetweenExecution);
+		} catch (RuntimeException e) {
+			logger.log(Level.SEVERE, e.getMessage());
+		}
+
+	}
 
 	public MigrationBatch() {
 		try {
@@ -77,10 +100,36 @@ public class MigrationBatch extends TimerTask {
 	 */
 	public void migrate(Connection rdapConnection, Connection originConnection) throws RequiredValueNotFoundException,
 			InvalidValueException, InvalidadDataStructure, IOException, SQLException {
+		if (MigratorConfiguration.migrateUsers()) {
+			migrateUsers(rdapConnection, originConnection);
+		}
 		migrateEntities(rdapConnection, originConnection);
 		migrateNameservers(rdapConnection, originConnection);
 		migrateDomains(rdapConnection, originConnection);
 
+	}
+
+	/**
+	 * Execute the users select stamements in the origin database and store them
+	 * in the RDAP databse
+	 * 
+	 * @param rdapConnection
+	 * @param originConnection
+	 */
+	private void migrateUsers(Connection rdapConnection, Connection originConnection) throws SQLException,
+			RequiredValueNotFoundException, InvalidValueException, InvalidadDataStructure, IOException {
+		logger.log(Level.INFO, "******STARTING USERS MIGRATION******");
+		try (PreparedStatement statement = originConnection.prepareStatement(selectQueries.get("user"));) {
+			logger.log(Level.INFO, "Excuting QUERY:" + statement.toString());
+			ResultSet entitiesResultSet = statement.executeQuery();
+			logger.log(Level.INFO, "Done!\n Processing Users resultset");
+			List<RdapUserDAO> users = UserMigrator.getUsersFromResultSet(entitiesResultSet);
+			logger.log(Level.INFO,
+					"Done!\n Users retrived:" + users.size() + "\n Starting to save in RDAP Database. Good luck :)");
+			UserMigrator.storeDomainsInRDAPDatabase(users, rdapConnection);
+
+		}
+		logger.log(Level.INFO, "******MIGRATING USERS SUCCESSFUL******");
 	}
 
 	/**
@@ -182,6 +231,9 @@ public class MigrationBatch extends TimerTask {
 				statement.executeUpdate();
 			}
 
+		}
+		if (MigratorConfiguration.migrateUsers()) {
+			RdapUserModel.cleanRdapUserDatabase(rdapConnection);
 		}
 		logger.log(Level.INFO, "******CLEANING RDAP DATABASE SUCCESSFUL******");
 	}

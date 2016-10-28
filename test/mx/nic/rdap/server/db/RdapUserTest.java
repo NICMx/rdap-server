@@ -56,4 +56,18 @@ public class RdapUserTest extends DatabaseTest {
 		}
 	}
 
+	@Test
+	public void cleanUsersTableTest() {
+		try {
+			try (Connection connection = DatabaseSession.getRdapConnection()) {
+				RdapUserModel.cleanRdapUserDatabase(connection);
+				connection.commit();
+			}
+			assert true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			assert false;
+		}
+	}
+
 }

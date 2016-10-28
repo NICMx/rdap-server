@@ -1,3 +1,7 @@
+#user
+SELECT 'dalpuche' AS rus_name, 'password1' AS pass,5 AS rus_max_search_results, 'AUTHENTICATED' AS rur_name FROM dual;
+
+
 #entity
 SELECT "XXXX" AS handle ,"whois.example.net" AS port43 ,"active,validated" AS rdap_status ,"registration| 2011-12-31T23:59:59Z| XXXX, reregistration| 2012-12-01T23:59:59Z | XXXX" AS events ,"XXXX |registrar" AS entities ,"1|IANA Registrar ID, 2|NIC ID " AS public_ids ,"Joe Jobs |Orange |www.orange.mx |jj@orange.mx |81 8818181 |81 8181818181 |248.697.0908 |Engineer |local |Mexico |Monterrey |Nuevo Leon |Altavista |100 |Av. Luis Elizondo |64000" AS vcard FROM dual;
 

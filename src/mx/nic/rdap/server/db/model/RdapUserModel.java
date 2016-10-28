@@ -118,4 +118,25 @@ public class RdapUserModel {
 			}
 		}
 	}
+
+	/**
+	 * Clean the rdapuser and rdapuserrole tables in the migration
+	 * 
+	 * @param connection
+	 * @throws SQLException
+	 */
+	public static void cleanRdapUserDatabase(Connection connection) throws SQLException {
+		String query = queryGroup.getQuery("deleteAllRdapUserRoles");
+		try (PreparedStatement statement = connection.prepareStatement(query)) {
+			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+			statement.executeUpdate();
+
+		}
+		query = queryGroup.getQuery("deleteAllRdapUsers");
+		try (PreparedStatement statement = connection.prepareStatement(query)) {
+			logger.log(Level.INFO, "Executing QUERY:" + statement.toString());
+			statement.executeUpdate();
+
+		}
+	}
 }
