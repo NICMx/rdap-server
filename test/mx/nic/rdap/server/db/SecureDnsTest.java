@@ -15,13 +15,19 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.core.db.DsData;
+import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Event;
 import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.SecureDNS;
+import mx.nic.rdap.server.db.model.DomainModel;
+import mx.nic.rdap.server.db.model.EntityModel;
 import mx.nic.rdap.server.db.model.SecureDNSModel;
+import mx.nic.rdap.server.db.model.ZoneModel;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
 import mx.nix.rdap.core.catalog.EventAction;
+import mx.nix.rdap.core.catalog.Rol;
 
 public class SecureDnsTest extends DatabaseTest {
 
@@ -43,9 +49,10 @@ public class SecureDnsTest extends DatabaseTest {
 
 	@Test
 	public void insertAndGetMinimum() {
-		Long domainId = 3L;
+		Domain dom = createSimpleDomain();
+		Long domainId = dom.getId();
 
-		SecureDNS secureDns = getSecureDns(null, 3L, true, false, null);
+		SecureDNS secureDns = getSecureDns(null, domainId, true, false, null);
 
 		try {
 			SecureDNSModel.storeToDatabase(secureDns, connection);
@@ -67,7 +74,8 @@ public class SecureDnsTest extends DatabaseTest {
 
 	@Test
 	public void insertAndGetComplex() {
-		Long domainId = 3L;
+		Domain dom = createSimpleDomain();
+		Long domainId = dom.getId();
 
 		List<DsData> dsDataList = new ArrayList<>();
 
@@ -84,11 +92,11 @@ public class SecureDnsTest extends DatabaseTest {
 		List<Event> events = new ArrayList<Event>();
 		Event event1 = new EventDAO();
 		event1.setEventAction(EventAction.REGISTRATION);
-		event1.setEventDate(new Timestamp(((new Date()).getTime())));
+		event1.setEventDate(new Date());
 
 		Event event2 = new EventDAO();
 		event2.setEventAction(EventAction.LAST_CHANGED);
-		event2.setEventDate(new Timestamp(((new Date()).getTime())));
+		event2.setEventDate(new Date());
 		event2.setEventActor("joe@example.com");
 
 		// event links data
@@ -177,11 +185,11 @@ public class SecureDnsTest extends DatabaseTest {
 		List<Event> events = new ArrayList<Event>();
 		Event event1 = new EventDAO();
 		event1.setEventAction(EventAction.REGISTRATION);
-		event1.setEventDate(new Timestamp(((new Date()).getTime())));
+		event1.setEventDate(new Date());
 
 		Event event2 = new EventDAO();
 		event2.setEventAction(EventAction.LAST_CHANGED);
-		event2.setEventDate(new Timestamp(((new Date()).getTime())));
+		event2.setEventDate(new Date());
 		event2.setEventActor("joe@example.com");
 
 		// event links data
@@ -204,5 +212,63 @@ public class SecureDnsTest extends DatabaseTest {
 
 		SecureDNS secureDns = getSecureDns(null, null, true, true, dsDataList);
 		return (SecureDNSDAO) secureDns;
+	}
+
+	private static Domain createSimpleDomain() {
+
+		Entity registrar = new EntityDAO();
+		registrar.setHandle("whois");
+		registrar.setPort43("whois.mx");
+		registrar.getRoles().add(Rol.SPONSOR);
+
+		Entity ent = new EntityDAO();
+		ent.setHandle("usr_evaldez");
+		ent.getRoles().add(Rol.REGISTRANT);
+		ent.getRoles().add(Rol.ADMINISTRATIVE);
+		ent.getRoles().add(Rol.TECHNICAL);
+
+		try {
+			EntityModel.storeToDatabase(registrar, connection);
+			EntityModel.storeToDatabase(ent, connection);
+		} catch (SQLException | IOException | RequiredValueNotFoundException e1) {
+			e1.printStackTrace();
+			fail();
+		}
+
+		try {
+			EntityModel.storeToDatabase(registrar, connection);
+			EntityModel.storeToDatabase(ent, connection);
+		} catch (SQLException | IOException | RequiredValueNotFoundException e1) {
+			e1.printStackTrace();
+			fail();
+		}
+
+		Domain dom = new DomainDAO();
+		dom.getEntities().add(ent);
+		dom.getEntities().add(registrar);
+		dom.setHandle("domcommx");
+		dom.setLdhName("mydomaintest.mx");
+
+		Integer zoneId = null;
+		try {
+			zoneId = ZoneModel.storeToDatabase("mx", connection);
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+			fail(e1.toString());
+		}
+		dom.setZoneId(zoneId);
+
+		// SecureDNSDAO secureDNS = SecureDnsTest.getSecureDns(null, null,
+		// false, false, null);
+		// dom.setSecureDNS(secureDNS);
+
+		try {
+			DomainModel.storeToDatabase(dom, connection);
+		} catch (SQLException | IOException | RequiredValueNotFoundException e) {
+			e.printStackTrace();
+			fail();
+		}
+
+		return dom;
 	}
 }

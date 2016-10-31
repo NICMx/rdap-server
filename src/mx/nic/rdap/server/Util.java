@@ -29,11 +29,18 @@ import mx.nix.rdap.core.catalog.Rol;
  */
 public class Util {
 
-	// This regex match with ###.###.###.n or ###.###.n or #.n or n, where ###. is 000 or 0 to
-	// 255, and n is any integer number
+	//
+	/**
+	 * This regex string match with ###.###.###.n or ###.###.n or #.n or n,
+	 * where ###. is 000 or 0 to 255, and n is any integer number
+	 */
 	private static String IP4_GENERIC_REGEX = "(((0|1)?[0-9]{0,2}|2[0-4][0-9]|25[0-5])\\.){0,3}\\d*[^\\.]";
+
+	/**
+	 * Compiled pattern of <code>IP4_GENERIC_REGEX<code>
+	 */
 	private static Pattern IP4_GENERIC_PATTERN = Pattern.compile(IP4_GENERIC_REGEX);
-	
+
 	private static final BigInteger FIRST_OCTECT_LIMIT = new BigInteger("4294967295"); // 0xFFFF_FFFF
 	private static final BigInteger SECOND_OCTECT_LIMIT = new BigInteger(0xFF_FFFF + "");// 16777215
 	private static final BigInteger THIRD_OCTECT_LIMIT = new BigInteger(0xFFFF + "");// 65535
@@ -138,30 +145,19 @@ public class Util {
 		// Validating if is a partial search and if it is, only can contain
 		// ASCII
 
-		if (pattern.length() < RdapConfiguration.getMinimumSearchPatternLength()) {// Validate
-																					// if
-																					// the
-																					// lenght
-																					// of
-																					// the
-																					// pattern
-																					// is
-																					// valid
+		// Validate if the lenght of the pattern is valid
+		if (pattern.length() < RdapConfiguration.getMinimumSearchPatternLength()) {
 			throw new UnprocessableEntityException("Search pattern must be at least "
 					+ RdapConfiguration.getMinimumSearchPatternLength() + " characters");
 		}
 		boolean partialSearch = false;
 		partialSearch = pattern.contains("*");
-		if (partialSearch && pattern.compareTo(IDN.toASCII(pattern)) != 0) {// Validate
-			// if is
-			// a
-			// valid
-			// partial
-			// search
+
+		// Validate if is a valid partial search
+		if (partialSearch && pattern.compareTo(IDN.toASCII(pattern)) != 0) {
 			throw new UnprocessableEntityException("Partial search must contain only ASCII values");
 		}
 	}
-
 
 	/**
 	 * Validates if IpAddress is valid

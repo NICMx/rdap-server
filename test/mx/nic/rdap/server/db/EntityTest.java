@@ -109,11 +109,11 @@ public class EntityTest extends DatabaseTest {
 		List<Event> events = new ArrayList<Event>();
 		Event event1 = new EventDAO();
 		event1.setEventAction(EventAction.REGISTRATION);
-		event1.setEventDate(new Timestamp(((new Date()).getTime())));
+		event1.setEventDate(new Date());
 
 		Event event2 = new EventDAO();
 		event2.setEventAction(EventAction.LAST_CHANGED);
-		event2.setEventDate(new Timestamp(((new Date()).getTime())));
+		event2.setEventDate(new Date());
 		event2.setEventActor("joe@example.com");
 
 		// event links data
@@ -266,11 +266,11 @@ public class EntityTest extends DatabaseTest {
 		List<Event> events = new ArrayList<Event>();
 		Event event1 = new EventDAO();
 		event1.setEventAction(EventAction.REGISTRATION);
-		event1.setEventDate(new Timestamp(((new Date()).getTime())));
+		event1.setEventDate(new Date());
 
 		Event event2 = new EventDAO();
 		event2.setEventAction(EventAction.LAST_CHANGED);
-		event2.setEventDate(new Timestamp(((new Date()).getTime())));
+		event2.setEventDate(new Date());
 		event2.setEventActor("joe@example.com");
 
 		// event links data
@@ -347,11 +347,11 @@ public class EntityTest extends DatabaseTest {
 		List<Event> eventList = new ArrayList<Event>();
 		Event eve1 = new EventDAO();
 		eve1.setEventAction(EventAction.REGISTRATION);
-		eve1.setEventDate(new Timestamp(((new Date()).getTime())));
+		eve1.setEventDate(new Date());
 
 		Event eve2 = new EventDAO();
 		eve2.setEventAction(EventAction.LAST_CHANGED);
-		eve2.setEventDate(new Timestamp(((new Date()).getTime())));
+		eve2.setEventDate(new Date());
 		eve2.setEventActor("joe@example.com");
 
 		// event links data
@@ -562,11 +562,11 @@ public class EntityTest extends DatabaseTest {
 		List<Event> events = new ArrayList<Event>();
 		Event event1 = new EventDAO();
 		event1.setEventAction(EventAction.REGISTRATION);
-		event1.setEventDate(new Timestamp(((new Date()).getTime())));
+		event1.setEventDate(new Date());
 
 		Event event2 = new EventDAO();
 		event2.setEventAction(EventAction.LAST_CHANGED);
-		event2.setEventDate(new Timestamp(((new Date()).getTime())));
+		event2.setEventDate(new Date());
 		event2.setEventActor("joe@example.com");
 
 		// event links data

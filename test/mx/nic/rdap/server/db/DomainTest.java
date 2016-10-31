@@ -278,11 +278,11 @@ public class DomainTest extends DatabaseTest {
 		List<Event> events = new ArrayList<Event>();
 		Event event1 = new EventDAO();
 		event1.setEventAction(EventAction.REGISTRATION);
-		event1.setEventDate(new Timestamp(((new Date()).getTime())));
+		event1.setEventDate(new Date());
 
 		Event event2 = new EventDAO();
 		event2.setEventAction(EventAction.LAST_CHANGED);
-		event2.setEventDate(new Timestamp(((new Date()).getTime())));
+		event2.setEventDate(new Date());
 		event2.setEventActor("joe@example.com");
 
 		// event links data
@@ -499,11 +499,11 @@ public class DomainTest extends DatabaseTest {
 		List<Event> events = new ArrayList<Event>();
 		Event event1 = new EventDAO();
 		event1.setEventAction(EventAction.REGISTRATION);
-		event1.setEventDate(new Timestamp(((new Date()).getTime())));
+		event1.setEventDate(new Date());
 
 		Event event2 = new EventDAO();
 		event2.setEventAction(EventAction.LAST_CHANGED);
-		event2.setEventDate(new Timestamp(((new Date()).getTime())));
+		event2.setEventDate(new Date());
 		event2.setEventActor("joe@example.com");
 
 		// event links data
