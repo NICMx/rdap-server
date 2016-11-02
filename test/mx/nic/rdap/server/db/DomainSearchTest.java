@@ -22,9 +22,9 @@ import mx.nic.rdap.core.db.Event;
 import mx.nic.rdap.core.db.IpAddress;
 import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.Nameserver;
-import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.core.db.RemarkDescription;
 import mx.nic.rdap.core.db.struct.NameserverIpAddressesStruct;
+import mx.nic.rdap.server.RdapConfiguration;
+import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.model.DomainModel;
 import mx.nic.rdap.server.db.model.EntityModel;
 import mx.nic.rdap.server.db.model.NameserverModel;
@@ -33,17 +33,17 @@ import mx.nic.rdap.server.exception.InvalidValueException;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
 import mx.nix.rdap.core.catalog.EventAction;
 import mx.nix.rdap.core.catalog.Rol;
-import mx.nix.rdap.core.catalog.Status;
 
 public class DomainSearchTest extends DatabaseTest {
-	
+
 	/**
 	 * Connection for this tests
 	 */
 	private static Connection connection = null;
 
 	@Before
-	public void before() throws SQLException {
+	public void before() throws SQLException, IOException {
+		RdapConfiguration.loadSystemProperties(Util.loadProperties("configuration"));
 		connection = DatabaseSession.getRdapConnection();
 	}
 
@@ -60,12 +60,12 @@ public class DomainSearchTest extends DatabaseTest {
 	 */
 	@Test
 	public void searchByName() throws UnknownHostException {
-		Random random = new Random();
-		createRandomDomains(random.nextInt());
+
+		createRandomDomains(5, 0);
 		try {
 			List<Domain> domains = DomainModel.searchByName("mydomaintest*", connection);
 			for (Domain domain : domains) {
-				System.out.println(domain.getHandle() + "\n" + domain.getNameServers().get(0).getHandle());
+				System.out.println(domain.getLdhName());
 			}
 		} catch (SQLException | IOException e) {
 			e.printStackTrace();
@@ -81,12 +81,11 @@ public class DomainSearchTest extends DatabaseTest {
 	 */
 	@Test
 	public void searchByNameWZone() throws UnknownHostException, InvalidValueException {
-		Random random = new Random();
-		createRandomDomains(random.nextInt());
+		createRandomDomains(5, 0);
 		try {
 			List<Domain> domains = DomainModel.searchByName("mydomaintest*", "lat", connection);
 			for (Domain domain : domains) {
-				System.out.println(domain.getHandle() + "\n" + domain.getNameServers().get(0).getHandle());
+				System.out.println(domain.getLdhName());
 			}
 		} catch (SQLException | IOException e) {
 			e.printStackTrace();
@@ -101,15 +100,16 @@ public class DomainSearchTest extends DatabaseTest {
 	 */
 	@Test
 	public void searchByNameserverName() throws UnknownHostException {
-		Random random = new Random();
-		createRandomDomains(random.nextInt());
+		createRandomDomains(3, 5);
 		try {
-			List<Domain> domains = DomainModel.searchByNsLdhName("ns1.xn--fo-5ja1*", connection);
+			List<Domain> domains = DomainModel.searchByNsLdhName("ns1.xn--fo-5ja*", connection);
 			for (Domain domain : domains) {
-				System.out.println(domain.getHandle());
+				System.out.println(domain.getLdhName());
 				List<Nameserver> nameservers = domain.getNameServers();
 				for (Nameserver ns : nameservers) {
 					System.out.println("\t" + ns.getLdhName());
+					System.out.println(ns.getIpAddresses().getIpv4Adresses().get(0).getAddress().getHostAddress());
+
 				}
 			}
 		} catch (SQLException | IOException e) {
@@ -124,34 +124,55 @@ public class DomainSearchTest extends DatabaseTest {
 	 * @throws UnknownHostException
 	 */
 	@Test
-	public void searchByNsIp() throws UnknownHostException {
+	public void searchByNsIp() {
+
 		try {
-			List<Domain> domains = DomainModel.searchByNsIp("192.0.2.1", connection);
+			createRandomDomains(1, 5);
+		} catch (UnknownHostException e1) {
+			e1.printStackTrace();
+		}
+		try {
+			List<Domain> domains = DomainModel.searchByNsIp("192.0.2.13", connection);
+
 			for (Domain domain : domains) {
-				System.out.println(domain.getHandle());
-				List<Nameserver> nameservers = domain.getNameServers();
-				for (Nameserver ns : nameservers) {
-					System.out.println("\t" + ns.getLdhName());
+				System.out.println(domain.getLdhName());
+				for (Nameserver nameserver : domain.getNameServers()) {
+					System.out.println(nameserver.getLdhName());
+					System.out.println(
+							nameserver.getIpAddresses().getIpv4Adresses().get(0).getAddress().getHostAddress());
 				}
 			}
-		} catch (SQLException | IOException e) {
+		} catch (IOException | SQLException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
 	}
 
-	public static List<Domain> createRandomDomains(int randomInt) throws UnknownHostException {
+	public static List<Domain> createRandomDomains(int numDom, int numNs) throws UnknownHostException {
+		Random random = new Random();
 		List<Domain> domains = new ArrayList<Domain>();
+
+		// Creat entity and registrar for domain
 		Entity registrar = new EntityDAO();
+		int randomInt = random.nextInt();
 		registrar.setHandle("whois" + randomInt);
-		registrar.setPort43("whois.mx");
 		registrar.getRoles().add(Rol.SPONSOR);
 
 		Entity ent = new EntityDAO();
 		ent.setHandle("usr_evaldez" + randomInt);
-		ent.getRoles().add(Rol.REGISTRANT);
-		ent.getRoles().add(Rol.ADMINISTRATIVE);
-		ent.getRoles().add(Rol.TECHNICAL);
+
+		// Create event with links for entity
+		Event event = new EventDAO();
+		event.setEventAction(EventAction.DELETION);
+		event.setEventDate(new Date());
+		event.setEventActor("dalpuche");
+
+		Link link = new LinkDAO();
+		link.setValue("linkofevent.com");
+		link.setHref("lele");
+		event.getLinks().add(link);
+
+		ent.getEvents().add(event);
 
 		try {
 			EntityModel.storeToDatabase(registrar, connection);
@@ -160,19 +181,24 @@ public class DomainSearchTest extends DatabaseTest {
 			e1.printStackTrace();
 			fail();
 		}
-		List<Nameserver> nameservers = createRandomNameservers(3);
-		Random random = new Random();
-		for (int i = 0; i < 10; i++) {
+
+		// Create nameservers
+		List<Nameserver> nameservers = createRandomNameservers(numNs, ent);
+
+		// Create each domain
+		for (int i = 0; i < numDom; i++) {
+
 			Domain dom = new DomainDAO();
 			int rnd = random.nextInt();
 			dom.getEntities().add(ent);
 			dom.getEntities().add(registrar);
 			dom.setHandle("domcommxewq" + rnd);
-			dom.setLdhName("mydomaintest" + rnd + ".mx");
+			dom.setLdhName("mydomaintest" + rnd + ".lat");
 
+			// Create zone
 			Integer zoneId = null;
 			try {
-				zoneId = ZoneModel.storeToDatabase("mx", connection);
+				zoneId = ZoneModel.storeToDatabase("lat", connection);
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 				fail(e1.toString());
@@ -181,14 +207,14 @@ public class DomainSearchTest extends DatabaseTest {
 
 			SecureDNSDAO secureDNS = SecureDnsTest.getSecureDns(null, null, false, false, null);
 			dom.setSecureDNS(secureDNS);
+			List<Nameserver> sub = new ArrayList<Nameserver>();
 
-			List<Nameserver> sub;
-			if (i < 5) {
-				sub = nameservers.subList(0, random.nextInt(5));
-			} else {
-				sub = nameservers.subList(5, random.nextInt(4) + 5);
-
+			for (Nameserver nameserver : nameservers) {
+				if (random.nextInt(10) < 5) {
+					sub.add(nameserver);
+				}
 			}
+
 			dom.setNameServers(sub);
 			Long domId = null;
 			try {
@@ -203,94 +229,33 @@ public class DomainSearchTest extends DatabaseTest {
 		return domains;
 	}
 
-	public static List<Nameserver> createRandomNameservers(int randomInt) throws UnknownHostException {
+	public static List<Nameserver> createRandomNameservers(int numNs, Entity ent) throws UnknownHostException {
+
 		List<Nameserver> nameservers = new ArrayList<Nameserver>();
+
 		Random r = new Random();
-		for (int i = 0; i < 10; i++) {
-			randomInt++;
+		for (int i = 0; i < numNs; i++) {
 			int rnd = r.nextInt();
 			Nameserver nameserver = new NameserverDAO();
 			nameserver.setHandle("XXXX" + rnd);
 			nameserver.setPunycodeName("ns1.xn--fo-5ja" + rnd + ".example");
 			nameserver.setPort43("whois.example.net");
+			nameserver.getEntities().add(ent);
 
 			// IpAddressStruct data
 			NameserverIpAddressesStruct ipAddresses = new NameserverIpAddressesStruct();
 
 			IpAddress ipv41 = new IpAddressDAO();
-			ipv41.setAddress(
-					InetAddress.getByName("192." + r.nextInt(256) + "." + r.nextInt(256) + "." + r.nextInt(256)));
+			try {
+				ipv41.setAddress(InetAddress.getByName("192.0.2.13"));
+			} catch (UnknownHostException e1) {
+				e1.printStackTrace();
+			}
+
 			ipv41.setType(4);
 			ipAddresses.getIpv4Adresses().add(ipv41);
 
-			IpAddress ipv42 = new IpAddressDAO();
-			ipv42.setAddress(
-					InetAddress.getByName("192." + r.nextInt(256) + "." + r.nextInt(256) + "." + r.nextInt(256)));
-			ipv42.setType(4);
-			ipAddresses.getIpv4Adresses().add(ipv42);
-
-			// Status data
-			List<Status> statusList = new ArrayList<Status>();
-			statusList.add(Status.ACTIVE);
-			statusList.add(Status.ASSOCIATED);
-			nameserver.setStatus(statusList);
-
-			// Remarks data
-			List<Remark> remarks = new ArrayList<Remark>();
-			Remark remark = new RemarkDAO();
-			remark.setLanguage("ES");
-			remark.setTitle("Prueba");
-			remark.setType("PruebaType");
-
-			List<RemarkDescription> descriptions = new ArrayList<RemarkDescription>();
-			RemarkDescription description1 = new RemarkDescriptionDAO();
-			description1.setOrder(1);
-			description1.setDescription("She sells sea shells down by the sea shore.");
-
-			RemarkDescription description2 = new RemarkDescriptionDAO();
-			description2.setOrder(2);
-			description2.setDescription("Originally written by Terry Sullivan.");
-
-			descriptions.add(description1);
-			descriptions.add(description2);
-			remark.setDescriptions(descriptions);
-			remarks.add(remark);
-			nameserver.setRemarks(remarks);
-
-			// Links data
-			List<Link> links = new ArrayList<Link>();
-			Link link = new LinkDAO();
-			link.setValue("http://example.net/nameserver/xxxx");
-			link.setRel("self");
-			link.setHref("http://example.net/nameserver/xxxx");
-			link.setType("application/rdap+json");
-			links.add(link);
-			nameserver.setLinks(links);
-
-			// Events Data
-			List<Event> events = new ArrayList<Event>();
-			Event event1 = new EventDAO();
-			event1.setEventAction(EventAction.REGISTRATION);
-			event1.setEventDate(new Date());
-
-			Event event2 = new EventDAO();
-			event2.setEventAction(EventAction.LAST_CHANGED);
-			event2.setEventDate(new Date());
-			event2.setEventActor("joe@example.com");
-
-			// event links data
-			List<Link> eventLinks = new ArrayList<Link>();
-			Link eventLink = new LinkDAO();
-			eventLink.setValue("eventLink1");
-			eventLink.setRel("eventlink");
-			eventLink.setHref("http://example.net/eventlink/xxxx");
-			eventLink.setType("application/rdap+json");
-			eventLinks.add(eventLink);
-			event2.setLinks(eventLinks);
-
-			events.add(event1);
-			events.add(event2);
-			nameserver.setEvents(events);
+			nameserver.setIpAddresses(ipAddresses);
 
 			try {
 				NameserverModel.storeToDatabase(nameserver, connection);
@@ -301,107 +266,5 @@ public class DomainSearchTest extends DatabaseTest {
 			nameservers.add(nameserver);
 		}
 		return nameservers;
-
-	}
-
-	public static List<Nameserver> createNameserverWithIp(int randomInt) throws UnknownHostException {
-		List<Nameserver> nameservers = new ArrayList<Nameserver>();
-		Random r = new Random();
-		for (int i = 0; i < 10; i++) {
-			randomInt++;
-			int rnd = r.nextInt();
-			Nameserver nameserver = new NameserverDAO();
-			nameserver.setHandle("XXXX" + rnd);
-			nameserver.setPunycodeName("ns1.xn--fo-5ja" + rnd + ".example");
-			nameserver.setPort43("whois.example.net");
-
-			// IpAddressStruct data
-			NameserverIpAddressesStruct ipAddresses = new NameserverIpAddressesStruct();
-
-			IpAddress ipv41 = new IpAddressDAO();
-			ipv41.setAddress(
-					InetAddress.getByName("192." + r.nextInt(256) + "." + r.nextInt(256) + "." + r.nextInt(256)));
-			ipv41.setType(4);
-			ipAddresses.getIpv4Adresses().add(ipv41);
-
-			IpAddress ipv42 = new IpAddressDAO();
-			ipv42.setAddress(
-					InetAddress.getByName("192." + r.nextInt(256) + "." + r.nextInt(256) + "." + r.nextInt(256)));
-			ipv42.setType(4);
-			ipAddresses.getIpv4Adresses().add(ipv42);
-
-			// Status data
-			List<Status> statusList = new ArrayList<Status>();
-			statusList.add(Status.ACTIVE);
-			statusList.add(Status.ASSOCIATED);
-			nameserver.setStatus(statusList);
-
-			// Remarks data
-			List<Remark> remarks = new ArrayList<Remark>();
-			Remark remark = new RemarkDAO();
-			remark.setLanguage("ES");
-			remark.setTitle("Prueba");
-			remark.setType("PruebaType");
-
-			List<RemarkDescription> descriptions = new ArrayList<RemarkDescription>();
-			RemarkDescription description1 = new RemarkDescriptionDAO();
-			description1.setOrder(1);
-			description1.setDescription("She sells sea shells down by the sea shore.");
-
-			RemarkDescription description2 = new RemarkDescriptionDAO();
-			description2.setOrder(2);
-			description2.setDescription("Originally written by Terry Sullivan.");
-
-			descriptions.add(description1);
-			descriptions.add(description2);
-			remark.setDescriptions(descriptions);
-			remarks.add(remark);
-			nameserver.setRemarks(remarks);
-
-			// Links data
-			List<Link> links = new ArrayList<Link>();
-			Link link = new LinkDAO();
-			link.setValue("http://example.net/nameserver/xxxx");
-			link.setRel("self");
-			link.setHref("http://example.net/nameserver/xxxx");
-			link.setType("application/rdap+json");
-			links.add(link);
-			nameserver.setLinks(links);
-
-			// Events Data
-			List<Event> events = new ArrayList<Event>();
-			Event event1 = new EventDAO();
-			event1.setEventAction(EventAction.REGISTRATION);
-			event1.setEventDate(new Date());
-
-			Event event2 = new EventDAO();
-			event2.setEventAction(EventAction.LAST_CHANGED);
-			event2.setEventDate(new Date());
-			event2.setEventActor("joe@example.com");
-
-			// event links data
-			List<Link> eventLinks = new ArrayList<Link>();
-			Link eventLink = new LinkDAO();
-			eventLink.setValue("eventLink1");
-			eventLink.setRel("eventlink");
-			eventLink.setHref("http://example.net/eventlink/xxxx");
-			eventLink.setType("application/rdap+json");
-			eventLinks.add(eventLink);
-			event2.setLinks(eventLinks);
-
-			events.add(event1);
-			events.add(event2);
-			nameserver.setEvents(events);
-
-			try {
-				NameserverModel.storeToDatabase(nameserver, connection);
-			} catch (SQLException | IOException | RequiredValueNotFoundException e) {
-				e.printStackTrace();
-				fail(e.getMessage());
-			}
-			nameservers.add(nameserver);
-		}
-		return nameservers;
-
 	}
 }

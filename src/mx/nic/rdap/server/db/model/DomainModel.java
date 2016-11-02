@@ -165,7 +165,7 @@ public class DomainModel {
 	public static List<Domain> searchByName(String name, String zone, Connection connection)
 			throws SQLException, IOException, InvalidValueException {
 		DomainModel.validateDomainZone(name + "." + zone);
-		name.replace("*", "%");
+		name = name.replaceAll("\\*", "%");
 
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("searchByNameWZone"))) {
 			Integer zoneId = ZoneModel.getIdByZoneName(zone);
@@ -233,7 +233,7 @@ public class DomainModel {
 	 * @throws IOException
 	 */
 	public static List<Domain> searchByNsLdhName(String name, Connection connection) throws SQLException, IOException {
-		name = name.replace("\\*", "%");
+		name = name.replace("*", "%");
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("searchByNsLdhName"))) {
 			statement.setString(1, name);
 			statement.setInt(2, Util.getMaxNumberOfResultsForUser());
@@ -245,6 +245,7 @@ public class DomainModel {
 			}
 			List<Domain> domains = new ArrayList<Domain>();
 			do {
+				// no Zone Id
 				DomainDAO domain = new DomainDAO(resultSet);
 				loadNestedObjects(domain, connection);
 				domains.add(domain);
@@ -285,11 +286,11 @@ public class DomainModel {
 			}
 			List<Domain> domains = new ArrayList<Domain>();
 			do {
-				DomainDAO domain = new DomainDAO();
+				DomainDAO domain = new DomainDAO(resultSet);
 				loadNestedObjects(domain, connection);
 				domains.add(domain);
 			} while (resultSet.next());
-			return null;
+			return domains;
 		}
 
 	}
