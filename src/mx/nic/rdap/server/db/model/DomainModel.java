@@ -22,6 +22,7 @@ import mx.nic.rdap.server.db.DomainDAO;
 import mx.nic.rdap.server.db.IpAddressDAO;
 import mx.nic.rdap.server.db.QueryGroup;
 import mx.nic.rdap.server.exception.InvalidValueException;
+import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.ObjectNotFoundException;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
 
@@ -161,11 +162,12 @@ public class DomainModel {
 	 * @throws SQLException
 	 * @throws InvalidValueException
 	 * @throws IOException
+	 * @throws MalformedRequestException
 	 */
 	public static List<Domain> searchByName(String name, String zone, Connection connection)
-			throws SQLException, IOException, InvalidValueException {
+			throws SQLException, IOException, InvalidValueException, MalformedRequestException {
 		DomainModel.validateDomainZone(name + "." + zone);
-		name = name.replaceAll("\\*", "%");
+		name = name.replace("*", "%");
 
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("searchByNameWZone"))) {
 			Integer zoneId = ZoneModel.getIdByZoneName(zone);
@@ -200,9 +202,11 @@ public class DomainModel {
 	 * @throws SQLException
 	 * @throws InvalidValueException
 	 * @throws IOException
+	 * @throws MalformedRequestException
 	 */
-	public static List<Domain> searchByName(String name, Connection connection) throws SQLException, IOException {
-		name = name.replaceAll("\\*", "%");
+	public static List<Domain> searchByName(String name, Connection connection)
+			throws SQLException, IOException, MalformedRequestException {
+		name = name.replace("*", "%");
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("searchByNameWOutZone"))) {
 			statement.setString(1, name);
 			statement.setInt(2, Util.getMaxNumberOfResultsForUser());
@@ -231,9 +235,11 @@ public class DomainModel {
 	 * @return
 	 * @throws SQLException
 	 * @throws IOException
+	 * @throws MalformedRequestException
 	 */
-	public static List<Domain> searchByNsLdhName(String name, Connection connection) throws SQLException, IOException {
-		name = name.replace("*", "%");
+	public static List<Domain> searchByNsLdhName(String name, Connection connection)
+			throws SQLException, IOException, MalformedRequestException {
+		validateWildcards(name);
 		try (PreparedStatement statement = connection.prepareStatement(queryGroup.getQuery("searchByNsLdhName"))) {
 			statement.setString(1, name);
 			statement.setInt(2, Util.getMaxNumberOfResultsForUser());
@@ -359,6 +365,16 @@ public class DomainModel {
 			domain.getEntities().addAll(EntityModel.getEntitiesByDomainId(domainId, connection));
 		} catch (ObjectNotFoundException onfe) {
 			// Do nothing, entities is not required
+		}
+	}
+
+	public static void validateWildcards(String searchString) throws MalformedRequestException {
+		int wildcardOcurr = searchString.length() - searchString.replace("*", "").length();
+
+		if (wildcardOcurr <= 1) {
+			return;
+		} else {
+			throw new MalformedRequestException("Search query can´t have more than one wild card.");
 		}
 	}
 

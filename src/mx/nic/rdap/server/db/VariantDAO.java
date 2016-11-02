@@ -80,7 +80,7 @@ public class VariantDAO extends Variant implements DatabaseObject, JsonParser {
 		if (this.getRelations() != null && !this.getRelations().isEmpty()) {
 			builder.add("relation", this.getRelationsJson(this.getRelations()));
 		}
-		if (this.getIdnTable() != null && this.getIdnTable() != "") {
+		if (this.getIdnTable() != null && !this.getIdnTable().equals("")) {
 			builder.add("idnTable", this.getIdnTable());
 		}
 		if (this.getVariantNames() != null && !this.getVariantNames().isEmpty()) {

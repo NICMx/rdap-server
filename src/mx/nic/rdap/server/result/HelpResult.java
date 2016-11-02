@@ -180,7 +180,7 @@ public class HelpResult implements RdapResult {
 							line = iterator.next().trim();
 							description = description.trim();
 						} while (!line.isEmpty() && !line.startsWith("link1"));
-						if (description != " " || !description.isEmpty()) {
+						if (!description.equals(" ") || !description.isEmpty()) {
 							descriptions.add(description);
 							description = "";
 						}

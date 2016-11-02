@@ -30,6 +30,7 @@ import mx.nic.rdap.server.db.model.EntityModel;
 import mx.nic.rdap.server.db.model.NameserverModel;
 import mx.nic.rdap.server.db.model.ZoneModel;
 import mx.nic.rdap.server.exception.InvalidValueException;
+import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequiredValueNotFoundException;
 import mx.nix.rdap.core.catalog.EventAction;
 import mx.nix.rdap.core.catalog.Rol;
@@ -57,9 +58,10 @@ public class DomainSearchTest extends DatabaseTest {
 	 * Searches Domains by it´s name without a zone
 	 * 
 	 * @throws UnknownHostException
+	 * @throws MalformedRequestException
 	 */
 	@Test
-	public void searchByName() throws UnknownHostException {
+	public void searchByName() throws UnknownHostException, MalformedRequestException {
 
 		createRandomDomains(5, 0);
 		try {
@@ -78,9 +80,10 @@ public class DomainSearchTest extends DatabaseTest {
 	 * 
 	 * @throws UnknownHostException
 	 * @throws InvalidValueException
+	 * @throws MalformedRequestException
 	 */
 	@Test
-	public void searchByNameWZone() throws UnknownHostException, InvalidValueException {
+	public void searchByNameWZone() throws UnknownHostException, InvalidValueException, MalformedRequestException {
 		createRandomDomains(5, 0);
 		try {
 			List<Domain> domains = DomainModel.searchByName("mydomaintest*", "lat", connection);
@@ -97,12 +100,13 @@ public class DomainSearchTest extends DatabaseTest {
 	 * Searches domains by it´s name server with random generated nameservers
 	 * 
 	 * @throws UnknownHostException
+	 * @throws MalformedRequestException
 	 */
 	@Test
-	public void searchByNameserverName() throws UnknownHostException {
+	public void searchByNameserverName() throws UnknownHostException, MalformedRequestException {
 		createRandomDomains(3, 5);
 		try {
-			List<Domain> domains = DomainModel.searchByNsLdhName("ns1.xn--fo-5ja*", connection);
+			List<Domain> domains = DomainModel.searchByNsLdhName("ns1.xn--fo-5ja**", connection);
 			for (Domain domain : domains) {
 				System.out.println(domain.getLdhName());
 				List<Nameserver> nameservers = domain.getNameServers();
