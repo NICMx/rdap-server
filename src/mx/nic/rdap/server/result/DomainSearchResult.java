@@ -10,9 +10,9 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-import mx.nic.rdap.core.db.Domain;
+import mx.nic.rdap.db.DomainDAO;
 import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.db.DomainDAO;
+import mx.nic.rdap.server.renderer.json.DomainParser;
 
 /**
  * 
@@ -21,9 +21,9 @@ import mx.nic.rdap.server.db.DomainDAO;
  */
 public class DomainSearchResult implements RdapResult {
 
-	private List<Domain> domains;
+	private List<DomainDAO> domains;
 
-	public DomainSearchResult(List<Domain> domains) {
+	public DomainSearchResult(List<DomainDAO> domains) {
 		this.domains = domains;
 	}
 
@@ -36,8 +36,9 @@ public class DomainSearchResult implements RdapResult {
 	public JsonObject toJson() {
 		JsonObjectBuilder builder = Json.createObjectBuilder();
 		JsonArrayBuilder arrB = Json.createArrayBuilder();
-		for (Domain domain : domains) {
-			JsonObject json = ((DomainDAO) domain).toJson();
+		for (DomainDAO domain : domains) {
+			DomainParser parser=new DomainParser(domain);
+			JsonObject json = parser.getJson();
 			arrB.add(json);
 		}
 		builder.add("domainSearchResults", arrB);

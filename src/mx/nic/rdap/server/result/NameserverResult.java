@@ -2,9 +2,9 @@ package mx.nic.rdap.server.result;
 
 import javax.json.JsonObject;
 
-import mx.nic.rdap.core.db.Nameserver;
+import mx.nic.rdap.db.NameserverDAO;
 import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.db.NameserverDAO;
+import mx.nic.rdap.server.renderer.json.NameserverParser;
 
 /**
  * A result from a Nameserver request
@@ -14,9 +14,9 @@ import mx.nic.rdap.server.db.NameserverDAO;
  */
 public class NameserverResult implements RdapResult {
 
-	private Nameserver nameserver;
+	private NameserverDAO nameserver;
 
-	public NameserverResult(Nameserver nameserver) {
+	public NameserverResult(NameserverDAO nameserver) {
 		this.nameserver = nameserver;
 	}
 
@@ -27,7 +27,8 @@ public class NameserverResult implements RdapResult {
 	 */
 	@Override
 	public JsonObject toJson() {
-		return ((NameserverDAO) nameserver).toJson();
+		NameserverParser parser=new NameserverParser(nameserver);
+		return parser.getJson();
 	}
 
 }

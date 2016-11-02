@@ -8,14 +8,14 @@ import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
-import mx.nic.rdap.core.db.Entity;
+import mx.nic.rdap.db.EntityDAO;
+import mx.nic.rdap.db.model.EntityModel;
+import mx.nic.rdap.exception.RequestHandleException;
+import mx.nic.rdap.exception.UnprocessableEntityException;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DatabaseSession;
-import mx.nic.rdap.server.db.model.EntityModel;
-import mx.nic.rdap.server.exception.RequestHandleException;
-import mx.nic.rdap.server.exception.UnprocessableEntityException;
 import mx.nic.rdap.server.result.EntitySearchResult;
 
 /**
@@ -39,18 +39,19 @@ public class EntitySearchServlet extends RdapServlet {
 
 		validateRequestParameter(httpRequest);
 
-		List<Entity> entities = null;
+		List<EntityDAO> entities = null;
 		String parameter = httpRequest.getParameterNames().nextElement();
 		String value = httpRequest.getParameter(parameter);
 
 		try (Connection connection = DatabaseSession.getRdapConnection()) {
-			Util.fillSearchDataForUser(httpRequest, connection);
+			String username = httpRequest.getRemoteUser();
+			Integer resultLimit=Util.getMaxNumberOfResultsForUser(username,connection);
 			switch (parameter) {
 			case FULL_NAME:
-				entities = EntityModel.searchByVCardName(value.trim(), connection);
+				entities = EntityModel.searchByVCardName(value.trim(),resultLimit, connection);
 				break;
 			case HANDLE:
-				entities = EntityModel.searchByHandle(value.trim(), connection);
+				entities = EntityModel.searchByHandle(value.trim(),resultLimit, connection);
 				break;
 			}
 		}

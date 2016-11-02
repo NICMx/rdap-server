@@ -9,14 +9,14 @@ import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import mx.nic.rdap.db.NameserverDAO;
+import mx.nic.rdap.db.model.NameserverModel;
+import mx.nic.rdap.exception.RequestHandleException;
+import mx.nic.rdap.exception.UnprocessableEntityException;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DatabaseSession;
-import mx.nic.rdap.server.db.NameserverDAO;
-import mx.nic.rdap.server.db.model.NameserverModel;
-import mx.nic.rdap.server.exception.RequestHandleException;
-import mx.nic.rdap.server.exception.UnprocessableEntityException;
 import mx.nic.rdap.server.result.NameserverSeachResult;
 
 /**
@@ -45,14 +45,15 @@ public class NameserverSearchServlet extends RdapServlet {
 		NameserverSearchRequest request = new NameserverSearchRequest(httpRequest);
 		List<NameserverDAO> nameservers = new ArrayList<NameserverDAO>();
 		try (Connection connection = DatabaseSession.getRdapConnection()) {
-			Util.fillSearchDataForUser(httpRequest, connection);
+			String username = httpRequest.getRemoteUser();
+			Integer resultLimit=Util.getMaxNumberOfResultsForUser(username,connection);
 			if (request.getParameter().compareTo(NameserverSearchRequest.NAME_PARAMETER_KEY) == 0) {
-				nameservers = NameserverModel.searchByName(request.getValue().trim(), connection);
+				nameservers = NameserverModel.searchByName(request.getValue().trim(),resultLimit, connection);
 				return new NameserverSeachResult(nameservers);
 			} else {
 				String ipAddress = request.getValue().trim();
 				Util.validateIpAddress(ipAddress);
-				nameservers = NameserverModel.searchByIp(ipAddress, connection);
+				nameservers = NameserverModel.searchByIp(ipAddress,resultLimit, connection);
 				return new NameserverSeachResult(nameservers);
 			}
 		}

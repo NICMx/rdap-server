@@ -11,7 +11,6 @@ import javax.sql.DataSource;
 public class DatabaseSession {
 
 	public static final String RDAP_DB = "rdap";
-	public static final String MIGRATION_DB = "migration";
 
 	private static DataSource getEnvironmentDataSource(String name) {
 		try {
@@ -24,10 +23,6 @@ public class DatabaseSession {
 
 	public static Connection getRdapConnection() throws SQLException {
 		return getEnvironmentDataSource(RDAP_DB).getConnection();
-	}
-
-	public static Connection getMigrationConnection() throws SQLException {
-		return getEnvironmentDataSource(MIGRATION_DB).getConnection();
 	}
 
 }

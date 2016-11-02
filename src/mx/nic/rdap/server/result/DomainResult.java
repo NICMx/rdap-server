@@ -2,9 +2,9 @@ package mx.nic.rdap.server.result;
 
 import javax.json.JsonObject;
 
-import mx.nic.rdap.core.db.Domain;
+import mx.nic.rdap.db.DomainDAO;
 import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.db.DomainDAO;
+import mx.nic.rdap.server.renderer.json.DomainParser;
 
 /**
  * A result from a Domain request
@@ -14,9 +14,9 @@ import mx.nic.rdap.server.db.DomainDAO;
  */
 public class DomainResult implements RdapResult {
 
-	private Domain domain;
+	private DomainDAO domain;
 
-	public DomainResult(Domain domain) {
+	public DomainResult(DomainDAO domain) {
 		this.domain = domain;
 	}
 
@@ -27,7 +27,7 @@ public class DomainResult implements RdapResult {
 	 */
 	@Override
 	public JsonObject toJson() {
-		return ((DomainDAO) domain).toJson();
+		return new DomainParser(domain).getJson();
 	}
 
 }

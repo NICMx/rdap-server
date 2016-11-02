@@ -20,10 +20,11 @@ import javax.servlet.ServletContext;
 
 import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.RemarkDescription;
+import mx.nic.rdap.db.LinkDAO;
+import mx.nic.rdap.db.RemarkDAO;
+import mx.nic.rdap.exception.InvalidadDataStructure;
 import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.db.LinkDAO;
-import mx.nic.rdap.server.db.RemarkDAO;
-import mx.nic.rdap.server.exception.InvalidadDataStructure;
+import mx.nic.rdap.server.renderer.json.RemarkParser;
 
 /**
  * 
@@ -113,7 +114,8 @@ public class HelpResult implements RdapResult {
 	public JsonObject toJson() {
 		JsonArrayBuilder builder = Json.createArrayBuilder();
 		for (RemarkDAO notice : notices) {
-			builder.add(notice.toJson());
+			RemarkParser parser=new RemarkParser(notice);
+			builder.add(parser.getJson());
 		}
 		JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
 		objectBuilder.add("notices", builder.build());

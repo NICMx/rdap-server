@@ -7,9 +7,9 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-import mx.nic.rdap.core.db.Entity;
+import mx.nic.rdap.db.EntityDAO;
 import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.db.EntityDAO;
+import mx.nic.rdap.server.renderer.json.EntityParser;
 
 /**
  * @author dhfelix
@@ -17,9 +17,9 @@ import mx.nic.rdap.server.db.EntityDAO;
  */
 public class EntitySearchResult implements RdapResult {
 
-	List<Entity> entities;
+	List<EntityDAO> entities;
 
-	public EntitySearchResult(List<Entity> entities) {
+	public EntitySearchResult(List<EntityDAO> entities) {
 		this.entities = entities;
 	}
 
@@ -27,8 +27,9 @@ public class EntitySearchResult implements RdapResult {
 	public JsonObject toJson() {
 		JsonObjectBuilder builder = Json.createObjectBuilder();
 		JsonArrayBuilder arrB = Json.createArrayBuilder();
-		for (Entity ent : entities) {
-			JsonObject json = ((EntityDAO) ent).toJson();
+		for (EntityDAO entity : entities) {
+			EntityParser parser=new EntityParser(entity);
+			JsonObject json = parser.getJson();
 			arrB.add(json);
 		}
 		builder.add("entitySearchResults", arrB);

@@ -10,5 +10,5 @@ import javax.json.JsonObject;
 public interface JsonParser {
 
 	
-	public JsonObject toJson();
+	public JsonObject getJson();
 }

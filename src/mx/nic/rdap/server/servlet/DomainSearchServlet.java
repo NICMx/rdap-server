@@ -9,16 +9,16 @@ import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
-import mx.nic.rdap.core.db.Domain;
+import mx.nic.rdap.db.DomainDAO;
+import mx.nic.rdap.db.model.DomainModel;
+import mx.nic.rdap.exception.InvalidValueException;
+import mx.nic.rdap.exception.MalformedRequestException;
+import mx.nic.rdap.exception.RequestHandleException;
+import mx.nic.rdap.exception.UnprocessableEntityException;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DatabaseSession;
-import mx.nic.rdap.server.db.model.DomainModel;
-import mx.nic.rdap.server.exception.InvalidValueException;
-import mx.nic.rdap.server.exception.MalformedRequestException;
-import mx.nic.rdap.server.exception.RequestHandleException;
-import mx.nic.rdap.server.exception.UnprocessableEntityException;
 import mx.nic.rdap.server.result.DomainSearchResult;
 
 /**
@@ -49,8 +49,9 @@ public class DomainSearchServlet extends RdapServlet {
 		RdapResult result = null;
 
 		try (Connection connection = DatabaseSession.getRdapConnection()) {
-			Util.fillSearchDataForUser(httpRequest, connection);
-			List<Domain> domains = new ArrayList<Domain>();
+			List<DomainDAO> domains = new ArrayList<DomainDAO>();
+			String username = httpRequest.getRemoteUser();
+			Integer resultLimit=Util.getMaxNumberOfResultsForUser(username,connection);
 
 			if (request.getParameter().equals("name")) {
 
@@ -58,24 +59,25 @@ public class DomainSearchServlet extends RdapServlet {
 				if (request.getValue().contains("\\.")) {
 					String domain = request.getValue().split("\\.", 2)[0];
 					String zone = request.getValue().split("\\.", 2)[1];
+					
 					try {
-						domains = DomainModel.searchByName(domain, zone, connection);
+						domains = DomainModel.searchByName(domain, zone,resultLimit, connection);
 					} catch (InvalidValueException e) {
 						e.printStackTrace();
 					}
 					// Gets domain by it´s name without zone, needs "*" as a
 					// wildcard
 				} else {
-					domains = DomainModel.searchByName(request.getValue(), connection);
+					domains = DomainModel.searchByName(request.getValue(),resultLimit, connection);
 				}
 			}
 			// Gets´s domain by it´s Nameserver name
 			if (request.getParameter().equals("nsLdhName")) {
-				domains = DomainModel.searchByNsLdhName(request.getValue(), connection);
+				domains = DomainModel.searchByNsLdhName(request.getValue(),resultLimit, connection);
 			}
 			// Get´s domain by it´s Nameserver Ip
 			if (request.getParameter().equals("nsIp")) {
-				domains = DomainModel.searchByNsIp(request.getValue(), connection);
+				domains = DomainModel.searchByNsIp(request.getValue(),resultLimit, connection);
 			}
 			result = new DomainSearchResult(domains);
 		}

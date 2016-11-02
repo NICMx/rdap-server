@@ -7,13 +7,13 @@ import java.sql.SQLException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
-import mx.nic.rdap.core.db.Entity;
+import mx.nic.rdap.db.EntityDAO;
+import mx.nic.rdap.db.model.EntityModel;
+import mx.nic.rdap.exception.RequestHandleException;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DatabaseSession;
-import mx.nic.rdap.server.db.model.EntityModel;
-import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.EntityResult;
 
 /**
@@ -44,7 +44,7 @@ public class EntityServlet extends RdapServlet {
 
 		RdapResult result = null;
 		try (Connection con = DatabaseSession.getRdapConnection()) {
-			Entity entity = EntityModel.getByHandle(request.getHandle(), con);
+			EntityDAO entity = EntityModel.getByHandle(request.getHandle(), con);
 			result = new EntityResult(entity);
 
 		}

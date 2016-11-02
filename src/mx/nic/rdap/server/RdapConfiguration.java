@@ -1,13 +1,18 @@
 package mx.nic.rdap.server;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import mx.nic.rdap.server.db.model.ZoneModel;
-import mx.nic.rdap.server.exception.ObjectNotFoundException;
+import mx.nic.rdap.db.model.ZoneModel;
+import mx.nic.rdap.exception.ObjectNotFoundException;
+import mx.nic.rdap.server.db.DatabaseSession;
 
 /**
  * Class containing the configuration of the rdap server
@@ -23,10 +28,19 @@ public class RdapConfiguration {
 	private static final String MINIMUN_SEARCH_PATTERN_LENGTH_KEY = "minimum.search.pattern.length";
 	private static final String MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER = "max.number.result.authenticated.user";
 	private static final String MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER = "max.number.result.unauthenticated.user";
-
+	
 	public RdapConfiguration() {
 	}
 
+	static {
+
+		try (Connection con = DatabaseSession.getRdapConnection()) {
+			ZoneModel.loadAllFromDatabase(con);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+
+	}
 	/**
 	 * @return the systemProperties
 	 */
@@ -43,7 +57,6 @@ public class RdapConfiguration {
 	 */
 	public static void loadSystemProperties(Properties systemProperties) throws ObjectNotFoundException {
 		RdapConfiguration.systemProperties = systemProperties;
-		validateConfiguratedZones();
 	}
 
 	/**
@@ -97,6 +110,29 @@ public class RdapConfiguration {
 		return length;
 	}
 
+
+	/**
+	 * Validate if the configurated zones are in the database
+	 * 
+	 * @throws ObjectNotFoundException
+	 */
+	public static void validateConfiguratedZones() throws ObjectNotFoundException {
+		List<String> configuratedZones = RdapConfiguration.getServerZones();
+		Map<Integer, String> zoneByIdForServer = new HashMap<Integer, String>();
+		Map<String, Integer> idByZoneForServer = new HashMap<String, Integer>();
+		for (String zone : configuratedZones) {
+			if (ZoneModel.getIdByZone().get(zone) == null) {
+				logger.log(Level.SEVERE, "Configurated zone not found in database:" + zone);
+				throw new ObjectNotFoundException("Configurated zone not found in database:" + zone);
+			}
+			zoneByIdForServer.put(ZoneModel.getIdByZone().get(zone), zone);
+			idByZoneForServer.put(zone, ZoneModel.getIdByZoneName(zone));
+		}
+		// Ovewrite the hashmaps to only use the configurated zones
+		ZoneModel.setZoneById(zoneByIdForServer);
+		ZoneModel.setIdByZone(idByZoneForServer);
+	}
+
 	/**
 	 * Return the max number of results for the authenticated user
 	 * 
@@ -132,14 +168,4 @@ public class RdapConfiguration {
 			}
 		return maxResults;
 	}
-
-	/**
-	 * Validate if the configurated zones are in the database
-	 * 
-	 * @throws ObjectNotFoundException
-	 */
-	public static void validateConfiguratedZones() throws ObjectNotFoundException {
-		ZoneModel.validateConfiguratedZones();
-	}
-
 }

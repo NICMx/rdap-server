@@ -16,12 +16,11 @@ import mx.nic.rdap.core.db.Event;
 import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.RdapObject;
 import mx.nic.rdap.core.db.Remark;
+import mx.nic.rdap.db.EntityDAO;
+import mx.nic.rdap.db.EventDAO;
+import mx.nic.rdap.db.LinkDAO;
+import mx.nic.rdap.db.RemarkDAO;
 import mx.nic.rdap.server.Util;
-import mx.nic.rdap.server.db.EntityDAO;
-import mx.nic.rdap.server.db.EventDAO;
-import mx.nic.rdap.server.db.LinkDAO;
-import mx.nic.rdap.server.db.RemarkDAO;
-import mx.nix.rdap.core.catalog.Rol;
 import mx.nix.rdap.core.catalog.Status;
 
 /**
@@ -80,8 +79,9 @@ public class JsonUtil {
 
 	public static JsonArray getEntitiesJson(List<Entity> entities) {
 		JsonArrayBuilder arrB = Json.createArrayBuilder();
-		for (Entity ent : entities) {
-			JsonObject json = ((EntityDAO) ent).toJson();
+		for (Entity entity : entities) {
+			EntityParser parser=new EntityParser((EntityDAO)entity);
+			JsonObject json = parser.getJson();
 			arrB.add(json);
 		}
 
@@ -96,7 +96,8 @@ public class JsonUtil {
 	public static JsonArray getLinksJson(List<Link> links) {
 		JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 		for (Link link : links) {
-			arrayBuilder.add(((LinkDAO) link).toJson());
+			LinkParser parser=new LinkParser((LinkDAO)link);
+			arrayBuilder.add(parser.getJson());
 		}
 		return arrayBuilder.build();
 	}
@@ -109,8 +110,9 @@ public class JsonUtil {
 	public static JsonArray getRemarksJson(List<Remark> remarks) {
 		JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 		for (Remark remark : remarks) {
-			arrayBuilder.add(((RemarkDAO) remark).toJson());
-		}
+			RemarkParser parser=new RemarkParser((RemarkDAO)remark);
+			arrayBuilder.add(parser.getJson());
+		}	
 		return arrayBuilder.build();
 	}
 
@@ -122,7 +124,8 @@ public class JsonUtil {
 	public static JsonArray getEventsJson(List<Event> events) {
 		JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 		for (Event event : events) {
-			arrayBuilder.add(((EventDAO) event).toJson());
+			EventParser parser=new EventParser((EventDAO)event);
+			arrayBuilder.add(parser.getJson());
 		}
 		return arrayBuilder.build();
 	}
@@ -159,24 +162,24 @@ public class JsonUtil {
 		return false;
 	}
 
-	/**
-	 * Retrieve the user accessLevel respect to an object
-	 * 
-	 * @param object
-	 * @return
-	 */
-	public static UserAccessLevel getUserAccessLevel(RdapObject object) {
-		if (Util.getAUTHENTICATED_USER() != null) {
-			// Validate is the user is the owner of the object
-			List<Rol> rols = Util.getConfiguratedOwnerRols();
-			if (true) {
-				// TODO:The magic stuff
-				return UserAccessLevel.OWNER;
-			}
-			return UserAccessLevel.AUTHENTICATED;
-		}
-		return UserAccessLevel.ANY;
-	}
+//	/**
+//	 * Retrieve the user accessLevel respect to an object
+//	 * 
+//	 * @param object
+//	 * @return
+//	 */
+//	public static UserAccessLevel getUserAccessLevel(RdapObject object) {
+//		if (Util.getAUTHENTICATED_USER() != null) {
+//			// Validate is the user is the owner of the object
+//			List<Rol> rols = Util.getConfiguratedOwnerRols();
+//			if (true) {
+//				// TODO:The magic stuff
+//				return UserAccessLevel.OWNER;
+//			}
+//			return UserAccessLevel.AUTHENTICATED;
+//		}
+//		return UserAccessLevel.ANY;
+//	}
 
 	public static HashMap<String, UserAccessLevel> loadObjectPrivacyHash(String object) {
 		HashMap<String, UserAccessLevel> privacyMap = new HashMap<String, UserAccessLevel>();

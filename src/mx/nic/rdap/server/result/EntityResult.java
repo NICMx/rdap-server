@@ -2,9 +2,9 @@ package mx.nic.rdap.server.result;
 
 import javax.json.JsonObject;
 
-import mx.nic.rdap.core.db.Entity;
+import mx.nic.rdap.db.EntityDAO;
 import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.db.EntityDAO;
+import mx.nic.rdap.server.renderer.json.EntityParser;
 
 /**
  * A result from an Entity request
@@ -14,9 +14,9 @@ import mx.nic.rdap.server.db.EntityDAO;
  */
 public class EntityResult implements RdapResult {
 
-	private Entity entity;
+	private EntityDAO entity;
 
-	public EntityResult(Entity entity) {
+	public EntityResult(EntityDAO entity) {
 		this.entity = entity;
 	}
 
@@ -27,7 +27,8 @@ public class EntityResult implements RdapResult {
 	 */
 	@Override
 	public JsonObject toJson() {
-		return ((EntityDAO) entity).toJson();
+		EntityParser parser=new EntityParser(entity);
+		return parser.getJson();
 	}
 
 }

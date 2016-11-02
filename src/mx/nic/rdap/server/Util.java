@@ -18,10 +18,10 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
-import mx.nic.rdap.server.db.model.RdapUserModel;
-import mx.nic.rdap.server.exception.MalformedRequestException;
-import mx.nic.rdap.server.exception.RequestHandleException;
-import mx.nic.rdap.server.exception.UnprocessableEntityException;
+import mx.nic.rdap.db.model.RdapUserModel;
+import mx.nic.rdap.exception.MalformedRequestException;
+import mx.nic.rdap.exception.RequestHandleException;
+import mx.nic.rdap.exception.UnprocessableEntityException;
 import mx.nix.rdap.core.catalog.Rol;
 
 /**
@@ -47,8 +47,8 @@ public class Util {
 	private static final BigInteger FOURTH_OCTECT_LIMIT = new BigInteger(0xFF + ""); // 255
 	private static final int IP_ADDRESS_ARRAY_SIZE = 4;
 
-	private static Integer AUTHENTICATED_USER_MAX_SEARCH_RESULT = null;
-	private static String AUTHENTICATED_USER;
+	
+	private Integer authenticatedMaxUserResultLimit = null;
 
 	/**
 	 * Loads the properties configuration file
@@ -227,11 +227,12 @@ public class Util {
 	 * Get the max search results number allowed for the user
 	 * 
 	 * @return
+	 * @throws SQLException 
+	 * @throws IOException 
 	 */
-	public static Integer getMaxNumberOfResultsForUser() {
-		boolean isAuthenticatedUser = getAUTHENTICATED_USER() != null;
-		if (isAuthenticatedUser) {
-			Integer limit = getAUTHENTICATED_USER_MAX_SEARCH_RESULT();
+	public static Integer getMaxNumberOfResultsForUser(String username,Connection connection) throws IOException, SQLException {
+		if (username!=null) {
+			Integer limit =RdapUserModel.getMaxSearchResultsForAuthenticatedUser(username, connection);
 			if (limit != null && limit != 0)
 				return limit;
 
@@ -241,53 +242,6 @@ public class Util {
 		return RdapConfiguration.getMaxNumberOfResultsForUnauthenticatedUser();
 	}
 
-	/**
-	 * @return the aUTHENTICATED_USER_MAX_SEARCH_RESULT
-	 */
-	public static Integer getAUTHENTICATED_USER_MAX_SEARCH_RESULT() {
-		return AUTHENTICATED_USER_MAX_SEARCH_RESULT;
-	}
-
-	/**
-	 * @param aUTHENTICATED_USER_MAX_SEARCH_RESULT
-	 *            the aUTHENTICATED_USER_MAX_SEARCH_RESULT to set
-	 */
-	public static void setAUTHENTICATED_USER_MAX_SEARCH_RESULT(Integer aUTHENTICATED_USER_MAX_SEARCH_RESULT) {
-		AUTHENTICATED_USER_MAX_SEARCH_RESULT = aUTHENTICATED_USER_MAX_SEARCH_RESULT;
-	}
-
-	/**
-	 * @return the aUTHENTICATED_USER
-	 */
-	public static String getAUTHENTICATED_USER() {
-		return AUTHENTICATED_USER;
-	}
-
-	/**
-	 * @param aUTHENTICATED_USER
-	 *            the aUTHENTICATED_USER to set
-	 */
-	public static void setAUTHENTICATED_USER(String aUTHENTICATED_USER) {
-		AUTHENTICATED_USER = aUTHENTICATED_USER;
-	}
-
-	/**
-	 * Read the request and fill the search data for the authenticated user
-	 * 
-	 * @param httpRequest
-	 * @param connection
-	 * @throws IOException
-	 * @throws SQLException
-	 */
-	public static void fillSearchDataForUser(HttpServletRequest httpRequest, Connection connection)
-			throws IOException, SQLException {
-		String username = httpRequest.getRemoteUser();
-		if (username != null) {
-			Util.setAUTHENTICATED_USER(username);
-			Util.setAUTHENTICATED_USER_MAX_SEARCH_RESULT(
-					RdapUserModel.getMaxSearchResultsForAuthenticatedUser(username, connection));
-		}
-	}
 
 	/**
 	 * Get the roles that can own a object
@@ -298,4 +252,25 @@ public class Util {
 		List<Rol> rols = new ArrayList<Rol>();
 		return rols;
 	}
+
+	/**
+	 * @return the authenticatedMaxUserResultLimit
+	 */
+	public Integer getAuthenticatedMaxUserResultLimit() {
+		return authenticatedMaxUserResultLimit;
+	}
+
+	/**
+	 * @param authenticatedMaxUserResultLimit the authenticatedMaxUserResultLimit to set
+	 */
+	public void setAuthenticatedMaxUserResultLimit(Integer authenticatedMaxUserResultLimit) {
+		this.authenticatedMaxUserResultLimit = authenticatedMaxUserResultLimit;
+	}
+	
+	
+
+
+
+
+
 }
