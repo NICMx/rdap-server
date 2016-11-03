@@ -1,5 +1,6 @@
 package mx.nic.rdap.server.result;
 
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -182,7 +183,7 @@ public class HelpResult implements RdapResult {
 							line = iterator.next().trim();
 							description = description.trim();
 						} while (!line.isEmpty() && !line.startsWith("link1"));
-						if (description != " " || !description.isEmpty()) {
+						if (!description.equals(" ") || !description.isEmpty()) {
 							descriptions.add(description);
 							description = "";
 						}

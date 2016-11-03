@@ -145,7 +145,7 @@ public class Util {
 		// Validating if is a partial search and if it is, only can contain
 		// ASCII
 
-		// Validate if the lenght of the pattern is valid
+		// Validate if the length of the pattern is valid
 		if (pattern.length() < RdapConfiguration.getMinimumSearchPatternLength()) {
 			throw new UnprocessableEntityException("Search pattern must be at least "
 					+ RdapConfiguration.getMinimumSearchPatternLength() + " characters");
@@ -156,7 +156,14 @@ public class Util {
 		// Validate if is a valid partial search
 		if (partialSearch && pattern.compareTo(IDN.toASCII(pattern)) != 0) {
 			throw new UnprocessableEntityException("Partial search must contain only ASCII values");
+		} else {
+			int numOfWild = pattern.length() - pattern.replaceAll("\\*", "").length();
+			if (numOfWild > 1) {
+				throw new UnprocessableEntityException("Partial search can have only one wildcard");
+			}
+
 		}
+
 	}
 
 	/**
