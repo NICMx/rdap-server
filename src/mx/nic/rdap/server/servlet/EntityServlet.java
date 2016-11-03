@@ -9,11 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.db.EntityDAO;
 import mx.nic.rdap.db.model.EntityModel;
-import mx.nic.rdap.exception.RequestHandleException;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DatabaseSession;
+import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.EntityResult;
 
 /**

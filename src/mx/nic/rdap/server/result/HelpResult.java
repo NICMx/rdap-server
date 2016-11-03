@@ -22,7 +22,7 @@ import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.RemarkDescription;
 import mx.nic.rdap.db.LinkDAO;
 import mx.nic.rdap.db.RemarkDAO;
-import mx.nic.rdap.exception.InvalidadDataStructure;
+import mx.nic.rdap.db.exception.InvalidadDataStructure;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.renderer.json.RemarkParser;
 

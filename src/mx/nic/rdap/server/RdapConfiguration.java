@@ -10,8 +10,8 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import mx.nic.rdap.db.exception.ObjectNotFoundException;
 import mx.nic.rdap.db.model.ZoneModel;
-import mx.nic.rdap.exception.ObjectNotFoundException;
 import mx.nic.rdap.server.db.DatabaseSession;
 
 /**

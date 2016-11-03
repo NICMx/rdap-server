@@ -9,14 +9,15 @@ import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import mx.nic.rdap.core.exception.UnprocessableEntityException;
 import mx.nic.rdap.db.NameserverDAO;
+import mx.nic.rdap.db.exception.InvalidValueException;
 import mx.nic.rdap.db.model.NameserverModel;
-import mx.nic.rdap.exception.RequestHandleException;
-import mx.nic.rdap.exception.UnprocessableEntityException;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DatabaseSession;
+import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.NameserverSeachResult;
 
 /**
@@ -42,7 +43,12 @@ public class NameserverSearchServlet extends RdapServlet {
 	@Override
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
-		NameserverSearchRequest request = new NameserverSearchRequest(httpRequest);
+		NameserverSearchRequest request;
+		try {
+			request = new NameserverSearchRequest(httpRequest);
+		} catch (UnprocessableEntityException e) {
+			throw new RequestHandleException(e.getHttpResponseStatusCode(), e.getMessage());
+		}
 		List<NameserverDAO> nameservers = new ArrayList<NameserverDAO>();
 		try (Connection connection = DatabaseSession.getRdapConnection()) {
 			String username = httpRequest.getRemoteUser();
@@ -53,7 +59,11 @@ public class NameserverSearchServlet extends RdapServlet {
 			} else {
 				String ipAddress = request.getValue().trim();
 				Util.validateIpAddress(ipAddress);
-				nameservers = NameserverModel.searchByIp(ipAddress,resultLimit, connection);
+				try {
+					nameservers = NameserverModel.searchByIp(ipAddress,resultLimit, connection);
+				} catch (InvalidValueException e) {
+					throw new RequestHandleException( e.getMessage());
+				}
 				return new NameserverSeachResult(nameservers);
 			}
 		}

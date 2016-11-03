@@ -18,10 +18,10 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import mx.nic.rdap.core.exception.UnprocessableEntityException;
 import mx.nic.rdap.db.model.RdapUserModel;
-import mx.nic.rdap.exception.MalformedRequestException;
-import mx.nic.rdap.exception.RequestHandleException;
-import mx.nic.rdap.exception.UnprocessableEntityException;
+import mx.nic.rdap.server.exception.MalformedRequestException;
+import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nix.rdap.core.catalog.Rol;
 
 /**

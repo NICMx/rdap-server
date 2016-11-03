@@ -8,14 +8,14 @@ import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import mx.nic.rdap.core.exception.UnprocessableEntityException;
 import mx.nic.rdap.db.EntityDAO;
 import mx.nic.rdap.db.model.EntityModel;
-import mx.nic.rdap.exception.RequestHandleException;
-import mx.nic.rdap.exception.UnprocessableEntityException;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DatabaseSession;
+import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.EntitySearchResult;
 
 /**
@@ -37,7 +37,11 @@ public class EntitySearchServlet extends RdapServlet {
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
 
-		validateRequestParameter(httpRequest);
+		try {
+			validateRequestParameter(httpRequest);
+		} catch (UnprocessableEntityException e) {
+			throw new RequestHandleException(e.getHttpResponseStatusCode(), e.getMessage());
+		}
 
 		List<EntityDAO> entities = null;
 		String parameter = httpRequest.getParameterNames().nextElement();

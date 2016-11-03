@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import junit.framework.TestCase;
-import mx.nic.rdap.exception.MalformedRequestException;
+import mx.nic.rdap.server.exception.MalformedRequestException;
 
 public class ValidateIpTest extends TestCase {
 

@@ -9,16 +9,16 @@ import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import mx.nic.rdap.core.exception.UnprocessableEntityException;
 import mx.nic.rdap.db.DomainDAO;
+import mx.nic.rdap.db.exception.InvalidValueException;
 import mx.nic.rdap.db.model.DomainModel;
-import mx.nic.rdap.exception.InvalidValueException;
-import mx.nic.rdap.exception.MalformedRequestException;
-import mx.nic.rdap.exception.RequestHandleException;
-import mx.nic.rdap.exception.UnprocessableEntityException;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DatabaseSession;
+import mx.nic.rdap.server.exception.MalformedRequestException;
+import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.DomainSearchResult;
 
 /**
@@ -45,7 +45,12 @@ public class DomainSearchServlet extends RdapServlet {
 	@Override
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
-		DomainSearchRequest request = new DomainSearchRequest(httpRequest);
+		DomainSearchRequest request;
+		try {
+			request = new DomainSearchRequest(httpRequest);
+		} catch (UnprocessableEntityException e) {
+			throw new RequestHandleException(e.getHttpResponseStatusCode(), e.getMessage());
+		}
 		RdapResult result = null;
 
 		try (Connection connection = DatabaseSession.getRdapConnection()) {
