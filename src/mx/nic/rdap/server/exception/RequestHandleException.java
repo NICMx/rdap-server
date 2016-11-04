@@ -9,7 +9,6 @@ public class RequestHandleException extends Exception {
 
 	/**
 	 * The code we'll return in the HTTP response.
-	 * https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 	 */
 	private int httpResponseStatusCode = 500;
 
