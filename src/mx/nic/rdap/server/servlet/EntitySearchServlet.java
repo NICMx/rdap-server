@@ -3,11 +3,13 @@ package mx.nic.rdap.server.servlet;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.exception.UnprocessableEntityException;
 import mx.nic.rdap.db.EntityDAO;
 import mx.nic.rdap.db.model.EntityModel;
@@ -18,19 +20,12 @@ import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.EntitySearchResult;
 
-/**
- * Servlet that searchs entities
- * 
- * @author dhfelix
- *
- */
 @WebServlet(name = "entities", urlPatterns = { "/entities" })
 public class EntitySearchServlet extends RdapServlet {
 
 	private static final long serialVersionUID = -8023237096799052268L;
 
 	public static final String FULL_NAME = "fn";
-
 	public static final String HANDLE = "handle";
 
 	@Override
@@ -46,21 +41,24 @@ public class EntitySearchServlet extends RdapServlet {
 		List<EntityDAO> entities = null;
 		String parameter = httpRequest.getParameterNames().nextElement();
 		String value = httpRequest.getParameter(parameter);
+		String userName = httpRequest.getRemoteUser();
 
 		try (Connection connection = DatabaseSession.getRdapConnection()) {
-			String username = httpRequest.getRemoteUser();
-			Integer resultLimit=Util.getMaxNumberOfResultsForUser(username,connection);
+			Integer resultLimit = Util.getMaxNumberOfResultsForUser(userName, connection);
 			switch (parameter) {
 			case FULL_NAME:
-				entities = EntityModel.searchByVCardName(value.trim(),resultLimit, connection);
+				entities = EntityModel.searchByVCardName(value.trim(), resultLimit, connection);
 				break;
 			case HANDLE:
-				entities = EntityModel.searchByHandle(value.trim(),resultLimit, connection);
+				entities = EntityModel.searchByHandle(value.trim(), resultLimit, connection);
 				break;
 			}
 		}
 
-		return new EntitySearchResult(entities);
+		List<Entity> entityList = null;
+		if (entities != null)
+			entityList = new ArrayList<Entity>(entities);
+		return new EntitySearchResult(entityList, userName);
 	}
 
 	@Override

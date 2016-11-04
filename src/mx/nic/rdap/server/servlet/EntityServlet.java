@@ -16,12 +16,6 @@ import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.EntityResult;
 
-/**
- * Servlet that find an entity by its handle
- * 
- * @author dhfelix
- *
- */
 @WebServlet(name = "entity", urlPatterns = { "/entity/*" })
 public class EntityServlet extends RdapServlet {
 
@@ -41,11 +35,12 @@ public class EntityServlet extends RdapServlet {
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
 		EntityRequest request = new EntityRequest(Util.getRequestParams(httpRequest)[0]);
+		String userName = httpRequest.getRemoteUser();
 
 		RdapResult result = null;
 		try (Connection con = DatabaseSession.getRdapConnection()) {
 			EntityDAO entity = EntityModel.getByHandle(request.getHandle(), con);
-			result = new EntityResult(entity);
+			result = new EntityResult(entity, userName);
 
 		}
 		return result;

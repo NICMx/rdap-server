@@ -9,14 +9,12 @@ import javax.json.JsonObjectBuilder;
 import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.server.RdapResult;
+import mx.nic.rdap.server.UserRequestInfo;
 
 /**
- * A result from a exception request
- * 
- * @author dalpuche
- *
+ * A result from a exception generated in a request.
  */
-public class ExceptionResult implements RdapResult {
+public class ExceptionResult extends UserRequestInfo implements RdapResult {
 
 	private final static Logger logger = Logger.getLogger(ExceptionResult.class.getName());
 

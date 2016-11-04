@@ -17,8 +17,9 @@ public class RdapInitializer implements ServletContextListener {
 		try {
 			RendererPool.loadRenderers(Util.loadProperties(RENDERERS_FILE));
 			RdapConfiguration.loadSystemProperties(Util.loadProperties(CONFIGURATION_FILE));
-			//Validate if the configurated zones are in the database
+			// Validate if the configurated zones are in the database
 			RdapConfiguration.validateConfiguratedZones();
+			PrivacyUtil.loadAllPrivacySettings();
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}

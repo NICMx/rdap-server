@@ -1,44 +1,53 @@
 package mx.nic.rdap.server.renderer.json;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-import mx.nic.rdap.db.EventDAO;
+import mx.nic.rdap.core.db.Event;
+import mx.nic.rdap.server.PrivacyStatus;
+import mx.nic.rdap.server.PrivacyUtil;
 
-/**
- * Parser for the EventDAO object.
- * 
- * @author dalpuche
- *
- */
-public class EventParser  implements JsonParser {
+public class EventParser {
+	public static JsonArray getJsonArray(List<Event> events, boolean isAuthenticated, boolean isOwner,
+			Map<String, PrivacyStatus> eventPrivacySettings, Map<String, PrivacyStatus> linkPrivacySettings) {
+		JsonArrayBuilder builder = Json.createArrayBuilder();
 
-	private EventDAO event;
-	
-	public EventParser(EventDAO event) {
-		this.event=event;
-	}
+		for (Event event : events) {
+			builder.add(getJsonObject(event, isAuthenticated, isOwner, eventPrivacySettings, linkPrivacySettings));
+		}
 
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see mx.nic.rdap.server.renderer.JsonParser#toJson()
-	 */
-	@Override
-	public JsonObject getJson() {
-		JsonObjectBuilder builder = Json.createObjectBuilder();
-		builder.add("eventAction", event.getEventAction().getValue());
-		if (event.getEventActor() != null && !event.getEventActor().isEmpty())
-			builder.add("eventActor", event.getEventActor());
-		builder.add("eventDate", event.getEventDate().toInstant().toString());
-		if (event.getLinks() != null && !event.getLinks().isEmpty())
-			builder.add("links", JsonUtil.getLinksJson(event.getLinks()));
 		return builder.build();
 	}
 
-	public String toString() {
-		return getJson().toString();
+	public static JsonObject getJsonObject(Event event, boolean isAuthenticated, boolean isOwner,
+			Map<String, PrivacyStatus> eventPrivacySettings, Map<String, PrivacyStatus> linkPrivacySettings) {
+		JsonObjectBuilder builder = Json.createObjectBuilder();
+
+		String key = "eventAction";
+		String value = event.getEventAction().getValue();
+		if (PrivacyUtil.isObjectVisible(value, key, eventPrivacySettings.get(key), isAuthenticated, isOwner))
+			builder.add(key, value);
+
+		key = "eventActor";
+		value = event.getEventActor();
+		if (PrivacyUtil.isObjectVisible(value, key, eventPrivacySettings.get(key), isAuthenticated, isOwner))
+			builder.add(key, value);
+
+		key = "eventDate";
+		value = event.getEventDate().toInstant().toString();
+		if (PrivacyUtil.isObjectVisible(value, key, eventPrivacySettings.get(key), isAuthenticated, isOwner))
+			builder.add(key, value);
+
+		key = "links";
+		if (PrivacyUtil.isObjectVisible(event.getLinks(), key, eventPrivacySettings.get(key), isAuthenticated, isOwner))
+			builder.add(key, LinkParser.getJsonArray(event.getLinks(), isAuthenticated, isOwner, linkPrivacySettings));
+
+		return builder.build();
 	}
 }

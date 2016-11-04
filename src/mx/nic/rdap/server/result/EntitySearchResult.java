@@ -7,30 +7,29 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-import mx.nic.rdap.db.EntityDAO;
+import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.server.RdapResult;
+import mx.nic.rdap.server.UserRequestInfo;
 import mx.nic.rdap.server.renderer.json.EntityParser;
 
 /**
- * @author dhfelix
- *
+ * A result from an Entity search request.
  */
-public class EntitySearchResult implements RdapResult {
+public class EntitySearchResult extends UserRequestInfo implements RdapResult {
 
-	List<EntityDAO> entities;
+	List<Entity> entities;
 
-	public EntitySearchResult(List<EntityDAO> entities) {
+	public EntitySearchResult(List<Entity> entities, String userName) {
 		this.entities = entities;
+		setUserName(userName);
 	}
 
 	@Override
 	public JsonObject toJson() {
 		JsonObjectBuilder builder = Json.createObjectBuilder();
 		JsonArrayBuilder arrB = Json.createArrayBuilder();
-		for (EntityDAO entity : entities) {
-			EntityParser parser=new EntityParser(entity);
-			JsonObject json = parser.getJson();
-			arrB.add(json);
+		for (Entity entity : entities) {
+			arrB.add(EntityParser.getJson(entity, isUserAuthenticated(), isOwner(entity)));
 		}
 		builder.add("entitySearchResults", arrB);
 		return builder.build();

@@ -9,6 +9,7 @@ import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.exception.UnprocessableEntityException;
 import mx.nic.rdap.db.NameserverDAO;
 import mx.nic.rdap.db.exception.InvalidValueException;
@@ -20,12 +21,6 @@ import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.NameserverSeachResult;
 
-/**
- * Servlet that find a nameserver by its name
- * 
- * @author dalpuche
- *
- */
 @WebServlet(name = "nameservers", urlPatterns = { "/nameservers" })
 public class NameserverSearchServlet extends RdapServlet {
 	private static final long serialVersionUID = 1L;
@@ -44,29 +39,35 @@ public class NameserverSearchServlet extends RdapServlet {
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
 		NameserverSearchRequest request;
+
 		try {
 			request = new NameserverSearchRequest(httpRequest);
 		} catch (UnprocessableEntityException e) {
 			throw new RequestHandleException(e.getHttpResponseStatusCode(), e.getMessage());
 		}
-		List<NameserverDAO> nameservers = new ArrayList<NameserverDAO>();
+
+		List<NameserverDAO> nameserversDAO = null;
+		String username = httpRequest.getRemoteUser();
+
 		try (Connection connection = DatabaseSession.getRdapConnection()) {
-			String username = httpRequest.getRemoteUser();
-			Integer resultLimit=Util.getMaxNumberOfResultsForUser(username,connection);
+			Integer resultLimit = Util.getMaxNumberOfResultsForUser(username, connection);
 			if (request.getParameter().compareTo(NameserverSearchRequest.NAME_PARAMETER_KEY) == 0) {
-				nameservers = NameserverModel.searchByName(request.getValue().trim(),resultLimit, connection);
-				return new NameserverSeachResult(nameservers);
+				nameserversDAO = NameserverModel.searchByName(request.getValue().trim(), resultLimit, connection);
 			} else {
 				String ipAddress = request.getValue().trim();
 				Util.validateIpAddress(ipAddress);
 				try {
-					nameservers = NameserverModel.searchByIp(ipAddress,resultLimit, connection);
+					nameserversDAO = NameserverModel.searchByIp(ipAddress, resultLimit, connection);
 				} catch (InvalidValueException e) {
-					throw new RequestHandleException( e.getMessage());
+					throw new RequestHandleException(e.getMessage());
 				}
-				return new NameserverSeachResult(nameservers);
 			}
 		}
+
+		List<Nameserver> nameservers = null;
+		if (nameserversDAO != null)
+			nameservers = new ArrayList<Nameserver>(nameserversDAO);
+		return new NameserverSeachResult(nameservers, username);
 	}
 
 	/*

@@ -1,15 +1,12 @@
 package mx.nic.rdap.server;
 
+/**
+ * Privacy levels of an object or attribute.
+ */
 public enum PrivacyStatus {
-	OWNER("owner"),
-	AUTHENTICATE("authenticate"),
-	ANY("any"),
-	NONE("none");
-	
-	private String name;
-	
-	private PrivacyStatus(String name) {
-		this.name = name;
+	OWNER, AUTHENTICATE, ANY, NONE;
+
+	private PrivacyStatus() {
 	}
-	
+
 }

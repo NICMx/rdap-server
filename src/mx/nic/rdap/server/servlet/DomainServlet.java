@@ -18,12 +18,6 @@ import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.DomainResult;
 
-/**
- * Servlet that find a domain by its name
- * 
- * @author dalpuche
- *
- */
 @WebServlet(name = "domain", urlPatterns = { "/domain/*" })
 public class DomainServlet extends RdapServlet {
 
@@ -43,6 +37,7 @@ public class DomainServlet extends RdapServlet {
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
 		DomainRequest request = new DomainRequest(Util.getRequestParams(httpRequest)[0]);
+		String userName = httpRequest.getRemoteUser();
 
 		RdapResult result = null;
 		try (Connection con = DatabaseSession.getRdapConnection()) {
@@ -59,8 +54,7 @@ public class DomainServlet extends RdapServlet {
 				throw new MalformedRequestException("Invalid zone", e);
 			}
 
-			result = new DomainResult(domain);
-
+			result = new DomainResult(domain, userName);
 		}
 		return result;
 	}

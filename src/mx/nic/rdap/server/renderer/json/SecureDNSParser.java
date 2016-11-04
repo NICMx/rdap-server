@@ -1,53 +1,37 @@
 package mx.nic.rdap.server.renderer.json;
 
-import java.sql.SQLException;
+import java.util.Map;
 
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-import mx.nic.rdap.db.SecureDNSDAO;
+import mx.nic.rdap.core.db.SecureDNS;
+import mx.nic.rdap.server.PrivacyStatus;
+import mx.nic.rdap.server.PrivacyUtil;
 
-/**
- * Parser access class for the SecureDNS object
- * 
- * @author evaldes
- *
- */
-public class SecureDNSParser implements JsonParser {
-	
- private SecureDNSDAO secureDns;
+public class SecureDNSParser {
 
-	/**
-	 * Construct the object SecurDNS from a resultset
-	 * 
-	 * @throws SQLException
-	 */
-	public SecureDNSParser(SecureDNSDAO secureDns) {
-	this.secureDns=secureDns;
-	}
-
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see mx.nic.rdap.server.renderer.json.JsonParser#toJson()
-	 */
-	public JsonObject getJson() {
+	public static JsonObject getJsonObject(SecureDNS secureDNS, boolean isAuthenticated, boolean isOwner) {
 		JsonObjectBuilder builder = Json.createObjectBuilder();
-		if (secureDns.getZoneSigned() != null) {
-			builder.add("zoneSigned", secureDns.getZoneSigned());
-		}
-		if (secureDns.getDelegationSigned() != null) {
-			builder.add("delegationSigned", secureDns.getZoneSigned());
-		}
-		if (secureDns.getMaxSigLife() != null) {
-			builder.add("maxSigLife", secureDns.getZoneSigned());
-		}
+		Map<String, PrivacyStatus> settings = PrivacyUtil.getSecureDnsPrivacySettings();
+		String key = "zoneSigned";
+		if (PrivacyUtil.isObjectVisible(secureDNS.getZoneSigned(), key, settings.get(key), isAuthenticated, isOwner))
+			builder.add(key, secureDNS.getZoneSigned());
 
-		if (secureDns.getDsData() != null && !secureDns.getDsData().isEmpty()) {
-			builder.add("dsData", ((DsDataParser) secureDns.getDsData()).getJson());
-		}
+		key = "delegationSigned";
+		if (PrivacyUtil.isObjectVisible(secureDNS.getDelegationSigned(), key, settings.get(key), isAuthenticated,
+				isOwner))
+			builder.add(key, secureDNS.getDelegationSigned());
+
+		key = "maxSigLife";
+		if (PrivacyUtil.isObjectVisible(secureDNS.getMaxSigLife(), key, settings.get(key), isAuthenticated, isOwner))
+			builder.add(key, secureDNS.getMaxSigLife());
+
+		key = "dsData";
+		if (PrivacyUtil.isObjectVisible(secureDNS.getDsData(), key, settings.get(key), isAuthenticated, isOwner))
+			builder.add(key, DsDataParser.getJsonArray(secureDNS.getDsData(), isAuthenticated, isOwner));
+
 		return builder.build();
 	}
 

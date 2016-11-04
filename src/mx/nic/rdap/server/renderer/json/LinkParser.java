@@ -1,59 +1,71 @@
 package mx.nic.rdap.server.renderer.json;
 
-import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 
 import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-import mx.nic.rdap.db.LinkDAO;
+import mx.nic.rdap.core.db.Link;
+import mx.nic.rdap.server.PrivacyStatus;
+import mx.nic.rdap.server.PrivacyUtil;
 
-/**
- * Parser for the LinkDAO object.
- * 
- * @author dalpuche
- *
- */
-public class LinkParser  implements JsonParser {
+public class LinkParser {
 
-	private LinkDAO link;
+	public static JsonArray getJsonArray(List<Link> links, boolean isAuthenticated, boolean isOwner,
+			Map<String, PrivacyStatus> privacySettings) {
+		JsonArrayBuilder builder = Json.createArrayBuilder();
 
-	/**
-	 * Construct a LinkParser from a resulset
-	 * 
-	 * @throws SQLException
-	 */
-	public LinkParser(LinkDAO link)  {
-		this.link=link;
-	}
+		for (Link link : links) {
+			builder.add(getJsonObject(link, isAuthenticated, isOwner, privacySettings));
+		}
 
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see mx.nic.rdap.server.renderer.JsonParser#toJson()
-	 */
-	@Override
-	public JsonObject getJson() {
-		JsonObjectBuilder builder = Json.createObjectBuilder();
-		if (link.getValue() != null && !link.getValue().isEmpty())
-			builder.add("value", link.getValue());
-		if (link.getRel() != null && !link.getRel().isEmpty())
-			builder.add("rel", link.getRel());
-		builder.add("href", link.getHref());
-		if (link.getHreflag() != null && !link.getHref().isEmpty())
-			builder.add("hreflang", link.getHreflag());
-		if (link.getTitle() != null && !link.getTitle().isEmpty())
-			builder.add("title", link.getTitle());
-		if (link.getMedia() != null && !link.getMedia().isEmpty())
-			builder.add("media", link.getMedia());
-		if (link.getType() != null && !link.getType().isEmpty())
-			builder.add("type", link.getType());
 		return builder.build();
 	}
 
-	public String toString() {
-		return getJson().toString();
+	public static JsonObject getJsonObject(Link link, boolean isAuthenticated, boolean isOwner,
+			Map<String, PrivacyStatus> privacySettings) {
+		JsonObjectBuilder builder = Json.createObjectBuilder();
+
+		String key = "value";
+		String value = link.getValue();
+		if (PrivacyUtil.isObjectVisible(value, key, privacySettings.get(key), isAuthenticated, isOwner))
+			builder.add(key, value);
+
+		key = "rel";
+		value = link.getRel();
+		if (PrivacyUtil.isObjectVisible(value, key, privacySettings.get(key), isAuthenticated, isOwner))
+			builder.add(key, value);
+
+		key = "href";
+		value = link.getHref();
+		if (PrivacyUtil.isObjectVisible(value, key, privacySettings.get(key), isAuthenticated, isOwner))
+			builder.add(key, value);
+
+		key = "hreflang";
+		value = link.getHreflag();
+		if (PrivacyUtil.isObjectVisible(value, key, privacySettings.get(key), isAuthenticated, isOwner))
+			builder.add(key, value);
+
+		key = "title";
+		value = link.getTitle();
+		if (PrivacyUtil.isObjectVisible(value, key, privacySettings.get(key), isAuthenticated, isOwner))
+			builder.add(key, value);
+
+		key = "media";
+		value = link.getMedia();
+		if (PrivacyUtil.isObjectVisible(value, key, privacySettings.get(key), isAuthenticated, isOwner))
+			builder.add(key, value);
+
+		key = "type";
+		value = link.getType();
+		if (PrivacyUtil.isObjectVisible(value, key, privacySettings.get(key), isAuthenticated, isOwner))
+			builder.add(key, value);
+
+		return builder.build();
 	}
 
 }

@@ -1,8 +1,8 @@
 package mx.nic.rdap.server.renderer.json;
 
 import java.net.IDN;
-import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -10,107 +10,60 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-import mx.nic.rdap.core.db.Nameserver;
-import mx.nic.rdap.core.db.PublicId;
-import mx.nic.rdap.core.db.SecureDNS;
-import mx.nic.rdap.core.db.Variant;
-import mx.nic.rdap.db.DomainDAO;
-import mx.nic.rdap.db.LinkDAO;
-import mx.nic.rdap.db.NameserverDAO;
-import mx.nic.rdap.db.PublicIdDAO;
-import mx.nic.rdap.db.SecureDNSDAO;
-import mx.nic.rdap.db.VariantDAO;
+import mx.nic.rdap.core.db.Domain;
+import mx.nic.rdap.server.PrivacyStatus;
+import mx.nic.rdap.server.PrivacyUtil;
 
-/**
- * Parser for the DomainDAO object.
- * 
- * @author evaldes
- *
- */
-public class DomainParser implements  JsonParser {
+public class DomainParser {
 
-	DomainDAO domain;
-	/**
-	 * Default Constructor
-	 */
-	public DomainParser() {
-	}
+	public static JsonArray getJsonArray(List<Domain> domains, boolean isAuthenticated, boolean isOwner) {
+		JsonArrayBuilder builder = Json.createArrayBuilder();
 
-	/**
-	 * Construct DomainParser with a ResultSet
-	 * 
-	 * @param resultSet
-	 * @throws SQLException
-	 */
-	public DomainParser(DomainDAO domain)  {
-		this.domain=domain;
-	}
-
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see mx.nic.rdap.server.renderer.json.JsonParser#toJson()
-	 */
-	@Override
-	public JsonObject getJson() {
-		domain.getLinks().add(new LinkDAO("domain", domain.getLdhName()));
-
-		JsonObjectBuilder builder = Json.createObjectBuilder();
-
-		builder.add("objectClassName", "domain");
-		JsonUtil.getCommonRdapJsonObject(builder, domain);
-		builder.add("ldhName", domain.getLdhName());
-		builder.add("unicodeName", IDN.toUnicode(domain.getLdhName()));
-		if (domain.getVariants() != null && !domain.getVariants().isEmpty()) {
-			builder.add("variants", this.getVariantsJson(domain.getVariants()));
-		}
-		if (domain.getPublicIds() != null && !domain.getPublicIds().isEmpty()) {
-			builder.add("publicIds", this.getPublicIdsJson(domain.getPublicIds()));
+		for (Domain domain : domains) {
+			builder.add(getJson(domain, isAuthenticated, isOwner));
 		}
 
-		if (domain.getNameServers() != null && !domain.getNameServers().isEmpty()) {
-			builder.add("nameservers", this.getNameServersJson(domain.getNameServers()));
-		}
-		getSecureDNSJson(builder, domain.getSecureDNS());
 		return builder.build();
 	}
 
-	private JsonArray getVariantsJson(List<Variant> variants) {
-		JsonArrayBuilder arrB = Json.createArrayBuilder();
-		for (Variant variant : variants) { 
-			VariantParser parser= new VariantParser((VariantDAO)variant);
-			JsonObject json =parser.getJson();
-			arrB.add(json);
+	public static JsonObject getJson(Domain domain, boolean isAuthenticated, boolean isOwner) {
+		Map<String, PrivacyStatus> settings = PrivacyUtil.getDomainPrivacySettings();
+		JsonObjectBuilder builder = Json.createObjectBuilder();
+
+		builder.add("objectClassName", "domain");
+		JsonUtil.fillCommonRdapJsonObject(builder, domain, isAuthenticated, isOwner, settings,
+				PrivacyUtil.getDomainRemarkPrivacySettings(), PrivacyUtil.getDomainLinkPrivacySettings(),
+				PrivacyUtil.getDomainEventPrivacySettings());
+
+		String key = "ldhName";
+		String value = domain.getLdhName();
+		if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
+			builder.add(key, value);
+
+		key = "unicodeName";
+		value = IDN.toUnicode(domain.getLdhName());
+		if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
+			builder.add(key, value);
+
+		key = "variants";
+		if (PrivacyUtil.isObjectVisible(domain.getVariants(), key, settings.get(key), isAuthenticated, isOwner))
+			builder.add(key, VariantParser.getJsonArray(domain.getVariants(), isAuthenticated, isOwner));
+
+		key = "publicIds";
+		if (PrivacyUtil.isObjectVisible(domain.getPublicIds(), key, settings.get(key), isAuthenticated, isOwner)) {
+			builder.add(key, PublicIdParser.getJsonArray(domain.getPublicIds(), isAuthenticated, isOwner,
+					PrivacyUtil.getDomainPublicIdsPrivacySettings()));
 		}
-		return arrB.build();
+
+		key = "nameservers";
+		if (PrivacyUtil.isObjectVisible(domain.getNameServers(), key, settings.get(key), isAuthenticated, isOwner))
+			builder.add(key, NameserverParser.getJsonArray(domain.getNameServers(), isAuthenticated, isOwner));
+
+		key = "secureDNS";
+		if (PrivacyUtil.isObjectVisible(domain.getSecureDNS(), key, settings.get(key), isAuthenticated, isOwner))
+			builder.add(key, SecureDNSParser.getJsonObject(domain.getSecureDNS(), isAuthenticated, isOwner));
+
+		return builder.build();
 	}
 
-	private JsonArray getPublicIdsJson(List<PublicId> publicIds) {
-		JsonArrayBuilder arrB = Json.createArrayBuilder();
-		for (PublicId publicId : publicIds) {
-			PublicIdParser parser=new PublicIdParser((PublicIdDAO)publicId);
-			JsonObject json = parser.getJson();
-			arrB.add(json);
-		}
-		return arrB.build();
-	}
-
-	private JsonArray getNameServersJson(List<Nameserver> nameservers) {
-		JsonArrayBuilder arrB = Json.createArrayBuilder();
-		for (Nameserver nameserver : nameservers) {
-			NameserverParser parser=new NameserverParser((NameserverDAO)nameserver);
-			JsonObject json = parser.getJson();
-			arrB.add(json);
-		}
-		return arrB.build();
-	}
-
-	private JsonObjectBuilder getSecureDNSJson(JsonObjectBuilder builder, SecureDNS secureDns) {
-		if (secureDns != null) {
-			SecureDNSParser parser=new SecureDNSParser((SecureDNSDAO)secureDns);
-			builder.add("secureDNS", parser.getJson());
-		}
-		return builder;
-	}
 }

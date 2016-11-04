@@ -11,12 +11,6 @@ import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.ExceptionResult;
 
-/**
- * Servlet that show the help information
- * 
- * @author dalpuche
- *
- */
 @WebServlet(name = "exception", urlPatterns = { "/exception" })
 public class ExceptionServlet extends RdapServlet {
 

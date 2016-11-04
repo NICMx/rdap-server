@@ -9,6 +9,7 @@ import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.core.exception.UnprocessableEntityException;
 import mx.nic.rdap.db.DomainDAO;
 import mx.nic.rdap.db.exception.InvalidValueException;
@@ -21,16 +22,16 @@ import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.DomainSearchResult;
 
-/**
- * Servlet that searches domains
- * 
- * @author evaldes
- * 
- */
 @WebServlet(name = "domains", urlPatterns = { "/domains" })
 public class DomainSearchServlet extends RdapServlet {
 
 	private static final long serialVersionUID = 1L;
+
+	public final String DOMAIN_NAME = "name";
+
+	public final String NAMESERVER_NAME = "nsLdhName";
+
+	public final String NAMESERVER_IP = "nsIp";
 
 	public DomainSearchServlet() throws IOException {
 		super();
@@ -51,42 +52,51 @@ public class DomainSearchServlet extends RdapServlet {
 		} catch (UnprocessableEntityException e) {
 			throw new RequestHandleException(e.getHttpResponseStatusCode(), e.getMessage());
 		}
-		RdapResult result = null;
+
+		List<DomainDAO> domainsDAO = null;
+		String username = httpRequest.getRemoteUser();
 
 		try (Connection connection = DatabaseSession.getRdapConnection()) {
-			List<DomainDAO> domains = new ArrayList<DomainDAO>();
-			String username = httpRequest.getRemoteUser();
-			Integer resultLimit=Util.getMaxNumberOfResultsForUser(username,connection);
+			Integer resultLimit = Util.getMaxNumberOfResultsForUser(username, connection);
 
-			if (request.getParameter().equals("name")) {
-
+			switch (request.getParameter()) {
+			case DOMAIN_NAME:
 				// Gets domain by its name with zone
 				if (request.getValue().contains("\\.")) {
 					String domain = request.getValue().split("\\.", 2)[0];
 					String zone = request.getValue().split("\\.", 2)[1];
-					
+
 					try {
-						domains = DomainModel.searchByName(domain, zone,resultLimit, connection);
+						domainsDAO = DomainModel.searchByName(domain, zone, resultLimit, connection);
 					} catch (InvalidValueException e) {
 						e.printStackTrace();
 					}
 					// Gets domain by it´s name without zone, needs "*" as a
 					// wildcard
 				} else {
-					domains = DomainModel.searchByName(request.getValue(),resultLimit, connection);
+					domainsDAO = DomainModel.searchByName(request.getValue(), resultLimit, connection);
 				}
+				break;
+			case NAMESERVER_NAME:
+				// Gets´s domain by it´s Nameserver name
+				domainsDAO = DomainModel.searchByNsLdhName(request.getValue(), resultLimit, connection);
+				break;
+			case NAMESERVER_IP:
+				// Get´s domain by it´s Nameserver Ip
+				domainsDAO = DomainModel.searchByNsIp(request.getValue(), resultLimit, connection);
+				break;
+			default:
+
+				break;
 			}
-			// Gets´s domain by it´s Nameserver name
-			if (request.getParameter().equals("nsLdhName")) {
-				domains = DomainModel.searchByNsLdhName(request.getValue(),resultLimit, connection);
-			}
-			// Get´s domain by it´s Nameserver Ip
-			if (request.getParameter().equals("nsIp")) {
-				domains = DomainModel.searchByNsIp(request.getValue(),resultLimit, connection);
-			}
-			result = new DomainSearchResult(domains);
+
 		}
-		return result;
+
+		List<Domain> domains = null;
+		if (domainsDAO != null)
+			domains = new ArrayList<Domain>(domainsDAO);
+
+		return new DomainSearchResult(domains, username);
 	}
 
 	/*
@@ -102,12 +112,6 @@ public class DomainSearchServlet extends RdapServlet {
 	}
 
 	private class DomainSearchRequest {
-
-		public final String DOMAIN_NAME = "name";
-
-		public final String NAMESERVER_NAME = "nsLdhName";
-
-		public final String NAMESERVER_IP = "nsIp";
 
 		private String parameter;
 

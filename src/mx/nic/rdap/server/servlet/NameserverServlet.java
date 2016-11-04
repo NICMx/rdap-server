@@ -16,12 +16,6 @@ import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.NameserverResult;
 
-/**
- * Servlet that find a nameserver by its name
- * 
- * @author dalpuche
- *
- */
 @WebServlet(name = "nameserver", urlPatterns = { "/nameserver/*" })
 public class NameserverServlet extends RdapServlet {
 
@@ -42,10 +36,11 @@ public class NameserverServlet extends RdapServlet {
 			throws RequestHandleException, IOException, SQLException {
 		NameserverRequest request = new NameserverRequest(Util.getRequestParams(httpRequest)[0]);
 		NameserverDAO nameserver = null;
+		String userName = httpRequest.getRemoteUser();
 		try (Connection con = DatabaseSession.getRdapConnection()) {
 			nameserver = NameserverModel.findByName(request.getName(), con);
 		}
-		return new NameserverResult(nameserver);
+		return new NameserverResult(nameserver, userName);
 	}
 
 	/*
