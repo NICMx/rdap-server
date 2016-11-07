@@ -47,8 +47,17 @@ public class Util {
 	private static final BigInteger FOURTH_OCTECT_LIMIT = new BigInteger(0xFF + ""); // 255
 	private static final int IP_ADDRESS_ARRAY_SIZE = 4;
 
-	
 	private Integer authenticatedMaxUserResultLimit = null;
+
+	/**
+	 * Regular expression to validate an incoming partial search request.
+	 */
+	private static final String PARTIAL_DOMAIN_SEARCH_REGEX = "([\\w-]*\\*?\\.)*([\\w-]*\\*?\\.?)";
+
+	/**
+	 * Compiled pattern of <code>PARTIAL_SEARCH_REGEX</code>.
+	 */
+	private static final Pattern PARTIAL_DOMAIN_SEARCH_PATTERN = Pattern.compile(PARTIAL_DOMAIN_SEARCH_REGEX);
 
 	/**
 	 * Loads the properties configuration file
@@ -93,30 +102,35 @@ public class Util {
 		return Arrays.copyOfRange(labels, 3, labels.length);
 	}
 
+	public static void validateEntitySearchRequest(HttpServletRequest request, String... params)
+			throws UnprocessableEntityException {
+		validateSearchRequest(request, true, params);
+	}
+
+	public static void validateDomainNameSearchRequest(HttpServletRequest request, String... params)
+			throws UnprocessableEntityException {
+		validateSearchRequest(request, false, params);
+	}
+
 	/**
 	 * Validate if the request is valid
 	 * 
-	 * @param request
-	 * @param params
 	 * @throws UnprocessableEntityException
 	 */
-	public static void validateSearchRequest(HttpServletRequest request, String... params)
+	private static void validateSearchRequest(HttpServletRequest request, boolean isEntityObject, String... params)
 			throws UnprocessableEntityException {
 		// Only accept one parameter in the request
 		if (request.getParameterMap().size() != 1) {
 			throw new UnprocessableEntityException("The request must contain one parameter");
 		}
 		String parameter = request.getParameterNames().nextElement();
-		String pattern = request.getParameter(parameter);
+		String valuePattern = request.getParameter(parameter);
 		validateSearchRequestParameters(parameter, params);
-		validateSearchPatterns(pattern);
+		validateSearchValue(valuePattern, isEntityObject);
 	}
 
 	/**
 	 * Validate if the search parameters are valid
-	 * 
-	 * @param request
-	 * @throws UnprocessableEntityException
 	 */
 	public static void validateSearchRequestParameters(String parameter, String... params)
 			throws UnprocessableEntityException {
@@ -138,30 +152,44 @@ public class Util {
 	/**
 	 * Validate if the search patterns are valid
 	 * 
-	 * @param pattern
+	 * @param valuePattern
 	 * @throws UnprocessableEntityException
 	 */
-	public static void validateSearchPatterns(String pattern) throws UnprocessableEntityException {
+	public static void validateSearchValue(String valuePattern, boolean isEntity) throws UnprocessableEntityException {
 		// Validating if is a partial search and if it is, only can contain
 		// ASCII
 
 		// Validate if the length of the pattern is valid
-		if (pattern.length() < RdapConfiguration.getMinimumSearchPatternLength()) {
+		if (valuePattern.length() < RdapConfiguration.getMinimumSearchPatternLength()) {
 			throw new UnprocessableEntityException("Search pattern must be at least "
 					+ RdapConfiguration.getMinimumSearchPatternLength() + " characters");
 		}
 		boolean partialSearch = false;
-		partialSearch = pattern.contains("*");
+		partialSearch = valuePattern.contains("*");
 
 		// Validate if is a valid partial search
-		if (partialSearch && pattern.compareTo(IDN.toASCII(pattern)) != 0) {
-			throw new UnprocessableEntityException("Partial search must contain only ASCII values");
-		} else {
-			int numOfWild = pattern.length() - pattern.replaceAll("\\*", "").length();
-			if (numOfWild > 1) {
-				throw new UnprocessableEntityException("Partial search can have only one wildcard");
-			}
+		if (!partialSearch) {
+			return;
+		}
 
+		if (valuePattern.compareTo(IDN.toASCII(valuePattern)) != 0) {
+			throw new UnprocessableEntityException("Partial search must contain only ASCII values");
+		}
+
+		if (isEntity) {
+			if (!valuePattern.endsWith("*")) {
+				throw new UnprocessableEntityException(
+						"Partial search can only have a wildcard at the end of the search");
+			}
+			int asteriskCount = valuePattern.length() - valuePattern.replaceAll("\\*", "").length();
+			if (asteriskCount > 1) {
+				throw new UnprocessableEntityException("Partial search can only have one wildcard");
+			}
+		} else {
+			if (!PARTIAL_DOMAIN_SEARCH_PATTERN.matcher(valuePattern).matches()) {
+				throw new UnprocessableEntityException(
+						"Partial search can only have wildcards at the end of each label");
+			}
 		}
 
 	}
@@ -234,12 +262,13 @@ public class Util {
 	 * Get the max search results number allowed for the user
 	 * 
 	 * @return
-	 * @throws SQLException 
-	 * @throws IOException 
+	 * @throws SQLException
+	 * @throws IOException
 	 */
-	public static Integer getMaxNumberOfResultsForUser(String username,Connection connection) throws IOException, SQLException {
-		if (username!=null) {
-			Integer limit =RdapUserModel.getMaxSearchResultsForAuthenticatedUser(username, connection);
+	public static Integer getMaxNumberOfResultsForUser(String username, Connection connection)
+			throws IOException, SQLException {
+		if (username != null) {
+			Integer limit = RdapUserModel.getMaxSearchResultsForAuthenticatedUser(username, connection);
 			if (limit != null && limit != 0)
 				return limit;
 
@@ -248,7 +277,6 @@ public class Util {
 		}
 		return RdapConfiguration.getMaxNumberOfResultsForUnauthenticatedUser();
 	}
-
 
 	/**
 	 * Get the roles that can own a object
@@ -268,16 +296,11 @@ public class Util {
 	}
 
 	/**
-	 * @param authenticatedMaxUserResultLimit the authenticatedMaxUserResultLimit to set
+	 * @param authenticatedMaxUserResultLimit
+	 *            the authenticatedMaxUserResultLimit to set
 	 */
 	public void setAuthenticatedMaxUserResultLimit(Integer authenticatedMaxUserResultLimit) {
 		this.authenticatedMaxUserResultLimit = authenticatedMaxUserResultLimit;
 	}
-	
-	
-
-
-
-
 
 }

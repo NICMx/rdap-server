@@ -69,7 +69,7 @@ public class EntitySearchServlet extends RdapServlet {
 	}
 
 	private static void validateRequestParameter(HttpServletRequest request) throws UnprocessableEntityException {
-		Util.validateSearchRequest(request, FULL_NAME, HANDLE);
+		Util.validateEntitySearchRequest(request, FULL_NAME, HANDLE);
 
 	}
 

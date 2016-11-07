@@ -62,18 +62,19 @@ public class DomainSearchServlet extends RdapServlet {
 			switch (request.getParameter()) {
 			case DOMAIN_NAME:
 				// Gets domain by its name with zone
-				if (request.getValue().contains("\\.")) {
-					String domain = request.getValue().split("\\.", 2)[0];
-					String zone = request.getValue().split("\\.", 2)[1];
+				if (request.getValue().contains(".")) {
+					String[] split = request.getValue().split("\\.", 2);
+					String domain = split[0];
+					String zone = split[1];
 
 					try {
 						domainsDAO = DomainModel.searchByName(domain, zone, resultLimit, connection);
 					} catch (InvalidValueException e) {
 						e.printStackTrace();
 					}
-					// Gets domain by it´s name without zone, needs "*" as a
-					// wildcard
 				} else {
+					// Search domain by it´s name without zone.
+					// TODO is valid to search a domain without an asterisk?.
 					domainsDAO = DomainModel.searchByName(request.getValue(), resultLimit, connection);
 				}
 				break;
@@ -120,11 +121,15 @@ public class DomainSearchServlet extends RdapServlet {
 		public DomainSearchRequest(HttpServletRequest httpRequest)
 				throws UnprocessableEntityException, MalformedRequestException {
 			super();
-			Util.validateSearchRequest(httpRequest, DOMAIN_NAME, NAMESERVER_NAME, NAMESERVER_IP);
+			Util.validateDomainNameSearchRequest(httpRequest, DOMAIN_NAME, NAMESERVER_NAME, NAMESERVER_IP);
 			this.parameter = httpRequest.getParameterNames().nextElement();
 			this.value = httpRequest.getParameter(parameter);
 			if (this.parameter.equals(NAMESERVER_IP)) {
 				Util.validateIpAddress(value);
+			}
+
+			if (this.value.endsWith(".")) {
+				this.value = this.value.substring(0, this.value.length() - 1);
 			}
 		}
 

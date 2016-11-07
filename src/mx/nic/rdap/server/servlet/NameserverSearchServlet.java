@@ -18,6 +18,7 @@ import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DatabaseSession;
+import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.NameserverSearchResult;
 
@@ -89,11 +90,18 @@ public class NameserverSearchServlet extends RdapServlet {
 		private String parameter;
 		private String value;
 
-		public NameserverSearchRequest(HttpServletRequest httpRequest) throws UnprocessableEntityException {
+		public NameserverSearchRequest(HttpServletRequest httpRequest)
+				throws UnprocessableEntityException, MalformedRequestException {
 			super();
-			Util.validateSearchRequest(httpRequest, IP_PARAMETER_KEY, NAME_PARAMETER_KEY);
+			Util.validateDomainNameSearchRequest(httpRequest, IP_PARAMETER_KEY, NAME_PARAMETER_KEY);
 			this.parameter = httpRequest.getParameterNames().nextElement();
 			this.value = httpRequest.getParameter(this.parameter);
+			if (this.parameter.equals(IP_PARAMETER_KEY)) {
+				Util.validateIpAddress(this.value);
+			}
+			if (this.value.endsWith(".")) {
+				this.value = this.value.substring(0, this.value.length() - 1);
+			}
 		}
 
 		/**

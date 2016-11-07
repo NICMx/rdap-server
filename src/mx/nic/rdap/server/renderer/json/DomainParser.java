@@ -11,6 +11,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import mx.nic.rdap.core.db.Domain;
+import mx.nic.rdap.db.model.ZoneModel;
 import mx.nic.rdap.server.PrivacyStatus;
 import mx.nic.rdap.server.PrivacyUtil;
 
@@ -36,12 +37,12 @@ public class DomainParser {
 				PrivacyUtil.getDomainEventPrivacySettings());
 
 		String key = "ldhName";
-		String value = domain.getLdhName();
+		String value = domain.getLdhName() + "." + ZoneModel.getZoneNameById(domain.getZoneId());
 		if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
 			builder.add(key, value);
 
 		key = "unicodeName";
-		value = IDN.toUnicode(domain.getLdhName());
+		value = IDN.toUnicode(domain.getLdhName()) + "." + ZoneModel.getZoneNameById(domain.getZoneId());
 		if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
 			builder.add(key, value);
 
