@@ -15,11 +15,11 @@ import mx.nic.rdap.server.renderer.json.NameserverParser;
 /**
  * A result from a Nameserver search request
  */
-public class NameserverSeachResult extends UserRequestInfo implements RdapResult {
+public class NameserverSearchResult extends UserRequestInfo implements RdapResult {
 
 	private List<Nameserver> nameservers;
 
-	public NameserverSeachResult(List<Nameserver> nameservers, String userName) {
+	public NameserverSearchResult(List<Nameserver> nameservers, String userName) {
 		this.nameservers = nameservers;
 		setUserName(userName);
 	}
