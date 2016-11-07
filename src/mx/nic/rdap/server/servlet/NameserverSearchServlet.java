@@ -19,7 +19,7 @@ import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.RequestHandleException;
-import mx.nic.rdap.server.result.NameserverSeachResult;
+import mx.nic.rdap.server.result.NameserverSearchResult;
 
 @WebServlet(name = "nameservers", urlPatterns = { "/nameservers" })
 public class NameserverSearchServlet extends RdapServlet {
@@ -67,7 +67,7 @@ public class NameserverSearchServlet extends RdapServlet {
 		List<Nameserver> nameservers = null;
 		if (nameserversDAO != null)
 			nameservers = new ArrayList<Nameserver>(nameserversDAO);
-		return new NameserverSeachResult(nameservers, username);
+		return new NameserverSearchResult(nameservers, username);
 	}
 
 	/*
