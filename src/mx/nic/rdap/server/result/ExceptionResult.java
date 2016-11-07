@@ -35,6 +35,10 @@ public class ExceptionResult extends UserRequestInfo implements RdapResult {
 				errorTitle = "Forbidden request";
 				errorDescription = "Must loggin to process the request";
 				break;
+			case "403":
+				errorTitle = "Forbidden request";
+				errorDescription = httpRequest.getAttribute("javax.servlet.error.message").toString()+".Verify User role";
+				break;
 			case "404":
 				errorTitle = "Object not found";
 				errorDescription = httpRequest.getAttribute("javax.servlet.error.message").toString();
