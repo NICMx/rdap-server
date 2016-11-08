@@ -8,10 +8,10 @@ import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 
+import mx.nic.rdap.core.catalog.Status;
 import mx.nic.rdap.core.db.RdapObject;
 import mx.nic.rdap.server.PrivacyStatus;
 import mx.nic.rdap.server.PrivacyUtil;
-import mx.nix.rdap.core.catalog.Status;
 
 /**
  * Utilities for json renderer

@@ -10,11 +10,11 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
+import mx.nic.rdap.core.catalog.VariantRelation;
 import mx.nic.rdap.core.db.Variant;
 import mx.nic.rdap.core.db.VariantName;
 import mx.nic.rdap.server.PrivacyStatus;
 import mx.nic.rdap.server.PrivacyUtil;
-import mx.nix.rdap.core.catalog.VariantRelation;
 
 public class VariantParser {
 	public static JsonArray getJsonArray(List<Variant> variants, boolean isAuthenticated, boolean isOwner) {
