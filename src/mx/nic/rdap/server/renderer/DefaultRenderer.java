@@ -5,8 +5,6 @@ package mx.nic.rdap.server.renderer;
  * 
  * It writes responses in Json anyway, but returns a content type browsers have
  * no trouble displaying verbatim.
- * 
- * @author aleiva
  */
 public class DefaultRenderer extends JsonRenderer {
 

@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import mx.nic.rdap.db.exception.ObjectNotFoundException;
 import mx.nic.rdap.server.AcceptHeaderFieldParser.Accept;
-import mx.nic.rdap.server.exception.ObjectNotFoundException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.renderer.DefaultRenderer;
 

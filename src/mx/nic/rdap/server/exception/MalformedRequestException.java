@@ -1,5 +1,8 @@
 package mx.nic.rdap.server.exception;
 
+/**
+ * Generic problems found while handling a client´s request.
+ */
 public class MalformedRequestException extends RequestHandleException {
 
 	private static final long serialVersionUID = 1L;

@@ -13,26 +13,26 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import javax.json.Json;
-import javax.json.JsonArrayBuilder;
+import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.servlet.ServletContext;
 
 import mx.nic.rdap.core.db.Link;
+import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.core.db.RemarkDescription;
+import mx.nic.rdap.db.exception.InvalidadDataStructure;
+import mx.nic.rdap.server.PrivacyUtil;
 import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.db.LinkDAO;
-import mx.nic.rdap.server.db.RemarkDAO;
-import mx.nic.rdap.server.exception.InvalidadDataStructure;
+import mx.nic.rdap.server.UserRequestInfo;
+import mx.nic.rdap.server.renderer.json.RemarkParser;
 
 /**
- * 
- * @author dalpuche
- *
+ * A Result from a help request.
  */
-public class HelpResult implements RdapResult {
+public class HelpResult extends UserRequestInfo implements RdapResult {
 
-	private List<RemarkDAO> notices = new ArrayList<>();
+	private List<Remark> notices = new ArrayList<>();
 	public static String helpFolderPath;
 
 	public HelpResult(ServletContext servletContext) throws FileNotFoundException {
@@ -42,10 +42,10 @@ public class HelpResult implements RdapResult {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<RemarkDAO> readNoticesFromFiles() throws FileNotFoundException {
+	private List<Remark> readNoticesFromFiles() throws FileNotFoundException {
 		List<List<Object>> noticesData = readFiles();
 		for (List<Object> noticeData : noticesData) {
-			RemarkDAO notice = new RemarkDAO();
+			Remark notice = new Remark();
 			List<String> descriptions = (List<String>) noticeData.get(1);
 			notice.setTitle((String) noticeData.get(0));
 			for (String descriptionString : descriptions) {
@@ -57,7 +57,7 @@ public class HelpResult implements RdapResult {
 			List<Link> links = new ArrayList<Link>();
 			List<String> linksData = (List<String>) noticeData.get(2);
 			for (String linkData : linksData) {
-				LinkDAO link;
+				Link link;
 				try {
 					link = parseLink(linkData);
 					notice.setLinks(links);
@@ -85,8 +85,8 @@ public class HelpResult implements RdapResult {
 	 * @return
 	 * @throws InvalidadDataStructure
 	 */
-	private LinkDAO parseLink(String linkData) throws InvalidadDataStructure {
-		LinkDAO link = new LinkDAO();
+	private Link parseLink(String linkData) throws InvalidadDataStructure {
+		Link link = new Link();
 		if (linkData != null && !linkData.trim().isEmpty()) {
 			List<String> linkList = Arrays.asList(linkData.split("\\|"));
 			if (linkList.size() == 7) {
@@ -111,12 +111,12 @@ public class HelpResult implements RdapResult {
 	 */
 	@Override
 	public JsonObject toJson() {
-		JsonArrayBuilder builder = Json.createArrayBuilder();
-		for (RemarkDAO notice : notices) {
-			builder.add(notice.toJson());
-		}
+		// TODO privacy settings are set from Entity.
+
 		JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-		objectBuilder.add("notices", builder.build());
+		JsonArray jsonArray = RemarkParser.getJsonArray(notices, true, true,
+				PrivacyUtil.getEntityRemarkPrivacySettings(), PrivacyUtil.getEntityLinkPrivacySettings());
+		objectBuilder.add("notices", jsonArray);
 		return objectBuilder.build();
 	}
 
@@ -180,7 +180,7 @@ public class HelpResult implements RdapResult {
 							line = iterator.next().trim();
 							description = description.trim();
 						} while (!line.isEmpty() && !line.startsWith("link1"));
-						if (description != " " || !description.isEmpty()) {
+						if (!description.equals(" ") || !description.isEmpty()) {
 							descriptions.add(description);
 							description = "";
 						}

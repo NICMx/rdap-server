@@ -3,20 +3,61 @@ package mx.nic.rdap.server;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
+import java.net.IDN;
+import java.net.InetAddress;
 import java.net.URLDecoder;
+import java.net.UnknownHostException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import mx.nic.rdap.core.exception.UnprocessableEntityException;
+import mx.nic.rdap.db.model.RdapUserModel;
+import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
+import mx.nix.rdap.core.catalog.Rol;
 
 /**
  * Random miscellaneous functions useful anywhere.
- *
- * @author aleiva
  */
 public class Util {
+
+	//
+	/**
+	 * This regex string match with ###.###.###.n or ###.###.n or #.n or n,
+	 * where ###. is 000 or 0 to 255, and n is any integer number
+	 */
+	private static String IP4_GENERIC_REGEX = "(((0|1)?[0-9]{0,2}|2[0-4][0-9]|25[0-5])\\.){0,3}\\d*[^\\.]";
+
+	/**
+	 * Compiled pattern of <code>IP4_GENERIC_REGEX<code>
+	 */
+	private static Pattern IP4_GENERIC_PATTERN = Pattern.compile(IP4_GENERIC_REGEX);
+
+	private static final BigInteger FIRST_OCTECT_LIMIT = new BigInteger("4294967295"); // 0xFFFF_FFFF
+	private static final BigInteger SECOND_OCTECT_LIMIT = new BigInteger(0xFF_FFFF + "");// 16777215
+	private static final BigInteger THIRD_OCTECT_LIMIT = new BigInteger(0xFFFF + "");// 65535
+	private static final BigInteger FOURTH_OCTECT_LIMIT = new BigInteger(0xFF + ""); // 255
+	private static final int IP_ADDRESS_ARRAY_SIZE = 4;
+
+	private Integer authenticatedMaxUserResultLimit = null;
+
+	/**
+	 * Regular expression to validate an incoming partial search request.
+	 */
+	private static final String PARTIAL_DOMAIN_SEARCH_REGEX = "([\\w-]*\\*?\\.)*([\\w-]*\\*?\\.?)";
+
+	/**
+	 * Compiled pattern of <code>PARTIAL_SEARCH_REGEX</code>.
+	 */
+	private static final Pattern PARTIAL_DOMAIN_SEARCH_PATTERN = Pattern.compile(PARTIAL_DOMAIN_SEARCH_REGEX);
 
 	/**
 	 * Loads the properties configuration file
@@ -59,6 +100,207 @@ public class Util {
 
 		// resourceType = labels[2];
 		return Arrays.copyOfRange(labels, 3, labels.length);
+	}
+
+	public static void validateEntitySearchRequest(HttpServletRequest request, String... params)
+			throws UnprocessableEntityException {
+		validateSearchRequest(request, true, params);
+	}
+
+	public static void validateDomainNameSearchRequest(HttpServletRequest request, String... params)
+			throws UnprocessableEntityException {
+		validateSearchRequest(request, false, params);
+	}
+
+	/**
+	 * Validate if the request is valid
+	 * 
+	 * @throws UnprocessableEntityException
+	 */
+	private static void validateSearchRequest(HttpServletRequest request, boolean isEntityObject, String... params)
+			throws UnprocessableEntityException {
+		// Only accept one parameter in the request
+		if (request.getParameterMap().size() != 1) {
+			throw new UnprocessableEntityException("The request must contain one parameter");
+		}
+		String parameter = request.getParameterNames().nextElement();
+		String valuePattern = request.getParameter(parameter);
+		validateSearchRequestParameters(parameter, params);
+		validateSearchValue(valuePattern, isEntityObject);
+	}
+
+	/**
+	 * Validate if the search parameters are valid
+	 */
+	public static void validateSearchRequestParameters(String parameter, String... params)
+			throws UnprocessableEntityException {
+		// Validate if the parameter if a valid parameter for the request
+		String validParametersMessage = "";
+		for (String paramName : params) {
+			if (paramName.compareTo(parameter) == 0) {
+				return;
+			}
+			if (!validParametersMessage.isEmpty()) {
+				validParametersMessage = validParametersMessage.concat(" or " + paramName);
+			} else {
+				validParametersMessage = paramName;
+			}
+		}
+		throw new UnprocessableEntityException("Valid parameters:" + validParametersMessage);
+	}
+
+	/**
+	 * Validate if the search patterns are valid
+	 * 
+	 * @param valuePattern
+	 * @throws UnprocessableEntityException
+	 */
+	public static void validateSearchValue(String valuePattern, boolean isEntity) throws UnprocessableEntityException {
+		// Validating if is a partial search and if it is, only can contain
+		// ASCII
+
+		// Validate if the length of the pattern is valid
+		if (valuePattern.length() < RdapConfiguration.getMinimumSearchPatternLength()) {
+			throw new UnprocessableEntityException("Search pattern must be at least "
+					+ RdapConfiguration.getMinimumSearchPatternLength() + " characters");
+		}
+		boolean partialSearch = false;
+		partialSearch = valuePattern.contains("*");
+
+		// Validate if is a valid partial search
+		if (!partialSearch) {
+			return;
+		}
+
+		if (valuePattern.compareTo(IDN.toASCII(valuePattern)) != 0) {
+			throw new UnprocessableEntityException("Partial search must contain only ASCII values");
+		}
+
+		if (isEntity) {
+			if (!valuePattern.endsWith("*")) {
+				throw new UnprocessableEntityException(
+						"Partial search can only have a wildcard at the end of the search");
+			}
+			int asteriskCount = valuePattern.length() - valuePattern.replaceAll("\\*", "").length();
+			if (asteriskCount > 1) {
+				throw new UnprocessableEntityException("Partial search can only have one wildcard");
+			}
+		} else {
+			if (!PARTIAL_DOMAIN_SEARCH_PATTERN.matcher(valuePattern).matches()) {
+				throw new UnprocessableEntityException(
+						"Partial search can only have wildcards at the end of each label");
+			}
+		}
+
+	}
+
+	/**
+	 * Validates if IpAddress is valid
+	 * 
+	 * @param ipAddress
+	 * @throws MalformedRequestException
+	 */
+	public static void validateIpAddress(String ipAddress) throws MalformedRequestException {
+		// if the ipAddress contains ':' then InetAddress will try to parse it
+		// like IPv6 address without doing a lookup to DNS.
+		if (ipAddress.contains(":")) {
+			try {
+				InetAddress.getByName(ipAddress);
+			} catch (UnknownHostException e) {
+				throw new MalformedRequestException("Requested ip is invalid.");
+			}
+			return;
+		}
+
+		if (ipAddress.startsWith(".") || !IP4_GENERIC_PATTERN.matcher(ipAddress).matches()) {
+			throw new MalformedRequestException("Requested ip is invalid.");
+		}
+
+		String[] split = ipAddress.split("\\.");
+
+		int arraySize = split.length;
+		if (arraySize > IP_ADDRESS_ARRAY_SIZE) {
+			throw new MalformedRequestException("Requested ip is invalid.");
+		}
+
+		BigInteger finalOctectValue;
+		try {
+			finalOctectValue = new BigInteger(split[arraySize - 1]);
+		} catch (NumberFormatException e) {
+			throw new MalformedRequestException("Requested ip is invalid.");
+		}
+
+		BigInteger limitValue = null;
+		switch (arraySize) {
+		case 1:
+			limitValue = FIRST_OCTECT_LIMIT;
+			break;
+		case 2:
+			limitValue = SECOND_OCTECT_LIMIT;
+			break;
+		case 3:
+			limitValue = THIRD_OCTECT_LIMIT;
+			break;
+		case 4:
+			limitValue = FOURTH_OCTECT_LIMIT;
+			break;
+		}
+
+		if (limitValue.compareTo(finalOctectValue) < 0) {
+			throw new MalformedRequestException("Requested ip is invalid.");
+		}
+
+		try {
+			InetAddress.getByName(ipAddress);
+		} catch (UnknownHostException e) {
+			throw new MalformedRequestException("Requested ip is invalid.");
+		}
+
+	}
+
+	/**
+	 * Get the max search results number allowed for the user
+	 * 
+	 * @return
+	 * @throws SQLException
+	 * @throws IOException
+	 */
+	public static Integer getMaxNumberOfResultsForUser(String username, Connection connection)
+			throws IOException, SQLException {
+		if (username != null) {
+			Integer limit = RdapUserModel.getMaxSearchResultsForAuthenticatedUser(username, connection);
+			if (limit != null && limit != 0)
+				return limit;
+
+			else
+				return RdapConfiguration.getMaxNumberOfResultsForAuthenticatedUser();
+		}
+		return RdapConfiguration.getMaxNumberOfResultsForUnauthenticatedUser();
+	}
+
+	/**
+	 * Get the roles that can own a object
+	 * 
+	 * @return
+	 */
+	public static List<Rol> getConfiguratedOwnerRols() {
+		List<Rol> rols = new ArrayList<Rol>();
+		return rols;
+	}
+
+	/**
+	 * @return the authenticatedMaxUserResultLimit
+	 */
+	public Integer getAuthenticatedMaxUserResultLimit() {
+		return authenticatedMaxUserResultLimit;
+	}
+
+	/**
+	 * @param authenticatedMaxUserResultLimit
+	 *            the authenticatedMaxUserResultLimit to set
+	 */
+	public void setAuthenticatedMaxUserResultLimit(Integer authenticatedMaxUserResultLimit) {
+		this.authenticatedMaxUserResultLimit = authenticatedMaxUserResultLimit;
 	}
 
 }

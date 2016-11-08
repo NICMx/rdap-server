@@ -7,23 +7,17 @@ import java.sql.SQLException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
-import mx.nic.rdap.core.db.Domain;
+import mx.nic.rdap.db.DomainDAO;
+import mx.nic.rdap.db.exception.InvalidValueException;
+import mx.nic.rdap.db.model.DomainModel;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DatabaseSession;
-import mx.nic.rdap.server.db.model.DomainModel;
-import mx.nic.rdap.server.exception.InvalidValueException;
 import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.DomainResult;
 
-/**
- * Servlet that find a domain by its name
- * 
- * @author dalpuche
- *
- */
 @WebServlet(name = "domain", urlPatterns = { "/domain/*" })
 public class DomainServlet extends RdapServlet {
 
@@ -43,17 +37,24 @@ public class DomainServlet extends RdapServlet {
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
 		DomainRequest request = new DomainRequest(Util.getRequestParams(httpRequest)[0]);
+		String userName = httpRequest.getRemoteUser();
 
 		RdapResult result = null;
-		try (Connection con = DatabaseSession.getConnection();) {
-			Domain domain;
+		try (Connection con = DatabaseSession.getRdapConnection()) {
+			DomainDAO domain = new DomainDAO();
+			try {
+				DomainModel.validateDomainZone(request.getName());
+
+			} catch (InvalidValueException | SQLException e) {
+				throw new MalformedRequestException("Invalid zone", e);
+			}
 			try {
 				domain = DomainModel.findByLdhName(request.getName(), con);
 			} catch (InvalidValueException e) {
-				throw new MalformedRequestException(e);
+				throw new MalformedRequestException("Invalid zone", e);
 			}
-			result = new DomainResult(domain);
 
+			result = new DomainResult(domain, userName);
 		}
 		return result;
 	}

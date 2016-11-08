@@ -4,24 +4,22 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
-import mx.nic.rdap.server.db.DatabaseSession;
-
 @WebListener
 public class RdapInitializer implements ServletContextListener {
 
 	/** File from which we will load the renderer. */
 	private static final String RENDERERS_FILE = "renderers";
-	/** File from which we will load the database connection. */
-	private static final String DATABASE_FILE = "database";
 	/** File from which we will load the rdap server configuration. */
 	private static final String CONFIGURATION_FILE = "configuration";
 
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
 		try {
-			DatabaseSession.init(Util.loadProperties(DATABASE_FILE));
 			RendererPool.loadRenderers(Util.loadProperties(RENDERERS_FILE));
 			RdapConfiguration.loadSystemProperties(Util.loadProperties(CONFIGURATION_FILE));
+			// Validate if the configurated zones are in the database
+			RdapConfiguration.validateConfiguratedZones();
+			PrivacyUtil.loadAllPrivacySettings();
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -29,11 +27,7 @@ public class RdapInitializer implements ServletContextListener {
 
 	@Override
 	public void contextDestroyed(ServletContextEvent event) {
-		try {
-			DatabaseSession.close();
-		} catch (Exception e) {
-			throw new IllegalArgumentException(e);
-		}
+		// Nothing needed.
 	}
 
 }

@@ -9,14 +9,12 @@ import javax.json.JsonObjectBuilder;
 import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.server.RdapResult;
+import mx.nic.rdap.server.UserRequestInfo;
 
 /**
- * A result from a exception request
- * 
- * @author dalpuche
- *
+ * A result from a exception generated in a request.
  */
-public class ExceptionResult implements RdapResult {
+public class ExceptionResult extends UserRequestInfo implements RdapResult {
 
 	private final static Logger logger = Logger.getLogger(ExceptionResult.class.getName());
 
@@ -33,15 +31,25 @@ public class ExceptionResult implements RdapResult {
 		errorCode = httpRequest.getAttribute("javax.servlet.error.status_code").toString();
 		if (errorCode != null) {
 			switch (errorCode) {
+			case "401":
+				errorTitle = "Forbidden request";
+				errorDescription = "Must loggin to process the request";
+				break;
+			case "403":
+				errorTitle = "Forbidden request";
+				errorDescription = httpRequest.getAttribute("javax.servlet.error.message").toString()+".Verify User role";
+				break;
 			case "404":
 				errorTitle = "Object not found";
+				errorDescription = httpRequest.getAttribute("javax.servlet.error.message").toString();
 				break;
 			case "500":
 				errorTitle = "Internal server error";
+				errorDescription = httpRequest.getAttribute("javax.servlet.error.message").toString();
 				break;
 			}
 		}
-		errorDescription = httpRequest.getAttribute("javax.servlet.error.message").toString();
+
 	}
 
 	/*
@@ -59,6 +67,8 @@ public class ExceptionResult implements RdapResult {
 			object.add("title", errorTitle);
 		}
 		if (errorCode != null && errorDescription != null) {
+			if (errorCode.compareTo("500") != 0)
+				object.add("description", errorDescription);
 			logger.log(Level.WARNING, errorCode + ":" + errorDescription);
 		}
 		return object.build();

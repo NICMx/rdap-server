@@ -7,21 +7,15 @@ import java.sql.SQLException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
-import mx.nic.rdap.core.db.Entity;
+import mx.nic.rdap.db.EntityDAO;
+import mx.nic.rdap.db.model.EntityModel;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DatabaseSession;
-import mx.nic.rdap.server.db.model.EntityModel;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.EntityResult;
 
-/**
- * Servlet that find an entity by its handle
- * 
- * @author dhfelix
- *
- */
 @WebServlet(name = "entity", urlPatterns = { "/entity/*" })
 public class EntityServlet extends RdapServlet {
 
@@ -41,11 +35,12 @@ public class EntityServlet extends RdapServlet {
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
 		EntityRequest request = new EntityRequest(Util.getRequestParams(httpRequest)[0]);
+		String userName = httpRequest.getRemoteUser();
 
 		RdapResult result = null;
-		try (Connection con = DatabaseSession.getConnection();) {
-			Entity entity = EntityModel.getByHandle(request.getHandle(), con);
-			result = new EntityResult(entity);
+		try (Connection con = DatabaseSession.getRdapConnection()) {
+			EntityDAO entity = EntityModel.getByHandle(request.getHandle(), con);
+			result = new EntityResult(entity, userName);
 
 		}
 		return result;

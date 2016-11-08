@@ -5,8 +5,6 @@ import java.util.PriorityQueue;
 /**
  * Rather bafflingly, the servlets API does not parse the "Accept" field of the
  * HTTP header. So we do it ourselves, here.
- * 
- * @author aleiva
  */
 public class AcceptHeaderFieldParser {
 
