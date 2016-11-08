@@ -2,9 +2,6 @@ package mx.nic.rdap.server;
 
 import javax.json.JsonObject;
 
-import mx.nic.rdap.core.db.Entity;
-import mx.nic.rdap.core.db.RdapObject;
-
 /**
  * A response to the user.
  */

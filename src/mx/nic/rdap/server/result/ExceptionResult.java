@@ -43,11 +43,16 @@ public class ExceptionResult extends UserRequestInfo implements RdapResult {
 				errorTitle = "Object not found";
 				errorDescription = httpRequest.getAttribute("javax.servlet.error.message").toString();
 				break;
+			case "422":
+				errorTitle = "Forbidden request";
+				errorDescription = httpRequest.getAttribute("javax.servlet.error.message").toString();
+				break;
 			case "500":
 				errorTitle = "Internal server error";
 				errorDescription = httpRequest.getAttribute("javax.servlet.error.message").toString();
 				break;
 			}
+			logger.log(Level.WARNING, errorCode + ":" + httpRequest.getAttribute("javax.servlet.error.message").toString());
 		}
 
 	}
@@ -69,7 +74,6 @@ public class ExceptionResult extends UserRequestInfo implements RdapResult {
 		if (errorCode != null && errorDescription != null) {
 			if (errorCode.compareTo("500") != 0)
 				object.add("description", errorDescription);
-			logger.log(Level.WARNING, errorCode + ":" + errorDescription);
 		}
 		return object.build();
 	}
