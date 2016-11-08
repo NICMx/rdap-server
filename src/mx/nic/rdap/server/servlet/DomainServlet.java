@@ -9,7 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.db.DomainDAO;
 import mx.nic.rdap.db.exception.InvalidValueException;
+import mx.nic.rdap.db.exception.ObjectNotFoundException;
 import mx.nic.rdap.db.model.DomainModel;
+import mx.nic.rdap.db.model.ZoneModel;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.Util;
@@ -36,20 +38,20 @@ public class DomainServlet extends RdapServlet {
 	@Override
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
-		DomainRequest request = new DomainRequest(Util.getRequestParams(httpRequest)[0]);
+		DomainRequest request = null;
+		try {
+			request = new DomainRequest(Util.getRequestParams(httpRequest)[0]);
+		} catch (InvalidValueException | ObjectNotFoundException e) {
+			throw new MalformedRequestException("Invalid zone", e);
+		}
 		String userName = httpRequest.getRemoteUser();
 
 		RdapResult result = null;
+
 		try (Connection con = DatabaseSession.getRdapConnection()) {
 			DomainDAO domain = new DomainDAO();
 			try {
-				DomainModel.validateDomainZone(request.getName());
-
-			} catch (InvalidValueException | SQLException e) {
-				throw new MalformedRequestException("Invalid zone", e);
-			}
-			try {
-				domain = DomainModel.findByLdhName(request.getName(), con);
+				domain = DomainModel.findByLdhName(request.getDomainName(), request.getZoneId(), con);
 			} catch (InvalidValueException e) {
 				throw new MalformedRequestException("Invalid zone", e);
 			}
@@ -73,18 +75,56 @@ public class DomainServlet extends RdapServlet {
 
 	private class DomainRequest {
 
-		private String name;
+		private String fullRequestValue;
 
-		public DomainRequest(String name) {
+		private String domainName;
+
+		private String zoneName;
+
+		private Integer zoneId;
+
+		public DomainRequest(String requestValue) throws ObjectNotFoundException, InvalidValueException {
 			super();
-			this.name = name;
+			if (requestValue.endsWith(".")) {
+				requestValue = requestValue.substring(0, requestValue.length() - 1);
+			}
+			this.fullRequestValue = requestValue;
+
+			DomainModel.validateDomainZone(requestValue);
+
+			if (ZoneModel.isReverseAddress(requestValue)) {
+				domainName = ZoneModel.getAddressWithoutArpaZone(requestValue);
+				zoneId = ZoneModel.getZoneIdForArpaZone(requestValue);
+				zoneName = ZoneModel.getZoneNameById(zoneId);
+			} else {
+				int indexOf = requestValue.indexOf('.');
+
+				if (indexOf <= 0) {
+					throw new InvalidValueException("Zone", "DomainServlet", "Domain");
+				}
+
+				zoneName = requestValue.substring(indexOf + 1, requestValue.length());
+				domainName = requestValue.substring(0, indexOf);
+				zoneId = ZoneModel.getIdByZoneName(zoneName);
+			}
 		}
 
-		/**
-		 * @return the name
-		 */
-		public String getName() {
-			return name;
+		@SuppressWarnings("unused")
+		public String getFullRequestValue() {
+			return fullRequestValue;
+		}
+
+		public String getDomainName() {
+			return domainName;
+		}
+
+		@SuppressWarnings("unused")
+		public String getZoneName() {
+			return zoneName;
+		}
+
+		public Integer getZoneId() {
+			return zoneId;
 		}
 
 	}
