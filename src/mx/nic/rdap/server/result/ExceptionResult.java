@@ -44,7 +44,7 @@ public class ExceptionResult extends UserRequestInfo implements RdapResult {
 				errorDescription = httpRequest.getAttribute("javax.servlet.error.message").toString();
 				break;
 			case "422":
-				errorTitle = "Forbidden request";
+				errorTitle = "Unprocessable Entity";
 				errorDescription = httpRequest.getAttribute("javax.servlet.error.message").toString();
 				break;
 			case "500":
