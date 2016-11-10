@@ -13,7 +13,7 @@ hs_err_pid*
 
 # These prevent developers from accidentally uploading passwords to the repository.
 database.properties
-src/test/resources/META-INF/context.xml
+context.xml
 
 /build/
 
