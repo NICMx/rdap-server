@@ -20,7 +20,9 @@ public class RemarkParser {
 		JsonArrayBuilder builder = Json.createArrayBuilder();
 
 		for (Remark remark : remarks) {
-			getJsonObject(remark, isAuthenticated, isOwner, remarkPrivacySettings, linkPrivacySettings);
+			JsonObject jsonObject = getJsonObject(remark, isAuthenticated, isOwner, remarkPrivacySettings,
+					linkPrivacySettings);
+			builder.add(jsonObject);
 		}
 
 		return builder.build();
