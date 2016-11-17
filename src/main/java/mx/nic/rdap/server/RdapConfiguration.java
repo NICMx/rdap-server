@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import mx.nic.rdap.db.exception.ObjectNotFoundException;
+import mx.nic.rdap.db.model.CountryCodeModel;
 import mx.nic.rdap.db.model.ZoneModel;
 import mx.nic.rdap.server.db.DatabaseSession;
 
@@ -28,19 +29,21 @@ public class RdapConfiguration {
 	private static final String MINIMUN_SEARCH_PATTERN_LENGTH_KEY = "minimum.search.pattern.length";
 	private static final String MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER = "max.number.result.authenticated.user";
 	private static final String MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER = "max.number.result.unauthenticated.user";
-	
+
 	public RdapConfiguration() {
 	}
 
 	static {
 
 		try (Connection con = DatabaseSession.getRdapConnection()) {
+			CountryCodeModel.loadAllFromDatabase(con);
 			ZoneModel.loadAllFromDatabase(con);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
 
 	}
+
 	/**
 	 * @return the systemProperties
 	 */
@@ -109,7 +112,6 @@ public class RdapConfiguration {
 			}
 		return length;
 	}
-
 
 	/**
 	 * Validate if the configurated zones are in the database

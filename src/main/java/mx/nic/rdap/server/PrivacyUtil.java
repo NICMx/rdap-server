@@ -44,6 +44,11 @@ public class PrivacyUtil {
 	private static final String NAMESERVER_REMARKS = "nameserver_remarks";
 	private static final String NAMESERVER_EVENTS = "nameserver_events";
 
+	private static final String AUTNUM = "autnum";
+	private static final String AUTNUM_LINKS = "autnum_links";
+	private static final String AUTNUM_REMARKS = "autnum_remarks";
+	private static final String AUTNUM_EVENTS = "autnum_events";
+
 	// ***** End of names of the properties files *****
 
 	public static void loadAllPrivacySettings() throws IOException {
@@ -66,6 +71,11 @@ public class PrivacyUtil {
 		loadObjectPrivacySettings(NAMESERVER_LINKS);
 		loadObjectPrivacySettings(NAMESERVER_EVENTS);
 		loadObjectPrivacySettings(NAMESERVER_REMARKS);
+
+		loadObjectPrivacySettings(AUTNUM);
+		loadObjectPrivacySettings(AUTNUM_LINKS);
+		loadObjectPrivacySettings(AUTNUM_EVENTS);
+		loadObjectPrivacySettings(AUTNUM_REMARKS);
 
 	}
 
@@ -250,4 +260,19 @@ public class PrivacyUtil {
 		return OBJECTS_PRIVACY_SETTING.get(NAMESERVER_EVENTS);
 	}
 
+	public static Map<String, PrivacyStatus> getAutnumPrivacySettings() {
+		return OBJECTS_PRIVACY_SETTING.get(AUTNUM);
+	}
+
+	public static Map<String, PrivacyStatus> getAutnumLinkPrivacySettings() {
+		return OBJECTS_PRIVACY_SETTING.get(AUTNUM_LINKS);
+	}
+
+	public static Map<String, PrivacyStatus> getAutnumRemarkPrivacySettings() {
+		return OBJECTS_PRIVACY_SETTING.get(AUTNUM_REMARKS);
+	}
+
+	public static Map<String, PrivacyStatus> getAutnumEventPrivacySettings() {
+		return OBJECTS_PRIVACY_SETTING.get(AUTNUM_EVENTS);
+	}
 }
