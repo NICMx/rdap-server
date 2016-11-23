@@ -42,7 +42,7 @@ public class DomainParser {
 			builder.add(key, value);
 
 		key = "unicodeName";
-		value = IDN.toUnicode(domain.getLdhName()) + "." + ZoneModel.getZoneNameById(domain.getZoneId());
+		value = domain.getUnicodeName() + "." + ZoneModel.getZoneNameById(domain.getZoneId());
 		if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
 			builder.add(key, value);
 
