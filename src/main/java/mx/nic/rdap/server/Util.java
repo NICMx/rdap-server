@@ -198,18 +198,18 @@ public class Util {
 	 * Validates if IpAddress is valid
 	 * 
 	 * @param ipAddress
+	 * @return
 	 * @throws MalformedRequestException
 	 */
-	public static void validateIpAddress(String ipAddress) throws MalformedRequestException {
+	public static InetAddress validateIpAddress(String ipAddress) throws MalformedRequestException {
 		// if the ipAddress contains ':' then InetAddress will try to parse it
 		// like IPv6 address without doing a lookup to DNS.
 		if (ipAddress.contains(":")) {
 			try {
-				InetAddress.getByName(ipAddress);
+				return InetAddress.getByName(ipAddress);
 			} catch (UnknownHostException e) {
 				throw new MalformedRequestException("Requested ip is invalid.");
 			}
-			return;
 		}
 
 		if (ipAddress.startsWith(".") || !IP4_GENERIC_PATTERN.matcher(ipAddress).matches()) {
@@ -251,7 +251,7 @@ public class Util {
 		}
 
 		try {
-			InetAddress.getByName(ipAddress);
+			return InetAddress.getByName(ipAddress);
 		} catch (UnknownHostException e) {
 			throw new MalformedRequestException("Requested ip is invalid.");
 		}

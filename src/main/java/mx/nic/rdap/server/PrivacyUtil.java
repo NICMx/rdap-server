@@ -8,12 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class PrivacyUtil {
-
-	private final static Logger logger = Logger.getLogger(PrivacyUtil.class.getName());
 
 	private static final Map<String, Map<String, PrivacyStatus>> OBJECTS_PRIVACY_SETTING = new HashMap<>();
 
@@ -49,6 +45,11 @@ public class PrivacyUtil {
 	private static final String AUTNUM_REMARKS = "autnum_remarks";
 	private static final String AUTNUM_EVENTS = "autnum_events";
 
+	private static final String IP_NETWORK = "ip_network";
+	private static final String IP_NETWORK_LINKS = "ip_network_links";
+	private static final String IP_NETWORK_REMARKS = "ip_network_remarks";
+	private static final String IP_NETWORK_EVENTS = "ip_network_events";
+
 	// ***** End of names of the properties files *****
 
 	public static void loadAllPrivacySettings() throws IOException {
@@ -77,6 +78,11 @@ public class PrivacyUtil {
 		loadObjectPrivacySettings(AUTNUM_EVENTS);
 		loadObjectPrivacySettings(AUTNUM_REMARKS);
 
+		loadObjectPrivacySettings(IP_NETWORK);
+		loadObjectPrivacySettings(IP_NETWORK_LINKS);
+		loadObjectPrivacySettings(IP_NETWORK_EVENTS);
+		loadObjectPrivacySettings(IP_NETWORK_REMARKS);
+
 	}
 
 	private static void loadObjectPrivacySettings(String objectName) throws IOException {
@@ -86,14 +92,18 @@ public class PrivacyUtil {
 		try (InputStream in = classLoader.getResourceAsStream(DEFAULT_PATH + objectName + ".properties");) {
 			properties.load(in);
 		} catch (NullPointerException e) {
-			logger.log(Level.WARNING, "Cannot load file: " + DEFAULT_PATH + objectName + ".properties");
-			throw e;
+			throw new IOException("Cannot load file: " + DEFAULT_PATH + objectName + ".properties", e);
 		}
 
 		InputStream in = classLoader.getResourceAsStream(USER_PATH + objectName + ".properties");
 		if (in != null) {
-			properties.load(in);
-			in.close();
+			try {
+				properties.load(in);
+			} catch (Exception e) {
+				throw new IOException("Cannot load file: " + DEFAULT_PATH + objectName + ".properties", e);
+			} finally {
+				in.close();
+			}
 		}
 
 		StringBuilder builder = new StringBuilder();
@@ -274,5 +284,21 @@ public class PrivacyUtil {
 
 	public static Map<String, PrivacyStatus> getAutnumEventPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(AUTNUM_EVENTS);
+	}
+
+	public static Map<String, PrivacyStatus> getIpNetworkPrivacySettings() {
+		return OBJECTS_PRIVACY_SETTING.get(IP_NETWORK);
+	}
+
+	public static Map<String, PrivacyStatus> getIpNetworkLinkPrivacySettings() {
+		return OBJECTS_PRIVACY_SETTING.get(IP_NETWORK_LINKS);
+	}
+
+	public static Map<String, PrivacyStatus> getIpNetworkRemarkPrivacySettings() {
+		return OBJECTS_PRIVACY_SETTING.get(IP_NETWORK_REMARKS);
+	}
+
+	public static Map<String, PrivacyStatus> getIpNetworkEventPrivacySettings() {
+		return OBJECTS_PRIVACY_SETTING.get(IP_NETWORK_EVENTS);
 	}
 }

@@ -1,6 +1,5 @@
 package mx.nic.rdap.server.renderer.json;
 
-import java.net.IDN;
 import java.util.List;
 import java.util.Map;
 
@@ -63,6 +62,11 @@ public class DomainParser {
 		key = "secureDNS";
 		if (PrivacyUtil.isObjectVisible(domain.getSecureDNS(), key, settings.get(key), isAuthenticated, isOwner))
 			builder.add(key, SecureDNSParser.getJsonObject(domain.getSecureDNS(), isAuthenticated, isOwner));
+
+		key = "network";
+		if (PrivacyUtil.isObjectVisible(domain.getIpNetwork(), key, settings.get(key), isAuthenticated, isOwner)) {
+			builder.add(key, IpNetworkParser.getJson(domain.getIpNetwork(), isAuthenticated, isOwner));
+		}
 
 		return builder.build();
 	}
