@@ -41,6 +41,11 @@ public class EntityParser {
 					publicIdsPrivacySettings));
 		}
 
+		key = "networks";
+		if (PrivacyUtil.isObjectVisible(entity.getIpNetworks(), key, settings.get(key), isAuthenticated, isOwner)) {
+			builder.add(key, IpNetworkParser.getJsonArray(entity.getIpNetworks(), isAuthenticated, isOwner));
+		}
+
 		return builder.build();
 	}
 

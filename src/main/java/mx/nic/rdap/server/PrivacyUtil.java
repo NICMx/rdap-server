@@ -17,7 +17,7 @@ public class PrivacyUtil {
 	private static final String DEFAULT_PATH = "META-INF/privacy_default/";
 
 	/** Path where the user properties are read */
-	private static final String USER_PATH = "META-INF/privacy/";
+	private static final String USER_PATH = "config/privacy/";
 
 	// ***** Names of the properties files *****
 	private static final String ENTITY = "entity";

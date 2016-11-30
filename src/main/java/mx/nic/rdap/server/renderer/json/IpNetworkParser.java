@@ -36,12 +36,12 @@ public class IpNetworkParser {
 		builder.add("objectClassName", "IpNetwork");
 
 		String key = "startAddress";
-		String value = ipNetwork.getStartAddress().toString();
+		String value = ipNetwork.getStartAddress().getHostAddress();
 		if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
 			builder.add(key, value);
 
 		key = "endAddress";
-		value = ipNetwork.getEndAddress().toString();
+		value = ipNetwork.getEndAddress().getHostAddress();
 		if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
 			builder.add(key, value);
 
