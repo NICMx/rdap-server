@@ -2,12 +2,16 @@ package mx.nic.rdap.server;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
+import javax.servlet.ServletContext;
 
 public class PrivacyUtil {
 
@@ -17,7 +21,7 @@ public class PrivacyUtil {
 	private static final String DEFAULT_PATH = "META-INF/privacy_default/";
 
 	/** Path where the user properties are read */
-	private static final String USER_PATH = "config/privacy/";
+	private static final String USER_PATH = "WEB-INF/privacy/";
 
 	// ***** Names of the properties files *****
 	private static final String ENTITY = "entity";
@@ -85,6 +89,35 @@ public class PrivacyUtil {
 
 	}
 
+	private static void loadUserPrivacySettings(String fileName, Properties properties) throws IOException {
+		ServletContext ctxt = RdapInitializer.getServletContext();
+		Path path = null;
+		InputStream inStream = null;
+		if (ctxt != null) {
+			String initParameter = ctxt.getInitParameter(RdapInitializer.PRIVACY_SETTINGS_PARAM_NAME);
+			if (initParameter == null) {
+				path = Paths.get(USER_PATH, fileName + ".properties");
+				inStream = ctxt.getResourceAsStream(path.toString());
+			} else {
+				path = Paths.get(initParameter, fileName + ".properties");
+				inStream = ctxt.getResourceAsStream(path.toString());
+			}
+		} else {
+			path = Paths.get("META-INF/privacy/", fileName + ".properties");
+			inStream = PrivacyUtil.class.getClassLoader().getResourceAsStream(path.toString());
+		}
+
+		if (inStream != null) {
+			try {
+				properties.load(inStream);
+			} catch (Exception e) {
+				throw new IOException("Cannot load file: " + path.toString(), e);
+			} finally {
+				inStream.close();
+			}
+		}
+	}
+
 	private static void loadObjectPrivacySettings(String objectName) throws IOException {
 		Properties properties = new Properties();
 		ClassLoader classLoader = PrivacyUtil.class.getClassLoader();
@@ -95,16 +128,7 @@ public class PrivacyUtil {
 			throw new IOException("Cannot load file: " + DEFAULT_PATH + objectName + ".properties", e);
 		}
 
-		InputStream in = classLoader.getResourceAsStream(USER_PATH + objectName + ".properties");
-		if (in != null) {
-			try {
-				properties.load(in);
-			} catch (Exception e) {
-				throw new IOException("Cannot load file: " + DEFAULT_PATH + objectName + ".properties", e);
-			} finally {
-				in.close();
-			}
-		}
+		loadUserPrivacySettings(objectName, properties);
 
 		StringBuilder builder = new StringBuilder();
 		boolean isInvalidProperties = false;
