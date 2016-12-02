@@ -111,8 +111,6 @@ public class HelpResult extends UserRequestInfo implements RdapResult {
 	 */
 	@Override
 	public JsonObject toJson() {
-		// TODO privacy settings are set from Entity.
-
 		JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
 		JsonArray jsonArray = RemarkParser.getJsonArray(notices, true, true,
 				PrivacyUtil.getEntityRemarkPrivacySettings(), PrivacyUtil.getEntityLinkPrivacySettings());

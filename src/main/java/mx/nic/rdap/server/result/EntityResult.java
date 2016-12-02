@@ -3,6 +3,7 @@ package mx.nic.rdap.server.result;
 import javax.json.JsonObject;
 
 import mx.nic.rdap.db.EntityDAO;
+import mx.nic.rdap.db.LinkDAO;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserRequestInfo;
 import mx.nic.rdap.server.renderer.json.EntityParser;
@@ -17,6 +18,8 @@ public class EntityResult extends UserRequestInfo implements RdapResult {
 	public EntityResult(EntityDAO entity, String userName) {
 		this.entity = entity;
 		setUserName(userName);
+		LinkDAO self = new LinkDAO("entity", entity.getHandle());
+		entity.getLinks().add(self);
 	}
 
 	/*

@@ -11,6 +11,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import mx.nic.rdap.core.db.Domain;
+import mx.nic.rdap.db.LinkDAO;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserRequestInfo;
 import mx.nic.rdap.server.renderer.json.DomainParser;
@@ -25,6 +26,10 @@ public class DomainSearchResult extends UserRequestInfo implements RdapResult {
 	public DomainSearchResult(List<Domain> domains, String userName) {
 		this.domains = domains;
 		setUserName(userName);
+		for (Domain domain : domains) {
+			LinkDAO self = new LinkDAO("domain", domain.getLdhName());
+			domain.getLinks().add(self);
+		}
 	}
 
 	/*
