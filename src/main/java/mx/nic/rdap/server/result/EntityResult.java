@@ -15,10 +15,10 @@ public class EntityResult extends UserRequestInfo implements RdapResult {
 
 	private EntityDAO entity;
 
-	public EntityResult(EntityDAO entity, String userName) {
+	public EntityResult(String contextPath, EntityDAO entity, String userName) {
 		this.entity = entity;
 		setUserName(userName);
-		LinkDAO self = new LinkDAO("entity", entity.getHandle());
+		LinkDAO self = new LinkDAO(contextPath, "entity", entity.getHandle());
 		entity.getLinks().add(self);
 	}
 

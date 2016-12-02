@@ -23,11 +23,11 @@ public class DomainSearchResult extends UserRequestInfo implements RdapResult {
 
 	private List<Domain> domains;
 
-	public DomainSearchResult(List<Domain> domains, String userName) {
+	public DomainSearchResult(String contextPath, List<Domain> domains, String userName) {
 		this.domains = domains;
 		setUserName(userName);
 		for (Domain domain : domains) {
-			LinkDAO self = new LinkDAO("domain", domain.getLdhName());
+			LinkDAO self = new LinkDAO(contextPath, "domain", domain.getLdhName());
 			domain.getLinks().add(self);
 		}
 	}

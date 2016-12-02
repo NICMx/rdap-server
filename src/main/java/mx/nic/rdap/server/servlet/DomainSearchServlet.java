@@ -96,7 +96,7 @@ public class DomainSearchServlet extends RdapServlet {
 		if (domainsDAO != null)
 			domains = new ArrayList<Domain>(domainsDAO);
 
-		return new DomainSearchResult(domains, username);
+		return new DomainSearchResult(httpRequest.getContextPath(), domains, username);
 	}
 
 	/*

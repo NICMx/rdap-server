@@ -12,10 +12,10 @@ public class IpResult extends UserRequestInfo implements RdapResult {
 
 	private IpNetwork ipNetwork;
 
-	public IpResult(IpNetwork ipNetwork, String userName) {
+	public IpResult(String contextPath, IpNetwork ipNetwork, String userName) {
 		this.ipNetwork = ipNetwork;
 		setUserName(userName);
-		LinkDAO self = new LinkDAO("ip", ipNetwork.getStartAddress() + "/" + ipNetwork.getCidr());
+		LinkDAO self = new LinkDAO(contextPath, "ip", ipNetwork.getStartAddress() + "/" + ipNetwork.getCidr());
 		ipNetwork.getLinks().add(self);
 	}
 

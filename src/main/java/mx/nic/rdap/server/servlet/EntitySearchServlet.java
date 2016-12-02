@@ -58,7 +58,7 @@ public class EntitySearchServlet extends RdapServlet {
 		List<Entity> entityList = null;
 		if (entities != null)
 			entityList = new ArrayList<Entity>(entities);
-		return new EntitySearchResult(entityList, userName);
+		return new EntitySearchResult(httpRequest.getContextPath(), entityList, userName);
 	}
 
 	@Override

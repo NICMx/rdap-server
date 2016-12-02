@@ -15,10 +15,10 @@ public class AutnumResult extends UserRequestInfo implements RdapResult {
 
 	private AutnumDAO autnum;
 
-	public AutnumResult(AutnumDAO autnum, String username) {
+	public AutnumResult(String contextPath, AutnumDAO autnum, String username) {
 		this.autnum = autnum;
 		setUserName(username);
-		LinkDAO self = new LinkDAO("autnum", autnum.getStartAutnum().toString());
+		LinkDAO self = new LinkDAO(contextPath, "autnum", autnum.getStartAutnum().toString());
 		autnum.getLinks().add(self);
 	}
 

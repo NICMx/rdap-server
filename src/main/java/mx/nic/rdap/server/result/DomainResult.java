@@ -15,10 +15,10 @@ public class DomainResult extends UserRequestInfo implements RdapResult {
 
 	private DomainDAO domain;
 
-	public DomainResult(DomainDAO domain, String userName) {
+	public DomainResult(String contextPath, DomainDAO domain, String userName) {
 		this.domain = domain;
 		setUserName(userName);
-		LinkDAO self = new LinkDAO("domain", domain.getLdhName());
+		LinkDAO self = new LinkDAO(contextPath, "domain", domain.getLdhName());
 		domain.getLinks().add(self);
 	}
 

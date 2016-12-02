@@ -55,7 +55,7 @@ public class DomainServlet extends RdapServlet {
 				throw new ObjectNotFoundException("The RDAP server doesn't hace information about the requested zone");
 			}
 
-			result = new DomainResult(domain, userName);
+			result = new DomainResult(httpRequest.getContextPath(), domain, userName);
 		}
 		return result;
 	}

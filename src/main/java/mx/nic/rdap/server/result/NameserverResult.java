@@ -15,10 +15,10 @@ public class NameserverResult extends UserRequestInfo implements RdapResult {
 
 	private NameserverDAO nameserver;
 
-	public NameserverResult(NameserverDAO nameserver, String userName) {
+	public NameserverResult(String contextPath, NameserverDAO nameserver, String userName) {
 		this.nameserver = nameserver;
 		setUserName(userName);
-		LinkDAO self = new LinkDAO("nameserver", nameserver.getLdhName());
+		LinkDAO self = new LinkDAO(contextPath, "nameserver", nameserver.getLdhName());
 		nameserver.getLinks().add(self);
 	}
 

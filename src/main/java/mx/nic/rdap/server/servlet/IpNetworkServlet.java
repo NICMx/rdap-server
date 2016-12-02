@@ -45,7 +45,7 @@ public class IpNetworkServlet extends RdapServlet {
 			} else {
 				ipNetwork = IpNetworkModel.getByInetAddress(request.getIp(), con);
 			}
-			result = new IpResult(ipNetwork, userName);
+			result = new IpResult(httpRequest.getContextPath(), ipNetwork, userName);
 
 		}
 		return result;

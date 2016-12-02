@@ -68,7 +68,7 @@ public class NameserverSearchServlet extends RdapServlet {
 		List<Nameserver> nameservers = null;
 		if (nameserversDAO != null)
 			nameservers = new ArrayList<Nameserver>(nameserversDAO);
-		return new NameserverSearchResult(nameservers, username);
+		return new NameserverSearchResult(httpRequest.getContextPath(), nameservers, username);
 	}
 
 	/*
