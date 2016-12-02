@@ -74,7 +74,6 @@ public class DomainSearchServlet extends RdapServlet {
 					}
 				} else {
 					// Search domain by it´s name without zone.
-					// TODO is valid to search a domain without an asterisk?.
 					domainsDAO = DomainModel.searchByName(request.getValue(), resultLimit, connection);
 				}
 				break;
