@@ -13,6 +13,7 @@ import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DatabaseSession;
+import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.AutnumResult;
 
@@ -60,9 +61,13 @@ public class AutnumServlet extends RdapServlet {
 
 		private Long autnum;
 
-		public AutnumRequest(String autnum) {
+		public AutnumRequest(String autnum) throws MalformedRequestException {
 			super();
-			this.autnum = Long.parseLong(autnum);
+			try {
+				this.autnum = Long.parseLong(autnum);
+			} catch (NumberFormatException e) {
+				throw new MalformedRequestException("Autnum must be an Int number");
+			}
 		}
 
 		public Long getAutnum() {
