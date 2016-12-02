@@ -30,6 +30,8 @@ public class PrivacyUtil {
 	private static final String ENTITY_REMARKS = "entity_remarks";
 	private static final String ENTITY_EVENTS = "entity_events";
 
+	private static final String VCARD = "vcard";
+
 	private static final String DOMAIN = "domain";
 	private static final String DOMAIN_PUBLIC_ID = "domain_public_id";
 	private static final String DOMAIN_VARIANTS = "domain_variants";
@@ -62,6 +64,8 @@ public class PrivacyUtil {
 		loadObjectPrivacySettings(ENTITY_LINKS);
 		loadObjectPrivacySettings(ENTITY_EVENTS);
 		loadObjectPrivacySettings(ENTITY_REMARKS);
+
+		loadObjectPrivacySettings(VCARD);
 
 		loadObjectPrivacySettings(DOMAIN);
 		loadObjectPrivacySettings(DOMAIN_PUBLIC_ID);
@@ -324,5 +328,9 @@ public class PrivacyUtil {
 
 	public static Map<String, PrivacyStatus> getIpNetworkEventPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(IP_NETWORK_EVENTS);
+	}
+
+	public static Map<String, PrivacyStatus> getVCardPrivacySettings() {
+		return OBJECTS_PRIVACY_SETTING.get(VCARD);
 	}
 }

@@ -46,6 +46,11 @@ public class EntityParser {
 			builder.add(key, IpNetworkParser.getJsonArray(entity.getIpNetworks(), isAuthenticated, isOwner));
 		}
 
+		key = "vcardArray";
+		if (PrivacyUtil.isObjectVisible(entity.getVCardList(), key, settings.get(key), isAuthenticated, isOwner)) {
+			builder.add(key, VCardParser.getJson(entity.getVCardList().get(0), isAuthenticated, isOwner));
+		}
+
 		return builder.build();
 	}
 
