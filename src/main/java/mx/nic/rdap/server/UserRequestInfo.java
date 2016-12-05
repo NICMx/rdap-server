@@ -1,5 +1,6 @@
 package mx.nic.rdap.server;
 
+import mx.nic.rdap.core.catalog.Rol;
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.RdapObject;
 
@@ -16,12 +17,13 @@ public abstract class UserRequestInfo {
 			return false;
 
 		if (object instanceof Entity) {
-			return isEntityOwner((Entity) object);
+			Entity ent = (Entity) object;
+			return ent.getHandle().equals(userName);
 		}
 
 		for (Entity ent : object.getEntities()) {
-			if (ent.getHandle().equals(userName)) {
-
+			if (isEntityOwner(ent)) {
+				return true;
 			}
 		}
 
@@ -29,23 +31,21 @@ public abstract class UserRequestInfo {
 	}
 
 	private boolean isEntityOwner(Entity ent) {
-		boolean result = true;
 		if (!ent.getHandle().equals(userName)) {
 			return false;
 		}
 
-		// TODO: this code will work when we filter by owner and its rol.
-		// if (ent.getRoles() == null || ent.getRoles().isEmpty()) {
-		// return false;
-		// }
-		// for(Rol rol : ent.getRoles()) {
-		// if (Util.getOwnerRoles().contains(rol)) {
-		// result = true;
-		// break;
-		// }
-		// }
+		if (ent.getRoles() == null || ent.getRoles().isEmpty()) {
+			return false;
+		}
 
-		return result;
+		for (Rol rol : ent.getRoles()) {
+			if (RdapConfiguration.isRolAnOwner(rol)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public String getUserName() {

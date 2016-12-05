@@ -4,12 +4,16 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import mx.nic.rdap.core.catalog.Rol;
+import mx.nic.rdap.db.exception.InvalidValueException;
 import mx.nic.rdap.db.exception.ObjectNotFoundException;
 import mx.nic.rdap.db.model.CountryCodeModel;
 import mx.nic.rdap.db.model.ZoneModel;
@@ -29,6 +33,7 @@ public class RdapConfiguration {
 	private static final String MINIMUN_SEARCH_PATTERN_LENGTH_KEY = "minimum.search.pattern.length";
 	private static final String MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER = "max.number.result.authenticated.user";
 	private static final String MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER = "max.number.result.unauthenticated.user";
+	private static Set<Rol> objectOwnerRoles;
 
 	public RdapConfiguration() {
 	}
@@ -169,5 +174,32 @@ public class RdapConfiguration {
 						"Max number of results for the unauthenticated user not found in configuration file. Using default: 10");
 			}
 		return maxResults;
+	}
+
+	public static void validateConfiguratedRoles() throws InvalidValueException {
+		String ownerRoles = systemProperties.getProperty("ownerRoles");
+		if (ownerRoles == null) {
+			throw new InvalidValueException("property 'ownerRoles' is not configured");
+		}
+
+		String[] split = ownerRoles.split(",");
+		objectOwnerRoles = new HashSet<Rol>();
+
+		for (String rol : split) {
+			rol = rol.trim();
+			if (rol.isEmpty())
+				continue;
+
+			Rol rolEnum = Rol.getByName(rol);
+			if (rolEnum == null) {
+				throw new InvalidValueException("unknown rol in property 'ownerRoles': " + rol);
+			}
+
+			objectOwnerRoles.add(rolEnum);
+		}
+	}
+
+	public static boolean isRolAnOwner(Rol rol) {
+		return objectOwnerRoles.contains(rol);
 	}
 }
