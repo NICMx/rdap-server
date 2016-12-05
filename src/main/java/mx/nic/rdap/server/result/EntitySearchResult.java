@@ -8,7 +8,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import mx.nic.rdap.core.db.Entity;
-import mx.nic.rdap.db.LinkDAO;
+import mx.nic.rdap.db.EntityDAO;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserRequestInfo;
 import mx.nic.rdap.server.renderer.json.EntityParser;
@@ -18,14 +18,13 @@ import mx.nic.rdap.server.renderer.json.EntityParser;
  */
 public class EntitySearchResult extends UserRequestInfo implements RdapResult {
 
-	List<Entity> entities;
+	List<EntityDAO> entities;
 
-	public EntitySearchResult(String contextPath, List<Entity> entities, String userName) {
+	public EntitySearchResult(String header, String contextPath, List<EntityDAO> entities, String userName) {
 		this.entities = entities;
 		setUserName(userName);
-		for (Entity entity : entities) {
-			LinkDAO self = new LinkDAO(contextPath, "entity", entity.getHandle());
-			entity.getLinks().add(self);
+		for (EntityDAO entity : entities) {
+			entity.addSelfLinks(header, contextPath);
 		}
 	}
 

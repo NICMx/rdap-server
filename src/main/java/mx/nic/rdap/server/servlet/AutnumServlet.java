@@ -42,7 +42,7 @@ public class AutnumServlet extends RdapServlet {
 		try (Connection con = DatabaseSession.getRdapConnection()) {
 			autnum = AutnumModel.getByRange(request.getAutnum(), con);
 		}
-		return new AutnumResult(httpRequest.getContextPath(), autnum, username);
+		return new AutnumResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), autnum, username);
 	}
 
 	/*

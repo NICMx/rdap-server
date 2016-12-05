@@ -9,7 +9,6 @@ import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
-import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.exception.UnprocessableEntityException;
 import mx.nic.rdap.db.NameserverDAO;
 import mx.nic.rdap.db.exception.InvalidValueException;
@@ -65,10 +64,11 @@ public class NameserverSearchServlet extends RdapServlet {
 			}
 		}
 
-		List<Nameserver> nameservers = null;
+		List<NameserverDAO> nameservers = null;
 		if (nameserversDAO != null)
-			nameservers = new ArrayList<Nameserver>(nameserversDAO);
-		return new NameserverSearchResult(httpRequest.getContextPath(), nameservers, username);
+			nameservers = new ArrayList<NameserverDAO>(nameserversDAO);
+		return new NameserverSearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), nameservers,
+				username);
 	}
 
 	/*

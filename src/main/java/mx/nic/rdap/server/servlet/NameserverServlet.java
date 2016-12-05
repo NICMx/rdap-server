@@ -40,7 +40,7 @@ public class NameserverServlet extends RdapServlet {
 		try (Connection con = DatabaseSession.getRdapConnection()) {
 			nameserver = NameserverModel.findByName(request.getName(), con);
 		}
-		return new NameserverResult(httpRequest.getContextPath(), nameserver, userName);
+		return new NameserverResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), nameserver, userName);
 	}
 
 	/*

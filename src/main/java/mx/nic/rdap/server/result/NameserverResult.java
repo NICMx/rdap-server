@@ -2,7 +2,6 @@ package mx.nic.rdap.server.result;
 
 import javax.json.JsonObject;
 
-import mx.nic.rdap.db.LinkDAO;
 import mx.nic.rdap.db.NameserverDAO;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserRequestInfo;
@@ -15,11 +14,10 @@ public class NameserverResult extends UserRequestInfo implements RdapResult {
 
 	private NameserverDAO nameserver;
 
-	public NameserverResult(String contextPath, NameserverDAO nameserver, String userName) {
+	public NameserverResult(String header, String contextPath, NameserverDAO nameserver, String userName) {
 		this.nameserver = nameserver;
 		setUserName(userName);
-		LinkDAO self = new LinkDAO(contextPath, "nameserver", nameserver.getLdhName());
-		nameserver.getLinks().add(self);
+		this.nameserver.addSelfLinks(header, contextPath);
 	}
 
 	/*
