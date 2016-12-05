@@ -33,6 +33,7 @@ public class RdapConfiguration {
 	private static final String MINIMUN_SEARCH_PATTERN_LENGTH_KEY = "minimum.search.pattern.length";
 	private static final String MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER = "max.number.result.authenticated.user";
 	private static final String MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER = "max.number.result.unauthenticated.user";
+	private static final String OWNER_ROLES_KEY = "ownerRoles";
 	private static Set<Rol> objectOwnerRoles;
 
 	public RdapConfiguration() {
@@ -73,12 +74,7 @@ public class RdapConfiguration {
 	 * @return
 	 */
 	public static String getServerLanguage() {
-		String lang = "en";// default:English
-		if (systemProperties.containsKey(LANGUAGE_KEY))
-			lang = systemProperties.getProperty(LANGUAGE_KEY);
-		else {
-			logger.log(Level.WARNING, "Language not found in configuration file. Using default: English");
-		}
+		String lang = systemProperties.getProperty(LANGUAGE_KEY);
 		return lang.trim();
 	}
 
@@ -107,15 +103,7 @@ public class RdapConfiguration {
 	 * @return
 	 */
 	public static int getMinimumSearchPatternLength() {
-		int length = 5;// default 5
-		if (systemProperties.containsKey(MINIMUN_SEARCH_PATTERN_LENGTH_KEY))
-			try {
-				length = Integer.parseInt(systemProperties.getProperty(MINIMUN_SEARCH_PATTERN_LENGTH_KEY).trim());
-			} catch (NumberFormatException nfe) {
-				logger.log(Level.WARNING,
-						"Minimum search pattern length not found in configuration file. Using default: 5");
-			}
-		return length;
+		return Integer.parseInt(systemProperties.getProperty(MINIMUN_SEARCH_PATTERN_LENGTH_KEY).trim());
 	}
 
 	/**
@@ -146,16 +134,7 @@ public class RdapConfiguration {
 	 * @return
 	 */
 	public static int getMaxNumberOfResultsForAuthenticatedUser() {
-		int maxResults = 20;// default 20
-		if (systemProperties.containsKey(MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER))
-			try {
-				maxResults = Integer
-						.parseInt(systemProperties.getProperty(MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER).trim());
-			} catch (NumberFormatException nfe) {
-				logger.log(Level.WARNING,
-						"Max number of results for the authenticated user not found in configuration file. Using default: 20");
-			}
-		return maxResults;
+		return Integer.parseInt(systemProperties.getProperty(MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER).trim());
 	}
 
 	/**
@@ -164,22 +143,13 @@ public class RdapConfiguration {
 	 * @return
 	 */
 	public static int getMaxNumberOfResultsForUnauthenticatedUser() {
-		int maxResults = 10;// default 10
-		if (systemProperties.containsKey(MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER))
-			try {
-				maxResults = Integer
-						.parseInt(systemProperties.getProperty(MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER).trim());
-			} catch (NumberFormatException nfe) {
-				logger.log(Level.WARNING,
-						"Max number of results for the unauthenticated user not found in configuration file. Using default: 10");
-			}
-		return maxResults;
+		return Integer.parseInt(systemProperties.getProperty(MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER).trim());
 	}
 
 	public static void validateConfiguratedRoles() throws InvalidValueException {
-		String ownerRoles = systemProperties.getProperty("ownerRoles");
+		String ownerRoles = systemProperties.getProperty(OWNER_ROLES_KEY);
 		if (ownerRoles == null) {
-			throw new InvalidValueException("property 'ownerRoles' is not configured");
+			throw new InvalidValueException("property '" + OWNER_ROLES_KEY + "' is not configured");
 		}
 
 		String[] split = ownerRoles.split(",");
@@ -192,14 +162,86 @@ public class RdapConfiguration {
 
 			Rol rolEnum = Rol.getByName(rol);
 			if (rolEnum == null) {
-				throw new InvalidValueException("unknown rol in property 'ownerRoles': " + rol);
+				throw new InvalidValueException("unknown rol in property '" + OWNER_ROLES_KEY + "': " + rol);
 			}
 
 			objectOwnerRoles.add(rolEnum);
 		}
+
 	}
 
 	public static boolean isRolAnOwner(Rol rol) {
 		return objectOwnerRoles.contains(rol);
+	}
+
+	public static void validateRdapConfiguration() throws InvalidValueException {
+		boolean isValid = true;
+		List<String> invalidProperties = new ArrayList<>();
+		List<Exception> exceptions = new ArrayList<>();
+
+		if (systemProperties.getProperty(LANGUAGE_KEY) == null
+				|| systemProperties.getProperty(LANGUAGE_KEY).trim().isEmpty()) {
+			isValid = false;
+			invalidProperties.add(LANGUAGE_KEY);
+		}
+
+		if (systemProperties.getProperty(ZONE_KEY) == null || systemProperties.getProperty(ZONE_KEY).trim().isEmpty()) {
+			isValid = false;
+			invalidProperties.add(ZONE_KEY);
+		}
+
+		if (systemProperties.getProperty(MINIMUN_SEARCH_PATTERN_LENGTH_KEY) == null) {
+			isValid = false;
+			invalidProperties.add(MINIMUN_SEARCH_PATTERN_LENGTH_KEY);
+		} else {
+			try {
+				getMinimumSearchPatternLength();
+			} catch (NumberFormatException e) {
+				isValid = false;
+				invalidProperties.add(MINIMUN_SEARCH_PATTERN_LENGTH_KEY);
+				exceptions.add(e);
+			}
+		}
+
+		if (systemProperties.getProperty(MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER) == null) {
+			isValid = false;
+			invalidProperties.add(MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER);
+		} else {
+			try {
+				getMaxNumberOfResultsForAuthenticatedUser();
+			} catch (NumberFormatException e) {
+				isValid = false;
+				invalidProperties.add(MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER);
+				exceptions.add(e);
+			}
+		}
+
+		if (systemProperties.getProperty(MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER) == null) {
+			isValid = false;
+			invalidProperties.add(MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER);
+		} else {
+			try {
+				getMaxNumberOfResultsForUnauthenticatedUser();
+			} catch (NumberFormatException e) {
+				isValid = false;
+				invalidProperties.add(MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER);
+				exceptions.add(e);
+			}
+		}
+
+		if (systemProperties.getProperty(OWNER_ROLES_KEY) == null) {
+			isValid = false;
+			invalidProperties.add(OWNER_ROLES_KEY);
+		}
+
+		if (!isValid) {
+			InvalidValueException invalidValueException = new InvalidValueException(
+					"The following required properties were not found or are invalid values in configuration file : "
+							+ invalidProperties.toString());
+			for (Exception exception : exceptions) {
+				invalidValueException.addSuppressed(exception);
+			}
+			throw invalidValueException;
+		}
 	}
 }
