@@ -37,7 +37,8 @@ public class ExceptionResult extends UserRequestInfo implements RdapResult {
 				break;
 			case "403":
 				errorTitle = "Forbidden request";
-				errorDescription = httpRequest.getAttribute("javax.servlet.error.message").toString()+".Verify User role";
+				errorDescription = httpRequest.getAttribute("javax.servlet.error.message").toString()
+						+ ". Verify User role";
 				break;
 			case "404":
 				errorTitle = "Object not found";
@@ -52,7 +53,8 @@ public class ExceptionResult extends UserRequestInfo implements RdapResult {
 				errorDescription = httpRequest.getAttribute("javax.servlet.error.message").toString();
 				break;
 			}
-			logger.log(Level.WARNING, errorCode + ":" + httpRequest.getAttribute("javax.servlet.error.message").toString());
+			logger.log(Level.WARNING,
+					errorCode + ":" + httpRequest.getAttribute("javax.servlet.error.message").toString());
 		}
 
 	}
@@ -66,7 +68,7 @@ public class ExceptionResult extends UserRequestInfo implements RdapResult {
 	public JsonObject toJson() {
 		JsonObjectBuilder object = Json.createObjectBuilder();
 		if (errorCode != null) {
-			object.add("erroCode", errorCode);
+			object.add("errorCode", errorCode);
 		}
 		if (errorTitle != null) {
 			object.add("title", errorTitle);

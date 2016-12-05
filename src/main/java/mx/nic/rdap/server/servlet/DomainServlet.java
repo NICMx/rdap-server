@@ -41,7 +41,7 @@ public class DomainServlet extends RdapServlet {
 		try {
 			request = new DomainRequest(Util.getRequestParams(httpRequest)[0]);
 		} catch (InvalidValueException | ObjectNotFoundException e) {
-			throw new ObjectNotFoundException("The RDAP server doesn't hace information about the requested zone");
+			throw new ObjectNotFoundException("The RDAP server doesn't have information about the requested zone");
 		}
 		String userName = httpRequest.getRemoteUser();
 
@@ -52,7 +52,7 @@ public class DomainServlet extends RdapServlet {
 			try {
 				domain = DomainModel.findByLdhName(request.getDomainName(), request.getZoneId(), con);
 			} catch (InvalidValueException e) {
-				throw new ObjectNotFoundException("The RDAP server doesn't hace information about the requested zone");
+				throw new ObjectNotFoundException("The RDAP server doesn't have information about the requested zone");
 			}
 
 			result = new DomainResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), domain, userName);
