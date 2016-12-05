@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.core.db.IpNetwork;
+import mx.nic.rdap.db.IpNetworkDAO;
 import mx.nic.rdap.db.model.IpNetworkModel;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
@@ -45,7 +46,8 @@ public class IpNetworkServlet extends RdapServlet {
 			} else {
 				ipNetwork = IpNetworkModel.getByInetAddress(request.getIp(), con);
 			}
-			result = new IpResult(httpRequest.getContextPath(), ipNetwork, userName);
+			result = new IpResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), (IpNetworkDAO) ipNetwork,
+					userName);
 
 		}
 		return result;

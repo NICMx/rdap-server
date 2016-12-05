@@ -9,7 +9,6 @@ import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
-import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.core.exception.UnprocessableEntityException;
 import mx.nic.rdap.db.DomainDAO;
 import mx.nic.rdap.db.exception.InvalidValueException;
@@ -92,11 +91,11 @@ public class DomainSearchServlet extends RdapServlet {
 
 		}
 
-		List<Domain> domains = null;
+		List<DomainDAO> domains = null;
 		if (domainsDAO != null)
-			domains = new ArrayList<Domain>(domainsDAO);
+			domains = new ArrayList<DomainDAO>(domainsDAO);
 
-		return new DomainSearchResult(httpRequest.getContextPath(), domains, username);
+		return new DomainSearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), domains, username);
 	}
 
 	/*

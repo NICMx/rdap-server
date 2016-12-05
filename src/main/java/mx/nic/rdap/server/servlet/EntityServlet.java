@@ -40,7 +40,7 @@ public class EntityServlet extends RdapServlet {
 		RdapResult result = null;
 		try (Connection con = DatabaseSession.getRdapConnection()) {
 			EntityDAO entity = EntityModel.getByHandle(request.getHandle(), con);
-			result = new EntityResult(httpRequest.getContextPath(),entity, userName);
+			result = new EntityResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), entity, userName);
 
 		}
 		return result;

@@ -3,7 +3,6 @@ package mx.nic.rdap.server.result;
 import javax.json.JsonObject;
 
 import mx.nic.rdap.db.DomainDAO;
-import mx.nic.rdap.db.LinkDAO;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserRequestInfo;
 import mx.nic.rdap.server.renderer.json.DomainParser;
@@ -15,11 +14,10 @@ public class DomainResult extends UserRequestInfo implements RdapResult {
 
 	private DomainDAO domain;
 
-	public DomainResult(String contextPath, DomainDAO domain, String userName) {
+	public DomainResult(String header, String contextPath, DomainDAO domain, String userName) {
 		this.domain = domain;
 		setUserName(userName);
-		LinkDAO self = new LinkDAO(contextPath, "domain", domain.getLdhName());
-		domain.getLinks().add(self);
+		this.domain.addSelfLinks(header, contextPath);
 	}
 
 	/*

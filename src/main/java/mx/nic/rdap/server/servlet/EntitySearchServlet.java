@@ -9,7 +9,6 @@ import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
-import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.exception.UnprocessableEntityException;
 import mx.nic.rdap.db.EntityDAO;
 import mx.nic.rdap.db.model.EntityModel;
@@ -55,10 +54,11 @@ public class EntitySearchServlet extends RdapServlet {
 			}
 		}
 
-		List<Entity> entityList = null;
+		List<EntityDAO> entityList = null;
 		if (entities != null)
-			entityList = new ArrayList<Entity>(entities);
-		return new EntitySearchResult(httpRequest.getContextPath(), entityList, userName);
+			entityList = new ArrayList<EntityDAO>(entities);
+		return new EntitySearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), entityList,
+				userName);
 	}
 
 	@Override
