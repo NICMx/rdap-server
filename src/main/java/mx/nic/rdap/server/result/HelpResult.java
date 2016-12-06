@@ -32,13 +32,13 @@ import mx.nic.rdap.server.renderer.json.RemarkParser;
  */
 public class HelpResult extends UserRequestInfo implements RdapResult {
 
-	private List<Remark> notices = new ArrayList<>();
-	public static String helpFolderPath;
+	private static List<Remark> notices = new ArrayList<>();
+	private static String helpFolderPath;
 
 	public HelpResult(ServletContext servletContext) throws FileNotFoundException {
-		helpFolderPath = servletContext.getRealPath(File.separator) + "\\WEB-INF\\classes\\META-INF\\help\\";
-		this.notices = readNoticesFromFiles();
-
+		helpFolderPath = servletContext.getRealPath(File.separator) + "\\WEB-INF\\help\\";
+		if (notices == null || notices.isEmpty())
+			notices = readNoticesFromFiles();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -177,14 +177,14 @@ public class HelpResult extends UserRequestInfo implements RdapResult {
 							description = description.trim() + " " + line;
 							line = iterator.next().trim();
 							description = description.trim();
-						} while (!line.isEmpty() && !line.startsWith("link1"));
+						} while (!line.isEmpty() && !line.startsWith("link"));
 						if (!description.equals(" ") || !description.isEmpty()) {
 							descriptions.add(description);
 							description = "";
 						}
-					} while (!line.startsWith("link1"));
+					} while (!line.startsWith("link"));
 				}
-				if (line.trim().startsWith("link1")) {
+				if (line.trim().startsWith("link")) {
 					descriptionChecker = false;
 				}
 				if (line.trim().startsWith("link")) {
