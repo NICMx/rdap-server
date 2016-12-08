@@ -21,7 +21,7 @@ public class VariantParser {
 		JsonArrayBuilder builder = Json.createArrayBuilder();
 
 		for (Variant variant : variants) {
-			getJsonObject(variant, isAuthenticated, isOwner);
+			builder.add(getJsonObject(variant, isAuthenticated, isOwner));
 		}
 
 		return builder.build();
