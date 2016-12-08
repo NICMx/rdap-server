@@ -20,7 +20,7 @@ public class DsDataParser {
 
 		Map<String, PrivacyStatus> privacySettings = PrivacyUtil.getDsDataPrivacySettings();
 		for (DsData dsData : dsDataList) {
-			getJsonObject(dsData, isAuthenticated, isOwner, privacySettings);
+			builder.add(getJsonObject(dsData, isAuthenticated, isOwner, privacySettings));
 		}
 
 		return builder.build();
