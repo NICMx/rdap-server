@@ -10,19 +10,19 @@ import javax.json.JsonObjectBuilder;
 import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.db.NameserverDAO;
 import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.UserRequestInfo;
+import mx.nic.rdap.server.UserInfo;
 import mx.nic.rdap.server.renderer.json.NameserverParser;
 
 /**
  * A result from a Nameserver search request
  */
-public class NameserverSearchResult extends UserRequestInfo implements RdapResult {
+public class NameserverSearchResult extends RdapResult {
 
 	private List<NameserverDAO> nameservers;
 
 	public NameserverSearchResult(String header, String contextPath, List<NameserverDAO> nameservers, String userName) {
 		this.nameservers = nameservers;
-		setUserName(userName);
+		this.userInfo = new UserInfo(userName);
 		for (NameserverDAO nameserver : nameservers) {
 			nameserver.addSelfLinks(header, contextPath);
 		}
@@ -38,7 +38,8 @@ public class NameserverSearchResult extends UserRequestInfo implements RdapResul
 		JsonObjectBuilder builder = Json.createObjectBuilder();
 		JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 		for (Nameserver nameserver : nameservers) {
-			arrayBuilder.add(NameserverParser.getJson(nameserver, isUserAuthenticated(), isOwner(nameserver)));
+			arrayBuilder.add(
+					NameserverParser.getJson(nameserver, userInfo.isUserAuthenticated(), userInfo.isOwner(nameserver)));
 		}
 		builder.add("nameserverSearchResults", arrayBuilder.build());
 		return builder.build();

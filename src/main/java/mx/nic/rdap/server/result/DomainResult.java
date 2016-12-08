@@ -4,19 +4,19 @@ import javax.json.JsonObject;
 
 import mx.nic.rdap.db.DomainDAO;
 import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.UserRequestInfo;
+import mx.nic.rdap.server.UserInfo;
 import mx.nic.rdap.server.renderer.json.DomainParser;
 
 /**
  * A result from a Domain request
  */
-public class DomainResult extends UserRequestInfo implements RdapResult {
+public class DomainResult extends RdapResult {
 
 	private DomainDAO domain;
 
 	public DomainResult(String header, String contextPath, DomainDAO domain, String userName) {
 		this.domain = domain;
-		setUserName(userName);
+		this.userInfo = new UserInfo(userName);
 		this.domain.addSelfLinks(header, contextPath);
 	}
 
@@ -28,7 +28,7 @@ public class DomainResult extends UserRequestInfo implements RdapResult {
 	@Override
 	public JsonObject toJson() {
 
-		return DomainParser.getJson(domain, isUserAuthenticated(), isOwner(domain));
+		return DomainParser.getJson(domain, userInfo.isUserAuthenticated(), userInfo.isOwner(domain));
 	}
 
 }

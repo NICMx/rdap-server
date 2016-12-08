@@ -13,19 +13,19 @@ import javax.json.JsonObjectBuilder;
 import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.db.DomainDAO;
 import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.UserRequestInfo;
+import mx.nic.rdap.server.UserInfo;
 import mx.nic.rdap.server.renderer.json.DomainParser;
 
 /**
  * A result from a Domain search request
  */
-public class DomainSearchResult extends UserRequestInfo implements RdapResult {
+public class DomainSearchResult extends RdapResult {
 
 	private List<DomainDAO> domains;
 
 	public DomainSearchResult(String header, String contextPath, List<DomainDAO> domains, String userName) {
 		this.domains = domains;
-		setUserName(userName);
+		this.userInfo = new UserInfo(userName);
 		for (DomainDAO domain : this.domains) {
 			domain.addSelfLinks(header, contextPath);
 		}
@@ -42,7 +42,7 @@ public class DomainSearchResult extends UserRequestInfo implements RdapResult {
 
 		JsonArrayBuilder arrB = Json.createArrayBuilder();
 		for (Domain domain : domains) {
-			arrB.add(DomainParser.getJson(domain, isUserAuthenticated(), isOwner(domain)));
+			arrB.add(DomainParser.getJson(domain, userInfo.isUserAuthenticated(), userInfo.isOwner(domain)));
 		}
 
 		builder.add("domainSearchResults", arrB);

@@ -4,14 +4,24 @@ import mx.nic.rdap.core.catalog.Rol;
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.RdapObject;
 
-public abstract class UserRequestInfo {
+/**
+ * Information about the user that make a request.
+ */
+public class UserInfo {
 
 	private String userName;
+
+	public UserInfo(String username) {
+		this.userName = username;
+	}
 
 	public boolean isUserAuthenticated() {
 		return userName != null;
 	}
 
+	/**
+	 * @return <code>true</code> if this user is the owner of the RdapObject
+	 */
 	public boolean isOwner(RdapObject object) {
 		if (!isUserAuthenticated())
 			return false;
@@ -30,6 +40,9 @@ public abstract class UserRequestInfo {
 		return false;
 	}
 
+	/**
+	 * @return <code>true</code> if this user is the owner of the Entity Object
+	 */
 	private boolean isEntityOwner(Entity ent) {
 		if (!ent.getHandle().equals(userName)) {
 			return false;

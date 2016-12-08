@@ -7,16 +7,16 @@ import javax.json.JsonObject;
 
 import mx.nic.rdap.db.AutnumDAO;
 import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.UserRequestInfo;
+import mx.nic.rdap.server.UserInfo;
 import mx.nic.rdap.server.renderer.json.AutnumParser;
 
-public class AutnumResult extends UserRequestInfo implements RdapResult {
+public class AutnumResult extends RdapResult {
 
 	private AutnumDAO autnum;
 
 	public AutnumResult(String header, String contextPath, AutnumDAO autnum, String username) {
 		this.autnum = autnum;
-		setUserName(username);
+		this.userInfo = new UserInfo(username);
 		this.autnum.addSelfLinks(header, contextPath);
 	}
 
@@ -27,7 +27,7 @@ public class AutnumResult extends UserRequestInfo implements RdapResult {
 	 */
 	@Override
 	public JsonObject toJson() {
-		return AutnumParser.getJson(autnum, isUserAuthenticated(), isOwner(autnum));
+		return AutnumParser.getJson(autnum, userInfo.isUserAuthenticated(), userInfo.isOwner(autnum));
 	}
 
 }

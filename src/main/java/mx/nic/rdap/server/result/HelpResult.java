@@ -24,13 +24,12 @@ import mx.nic.rdap.core.db.RemarkDescription;
 import mx.nic.rdap.db.exception.InvalidadDataStructure;
 import mx.nic.rdap.server.PrivacyUtil;
 import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.UserRequestInfo;
 import mx.nic.rdap.server.renderer.json.RemarkParser;
 
 /**
  * A Result from a help request.
  */
-public class HelpResult extends UserRequestInfo implements RdapResult {
+public class HelpResult extends RdapResult {
 
 	private static List<Remark> notices = new ArrayList<>();
 	private static String helpFolderPath;

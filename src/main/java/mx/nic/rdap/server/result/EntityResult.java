@@ -4,19 +4,19 @@ import javax.json.JsonObject;
 
 import mx.nic.rdap.db.EntityDAO;
 import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.UserRequestInfo;
+import mx.nic.rdap.server.UserInfo;
 import mx.nic.rdap.server.renderer.json.EntityParser;
 
 /**
  * A result from an Entity request
  */
-public class EntityResult extends UserRequestInfo implements RdapResult {
+public class EntityResult extends RdapResult {
 
 	private EntityDAO entity;
 
 	public EntityResult(String header, String contextPath, EntityDAO entity, String userName) {
 		this.entity = entity;
-		setUserName(userName);
+		this.userInfo = new UserInfo(userName);
 		this.entity.addSelfLinks(header, contextPath);
 	}
 
@@ -27,7 +27,7 @@ public class EntityResult extends UserRequestInfo implements RdapResult {
 	 */
 	@Override
 	public JsonObject toJson() {
-		return EntityParser.getJson(entity, isUserAuthenticated(), isOwner(entity));
+		return EntityParser.getJson(entity, userInfo.isUserAuthenticated(), userInfo.isOwner(entity));
 	}
 
 }
