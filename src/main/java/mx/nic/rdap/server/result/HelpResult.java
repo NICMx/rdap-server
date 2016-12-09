@@ -35,6 +35,7 @@ public class HelpResult extends RdapResult {
 	private static String helpFolderPath;
 
 	public HelpResult(ServletContext servletContext) throws FileNotFoundException {
+		notices = new ArrayList<Remark>();
 		helpFolderPath = servletContext.getRealPath(File.separator) + "\\WEB-INF\\help\\";
 		if (notices == null || notices.isEmpty())
 			notices = readNoticesFromFiles();
@@ -200,6 +201,16 @@ public class HelpResult extends RdapResult {
 		catch (IOException e) {
 			throw new RuntimeException(e.getMessage());
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see mx.nic.rdap.server.RdapResult#fillNotices()
+	 */
+	@Override
+	public void fillNotices() {
+		// At the moment, there is no notices for this request
 	}
 
 }

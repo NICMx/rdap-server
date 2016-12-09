@@ -55,6 +55,34 @@ public class RemarkParser {
 		return builder.build();
 	}
 
+	/**
+	 * There is no privacy settings for notices, the server will show every data
+	 * of remarks
+	 */
+	public static JsonObject getNoticeJsonObject(Remark remark) {
+		JsonObjectBuilder builder = Json.createObjectBuilder();
+
+		String key = "title";
+		String value = remark.getTitle();
+		if (value != null && !value.isEmpty())
+			builder.add(key, value);
+
+		key = "description";
+		if (remark.getDescriptions() != null && !remark.getDescriptions().isEmpty())
+			builder.add(key, getDescriptionsJsonArray(remark.getDescriptions()));
+
+		key = "type";
+		value = remark.getType();
+		if (value != null && !value.isEmpty())
+			builder.add(key, value);
+
+		key = "links";
+		if (remark.getLinks() != null && !remark.getLinks().isEmpty())
+			builder.add(key, LinkParser.getNoticeLinksJsonArray(remark.getLinks()));
+
+		return builder.build();
+	}
+
 	private static JsonArray getDescriptionsJsonArray(List<RemarkDescription> descriptions) {
 		JsonArrayBuilder builder = Json.createArrayBuilder();
 

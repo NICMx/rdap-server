@@ -3,15 +3,14 @@ package mx.nic.rdap.server.servlet;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.core.exception.UnprocessableEntityException;
-import mx.nic.rdap.db.EntityDAO;
 import mx.nic.rdap.db.model.EntityModel;
+import mx.nic.rdap.db.struct.SearchResultStruct;
+import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.Util;
@@ -37,28 +36,26 @@ public class EntitySearchServlet extends RdapServlet {
 			throw new RequestHandleException(e.getHttpResponseStatusCode(), e.getMessage());
 		}
 
-		List<EntityDAO> entities = null;
 		String parameter = httpRequest.getParameterNames().nextElement();
 		String value = httpRequest.getParameter(parameter);
 		String userName = httpRequest.getRemoteUser();
+		SearchResultStruct result = new SearchResultStruct();
+
+		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUnauthenticatedUser();// Default
 
 		try (Connection connection = DatabaseSession.getRdapConnection()) {
-			Integer resultLimit = Util.getMaxNumberOfResultsForUser(userName, connection);
+			resultLimit = Util.getMaxNumberOfResultsForUser(userName, connection);
 			switch (parameter) {
 			case FULL_NAME:
-				entities = EntityModel.searchByVCardName(value.trim(), resultLimit, connection);
+				result = EntityModel.searchByVCardName(value.trim(), resultLimit, connection);
 				break;
 			case HANDLE:
-				entities = EntityModel.searchByHandle(value.trim(), resultLimit, connection);
+				result = EntityModel.searchByHandle(value.trim(), resultLimit, connection);
 				break;
 			}
 		}
 
-		List<EntityDAO> entityList = null;
-		if (entities != null)
-			entityList = new ArrayList<EntityDAO>(entities);
-		return new EntitySearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), entityList,
-				userName);
+		return new EntitySearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), result, userName);
 	}
 
 	@Override

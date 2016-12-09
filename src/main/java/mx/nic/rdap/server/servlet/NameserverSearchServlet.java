@@ -3,16 +3,15 @@ package mx.nic.rdap.server.servlet;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.core.exception.UnprocessableEntityException;
-import mx.nic.rdap.db.NameserverDAO;
 import mx.nic.rdap.db.exception.InvalidValueException;
 import mx.nic.rdap.db.model.NameserverModel;
+import mx.nic.rdap.db.struct.SearchResultStruct;
+import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.Util;
@@ -46,28 +45,27 @@ public class NameserverSearchServlet extends RdapServlet {
 			throw new RequestHandleException(e.getHttpResponseStatusCode(), e.getMessage());
 		}
 
-		List<NameserverDAO> nameserversDAO = null;
 		String username = httpRequest.getRemoteUser();
+		SearchResultStruct result = new SearchResultStruct();
+
+		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUnauthenticatedUser();// Default
 
 		try (Connection connection = DatabaseSession.getRdapConnection()) {
-			Integer resultLimit = Util.getMaxNumberOfResultsForUser(username, connection);
+			resultLimit = Util.getMaxNumberOfResultsForUser(username, connection);
 			if (request.getParameter().compareTo(NameserverSearchRequest.NAME_PARAMETER_KEY) == 0) {
-				nameserversDAO = NameserverModel.searchByName(request.getValue().trim(), resultLimit, connection);
+				result = NameserverModel.searchByName(request.getValue().trim(), resultLimit, connection);
 			} else {
 				String ipAddress = request.getValue().trim();
 				Util.validateIpAddress(ipAddress);
 				try {
-					nameserversDAO = NameserverModel.searchByIp(ipAddress, resultLimit, connection);
+					result = NameserverModel.searchByIp(ipAddress, resultLimit, connection);
 				} catch (InvalidValueException e) {
 					throw new RequestHandleException(e.getMessage());
 				}
 			}
 		}
 
-		List<NameserverDAO> nameservers = null;
-		if (nameserversDAO != null)
-			nameservers = new ArrayList<NameserverDAO>(nameserversDAO);
-		return new NameserverSearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), nameservers,
+		return new NameserverSearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), result,
 				username);
 	}
 

@@ -30,4 +30,14 @@ public class AutnumResult extends RdapResult {
 		return AutnumParser.getJson(autnum, userInfo.isUserAuthenticated(), userInfo.isOwner(autnum));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see mx.nic.rdap.server.RdapResult#fillNotices()
+	 */
+	@Override
+	public void fillNotices() {
+		// At the moment, there is no notices for this request
+	}
+
 }

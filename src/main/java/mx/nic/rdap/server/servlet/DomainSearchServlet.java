@@ -3,16 +3,15 @@ package mx.nic.rdap.server.servlet;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.core.exception.UnprocessableEntityException;
-import mx.nic.rdap.db.DomainDAO;
 import mx.nic.rdap.db.exception.InvalidValueException;
 import mx.nic.rdap.db.model.DomainModel;
+import mx.nic.rdap.db.struct.SearchResultStruct;
+import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.Util;
@@ -52,11 +51,12 @@ public class DomainSearchServlet extends RdapServlet {
 			throw new RequestHandleException(e.getHttpResponseStatusCode(), e.getMessage());
 		}
 
-		List<DomainDAO> domainsDAO = null;
+		SearchResultStruct result = new SearchResultStruct();
 		String username = httpRequest.getRemoteUser();
 
+		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUnauthenticatedUser();// Default
 		try (Connection connection = DatabaseSession.getRdapConnection()) {
-			Integer resultLimit = Util.getMaxNumberOfResultsForUser(username, connection);
+			resultLimit = Util.getMaxNumberOfResultsForUser(username, connection);
 
 			switch (request.getParameter()) {
 			case DOMAIN_NAME:
@@ -67,22 +67,22 @@ public class DomainSearchServlet extends RdapServlet {
 					String zone = split[1];
 
 					try {
-						domainsDAO = DomainModel.searchByName(domain, zone, resultLimit, connection);
+						result = DomainModel.searchByName(domain, zone, resultLimit, connection);
 					} catch (InvalidValueException e) {
 						e.printStackTrace();
 					}
 				} else {
 					// Search domain by it´s name without zone.
-					domainsDAO = DomainModel.searchByName(request.getValue(), resultLimit, connection);
+					result = DomainModel.searchByName(request.getValue(), resultLimit, connection);
 				}
 				break;
 			case NAMESERVER_NAME:
 				// Gets´s domain by it´s Nameserver name
-				domainsDAO = DomainModel.searchByNsLdhName(request.getValue(), resultLimit, connection);
+				result = DomainModel.searchByNsLdhName(request.getValue(), resultLimit, connection);
 				break;
 			case NAMESERVER_IP:
 				// Get´s domain by it´s Nameserver Ip
-				domainsDAO = DomainModel.searchByNsIp(request.getValue(), resultLimit, connection);
+				result = DomainModel.searchByNsIp(request.getValue(), resultLimit, connection);
 				break;
 			default:
 
@@ -91,11 +91,7 @@ public class DomainSearchServlet extends RdapServlet {
 
 		}
 
-		List<DomainDAO> domains = null;
-		if (domainsDAO != null)
-			domains = new ArrayList<DomainDAO>(domainsDAO);
-
-		return new DomainSearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), domains, username);
+		return new DomainSearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), result, username);
 	}
 
 	/*

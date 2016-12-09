@@ -1,5 +1,6 @@
 package mx.nic.rdap.server.result;
 
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -8,6 +9,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.servlet.http.HttpServletRequest;
 
+import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.server.RdapResult;
 
 /**
@@ -27,6 +29,7 @@ public class ExceptionResult extends RdapResult {
 	 * @param httpRequest
 	 */
 	public ExceptionResult(HttpServletRequest httpRequest) {
+		notices = new ArrayList<Remark>();
 		errorCode = httpRequest.getAttribute("javax.servlet.error.status_code").toString();
 		if (errorCode != null) {
 			switch (errorCode) {
@@ -77,6 +80,16 @@ public class ExceptionResult extends RdapResult {
 				object.add("description", errorDescription);
 		}
 		return object.build();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see mx.nic.rdap.server.RdapResult#fillNotices()
+	 */
+	@Override
+	public void fillNotices() {
+		// At the moment, there is no notices for this request
 	}
 
 }

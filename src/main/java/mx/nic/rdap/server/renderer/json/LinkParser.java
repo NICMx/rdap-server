@@ -8,6 +8,7 @@ import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.json.JsonValue;
 
 import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.server.PrivacyStatus;
@@ -63,6 +64,65 @@ public class LinkParser {
 		key = "type";
 		value = link.getType();
 		if (PrivacyUtil.isObjectVisible(value, key, privacySettings.get(key), isAuthenticated, isOwner))
+			builder.add(key, value);
+
+		return builder.build();
+	}
+
+	/**
+	 * There is no privacy settings for links in notices, the server will show
+	 * every data of remarks
+	 */
+	public static JsonArray getNoticeLinksJsonArray(List<Link> links) {
+		JsonArrayBuilder builder = Json.createArrayBuilder();
+
+		for (Link link : links) {
+			builder.add(getNoticesLinksJsonObject(link));
+		}
+
+		return builder.build();
+	}
+
+	/**
+	 * There is no privacy settings for links in notices, the server will show
+	 * every data of remarks
+	 */
+	private static JsonValue getNoticesLinksJsonObject(Link link) {
+		JsonObjectBuilder builder = Json.createObjectBuilder();
+
+		String key = "value";
+		String value = link.getValue();
+		if (value != null && !value.isEmpty())
+			builder.add(key, value);
+
+		key = "rel";
+		value = link.getRel();
+		if (value != null && !value.isEmpty())
+			builder.add(key, value);
+
+		key = "href";
+		value = link.getHref();
+		if (value != null && !value.isEmpty())
+			builder.add(key, value);
+
+		key = "hreflang";
+		value = link.getHreflag();
+		if (value != null && !value.isEmpty())
+			builder.add(key, value);
+
+		key = "title";
+		value = link.getTitle();
+		if (value != null && !value.isEmpty())
+			builder.add(key, value);
+
+		key = "media";
+		value = link.getMedia();
+		if (value != null && !value.isEmpty())
+			builder.add(key, value);
+
+		key = "type";
+		value = link.getType();
+		if (value != null && !value.isEmpty())
 			builder.add(key, value);
 
 		return builder.build();
