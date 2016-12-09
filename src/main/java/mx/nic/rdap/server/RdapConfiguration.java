@@ -3,6 +3,7 @@ package mx.nic.rdap.server;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -21,19 +22,18 @@ import mx.nic.rdap.server.db.DatabaseSession;
 
 /**
  * Class containing the configuration of the rdap server
- * 
- * @author dalpuche
- *
  */
 public class RdapConfiguration {
 	private final static Logger logger = Logger.getLogger(RdapConfiguration.class.getName());
 	private static Properties systemProperties;
 	private static final String LANGUAGE_KEY = "language";
 	private static final String ZONE_KEY = "zones";
-	private static final String MINIMUN_SEARCH_PATTERN_LENGTH_KEY = "minimum.search.pattern.length";
-	private static final String MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER = "max.number.result.authenticated.user";
-	private static final String MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER = "max.number.result.unauthenticated.user";
-	private static final String OWNER_ROLES_KEY = "ownerRoles";
+	private static final String MINIMUN_SEARCH_PATTERN_LENGTH_KEY = "minimum_search_pattern_length";
+	private static final String MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER = "max_number_result_authenticated_user";
+	private static final String MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER = "max_number_result_unauthenticated_user";
+	private static final String OWNER_ROLES_KEY = "owner_roles";
+	private static final String IS_REVERSE_IPV4_ENABLED_KEY = "is_reverse_ipv4_enabled";
+	private static final String IS_REVERSE_IPV6_ENABLED_KEY = "is_reverse_ipv6_enabled";
 	private static Set<Rol> objectOwnerRoles;
 
 	public RdapConfiguration() {
@@ -88,13 +88,13 @@ public class RdapConfiguration {
 			String zones[] = systemProperties.getProperty(ZONE_KEY).trim().split(",");
 			List<String> trimmedZones = new ArrayList<String>();
 			for (String zone : zones) {
-				trimmedZones.add(zone.trim());
+				if (!zone.trim().isEmpty())
+					trimmedZones.add(zone.trim());
 			}
 			return trimmedZones;
-		} else {
-			logger.log(Level.SEVERE, "Zones not found in configuration file");
-			throw new RuntimeException("MUST defined zones in configuration file");
 		}
+
+		return Collections.emptyList();
 	}
 
 	/**
@@ -115,6 +115,30 @@ public class RdapConfiguration {
 		List<String> configuratedZones = RdapConfiguration.getServerZones();
 		Map<Integer, String> zoneByIdForServer = new HashMap<Integer, String>();
 		Map<String, Integer> idByZoneForServer = new HashMap<String, Integer>();
+
+		// Configure reverse zones
+		if (Boolean.parseBoolean(systemProperties.getProperty(IS_REVERSE_IPV4_ENABLED_KEY))) {
+			String zone = ZoneModel.REVERSE_IP_V4;
+			if (ZoneModel.getIdByZone().get(zone) != null) {
+				zoneByIdForServer.put(ZoneModel.getIdByZone().get(zone), zone);
+				idByZoneForServer.put(zone, ZoneModel.getIdByZoneName(zone));
+			} else {
+				logger.log(Level.WARNING, "Configurated zone not found in database : " + zone);
+			}
+		}
+		configuratedZones.remove(ZoneModel.REVERSE_IP_V4);
+
+		if (Boolean.parseBoolean(systemProperties.getProperty(IS_REVERSE_IPV6_ENABLED_KEY))) {
+			String zone = ZoneModel.REVERSE_IP_V6;
+			if (ZoneModel.getIdByZone().get(zone) != null) {
+				zoneByIdForServer.put(ZoneModel.getIdByZone().get(zone), zone);
+				idByZoneForServer.put(zone, ZoneModel.getIdByZoneName(zone));
+			} else {
+				logger.log(Level.WARNING, "Configurated zone not found in database : " + zone);
+			}
+		}
+		configuratedZones.remove(ZoneModel.REVERSE_IP_V6);
+
 		for (String zone : configuratedZones) {
 			if (ZoneModel.getIdByZone().get(zone) == null) {
 				logger.log(Level.SEVERE, "Configurated zone not found in database:" + zone);
@@ -123,6 +147,7 @@ public class RdapConfiguration {
 			zoneByIdForServer.put(ZoneModel.getIdByZone().get(zone), zone);
 			idByZoneForServer.put(zone, ZoneModel.getIdByZoneName(zone));
 		}
+
 		// Ovewrite the hashmaps to only use the configurated zones
 		ZoneModel.setZoneById(zoneByIdForServer);
 		ZoneModel.setIdByZone(idByZoneForServer);
@@ -183,11 +208,6 @@ public class RdapConfiguration {
 				|| systemProperties.getProperty(LANGUAGE_KEY).trim().isEmpty()) {
 			isValid = false;
 			invalidProperties.add(LANGUAGE_KEY);
-		}
-
-		if (systemProperties.getProperty(ZONE_KEY) == null || systemProperties.getProperty(ZONE_KEY).trim().isEmpty()) {
-			isValid = false;
-			invalidProperties.add(ZONE_KEY);
 		}
 
 		if (systemProperties.getProperty(MINIMUN_SEARCH_PATTERN_LENGTH_KEY) == null) {

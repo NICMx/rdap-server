@@ -1,26 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+	id="WebApp_ID" version="3.1">
 
-  <display-name>rdap-server</display-name>
-  <error-page>
-  	<location>/exception</location>
-  </error-page>
-      <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Wildcard means whole app requires authentication</web-resource-name>
-            <url-pattern>/nameservers</url-pattern>
-             <url-pattern>/domains</url-pattern>
-              <url-pattern>/entities</url-pattern>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>AUTHENTICATED</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-role>
-    <role-name>AUTHENTICATED</role-name>
-</security-role>
-    <login-config>
-        <auth-method>BASIC</auth-method>
-    </login-config>
-  
+	<display-name>rdap-server</display-name>
+	
+	<error-page>
+		<location>/exception</location>
+	</error-page>
+	
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Search pages</web-resource-name>
+			<description>Wildcard means whole app requires authentication</description>
+			<url-pattern>/nameservers</url-pattern>
+			<url-pattern>/domains</url-pattern>
+			<url-pattern>/entities</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>AUTHENTICATED</role-name>
+		</auth-constraint>
+	</security-constraint>
+
+	<security-role>
+		<role-name>AUTHENTICATED</role-name>
+	</security-role>
+	
+	<login-config>
+		<auth-method>BASIC</auth-method>
+	</login-config>
+
 </web-app>
