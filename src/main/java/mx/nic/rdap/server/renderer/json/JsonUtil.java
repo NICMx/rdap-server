@@ -20,6 +20,7 @@ import mx.nic.rdap.core.db.RdapObject;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.server.PrivacyStatus;
 import mx.nic.rdap.server.PrivacyUtil;
+import mx.nic.rdap.server.RdapConfiguration;
 
 /**
  * Utilities for json renderer
@@ -85,7 +86,9 @@ public class JsonUtil {
 			builder.add(key, EntityParser.getJsonArray(object.getEntities(), isAuthenticated, isOwner));
 
 		key = "lang";
-		builder.add("lang", "en");// TODO: read the configuration
+		if (PrivacyUtil.isObjectVisible(RdapConfiguration.getServerLanguage(), key, privacySettings.get(key),
+				isAuthenticated, isOwner))
+			builder.add("lang", RdapConfiguration.getServerLanguage());
 		return builder;
 	}
 
@@ -108,11 +111,11 @@ public class JsonUtil {
 			remarkPrivacySettings.putAll(PrivacyUtil.getEntityRemarkPrivacySettings());
 			linkPrivacySettings.putAll(PrivacyUtil.getEntityLinkPrivacySettings());
 			eventPrivacySettings.putAll(PrivacyUtil.getEntityEventPrivacySettings());
-			Map<String, PrivacyStatus> publicIdPrivacySettings =PrivacyUtil.getEntityPublicIdsPrivacySettings();
+			Map<String, PrivacyStatus> publicIdPrivacySettings = PrivacyUtil.getEntityPublicIdsPrivacySettings();
 			for (String key : publicIdPrivacySettings.keySet()) {
 				allObjectPrivacySettings.put("publicId-" + key, publicIdPrivacySettings.get(key));
 			}
-			Map<String, PrivacyStatus> vCardPrivacySettings =PrivacyUtil.getVCardPrivacySettings();
+			Map<String, PrivacyStatus> vCardPrivacySettings = PrivacyUtil.getVCardPrivacySettings();
 			for (String key : vCardPrivacySettings.keySet()) {
 				allObjectPrivacySettings.put("vcard-" + key, vCardPrivacySettings.get(key));
 			}
@@ -121,19 +124,19 @@ public class JsonUtil {
 			remarkPrivacySettings.putAll(PrivacyUtil.getDomainRemarkPrivacySettings());
 			linkPrivacySettings.putAll(PrivacyUtil.getDomainLinkPrivacySettings());
 			eventPrivacySettings.putAll(PrivacyUtil.getDomainEventPrivacySettings());
-			Map<String, PrivacyStatus> publicIdPrivacySettings =PrivacyUtil.getDomainPublicIdsPrivacySettings();
+			Map<String, PrivacyStatus> publicIdPrivacySettings = PrivacyUtil.getDomainPublicIdsPrivacySettings();
 			for (String key : publicIdPrivacySettings.keySet()) {
 				allObjectPrivacySettings.put("publicId-" + key, publicIdPrivacySettings.get(key));
 			}
-			Map<String, PrivacyStatus> variantPrivacySettings =PrivacyUtil.getDomainVariantsPrivacySettings();
+			Map<String, PrivacyStatus> variantPrivacySettings = PrivacyUtil.getDomainVariantsPrivacySettings();
 			for (String key : variantPrivacySettings.keySet()) {
 				allObjectPrivacySettings.put("variant-" + key, variantPrivacySettings.get(key));
 			}
-			Map<String, PrivacyStatus> secureDNStPrivacySettings =PrivacyUtil.getSecureDnsPrivacySettings();
+			Map<String, PrivacyStatus> secureDNStPrivacySettings = PrivacyUtil.getSecureDnsPrivacySettings();
 			for (String key : secureDNStPrivacySettings.keySet()) {
 				allObjectPrivacySettings.put("secureDNS-" + key, secureDNStPrivacySettings.get(key));
 			}
-			Map<String, PrivacyStatus> dsDataPrivacySettings =PrivacyUtil.getDsDataPrivacySettings();
+			Map<String, PrivacyStatus> dsDataPrivacySettings = PrivacyUtil.getDsDataPrivacySettings();
 			for (String key : dsDataPrivacySettings.keySet()) {
 				allObjectPrivacySettings.put("dsData-" + key, dsDataPrivacySettings.get(key));
 			}

@@ -52,6 +52,11 @@ public class RemarkParser {
 				isOwner))
 			builder.add(key, LinkParser.getJsonArray(remark.getLinks(), isAuthenticated, isOwner, linkPrivacySettings));
 
+		key = "lang";
+		if (PrivacyUtil.isObjectVisible(remark.getLanguage(), key, remarkPrivacySettings.get(key), isAuthenticated,
+				isOwner))
+			builder.add("lang", remark.getLanguage());
+
 		return builder.build();
 	}
 

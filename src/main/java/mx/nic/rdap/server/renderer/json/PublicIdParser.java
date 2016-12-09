@@ -33,6 +33,7 @@ public class PublicIdParser {
 		if (PrivacyUtil.isObjectVisible(publicId.getType(), key, privacySettings.get(key), isAuthenticated, isOwner)) {
 			builder.add(key, publicId.getType());
 		}
+
 		key = "identifier";
 		if (PrivacyUtil.isObjectVisible(publicId.getPublicId(), key, privacySettings.get(key), isAuthenticated,
 				isOwner)) {
