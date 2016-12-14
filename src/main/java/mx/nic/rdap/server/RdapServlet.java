@@ -56,6 +56,7 @@ public abstract class RdapServlet extends HttpServlet {
 		}
 
 		Renderer renderer = findRenderer(request);
+		response.setCharacterEncoding("UTF-8");
 		response.setContentType(renderer.getResponseContentType());
 		renderer.render(result, response.getWriter());
 	}
