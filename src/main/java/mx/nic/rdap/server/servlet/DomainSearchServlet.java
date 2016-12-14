@@ -1,6 +1,7 @@
 package mx.nic.rdap.server.servlet;
 
 import java.io.IOException;
+import java.net.IDN;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -19,6 +20,7 @@ import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.DomainSearchResult;
+import mx.nic.rdap.server.result.OkResult;
 
 @WebServlet(name = "domains", urlPatterns = { "/domains" })
 public class DomainSearchServlet extends RdapServlet {
@@ -57,13 +59,19 @@ public class DomainSearchServlet extends RdapServlet {
 		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUnauthenticatedUser();// Default
 		try (Connection connection = DatabaseSession.getRdapConnection()) {
 			resultLimit = Util.getMaxNumberOfResultsForUser(username, connection);
-
+			String domain = request.getValue();
+			if (IDN.toASCII(domain) != domain) {
+				domain = IDN.toASCII(domain);
+			}
 			switch (request.getParameter()) {
 			case DOMAIN_NAME:
 				// Gets domain by its name with zone
 				if (request.getValue().contains(".")) {
 					String[] split = request.getValue().split("\\.", 2);
-					String domain = split[0];
+					domain = split[0];
+					if (IDN.toASCII(domain) != domain) {
+						domain = IDN.toASCII(domain);
+					}
 					String zone = split[1];
 
 					try {
@@ -72,17 +80,18 @@ public class DomainSearchServlet extends RdapServlet {
 						e.printStackTrace();
 					}
 				} else {
+
 					// Search domain by it´s name without zone.
-					result = DomainModel.searchByName(request.getValue(), resultLimit, connection);
+					result = DomainModel.searchByName(domain, resultLimit, connection);
 				}
 				break;
 			case NAMESERVER_NAME:
 				// Gets´s domain by it´s Nameserver name
-				result = DomainModel.searchByNsLdhName(request.getValue(), resultLimit, connection);
+				result = DomainModel.searchByNsLdhName(domain, resultLimit, connection);
 				break;
 			case NAMESERVER_IP:
 				// Get´s domain by it´s Nameserver Ip
-				result = DomainModel.searchByNsIp(request.getValue(), resultLimit, connection);
+				result = DomainModel.searchByNsIp(domain, resultLimit, connection);
 				break;
 			default:
 
@@ -101,9 +110,48 @@ public class DomainSearchServlet extends RdapServlet {
 	 * HttpServletRequest)
 	 */
 	@Override
-	protected RdapResult doRdapHead(HttpServletRequest request)
+	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
-		throw new RequestHandleException(501, "Not implemented yet.");
+		DomainSearchRequest request;
+		try {
+			request = new DomainSearchRequest(httpRequest);
+		} catch (UnprocessableEntityException e) {
+			throw new RequestHandleException(e.getHttpResponseStatusCode(), e.getMessage());
+		}
+		String domain = request.getValue();
+		if (IDN.toASCII(domain) != domain) {
+			domain = IDN.toASCII(domain);
+		}
+		try (Connection connection = DatabaseSession.getRdapConnection()) {
+			switch (request.getParameter()) {
+			case DOMAIN_NAME:
+				// Gets domain by its name with zone
+				if (request.getValue().contains(".")) {
+					String[] split = request.getValue().split("\\.", 2);
+					domain = split[0];
+					domain = IDN.toASCII(domain);
+					String zone = split[1];
+					DomainModel.existByName(domain, zone, connection);
+				} else {
+					// Search domain by it´s name without zone.
+					DomainModel.existByName(domain, connection);
+				}
+				break;
+			case NAMESERVER_NAME:
+				// Gets´s domain by it´s Nameserver name
+				DomainModel.existByNsLdhName(domain, connection);
+				break;
+			case NAMESERVER_IP:
+				// Get´s domain by it´s Nameserver Ip
+				DomainModel.existByNsIp(domain, connection);
+				break;
+			default:
+				break;
+			}
+
+		}
+
+		return new OkResult();
 	}
 
 	private class DomainSearchRequest {

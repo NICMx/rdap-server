@@ -10,6 +10,7 @@ import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.HelpResult;
+import mx.nic.rdap.server.result.OkResult;
 
 @WebServlet(name = "help", urlPatterns = { "/help" })
 public class HelpServlet extends RdapServlet {
@@ -42,7 +43,7 @@ public class HelpServlet extends RdapServlet {
 	@Override
 	protected RdapResult doRdapHead(HttpServletRequest request)
 			throws RequestHandleException, IOException, SQLException {
-		throw new RequestHandleException(501, "Not implemented yet.");
+		return new OkResult();
 	}
 
 }

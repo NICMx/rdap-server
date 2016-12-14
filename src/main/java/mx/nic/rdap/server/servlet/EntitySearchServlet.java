@@ -17,6 +17,7 @@ import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.EntitySearchResult;
+import mx.nic.rdap.server.result.OkResult;
 
 @WebServlet(name = "entities", urlPatterns = { "/entities" })
 public class EntitySearchServlet extends RdapServlet {
@@ -59,10 +60,29 @@ public class EntitySearchServlet extends RdapServlet {
 	}
 
 	@Override
-	protected RdapResult doRdapHead(HttpServletRequest request)
+	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			validateRequestParameter(httpRequest);
+		} catch (UnprocessableEntityException e) {
+			throw new RequestHandleException(e.getHttpResponseStatusCode(), e.getMessage());
+		}
+
+		String parameter = httpRequest.getParameterNames().nextElement();
+		String value = httpRequest.getParameter(parameter);
+
+		try (Connection connection = DatabaseSession.getRdapConnection()) {
+			switch (parameter) {
+			case FULL_NAME:
+				EntityModel.existByVCardName(value.trim(), connection);
+				break;
+			case HANDLE:
+				EntityModel.existByHandle(value.trim(), connection);
+				break;
+			}
+		}
+
+		return new OkResult();
 	}
 
 	private static void validateRequestParameter(HttpServletRequest request) throws UnprocessableEntityException {

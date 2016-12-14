@@ -18,6 +18,7 @@ import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.IpResult;
+import mx.nic.rdap.server.result.OkResult;
 
 @WebServlet(name = "ip", urlPatterns = { "/ip/*" })
 public class IpNetworkServlet extends RdapServlet {
@@ -64,9 +65,20 @@ public class IpNetworkServlet extends RdapServlet {
 	 * HttpServletRequest)
 	 */
 	@Override
-	protected RdapResult doRdapHead(HttpServletRequest request)
+	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
-		throw new RequestHandleException(501, "Not implemented yet.");
+		IpRequest request = new IpRequest(Util.getRequestParams(httpRequest));
+		try (Connection con = DatabaseSession.getRdapConnection()) {
+			if (request.hasCidr()) {
+				IpNetworkModel.existByInetAddress(request.getIp(), request.getCidr(), con);
+			} else {
+				IpNetworkModel.existByInetAddress(request.getIp(), con);
+			}
+
+		} catch (UnknownHostException e) {
+			throw new MalformedRequestException("Invalid IP address", e);
+		}
+		return new OkResult();
 	}
 
 	private class IpRequest {

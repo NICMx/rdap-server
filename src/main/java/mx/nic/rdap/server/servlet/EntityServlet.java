@@ -15,6 +15,7 @@ import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.EntityResult;
+import mx.nic.rdap.server.result.OkResult;
 
 @WebServlet(name = "entity", urlPatterns = { "/entity/*" })
 public class EntityServlet extends RdapServlet {
@@ -53,9 +54,13 @@ public class EntityServlet extends RdapServlet {
 	 * HttpServletRequest)
 	 */
 	@Override
-	protected RdapResult doRdapHead(HttpServletRequest request)
+	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
-		throw new RequestHandleException(501, "Not implemented yet.");
+		EntityRequest request = new EntityRequest(Util.getRequestParams(httpRequest)[0]);
+		try (Connection con = DatabaseSession.getRdapConnection()) {
+			EntityModel.existByHandle(request.getHandle(), con);
+		}
+		return new OkResult();
 	}
 
 	private class EntityRequest {

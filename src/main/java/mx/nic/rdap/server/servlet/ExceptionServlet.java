@@ -42,7 +42,8 @@ public class ExceptionServlet extends RdapServlet {
 	@Override
 	protected RdapResult doRdapHead(HttpServletRequest request)
 			throws RequestHandleException, IOException, SQLException {
-		throw new RequestHandleException(501, "Not implemented yet.");
+		RdapResult result = new ExceptionResult(request);
+		return result;
 	}
 
 }

@@ -16,6 +16,7 @@ import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.AutnumResult;
+import mx.nic.rdap.server.result.OkResult;
 
 @WebServlet(name = "autnum", urlPatterns = { "/autnum/*" })
 public class AutnumServlet extends RdapServlet {
@@ -52,9 +53,13 @@ public class AutnumServlet extends RdapServlet {
 	 * HttpServletRequest)
 	 */
 	@Override
-	protected RdapResult doRdapHead(HttpServletRequest request)
+	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
-		throw new RequestHandleException(501, "Not implemented yet.");
+		AutnumRequest request = new AutnumRequest(Util.getRequestParams(httpRequest)[0]);
+		try (Connection con = DatabaseSession.getRdapConnection()) {
+			AutnumModel.existByRange(request.getAutnum(), con);
+		}
+		return new OkResult();
 	}
 
 	private class AutnumRequest {

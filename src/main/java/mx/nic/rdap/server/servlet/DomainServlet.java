@@ -18,6 +18,7 @@ import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.DomainResult;
+import mx.nic.rdap.server.result.OkResult;
 
 @WebServlet(name = "domain", urlPatterns = { "/domain/*" })
 public class DomainServlet extends RdapServlet {
@@ -67,9 +68,18 @@ public class DomainServlet extends RdapServlet {
 	 * HttpServletRequest)
 	 */
 	@Override
-	protected RdapResult doRdapHead(HttpServletRequest request)
+	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
-		throw new RequestHandleException(501, "Not implemented yet.");
+		DomainRequest request = null;
+		try {
+			request = new DomainRequest(Util.getRequestParams(httpRequest)[0]);
+		} catch (InvalidValueException | ObjectNotFoundException e) {
+			throw new ObjectNotFoundException("The RDAP server doesn't have information about the requested zone");
+		}
+		try (Connection con = DatabaseSession.getRdapConnection()) {
+			DomainModel.existByLdhName(request.getDomainName(), request.getZoneId(), con);
+		}
+		return new OkResult();
 	}
 
 	private class DomainRequest {

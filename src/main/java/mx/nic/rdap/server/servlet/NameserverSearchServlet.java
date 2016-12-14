@@ -19,6 +19,7 @@ import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.NameserverSearchResult;
+import mx.nic.rdap.server.result.OkResult;
 
 @WebServlet(name = "nameservers", urlPatterns = { "/nameservers" })
 public class NameserverSearchServlet extends RdapServlet {
@@ -76,9 +77,31 @@ public class NameserverSearchServlet extends RdapServlet {
 	 * HttpServletRequest)
 	 */
 	@Override
-	protected RdapResult doRdapHead(HttpServletRequest request)
+	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
-		throw new RequestHandleException(501, "Not implemented yet.");
+		NameserverSearchRequest request;
+
+		try {
+			request = new NameserverSearchRequest(httpRequest);
+		} catch (UnprocessableEntityException e) {
+			throw new RequestHandleException(e.getHttpResponseStatusCode(), e.getMessage());
+		}
+
+		try (Connection connection = DatabaseSession.getRdapConnection()) {
+			if (request.getParameter().compareTo(NameserverSearchRequest.NAME_PARAMETER_KEY) == 0) {
+				NameserverModel.existByName(request.getValue().trim(), connection);
+			} else {
+				String ipAddress = request.getValue().trim();
+				Util.validateIpAddress(ipAddress);
+				try {
+					NameserverModel.existByIp(ipAddress, connection);
+				} catch (InvalidValueException e) {
+					throw new RequestHandleException(e.getMessage());
+				}
+			}
+		}
+
+		return new OkResult();
 	}
 
 	private class NameserverSearchRequest {

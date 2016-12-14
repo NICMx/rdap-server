@@ -15,6 +15,7 @@ import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.NameserverResult;
+import mx.nic.rdap.server.result.OkResult;
 
 @WebServlet(name = "nameserver", urlPatterns = { "/nameserver/*" })
 public class NameserverServlet extends RdapServlet {
@@ -50,9 +51,13 @@ public class NameserverServlet extends RdapServlet {
 	 * HttpServletRequest)
 	 */
 	@Override
-	protected RdapResult doRdapHead(HttpServletRequest request)
+	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
-		throw new RequestHandleException(501, "Not implemented yet.");
+		NameserverRequest request = new NameserverRequest(Util.getRequestParams(httpRequest)[0]);
+		try (Connection con = DatabaseSession.getRdapConnection()) {
+			NameserverModel.existByName(request.getName(), con);
+		}
+		return new OkResult();
 	}
 
 	private class NameserverRequest {
