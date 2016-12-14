@@ -77,7 +77,10 @@ pre code {
 	display: block;
 	overflow: auto;
 	padding: 0.5em 3em;
-	background-color: #ddd;
+}
+
+code {
+	background-color: #e0e0e0;
 }
 
 .continue-reading {
