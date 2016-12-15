@@ -11,8 +11,8 @@ import javax.json.JsonObjectBuilder;
 
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.core.db.RemarkDescription;
-import mx.nic.rdap.server.PrivacyStatus;
 import mx.nic.rdap.server.PrivacyUtil;
+import mx.nic.rdap.server.catalog.PrivacyStatus;
 
 public class RemarkParser {
 	public static JsonArray getJsonArray(List<Remark> remarks, boolean isAuthenticated, boolean isOwner,

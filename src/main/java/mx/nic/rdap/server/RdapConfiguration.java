@@ -18,6 +18,7 @@ import mx.nic.rdap.db.exception.InvalidValueException;
 import mx.nic.rdap.db.exception.ObjectNotFoundException;
 import mx.nic.rdap.db.model.CountryCodeModel;
 import mx.nic.rdap.db.model.ZoneModel;
+import mx.nic.rdap.server.catalog.OperationalProfile;
 import mx.nic.rdap.server.db.DatabaseSession;
 
 /**
@@ -34,6 +35,7 @@ public class RdapConfiguration {
 	private static final String OWNER_ROLES_KEY = "owner_roles";
 	private static final String IS_REVERSE_IPV4_ENABLED_KEY = "is_reverse_ipv4_enabled";
 	private static final String IS_REVERSE_IPV6_ENABLED_KEY = "is_reverse_ipv6_enabled";
+	private static final String OPERATIONAL_PROFILE_KEY = "operational_profile";
 	private static Set<Rol> objectOwnerRoles;
 
 	public RdapConfiguration() {
@@ -162,15 +164,6 @@ public class RdapConfiguration {
 		return Integer.parseInt(systemProperties.getProperty(MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER).trim());
 	}
 
-	/**
-	 * Return the max number of results for the authenticated user
-	 * 
-	 * @return
-	 */
-	public static int getMaxNumberOfResultsForUnauthenticatedUser() {
-		return Integer.parseInt(systemProperties.getProperty(MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER).trim());
-	}
-
 	public static void validateConfiguratedRoles() throws InvalidValueException {
 		String ownerRoles = systemProperties.getProperty(OWNER_ROLES_KEY);
 		if (ownerRoles == null) {
@@ -254,6 +247,23 @@ public class RdapConfiguration {
 			invalidProperties.add(OWNER_ROLES_KEY);
 		}
 
+		if (systemProperties.getProperty(OPERATIONAL_PROFILE_KEY) != null) {
+			String property = systemProperties.getProperty(OPERATIONAL_PROFILE_KEY).trim();
+			OperationalProfile profile = OperationalProfile.valueOf(property.toUpperCase());
+
+			switch (profile) {
+			case REGISTRAR:
+				break;
+			case REGISTRY:
+				break;
+			case NONE:
+				break;
+			default:
+				isValid = false;
+				invalidProperties.add(OPERATIONAL_PROFILE_KEY);
+			}
+		}
+
 		if (!isValid) {
 			InvalidValueException invalidValueException = new InvalidValueException(
 					"The following required properties were not found or are invalid values in configuration file : "
@@ -263,5 +273,21 @@ public class RdapConfiguration {
 			}
 			throw invalidValueException;
 		}
+	}
+
+	/**
+	 * Return the max number of results for the authenticated user
+	 * 
+	 */
+	public static int getMaxNumberOfResultsForUnauthenticatedUser() {
+		return Integer.parseInt(systemProperties.getProperty(MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER).trim());
+	}
+
+	/**
+	 *Return the profile configurated for the server 
+	 */
+	public static OperationalProfile getServerProfile() {
+		String property = systemProperties.getProperty(OPERATIONAL_PROFILE_KEY).trim();
+		return OperationalProfile.valueOf(property.toUpperCase());
 	}
 }

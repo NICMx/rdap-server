@@ -18,9 +18,9 @@ import mx.nic.rdap.core.db.IpNetwork;
 import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.RdapObject;
 import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.server.PrivacyStatus;
 import mx.nic.rdap.server.PrivacyUtil;
 import mx.nic.rdap.server.RdapConfiguration;
+import mx.nic.rdap.server.catalog.PrivacyStatus;
 
 /**
  * Utilities for json renderer
@@ -182,7 +182,7 @@ public class JsonUtil {
 	private static PrivacyStatus getPriorityPrivacyStatus(boolean isAuthenticated, boolean isOwner,
 			Map<String, PrivacyStatus> privacySettings) {
 		// First check if all the privacys settings are in "Any"
-		if (!privacySettings.containsValue(PrivacyStatus.AUTHENTICATE)
+		if (!privacySettings.containsValue(PrivacyStatus.AUTHENTICATED)
 				&& !privacySettings.containsValue(PrivacyStatus.OWNER)
 				&& !privacySettings.containsValue(PrivacyStatus.NONE)) {
 			return PrivacyStatus.ANY;
@@ -191,8 +191,8 @@ public class JsonUtil {
 			return PrivacyStatus.NONE;
 		} else if (privacySettings.containsValue(PrivacyStatus.OWNER) && !isOwner) {
 			return PrivacyStatus.OWNER;
-		} else if (privacySettings.containsValue(PrivacyStatus.AUTHENTICATE) && !isAuthenticated) {
-			return PrivacyStatus.AUTHENTICATE;
+		} else if (privacySettings.containsValue(PrivacyStatus.AUTHENTICATED) && !isAuthenticated) {
+			return PrivacyStatus.AUTHENTICATED;
 		} else
 			return PrivacyStatus.ANY;
 	}
@@ -205,7 +205,7 @@ public class JsonUtil {
 			return Status.REMOVED;
 		} else if (priorityStatus.equals(PrivacyStatus.OWNER)) {
 			return Status.PRIVATE;
-		} else if (priorityStatus.equals(PrivacyStatus.AUTHENTICATE)) {
+		} else if (priorityStatus.equals(PrivacyStatus.AUTHENTICATED)) {
 			return Status.PRIVATE;
 		} else
 			return null;
@@ -219,7 +219,7 @@ public class JsonUtil {
 			return new Remark(RemarkType.OBJECT_AUTHORIZATION);
 		} else if (priorityStatus.equals(PrivacyStatus.OWNER)) {
 			return new Remark(RemarkType.OBJECT_AUTHORIZATION);
-		} else if (priorityStatus.equals(PrivacyStatus.AUTHENTICATE)) {
+		} else if (priorityStatus.equals(PrivacyStatus.AUTHENTICATED)) {
 			return new Remark(RemarkType.OBJECT_AUTHORIZATION);
 		} else
 			return new Remark(RemarkType.OBJECT_UNEXPLAINABLE);
@@ -232,7 +232,7 @@ public class JsonUtil {
 			return new Remark(RemarkType.RESULT_SET_AUTHORIZATION);
 		} else if (priorityStatus.equals(PrivacyStatus.OWNER)) {
 			return new Remark(RemarkType.RESULT_SET_AUTHORIZATION);
-		} else if (priorityStatus.equals(PrivacyStatus.AUTHENTICATE)) {
+		} else if (priorityStatus.equals(PrivacyStatus.AUTHENTICATED)) {
 			return new Remark(RemarkType.RESULT_SET_AUTHORIZATION);
 		} else
 			return new Remark(RemarkType.RESULT_SET_UNEXPLAINABLE);

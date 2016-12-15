@@ -11,8 +11,8 @@ import javax.json.JsonObjectBuilder;
 
 import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.db.model.ZoneModel;
-import mx.nic.rdap.server.PrivacyStatus;
 import mx.nic.rdap.server.PrivacyUtil;
+import mx.nic.rdap.server.catalog.PrivacyStatus;
 
 public class DomainParser {
 

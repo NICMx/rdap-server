@@ -12,8 +12,8 @@ import javax.json.JsonObjectBuilder;
 import mx.nic.rdap.core.db.IpAddress;
 import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.struct.NameserverIpAddressesStruct;
-import mx.nic.rdap.server.PrivacyStatus;
 import mx.nic.rdap.server.PrivacyUtil;
+import mx.nic.rdap.server.catalog.PrivacyStatus;
 
 public class NameserverParser {
 

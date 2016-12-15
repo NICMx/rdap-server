@@ -13,6 +13,8 @@ import java.util.Set;
 
 import javax.servlet.ServletContext;
 
+import mx.nic.rdap.server.catalog.PrivacyStatus;
+
 public class PrivacyUtil {
 
 	private static final Map<String, Map<String, PrivacyStatus>> OBJECTS_PRIVACY_SETTING = new HashMap<>();
@@ -150,7 +152,7 @@ public class PrivacyUtil {
 			switch (privacyProperty) {
 			case OWNER:
 				break;
-			case AUTHENTICATE:
+			case AUTHENTICATED:
 				break;
 			case ANY:
 				break;
@@ -216,7 +218,7 @@ public class PrivacyUtil {
 				result = true;
 			}
 			break;
-		case AUTHENTICATE:
+		case AUTHENTICATED:
 			if (isAuthenticated) {
 				result = true;
 			}

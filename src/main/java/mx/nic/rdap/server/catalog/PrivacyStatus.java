@@ -1,10 +1,10 @@
-package mx.nic.rdap.server;
+package mx.nic.rdap.server.catalog;
 
 /**
  * Privacy levels of an object or attribute.
  */
 public enum PrivacyStatus {
-	OWNER, AUTHENTICATE, ANY, NONE;
+	OWNER, AUTHENTICATED, ANY, NONE;
 
 	private PrivacyStatus() {
 	}
