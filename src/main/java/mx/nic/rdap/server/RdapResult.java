@@ -20,6 +20,11 @@ public abstract class RdapResult {
 	 * @return JSON version of this object.
 	 */
 	public abstract JsonObject toJson();
+	
+	/**
+	 * Some validations for the responses
+	 */
+	public abstract void validateResponse();
 
 	/**
 	 * Fills the notices of the request

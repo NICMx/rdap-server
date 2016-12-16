@@ -14,7 +14,7 @@ import mx.nic.rdap.db.model.ZoneModel;
 import mx.nic.rdap.server.PrivacyUtil;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
 
-public class DomainParser {
+public class DomainJsonWriter {
 
 	public static JsonArray getJsonArray(List<Domain> domains, boolean isAuthenticated, boolean isOwner) {
 		JsonArrayBuilder builder = Json.createArrayBuilder();
@@ -47,25 +47,25 @@ public class DomainParser {
 
 		key = "variants";
 		if (PrivacyUtil.isObjectVisible(domain.getVariants(), key, settings.get(key), isAuthenticated, isOwner))
-			builder.add(key, VariantParser.getJsonArray(domain.getVariants(), isAuthenticated, isOwner));
+			builder.add(key, VariantJsonWriter.getJsonArray(domain.getVariants(), isAuthenticated, isOwner));
 
 		key = "publicIds";
 		if (PrivacyUtil.isObjectVisible(domain.getPublicIds(), key, settings.get(key), isAuthenticated, isOwner)) {
-			builder.add(key, PublicIdParser.getJsonArray(domain.getPublicIds(), isAuthenticated, isOwner,
+			builder.add(key, PublicIdJsonWriter.getJsonArray(domain.getPublicIds(), isAuthenticated, isOwner,
 					PrivacyUtil.getDomainPublicIdsPrivacySettings()));
 		}
 
 		key = "nameservers";
 		if (PrivacyUtil.isObjectVisible(domain.getNameServers(), key, settings.get(key), isAuthenticated, isOwner))
-			builder.add(key, NameserverParser.getJsonArray(domain.getNameServers(), isAuthenticated, isOwner));
+			builder.add(key, NameserverJsonWriter.getJsonArray(domain.getNameServers(), isAuthenticated, isOwner));
 
 		key = "secureDNS";
 		if (PrivacyUtil.isObjectVisible(domain.getSecureDNS(), key, settings.get(key), isAuthenticated, isOwner))
-			builder.add(key, SecureDNSParser.getJsonObject(domain.getSecureDNS(), isAuthenticated, isOwner));
+			builder.add(key, SecureDNSJsonWriter.getJsonObject(domain.getSecureDNS(), isAuthenticated, isOwner));
 
 		key = "network";
 		if (PrivacyUtil.isObjectVisible(domain.getIpNetwork(), key, settings.get(key), isAuthenticated, isOwner)) {
-			builder.add(key, IpNetworkParser.getJson(domain.getIpNetwork(), isAuthenticated, isOwner));
+			builder.add(key, IpNetworkJsonWriter.getJson(domain.getIpNetwork(), isAuthenticated, isOwner));
 		}
 
 		return builder.build();

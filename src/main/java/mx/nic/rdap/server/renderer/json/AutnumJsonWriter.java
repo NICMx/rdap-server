@@ -17,7 +17,7 @@ import mx.nic.rdap.db.model.CountryCodeModel;
 import mx.nic.rdap.server.PrivacyUtil;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
 
-public class AutnumParser {
+public class AutnumJsonWriter {
 
 	public static JsonArray getJsonArray(List<Autnum> autnums, boolean isAuthenticated, boolean isOwner) {
 		JsonArrayBuilder builder = Json.createArrayBuilder();

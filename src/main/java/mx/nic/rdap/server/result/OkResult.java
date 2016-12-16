@@ -34,4 +34,13 @@ public class OkResult extends RdapResult {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see mx.nic.rdap.server.RdapResult#validateResponse()
+	 */
+	@Override
+	public void validateResponse() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -14,7 +14,7 @@ import mx.nic.rdap.core.db.RemarkDescription;
 import mx.nic.rdap.server.PrivacyUtil;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
 
-public class RemarkParser {
+public class RemarkJsonWriter {
 	public static JsonArray getJsonArray(List<Remark> remarks, boolean isAuthenticated, boolean isOwner,
 			Map<String, PrivacyStatus> remarkPrivacySettings, Map<String, PrivacyStatus> linkPrivacySettings) {
 		JsonArrayBuilder builder = Json.createArrayBuilder();
@@ -50,7 +50,7 @@ public class RemarkParser {
 		key = "links";
 		if (PrivacyUtil.isObjectVisible(remark.getLinks(), key, remarkPrivacySettings.get(key), isAuthenticated,
 				isOwner))
-			builder.add(key, LinkParser.getJsonArray(remark.getLinks(), isAuthenticated, isOwner, linkPrivacySettings));
+			builder.add(key, LinkJsonWriter.getJsonArray(remark.getLinks(), isAuthenticated, isOwner, linkPrivacySettings));
 
 		key = "lang";
 		if (PrivacyUtil.isObjectVisible(remark.getLanguage(), key, remarkPrivacySettings.get(key), isAuthenticated,
@@ -83,7 +83,7 @@ public class RemarkParser {
 
 		key = "links";
 		if (remark.getLinks() != null && !remark.getLinks().isEmpty())
-			builder.add(key, LinkParser.getNoticeLinksJsonArray(remark.getLinks()));
+			builder.add(key, LinkJsonWriter.getNoticeLinksJsonArray(remark.getLinks()));
 
 		return builder.build();
 	}

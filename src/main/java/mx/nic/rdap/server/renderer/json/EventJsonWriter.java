@@ -13,7 +13,7 @@ import mx.nic.rdap.core.db.Event;
 import mx.nic.rdap.server.PrivacyUtil;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
 
-public class EventParser {
+public class EventJsonWriter {
 	public static JsonArray getJsonArray(List<Event> events, boolean isAuthenticated, boolean isOwner,
 			Map<String, PrivacyStatus> eventPrivacySettings, Map<String, PrivacyStatus> linkPrivacySettings) {
 		JsonArrayBuilder builder = Json.createArrayBuilder();
@@ -46,7 +46,7 @@ public class EventParser {
 
 		key = "links";
 		if (PrivacyUtil.isObjectVisible(event.getLinks(), key, eventPrivacySettings.get(key), isAuthenticated, isOwner))
-			builder.add(key, LinkParser.getJsonArray(event.getLinks(), isAuthenticated, isOwner, linkPrivacySettings));
+			builder.add(key, LinkJsonWriter.getJsonArray(event.getLinks(), isAuthenticated, isOwner, linkPrivacySettings));
 
 		return builder.build();
 	}

@@ -1,5 +1,7 @@
 package mx.nic.rdap.server;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -8,18 +10,27 @@ import java.net.IDN;
 import java.net.InetAddress;
 import java.net.URLDecoder;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.core.catalog.Rol;
+import mx.nic.rdap.core.db.Link;
+import mx.nic.rdap.core.db.Remark;
+import mx.nic.rdap.core.db.RemarkDescription;
 import mx.nic.rdap.core.exception.UnprocessableEntityException;
+import mx.nic.rdap.db.exception.InvalidadDataStructure;
 import mx.nic.rdap.db.model.RdapUserModel;
 import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
@@ -303,4 +314,130 @@ public class Util {
 		this.authenticatedMaxUserResultLimit = authenticatedMaxUserResultLimit;
 	}
 
+	@SuppressWarnings("unchecked")
+	public static List<Remark> readNoticesFromFiles(String filePath) throws FileNotFoundException {
+		List<Remark> notices=new ArrayList<Remark>();
+		List<List<Object>> noticesData = readFiles(filePath);
+		for (List<Object> noticeData : noticesData) {
+			Remark notice = new Remark();
+			List<String> descriptions = (List<String>) noticeData.get(1);
+			notice.setTitle((String) noticeData.get(0));
+			for (String descriptionString : descriptions) {
+				RemarkDescription description = new RemarkDescription();
+				description.setDescription(descriptionString);
+				notice.getDescriptions().add(description);
+			}
+
+			List<Link> links = new ArrayList<Link>();
+			List<String> linksData = (List<String>) noticeData.get(2);
+			for (String linkData : linksData) {
+				Link link;
+				try {
+					link = parseLink(linkData);
+					notice.setLinks(links);
+					links.add(link);
+				} catch (InvalidadDataStructure e) {
+					e.printStackTrace();
+				}
+			}
+
+			notices.add(notice);
+		}
+
+		return notices;
+
+	}
+	
+	private static Link parseLink(String linkData) throws InvalidadDataStructure {
+		Link link = new Link();
+		if (linkData != null && !linkData.trim().isEmpty()) {
+			List<String> linkList = Arrays.asList(linkData.split("\\|"));
+			if (linkList.size() == 7) {
+				link.setValue(linkList.get(0).trim());
+				link.setRel(linkList.get(1).trim());
+				link.setHref(linkList.get(2).trim());
+				link.setHreflag(linkList.get(3).trim());
+				link.setTitle(linkList.get(4).trim());
+				link.setMedia(linkList.get(5).trim());
+				link.setType(linkList.get(6).trim());
+			} else {
+				throw new InvalidadDataStructure();
+			}
+		}
+		return link;
+	}
+	
+	private static List<List<Object>> readFiles(String folderPath) {
+
+		File folder = new File(folderPath);
+
+		List<File> txtList = Arrays.asList(folder.listFiles());
+		Collections.sort(txtList);
+		List<List<Object>> noticesData = new ArrayList<List<Object>>();
+
+		if (txtList.size() != 0) {
+
+			for (File file : txtList) {
+				List<Object> notice = readFileContent(file);
+				noticesData.add(notice);
+			}
+		}
+
+		else {
+			throw new RuntimeException("There are no text files on folder "+folderPath);
+		}
+
+		return noticesData;
+	}
+
+	private static List<Object> readFileContent(File file) {
+		boolean descriptionChecker = false;
+		List<Object> notice = new ArrayList<Object>();
+		String title = "";
+		List<String> descriptions = new ArrayList<String>();
+		List<String> links = new ArrayList<String>();
+		String description = "";
+
+		try (Stream<String> stream = Files.lines(Paths.get(file.getAbsolutePath()))) {
+			Iterator<String> iterator = stream.iterator();
+			while (iterator.hasNext()) {
+				String line = iterator.next();
+				if (line.trim().startsWith("title")) {
+					title = line.substring(line.indexOf("=") + 1).trim();
+				}
+				if (line.trim().startsWith("description")) {
+					line = line.substring(line.indexOf("=") + 1).trim();
+					descriptionChecker = true;
+				}
+				if (descriptionChecker) {
+					do {
+						do {
+							description = description.trim() + " " + line;
+							line = iterator.next().trim();
+							description = description.trim();
+						} while (!line.isEmpty() && !line.startsWith("link"));
+						if (!description.equals(" ") || !description.isEmpty()) {
+							descriptions.add(description);
+							description = "";
+						}
+					} while (!line.startsWith("link"));
+				}
+				if (line.trim().startsWith("link")) {
+					descriptionChecker = false;
+				}
+				if (line.trim().startsWith("link")) {
+					links.add(line.substring(line.indexOf("=") + 1).trim());
+				}
+			}
+			descriptions.removeAll(Arrays.asList(" ", "", null));
+			notice.add(title);
+			notice.add(descriptions);
+			notice.add(links);
+			return notice;
+		}
+
+		catch (IOException e) {
+			throw new RuntimeException(e.getMessage());
+		}
+	}
 }

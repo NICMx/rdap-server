@@ -92,4 +92,10 @@ public class ExceptionResult extends RdapResult {
 		// At the moment, there is no notices for this request
 	}
 
+	/* (non-Javadoc)
+	 * @see mx.nic.rdap.server.RdapResult#validateResponse()
+	 */
+	@Override
+	public void validateResponse() {
+	}
 }

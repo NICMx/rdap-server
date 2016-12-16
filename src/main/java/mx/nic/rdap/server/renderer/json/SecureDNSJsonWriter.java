@@ -10,7 +10,7 @@ import mx.nic.rdap.core.db.SecureDNS;
 import mx.nic.rdap.server.PrivacyUtil;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
 
-public class SecureDNSParser {
+public class SecureDNSJsonWriter {
 
 	public static JsonObject getJsonObject(SecureDNS secureDNS, boolean isAuthenticated, boolean isOwner) {
 		JsonObjectBuilder builder = Json.createObjectBuilder();
@@ -30,7 +30,7 @@ public class SecureDNSParser {
 
 		key = "dsData";
 		if (PrivacyUtil.isObjectVisible(secureDNS.getDsData(), key, settings.get(key), isAuthenticated, isOwner))
-			builder.add(key, DsDataParser.getJsonArray(secureDNS.getDsData(), isAuthenticated, isOwner));
+			builder.add(key, DsDataJsonWriter.getJsonArray(secureDNS.getDsData(), isAuthenticated, isOwner));
 
 		return builder.build();
 	}

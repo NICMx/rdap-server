@@ -13,7 +13,7 @@ import mx.nic.rdap.core.db.DsData;
 import mx.nic.rdap.server.PrivacyUtil;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
 
-public class DsDataParser {
+public class DsDataJsonWriter {
 
 	public static JsonArray getJsonArray(List<DsData> dsDataList, boolean isAuthenticated, boolean isOwner) {
 		JsonArrayBuilder builder = Json.createArrayBuilder();
@@ -51,12 +51,12 @@ public class DsDataParser {
 
 		key = "events";
 		if (PrivacyUtil.isObjectVisible(dsData.getEvents(), key, privacySettings.get(key), isAuthenticated, isOwner))
-			builder.add(key, EventParser.getJsonArray(dsData.getEvents(), isAuthenticated, isOwner,
+			builder.add(key, EventJsonWriter.getJsonArray(dsData.getEvents(), isAuthenticated, isOwner,
 					PrivacyUtil.getDomainEventPrivacySettings(), PrivacyUtil.getDomainLinkPrivacySettings()));
 
 		key = "links";
 		if (PrivacyUtil.isObjectVisible(dsData.getLinks(), key, privacySettings.get(key), isAuthenticated, isOwner))
-			builder.add(key, LinkParser.getJsonArray(dsData.getLinks(), isAuthenticated, isOwner,
+			builder.add(key, LinkJsonWriter.getJsonArray(dsData.getLinks(), isAuthenticated, isOwner,
 					PrivacyUtil.getDomainLinkPrivacySettings()));
 
 		return builder.build();

@@ -15,7 +15,7 @@ import mx.nic.rdap.core.db.struct.NameserverIpAddressesStruct;
 import mx.nic.rdap.server.PrivacyUtil;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
 
-public class NameserverParser {
+public class NameserverJsonWriter {
 
 	public static JsonArray getJsonArray(List<Nameserver> nameserver, boolean isAuthenticated, boolean isOwner) {
 		JsonArrayBuilder builder = Json.createArrayBuilder();

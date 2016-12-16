@@ -14,7 +14,7 @@ import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.server.PrivacyUtil;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
 
-public class LinkParser {
+public class LinkJsonWriter {
 
 	public static JsonArray getJsonArray(List<Link> links, boolean isAuthenticated, boolean isOwner,
 			Map<String, PrivacyStatus> privacySettings) {

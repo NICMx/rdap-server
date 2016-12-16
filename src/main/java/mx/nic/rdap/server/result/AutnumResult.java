@@ -5,10 +5,14 @@ package mx.nic.rdap.server.result;
 
 import javax.json.JsonObject;
 
+import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.db.AutnumDAO;
+import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserInfo;
-import mx.nic.rdap.server.renderer.json.AutnumParser;
+import mx.nic.rdap.server.catalog.OperationalProfile;
+import mx.nic.rdap.server.operational.profile.OperationalProfileValidator;
+import mx.nic.rdap.server.renderer.json.AutnumJsonWriter;
 
 public class AutnumResult extends RdapResult {
 
@@ -18,6 +22,7 @@ public class AutnumResult extends RdapResult {
 		this.autnum = autnum;
 		this.userInfo = new UserInfo(username);
 		this.autnum.addSelfLinks(header, contextPath);
+		validateResponse();
 	}
 
 	/*
@@ -27,7 +32,7 @@ public class AutnumResult extends RdapResult {
 	 */
 	@Override
 	public JsonObject toJson() {
-		return AutnumParser.getJson(autnum, userInfo.isUserAuthenticated(), userInfo.isOwner(autnum));
+		return AutnumJsonWriter.getJson(autnum, userInfo.isUserAuthenticated(), userInfo.isOwner(autnum));
 	}
 
 	/*
@@ -38,6 +43,20 @@ public class AutnumResult extends RdapResult {
 	@Override
 	public void fillNotices() {
 		// At the moment, there is no notices for this request
+	}
+
+	/* (non-Javadoc)
+	 * @see mx.nic.rdap.server.RdapResult#validateResponse()
+	 */
+	@Override
+	public void validateResponse() {
+		if(!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)){
+			if(autnum.getEntities()!=null&&!autnum.getEntities().isEmpty()){
+				for(Entity ent:autnum.getEntities()){
+					OperationalProfileValidator.validateEntityEvents(ent);
+				}
+			}
+		}
 	}
 
 }

@@ -15,7 +15,7 @@ import mx.nic.rdap.core.db.VCardPostalInfo;
 import mx.nic.rdap.server.PrivacyUtil;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
 
-public class VCardParser {
+public class VCardJsonWriter {
 
 	public static JsonArray getJson(VCard vCard, boolean isAuthenticated, boolean isOwner) {
 		Map<String, PrivacyStatus> settings = PrivacyUtil.getVCardPrivacySettings();

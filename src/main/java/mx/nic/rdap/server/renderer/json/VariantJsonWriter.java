@@ -16,7 +16,7 @@ import mx.nic.rdap.core.db.VariantName;
 import mx.nic.rdap.server.PrivacyUtil;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
 
-public class VariantParser {
+public class VariantJsonWriter {
 	public static JsonArray getJsonArray(List<Variant> variants, boolean isAuthenticated, boolean isOwner) {
 		JsonArrayBuilder builder = Json.createArrayBuilder();
 

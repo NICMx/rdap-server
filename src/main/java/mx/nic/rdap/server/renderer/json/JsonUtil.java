@@ -1,5 +1,6 @@
 package mx.nic.rdap.server.renderer.json;
 
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
+import javax.json.JsonValue;
 
 import mx.nic.rdap.core.catalog.RemarkType;
 import mx.nic.rdap.core.catalog.Status;
@@ -18,8 +20,11 @@ import mx.nic.rdap.core.db.IpNetwork;
 import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.RdapObject;
 import mx.nic.rdap.core.db.Remark;
+import mx.nic.rdap.db.RemarkDAO;
+import mx.nic.rdap.db.RemarkDescriptionDAO;
 import mx.nic.rdap.server.PrivacyUtil;
 import mx.nic.rdap.server.RdapConfiguration;
+import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
 
 /**
@@ -55,16 +60,16 @@ public class JsonUtil {
 		if (privacyRemark != null)
 			object.getRemarks().add(privacyRemark);
 		if (PrivacyUtil.isObjectVisible(object.getRemarks(), key, privacySettings.get(key), isAuthenticated, isOwner))
-			builder.add(key, RemarkParser.getJsonArray(object.getRemarks(), isAuthenticated, isOwner,
+			builder.add(key, RemarkJsonWriter.getJsonArray(object.getRemarks(), isAuthenticated, isOwner,
 					remarkPrivacySettings, linkPrivacySettings));
 
 		key = "links";
 		if (PrivacyUtil.isObjectVisible(object.getLinks(), key, privacySettings.get(key), isAuthenticated, isOwner))
-			builder.add(key, LinkParser.getJsonArray(object.getLinks(), isAuthenticated, isOwner, linkPrivacySettings));
+			builder.add(key, LinkJsonWriter.getJsonArray(object.getLinks(), isAuthenticated, isOwner, linkPrivacySettings));
 
 		key = "events";
 		if (PrivacyUtil.isObjectVisible(object.getEvents(), key, privacySettings.get(key), isAuthenticated, isOwner))
-			builder.add(key, EventParser.getJsonArray(object.getEvents(), isAuthenticated, isOwner,
+			builder.add(key, EventJsonWriter.getJsonArray(object.getEvents(), isAuthenticated, isOwner,
 					eventPrivacySettings, linkPrivacySettings));
 
 		// Verify is we have to include a Status of "privacy"
@@ -83,7 +88,7 @@ public class JsonUtil {
 
 		key = "entities";
 		if (PrivacyUtil.isObjectVisible(object.getEntities(), key, privacySettings.get(key), isAuthenticated, isOwner))
-			builder.add(key, EntityParser.getJsonArray(object.getEntities(), isAuthenticated, isOwner));
+			builder.add(key, EntityJsonWriter.getJsonArray(object.getEntities(), isAuthenticated, isOwner));
 
 		key = "lang";
 		if (PrivacyUtil.isObjectVisible(RdapConfiguration.getServerLanguage(), key, privacySettings.get(key),
@@ -225,16 +230,20 @@ public class JsonUtil {
 			return new Remark(RemarkType.OBJECT_UNEXPLAINABLE);
 	}
 
-	public static Remark getPrivacyNotice(boolean isAuthenticated, boolean isOwner, PrivacyStatus priorityStatus) {
-		if (priorityStatus.equals(PrivacyStatus.ANY)) {
-			return null;
-		} else if (priorityStatus.equals(PrivacyStatus.NONE)) {
-			return new Remark(RemarkType.RESULT_SET_AUTHORIZATION);
-		} else if (priorityStatus.equals(PrivacyStatus.OWNER)) {
-			return new Remark(RemarkType.RESULT_SET_AUTHORIZATION);
-		} else if (priorityStatus.equals(PrivacyStatus.AUTHENTICATED)) {
-			return new Remark(RemarkType.RESULT_SET_AUTHORIZATION);
-		} else
-			return new Remark(RemarkType.RESULT_SET_UNEXPLAINABLE);
+	public static Remark getTermsOfServiceNotice(String filePath) throws FileNotFoundException {
+		return Util.readNoticesFromFiles(filePath).get(0);
 	}
+
+	/**
+	 * @return
+	 */
+	public static JsonValue getOperationalProfileRemark() {
+		RemarkDAO remark=new RemarkDAO();
+		RemarkDescriptionDAO description =new RemarkDescriptionDAO();
+		description.setDescription("This response conforms to the RDAP Operational Profile for gTLD Registries and Registrars version 1.0");
+		remark.getDescriptions().add(description);
+		return RemarkJsonWriter.getNoticeJsonObject(remark);
+	}
+
+	
 }

@@ -13,7 +13,7 @@ import mx.nic.rdap.core.db.PublicId;
 import mx.nic.rdap.server.PrivacyUtil;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
 
-public class PublicIdParser {
+public class PublicIdJsonWriter {
 
 	public static JsonArray getJsonArray(List<PublicId> publicIds, boolean isAuthenticated, boolean isOwner,
 			Map<String, PrivacyStatus> privacySettings) {

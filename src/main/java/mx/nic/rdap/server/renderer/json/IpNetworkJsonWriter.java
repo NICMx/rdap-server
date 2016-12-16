@@ -13,7 +13,7 @@ import mx.nic.rdap.core.db.IpNetwork;
 import mx.nic.rdap.server.PrivacyUtil;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
 
-public class IpNetworkParser {
+public class IpNetworkJsonWriter {
 
 	public static JsonArray getJsonArray(List<IpNetwork> ips, boolean isAuthenticated, boolean isOwner) {
 		JsonArrayBuilder builder = Json.createArrayBuilder();

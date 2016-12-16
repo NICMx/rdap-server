@@ -4,11 +4,15 @@ import java.util.ArrayList;
 
 import javax.json.JsonObject;
 
+import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.db.NameserverDAO;
+import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserInfo;
-import mx.nic.rdap.server.renderer.json.NameserverParser;
+import mx.nic.rdap.server.catalog.OperationalProfile;
+import mx.nic.rdap.server.operational.profile.OperationalProfileValidator;
+import mx.nic.rdap.server.renderer.json.NameserverJsonWriter;
 
 /**
  * A result from a Nameserver request
@@ -31,7 +35,7 @@ public class NameserverResult extends RdapResult {
 	 */
 	@Override
 	public JsonObject toJson() {
-		return NameserverParser.getJson(nameserver, userInfo.isUserAuthenticated(), userInfo.isOwner(nameserver));
+		return NameserverJsonWriter.getJson(nameserver, userInfo.isUserAuthenticated(), userInfo.isOwner(nameserver));
 	}
 
 	/*
@@ -44,4 +48,17 @@ public class NameserverResult extends RdapResult {
 		// At the moment, there is no notices for this request
 	}
 
+	/* (non-Javadoc)
+	 * @see mx.nic.rdap.server.RdapResult#validateResponse()
+	 */
+	@Override
+	public void validateResponse() {
+		if(!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)){
+			if(nameserver.getEntities()!=null&&!nameserver.getEntities().isEmpty()){
+				for(Entity ent:nameserver.getEntities()){
+					OperationalProfileValidator.validateEntityEvents(ent);
+				}
+			}
+		}
+	}
 }

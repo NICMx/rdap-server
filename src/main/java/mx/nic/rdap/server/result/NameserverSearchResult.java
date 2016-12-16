@@ -9,14 +9,18 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import mx.nic.rdap.core.catalog.RemarkType;
+import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.RdapObject;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.db.NameserverDAO;
 import mx.nic.rdap.db.struct.SearchResultStruct;
+import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserInfo;
-import mx.nic.rdap.server.renderer.json.NameserverParser;
+import mx.nic.rdap.server.catalog.OperationalProfile;
+import mx.nic.rdap.server.operational.profile.OperationalProfileValidator;
+import mx.nic.rdap.server.renderer.json.NameserverJsonWriter;
 
 /**
  * A result from a Nameserver search request
@@ -53,7 +57,7 @@ public class NameserverSearchResult extends RdapResult {
 		JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 		for (Nameserver nameserver : nameservers) {
 			arrayBuilder.add(
-					NameserverParser.getJson(nameserver, userInfo.isUserAuthenticated(), userInfo.isOwner(nameserver)));
+					NameserverJsonWriter.getJson(nameserver, userInfo.isUserAuthenticated(), userInfo.isOwner(nameserver)));
 		}
 		builder.add("nameserverSearchResults", arrayBuilder.build());
 		return builder.build();
@@ -72,6 +76,20 @@ public class NameserverSearchResult extends RdapResult {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see mx.nic.rdap.server.RdapResult#validateResponse()
+	 */
+	@Override
+	public void validateResponse() {
+		if(!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)){
+			for(Nameserver nameserver:nameservers)
+			if(nameserver.getEntities()!=null&&!nameserver.getEntities().isEmpty()){
+				for(Entity ent:nameserver.getEntities()){
+					OperationalProfileValidator.validateEntityEvents(ent);
+				}
+			}
+		}
+	}
 	public Integer getMaxNumberOfResultsForUser() {
 		return maxNumberOfResultsForUser;
 	}

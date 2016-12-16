@@ -4,11 +4,15 @@ import java.util.ArrayList;
 
 import javax.json.JsonObject;
 
+import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.db.EntityDAO;
+import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserInfo;
-import mx.nic.rdap.server.renderer.json.EntityParser;
+import mx.nic.rdap.server.catalog.OperationalProfile;
+import mx.nic.rdap.server.operational.profile.OperationalProfileValidator;
+import mx.nic.rdap.server.renderer.json.EntityJsonWriter;
 
 /**
  * A result from an Entity request
@@ -22,6 +26,7 @@ public class EntityResult extends RdapResult {
 		this.entity = entity;
 		this.userInfo = new UserInfo(userName);
 		this.entity.addSelfLinks(header, contextPath);
+		validateResponse();
 	}
 
 	/*
@@ -31,7 +36,7 @@ public class EntityResult extends RdapResult {
 	 */
 	@Override
 	public JsonObject toJson() {
-		return EntityParser.getJson(entity, userInfo.isUserAuthenticated(), userInfo.isOwner(entity));
+		return EntityJsonWriter.getJson(entity, userInfo.isUserAuthenticated(), userInfo.isOwner(entity));
 	}
 
 	/*
@@ -44,4 +49,18 @@ public class EntityResult extends RdapResult {
 		// At the moment, there is no notices for this request
 	}
 
+	/* (non-Javadoc)
+	 * @see mx.nic.rdap.server.RdapResult#validateResponse()
+	 */
+	@Override
+	public void validateResponse() {
+		if(!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)){
+			OperationalProfileValidator.validateEntityEvents(entity);
+			if(entity.getEntities()!=null&&!entity.getEntities().isEmpty()){
+				for(Entity ent:entity.getEntities()){
+					OperationalProfileValidator.validateEntityEvents(ent);
+				}
+			}
+		}
+	}
 }

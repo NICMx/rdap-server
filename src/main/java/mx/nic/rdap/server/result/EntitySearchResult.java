@@ -14,9 +14,12 @@ import mx.nic.rdap.core.db.RdapObject;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.db.EntityDAO;
 import mx.nic.rdap.db.struct.SearchResultStruct;
+import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserInfo;
-import mx.nic.rdap.server.renderer.json.EntityParser;
+import mx.nic.rdap.server.catalog.OperationalProfile;
+import mx.nic.rdap.server.operational.profile.OperationalProfileValidator;
+import mx.nic.rdap.server.renderer.json.EntityJsonWriter;
 
 /**
  * A result from an Entity search request.
@@ -40,6 +43,7 @@ public class EntitySearchResult extends RdapResult {
 			entities.add(dao);
 			dao.addSelfLinks(header, contextPath);
 		}
+		validateResponse();
 	}
 
 	@Override
@@ -47,7 +51,7 @@ public class EntitySearchResult extends RdapResult {
 		JsonObjectBuilder builder = Json.createObjectBuilder();
 		JsonArrayBuilder arrB = Json.createArrayBuilder();
 		for (Entity entity : entities) {
-			arrB.add(EntityParser.getJson(entity, userInfo.isUserAuthenticated(), userInfo.isOwner(entity)));
+			arrB.add(EntityJsonWriter.getJson(entity, userInfo.isUserAuthenticated(), userInfo.isOwner(entity)));
 		}
 		builder.add("entitySearchResults", arrB);
 		return builder.build();
@@ -68,6 +72,21 @@ public class EntitySearchResult extends RdapResult {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see mx.nic.rdap.server.RdapResult#validateResponse()
+	 */
+	@Override
+	public void validateResponse() {
+		if(!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)){
+			for(Entity entity:entities)
+			if(entity.getEntities()!=null&&!entity.getEntities().isEmpty()){
+				for(Entity ent:entity.getEntities()){
+					OperationalProfileValidator.validateEntityEvents(ent);
+				}
+			}
+		}
+	}
+	
 	public List<EntityDAO> getEntities() {
 		return entities;
 	}

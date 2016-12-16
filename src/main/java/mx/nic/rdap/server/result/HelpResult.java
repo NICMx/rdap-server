@@ -2,15 +2,8 @@ package mx.nic.rdap.server.result;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Stream;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -18,13 +11,11 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.servlet.ServletContext;
 
-import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.core.db.RemarkDescription;
-import mx.nic.rdap.db.exception.InvalidadDataStructure;
 import mx.nic.rdap.server.PrivacyUtil;
 import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.renderer.json.RemarkParser;
+import mx.nic.rdap.server.Util;
+import mx.nic.rdap.server.renderer.json.RemarkJsonWriter;
 
 /**
  * A Result from a help request.
@@ -38,71 +29,10 @@ public class HelpResult extends RdapResult {
 		notices = new ArrayList<Remark>();
 		helpFolderPath = servletContext.getRealPath(File.separator) + "\\WEB-INF\\help\\";
 		if (notices == null || notices.isEmpty())
-			notices = readNoticesFromFiles();
+			notices = Util.readNoticesFromFiles(helpFolderPath);
 	}
 
-	@SuppressWarnings("unchecked")
-	private List<Remark> readNoticesFromFiles() throws FileNotFoundException {
-		List<List<Object>> noticesData = readFiles();
-		for (List<Object> noticeData : noticesData) {
-			Remark notice = new Remark();
-			List<String> descriptions = (List<String>) noticeData.get(1);
-			notice.setTitle((String) noticeData.get(0));
-			for (String descriptionString : descriptions) {
-				RemarkDescription description = new RemarkDescription();
-				description.setDescription(descriptionString);
-				notice.getDescriptions().add(description);
-			}
 
-			List<Link> links = new ArrayList<Link>();
-			List<String> linksData = (List<String>) noticeData.get(2);
-			for (String linkData : linksData) {
-				Link link;
-				try {
-					link = parseLink(linkData);
-					notice.setLinks(links);
-					links.add(link);
-				} catch (InvalidadDataStructure e) {
-					e.printStackTrace();
-				}
-			}
-
-			notices.add(notice);
-		}
-
-		return notices;
-
-	}
-
-	/**
-	 * Converts from string to LinObject
-	 * 
-	 * @param linkData
-	 *            Link data must be in the format:
-	 *            "value|rel|href|hreflang|title|media|type". In case of null
-	 *            object there must be an space between the two pipes of the
-	 *            null object.
-	 * @return
-	 * @throws InvalidadDataStructure
-	 */
-	private Link parseLink(String linkData) throws InvalidadDataStructure {
-		Link link = new Link();
-		if (linkData != null && !linkData.trim().isEmpty()) {
-			List<String> linkList = Arrays.asList(linkData.split("\\|"));
-			if (linkList.size() == 7) {
-				link.setValue(linkList.get(0).trim());
-				link.setRel(linkList.get(1).trim());
-				link.setHref(linkList.get(2).trim());
-				link.setHreflag(linkList.get(3).trim());
-				link.setTitle(linkList.get(4).trim());
-				link.setMedia(linkList.get(5).trim());
-				link.setType(linkList.get(6).trim());
-			} else {
-				throw new InvalidadDataStructure();
-			}
-		}
-		return link;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -112,96 +42,13 @@ public class HelpResult extends RdapResult {
 	@Override
 	public JsonObject toJson() {
 		JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-		JsonArray jsonArray = RemarkParser.getJsonArray(notices, true, true,
+		JsonArray jsonArray = RemarkJsonWriter.getJsonArray(notices, true, true,
 				PrivacyUtil.getEntityRemarkPrivacySettings(), PrivacyUtil.getEntityLinkPrivacySettings());
 		objectBuilder.add("notices", jsonArray);
 		return objectBuilder.build();
 	}
 
-	/**
-	 * method which reads all files in help folder
-	 * 
-	 * @return
-	 */
-	private static List<List<Object>> readFiles() {
-
-		File folder = new File(helpFolderPath);
-
-		List<File> txtList = Arrays.asList(folder.listFiles());
-		Collections.sort(txtList);
-		List<List<Object>> noticesData = new ArrayList<List<Object>>();
-
-		if (txtList.size() != 0) {
-
-			for (File file : txtList) {
-				List<Object> notice = readFileContent(file);
-				noticesData.add(notice);
-			}
-		}
-
-		else {
-			throw new RuntimeException("There are no text files on help folder.");
-		}
-
-		return noticesData;
-	}
-
-	/**
-	 * method which reads a file, line by line
-	 * 
-	 * @param file
-	 * @return
-	 */
-	private static List<Object> readFileContent(File file) {
-		boolean descriptionChecker = false;
-		List<Object> notice = new ArrayList<Object>();
-		String title = "";
-		List<String> descriptions = new ArrayList<String>();
-		List<String> links = new ArrayList<String>();
-		String description = "";
-
-		try (Stream<String> stream = Files.lines(Paths.get(file.getAbsolutePath()))) {
-			Iterator<String> iterator = stream.iterator();
-			while (iterator.hasNext()) {
-				String line = iterator.next();
-				if (line.trim().startsWith("title")) {
-					title = line.substring(line.indexOf("=") + 1).trim();
-				}
-				if (line.trim().startsWith("description")) {
-					line = line.substring(line.indexOf("=") + 1).trim();
-					descriptionChecker = true;
-				}
-				if (descriptionChecker) {
-					do {
-						do {
-							description = description.trim() + " " + line;
-							line = iterator.next().trim();
-							description = description.trim();
-						} while (!line.isEmpty() && !line.startsWith("link"));
-						if (!description.equals(" ") || !description.isEmpty()) {
-							descriptions.add(description);
-							description = "";
-						}
-					} while (!line.startsWith("link"));
-				}
-				if (line.trim().startsWith("link")) {
-					descriptionChecker = false;
-				}
-				if (line.trim().startsWith("link")) {
-					links.add(line.substring(line.indexOf("=") + 1).trim());
-				}
-			}
-			descriptions.removeAll(Arrays.asList(" ", "", null));
-			notice.add(title);
-			notice.add(descriptions);
-			notice.add(links);
-			return notice;
-		}
-
-		catch (IOException e) {
-			throw new RuntimeException(e.getMessage());
-		}
-	}
+	
 
 	/*
 	 * (non-Javadoc)
@@ -211,6 +58,13 @@ public class HelpResult extends RdapResult {
 	@Override
 	public void fillNotices() {
 		// At the moment, there is no notices for this request
+	}
+	
+	/* (non-Javadoc)
+	 * @see mx.nic.rdap.server.RdapResult#validateResponse()
+	 */
+	@Override
+	public void validateResponse() {
 	}
 
 }

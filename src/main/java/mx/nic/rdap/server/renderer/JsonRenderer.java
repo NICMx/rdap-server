@@ -1,5 +1,6 @@
 package mx.nic.rdap.server.renderer;
 
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map.Entry;
@@ -12,10 +13,12 @@ import javax.json.JsonValue;
 import javax.json.JsonWriter;
 
 import mx.nic.rdap.core.db.Remark;
+import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.Renderer;
+import mx.nic.rdap.server.catalog.OperationalProfile;
 import mx.nic.rdap.server.renderer.json.JsonUtil;
-import mx.nic.rdap.server.renderer.json.RemarkParser;
+import mx.nic.rdap.server.renderer.json.RemarkJsonWriter;
 
 public class JsonRenderer implements Renderer {
 
@@ -38,8 +41,21 @@ public class JsonRenderer implements Renderer {
 		JsonObjectBuilder object = Json.createObjectBuilder();
 		object.add("rdapConformance", JsonUtil.getRdapConformance());
 		result.fillNotices();
+//		// Point 1.4.4 of rdap operational profile by ICANN
+//		if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)) {
+//			try {
+//				result.getNotices().add(JsonUtil.getTermsOfServiceNotice("terms"));
+//			} catch (FileNotFoundException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
 		if (result.getNotices() != null && !result.getNotices().isEmpty()) {
 			object.add("notices", this.getNotices(result.getNotices()));
+		}
+		// Point 1.4.10 of rdap operational profile by ICANN
+		if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)) {
+				object.add("remarks", JsonUtil.getOperationalProfileRemark());
 		}
 		for (Entry<String, JsonValue> entry : result.toJson().entrySet()) {
 			object.add(entry.getKey(), entry.getValue());
@@ -50,7 +66,7 @@ public class JsonRenderer implements Renderer {
 	private JsonArray getNotices(List<Remark> notices) {
 		JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 		for (Remark notice : notices) {
-			arrayBuilder.add(RemarkParser.getNoticeJsonObject(notice));
+			arrayBuilder.add(RemarkJsonWriter.getNoticeJsonObject(notice));
 		}
 		return arrayBuilder.build();
 	}
