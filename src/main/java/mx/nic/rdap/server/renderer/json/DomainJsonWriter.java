@@ -12,6 +12,8 @@ import javax.json.JsonObjectBuilder;
 import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.db.model.ZoneModel;
 import mx.nic.rdap.server.PrivacyUtil;
+import mx.nic.rdap.server.RdapConfiguration;
+import mx.nic.rdap.server.catalog.OperationalProfile;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
 
 public class DomainJsonWriter {
@@ -39,8 +41,11 @@ public class DomainJsonWriter {
 		String value = domain.getLdhName() + "." + ZoneModel.getZoneNameById(domain.getZoneId());
 		if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
 			builder.add(key, value);
-
-		key = "unicodeName";
+		// Point 1.5.2 of rdap operational profile by ICANN
+		if (RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)
+				|| (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)
+						&& domain.getLdhName().compareTo(domain.getUnicodeName()) != 0))
+			key = "unicodeName";
 		value = domain.getUnicodeName() + "." + ZoneModel.getZoneNameById(domain.getZoneId());
 		if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
 			builder.add(key, value);

@@ -61,6 +61,7 @@ public class DomainResult extends RdapResult {
 					OperationalProfileValidator.validateEntityEvents(ent);
 				}
 			}
+			OperationalProfileValidator.validateDomainStatus(domain);
 		}
 	}
 }

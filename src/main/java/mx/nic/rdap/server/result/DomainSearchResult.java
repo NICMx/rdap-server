@@ -89,11 +89,13 @@ public class DomainSearchResult extends RdapResult {
 	@Override
 	public void validateResponse() {
 		if(!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)){
-			for(Domain domain:domains)
+			for(Domain domain:domains){
 			if(domain.getEntities()!=null&&!domain.getEntities().isEmpty()){
 				for(Entity ent:domain.getEntities()){
 					OperationalProfileValidator.validateEntityEvents(ent);
 				}
+			}
+			OperationalProfileValidator.validateDomainStatus(domain);
 			}
 		}
 	}
