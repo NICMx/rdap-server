@@ -82,12 +82,16 @@ public class NameserverSearchResult extends RdapResult {
 	@Override
 	public void validateResponse() {
 		if(!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)){
-			for(Nameserver nameserver:nameservers)
+			for(Nameserver nameserver:nameservers){
 			if(nameserver.getEntities()!=null&&!nameserver.getEntities().isEmpty()){
 				for(Entity ent:nameserver.getEntities()){
 					OperationalProfileValidator.validateEntityEvents(ent);
 				}
+				
 			}
+			if(RdapConfiguration.getServerProfile().equals(OperationalProfile.REGISTRY)){
+				OperationalProfileValidator.validateNameserverName(nameserver);
+			}}
 		}
 	}
 	public Integer getMaxNumberOfResultsForUser() {

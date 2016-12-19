@@ -13,6 +13,8 @@ import mx.nic.rdap.core.db.IpAddress;
 import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.struct.NameserverIpAddressesStruct;
 import mx.nic.rdap.server.PrivacyUtil;
+import mx.nic.rdap.server.RdapConfiguration;
+import mx.nic.rdap.server.catalog.OperationalProfile;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
 
 public class NameserverJsonWriter {
@@ -40,11 +42,15 @@ public class NameserverJsonWriter {
 		String value = nameserver.getLdhName();
 		if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
 			builder.add(key, value);
-
-		key = "unicodeName";
-		value = nameserver.getUnicodeName();
-		if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
-			builder.add(key, value);
+		// Point 2.9.4 of rdap operational profile by ICANN
+		if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.REGISTRY)
+				|| (RdapConfiguration.getServerProfile().equals(OperationalProfile.REGISTRY)
+						&& nameserver.getLdhName().compareTo(nameserver.getUnicodeName()) != 0)) {
+			key = "unicodeName";
+			value = nameserver.getUnicodeName();
+			if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
+				builder.add(key, value);
+		}
 
 		fillIpAddresses(builder, nameserver.getIpAddresses(), isAuthenticated, isOwner, settings);
 

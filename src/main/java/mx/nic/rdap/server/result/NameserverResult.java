@@ -60,5 +60,8 @@ public class NameserverResult extends RdapResult {
 				}
 			}
 		}
+		if(RdapConfiguration.getServerProfile().equals(OperationalProfile.REGISTRY)){
+			OperationalProfileValidator.validateNameserverName(nameserver);
+		}
 	}
 }

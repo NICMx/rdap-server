@@ -121,12 +121,15 @@ public class OperationalProfileValidator {
 	// Point 1.5.7 of rdap operational profile by ICANN
 	private static void validateDomainNameservers(Domain domain) {
 		for (Nameserver ns : domain.getNameServers()) {
-			if (ns.getLdhName() == null || ns.getLdhName().isEmpty()) {
-				logger.warning("When using profile " + RdapConfiguration.getServerProfile()
-						+ ", each nameserver of a Domain object MUST contain the following member: ldhName");
-			}
-
+			validateNameserverName(ns);
 			OperationalProfileValidator.validateNameserverEvents(ns);
+		}
+	}
+
+	public static void validateNameserverName(Nameserver ns) {
+		if (ns.getLdhName() == null || ns.getLdhName().isEmpty()) {
+			logger.warning("When using profile " + RdapConfiguration.getServerProfile()
+					+ ", each nameserver of a Domain object MUST contain the following member: ldhName");
 		}
 	}
 
