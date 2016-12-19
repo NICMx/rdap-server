@@ -96,15 +96,16 @@ public class OperationalProfileValidator {
 				if (ent.getRoles().contains(Rol.REGISTRAR)) {
 					existRegistrar = true;
 					if (ent.getPublicIds() == null || ent.getPublicIds().isEmpty()) {
-						logger.warning(
-								"The entity with the registrar role in the RDAP response MUST contain a publicIDs member");
+						logger.warning("When using profile " + RdapConfiguration.getServerProfile()
+								+ ",the entity with the registrar role in the RDAP response MUST contain a publicIDs member");
 					}
 				}
 			}
 		}
 
 		if (!existRegistrar) {
-			logger.warning("The domain object in the RDAP response MUST contain an entity with the registrar role");
+			logger.warning("When using profile " + RdapConfiguration.getServerProfile()
+					+ ", the domain object in the RDAP response MUST contain an entity with the registrar role");
 		}
 
 	}

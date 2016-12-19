@@ -249,8 +249,9 @@ public class RdapConfiguration {
 
 		if (systemProperties.getProperty(OPERATIONAL_PROFILE_KEY) != null) {
 			String property = systemProperties.getProperty(OPERATIONAL_PROFILE_KEY).trim();
+			
+			try{
 			OperationalProfile profile = OperationalProfile.valueOf(property.toUpperCase());
-
 			switch (profile) {
 			case REGISTRAR:
 				break;
@@ -262,6 +263,11 @@ public class RdapConfiguration {
 				isValid = false;
 				invalidProperties.add(OPERATIONAL_PROFILE_KEY);
 			}
+			}catch(IllegalArgumentException iae){
+				isValid = false;
+				invalidProperties.add(OPERATIONAL_PROFILE_KEY);
+			}
+			
 		}
 
 		if (!isValid) {
