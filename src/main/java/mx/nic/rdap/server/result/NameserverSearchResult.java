@@ -95,6 +95,7 @@ public class NameserverSearchResult extends RdapResult {
 				if (nameserver.getEntities() != null && !nameserver.getEntities().isEmpty()) {
 					for (Entity ent : nameserver.getEntities()) {
 						OperationalProfileValidator.validateEntityEvents(ent);
+						OperationalProfileValidator.validateEntityEvents(ent);
 					}
 
 					if (RdapConfiguration.getServerProfile().equals(OperationalProfile.REGISTRY)) {

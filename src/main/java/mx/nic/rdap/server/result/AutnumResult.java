@@ -61,6 +61,7 @@ public class AutnumResult extends RdapResult {
 			if (autnum.getEntities() != null && !autnum.getEntities().isEmpty()) {
 				for (Entity ent : autnum.getEntities()) {
 					OperationalProfileValidator.validateEntityEvents(ent);
+					OperationalProfileValidator.validateEntityTel(ent);
 				}
 			}
 		}

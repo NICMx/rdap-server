@@ -64,10 +64,11 @@ public class NameserverResult extends RdapResult {
 			if (nameserver.getEntities() != null && !nameserver.getEntities().isEmpty()) {
 				for (Entity ent : nameserver.getEntities()) {
 					OperationalProfileValidator.validateEntityEvents(ent);
+					OperationalProfileValidator.validateEntityTel(ent);
 				}
 			}
 		}
-		if(RdapConfiguration.getServerProfile().equals(OperationalProfile.REGISTRY)){
+		if (RdapConfiguration.getServerProfile().equals(OperationalProfile.REGISTRY)) {
 			OperationalProfileValidator.validateNameserverName(nameserver);
 		}
 	}

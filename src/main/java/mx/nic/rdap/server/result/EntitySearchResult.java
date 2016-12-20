@@ -85,12 +85,16 @@ public class EntitySearchResult extends RdapResult {
 	@Override
 	public void validateResponse() {
 		if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)) {
-			for (Entity entity : entities)
+			for (Entity entity : entities) {
+				OperationalProfileValidator.validateEntityTel(entity);
+				OperationalProfileValidator.validateEntityEvents(entity);
 				if (entity.getEntities() != null && !entity.getEntities().isEmpty()) {
 					for (Entity ent : entity.getEntities()) {
+						OperationalProfileValidator.validateEntityTel(ent);
 						OperationalProfileValidator.validateEntityEvents(ent);
 					}
 				}
+			}
 		}
 	}
 

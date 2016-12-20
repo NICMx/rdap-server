@@ -56,6 +56,7 @@ public class IpResult extends RdapResult {
 			if (ipNetwork.getEntities() != null && !ipNetwork.getEntities().isEmpty()) {
 				for (Entity ent : ipNetwork.getEntities()) {
 					OperationalProfileValidator.validateEntityEvents(ent);
+					OperationalProfileValidator.validateEntityTel(ent);
 				}
 			}
 		}

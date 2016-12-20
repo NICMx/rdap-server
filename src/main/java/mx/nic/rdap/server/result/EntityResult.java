@@ -65,6 +65,7 @@ public class EntityResult extends RdapResult {
 			if (entity.getEntities() != null && !entity.getEntities().isEmpty()) {
 				for (Entity ent : entity.getEntities()) {
 					OperationalProfileValidator.validateEntityEvents(ent);
+					OperationalProfileValidator.validateEntityTel(ent);
 				}
 			}
 		}
