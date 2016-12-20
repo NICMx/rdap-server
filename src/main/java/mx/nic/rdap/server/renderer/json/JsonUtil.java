@@ -1,6 +1,5 @@
 package mx.nic.rdap.server.renderer.json;
 
-import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +10,6 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
-import mx.nic.rdap.core.catalog.RemarkType;
 import mx.nic.rdap.core.catalog.Status;
 import mx.nic.rdap.core.db.Autnum;
 import mx.nic.rdap.core.db.Domain;
@@ -20,8 +18,6 @@ import mx.nic.rdap.core.db.IpNetwork;
 import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.RdapObject;
 import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.db.RemarkDAO;
-import mx.nic.rdap.db.RemarkDescriptionDAO;
 import mx.nic.rdap.server.PrivacyUtil;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.Util;
@@ -49,14 +45,14 @@ public class JsonUtil {
 			Map<String, PrivacyStatus> eventPrivacySettings) {
 
 		Map<String, PrivacyStatus> allObjectPrivacySettings = getAllObjectPrivacySettings(object);
-		PrivacyStatus priorityStatus = getPriorityPrivacyStatus(isAuthenticated, isOwner, allObjectPrivacySettings);
+		PrivacyStatus priorityStatus = Util.getPriorityPrivacyStatus(isAuthenticated, isOwner, allObjectPrivacySettings);
 
 		String key = "handle";
 		if (PrivacyUtil.isObjectVisible(object.getHandle(), key, privacySettings.get(key), isAuthenticated, isOwner))
 			builder.add(key, object.getHandle());
 
 		key = "remarks";
-		Remark privacyRemark = getObjectRemarkFromPrivacy(isAuthenticated, isOwner, priorityStatus);
+		Remark privacyRemark = Util.getObjectRemarkFromPrivacy(isAuthenticated, isOwner, priorityStatus);
 		if (privacyRemark != null)
 			object.getRemarks().add(privacyRemark);
 		if (PrivacyUtil.isObjectVisible(object.getRemarks(), key, privacySettings.get(key), isAuthenticated, isOwner))
@@ -74,7 +70,7 @@ public class JsonUtil {
 
 		// Verify is we have to include a Status of "privacy"
 		// (REMOVE,PRIVATE,OBSCURED)
-		Status privacyStatus = getObjectStatusFromPrivacy(isAuthenticated, isOwner, priorityStatus);
+		Status privacyStatus = Util.getObjectStatusFromPrivacy(isAuthenticated, isOwner, priorityStatus);
 		if (privacyStatus != null)
 			object.getStatus().add(privacyStatus);
 
@@ -180,69 +176,9 @@ public class JsonUtil {
 		return builder.build();
 	}
 
-	/**
-	 * Return the privacy status with most priority.something like:
-	 * none>owner>authenticate>any
-	 */
-	private static PrivacyStatus getPriorityPrivacyStatus(boolean isAuthenticated, boolean isOwner,
-			Map<String, PrivacyStatus> privacySettings) {
-		// First check if all the privacys settings are in "Any"
-		if (!privacySettings.containsValue(PrivacyStatus.AUTHENTICATED)
-				&& !privacySettings.containsValue(PrivacyStatus.OWNER)
-				&& !privacySettings.containsValue(PrivacyStatus.NONE)) {
-			return PrivacyStatus.ANY;
-		} // Then, validate if all the privacy is
-		else if (privacySettings.containsValue(PrivacyStatus.NONE)) {
-			return PrivacyStatus.NONE;
-		} else if (privacySettings.containsValue(PrivacyStatus.OWNER) && !isOwner) {
-			return PrivacyStatus.OWNER;
-		} else if (privacySettings.containsValue(PrivacyStatus.AUTHENTICATED) && !isAuthenticated) {
-			return PrivacyStatus.AUTHENTICATED;
-		} else
-			return PrivacyStatus.ANY;
-	}
 
-	public static Status getObjectStatusFromPrivacy(boolean isAuthenticated, boolean isOwner,
-			PrivacyStatus priorityStatus) {
-		if (priorityStatus.equals(PrivacyStatus.ANY)) {
-			return null;
-		} else if (priorityStatus.equals(PrivacyStatus.NONE)) {
-			return Status.REMOVED;
-		} else if (priorityStatus.equals(PrivacyStatus.OWNER)) {
-			return Status.PRIVATE;
-		} else if (priorityStatus.equals(PrivacyStatus.AUTHENTICATED)) {
-			return Status.PRIVATE;
-		} else
-			return null;
-	}
-
-	private static Remark getObjectRemarkFromPrivacy(boolean isAuthenticated, boolean isOwner,
-			PrivacyStatus priorityStatus) {
-		if (priorityStatus.equals(PrivacyStatus.ANY)) {
-			return null;
-		} else if (priorityStatus.equals(PrivacyStatus.NONE)) {
-			return new Remark(RemarkType.OBJECT_AUTHORIZATION);
-		} else if (priorityStatus.equals(PrivacyStatus.OWNER)) {
-			return new Remark(RemarkType.OBJECT_AUTHORIZATION);
-		} else if (priorityStatus.equals(PrivacyStatus.AUTHENTICATED)) {
-			return new Remark(RemarkType.OBJECT_AUTHORIZATION);
-		} else
-			return new Remark(RemarkType.OBJECT_UNEXPLAINABLE);
-	}
-
-	public static Remark getTermsOfServiceNotice(String filePath) throws FileNotFoundException {
-		return Util.readNoticesFromFiles(filePath).get(0);
-	}
-
-	/**
-	 * @return
-	 */
 	public static JsonValue getOperationalProfileRemark() {
-		RemarkDAO remark=new RemarkDAO();
-		RemarkDescriptionDAO description =new RemarkDescriptionDAO();
-		description.setDescription("This response conforms to the RDAP Operational Profile for gTLD Registries and Registrars version 1.0");
-		remark.getDescriptions().add(description);
-		return RemarkJsonWriter.getNoticeJsonObject(remark);
+		return RemarkJsonWriter.getNoticeJsonObject(Util.getOperationalProfileRemark());
 	}
 
 	

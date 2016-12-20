@@ -14,7 +14,6 @@ import javax.json.JsonObjectBuilder;
 
 import mx.nic.rdap.core.catalog.RemarkType;
 import mx.nic.rdap.core.db.Domain;
-import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.RdapObject;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.db.DomainDAO;
@@ -22,6 +21,7 @@ import mx.nic.rdap.db.struct.SearchResultStruct;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserInfo;
+import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.catalog.OperationalProfile;
 import mx.nic.rdap.server.operational.profile.OperationalProfileValidator;
 import mx.nic.rdap.server.operational.profile.TermsOfServiceAdder;
@@ -96,12 +96,11 @@ public class DomainSearchResult extends RdapResult {
 	public void validateResponse() {
 		if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)) {
 			for (Domain domain : domains) {
-				if (domain.getEntities() != null && !domain.getEntities().isEmpty()) {
-					for (Entity ent : domain.getEntities()) {
-						OperationalProfileValidator.validateEntityEvents(ent);
-					}
-				}
-				OperationalProfileValidator.validateDomainStatus(domain);
+				OperationalProfileValidator.validateDomain(domain);
+				// Point 1.5.18 of rdap operational profile by ICANN
+				domain.getRemarks().add(Util.getEppInformationRemark());
+				// Point 1.5.20 of rdap operational profile by ICANN
+				domain.getRemarks().add(Util.getWhoisInaccuracyComplaintFormRemark());
 			}
 		}
 	}

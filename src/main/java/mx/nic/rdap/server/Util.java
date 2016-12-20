@@ -19,19 +19,25 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
+import mx.nic.rdap.core.catalog.RemarkType;
 import mx.nic.rdap.core.catalog.Rol;
+import mx.nic.rdap.core.catalog.Status;
 import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.core.db.RemarkDescription;
 import mx.nic.rdap.core.exception.UnprocessableEntityException;
+import mx.nic.rdap.db.RemarkDAO;
+import mx.nic.rdap.db.RemarkDescriptionDAO;
 import mx.nic.rdap.db.exception.InvalidadDataStructure;
 import mx.nic.rdap.db.model.RdapUserModel;
+import mx.nic.rdap.server.catalog.PrivacyStatus;
 import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 
@@ -439,5 +445,91 @@ public class Util {
 		catch (IOException e) {
 			throw new RuntimeException(e.getMessage());
 		}
+	}
+	
+	public static Remark getOperationalProfileRemark(){
+		RemarkDAO remark=new RemarkDAO();
+		RemarkDescriptionDAO description =new RemarkDescriptionDAO();
+		description.setDescription("This response conforms to the RDAP Operational Profile for gTLD Registries and Registrars version 1.0");
+		remark.getDescriptions().add(description);
+		return remark;
+	}
+	
+	public static Remark getEppInformationRemark(){
+		RemarkDAO remark=new RemarkDAO();
+		remark.setTitle("EPP Status Codes");
+		RemarkDescriptionDAO description =new RemarkDescriptionDAO();
+		description.setDescription("For more information on domain status codes, please visit https://icann.org/epp");
+		remark.getDescriptions().add(description);
+		Link link=new Link();
+		link.setHref("https://icann.org/epp");
+		remark.getLinks().add(link);
+		return remark;
+	}
+	
+	public static Remark getWhoisInaccuracyComplaintFormRemark(){
+		RemarkDAO remark=new RemarkDAO();
+		RemarkDescriptionDAO description =new RemarkDescriptionDAO();
+		remark.setTitle("Whois Inaccuracy Complaint Form");
+		description.setDescription("URL of the ICANN Whois Inaccuracy Complaint Form: https://www.icann.org/wicf");
+		remark.getDescriptions().add(description);
+		Link link=new Link();
+		link.setHref("https://www.icann.org/wicf");
+		remark.getLinks().add(link);
+		return remark;
+	}
+
+	/**
+	 * Return the privacy status with most priority.something like:
+	 * none>owner>authenticate>any
+	 */
+	public static PrivacyStatus getPriorityPrivacyStatus(boolean isAuthenticated, boolean isOwner,
+			Map<String, PrivacyStatus> privacySettings) {
+		// First check if all the privacys settings are in "Any"
+		if (!privacySettings.containsValue(PrivacyStatus.AUTHENTICATED)
+				&& !privacySettings.containsValue(PrivacyStatus.OWNER)
+				&& !privacySettings.containsValue(PrivacyStatus.NONE)) {
+			return PrivacyStatus.ANY;
+		} // Then, validate if all the privacy is
+		else if (privacySettings.containsValue(PrivacyStatus.NONE)) {
+			return PrivacyStatus.NONE;
+		} else if (privacySettings.containsValue(PrivacyStatus.OWNER) && !isOwner) {
+			return PrivacyStatus.OWNER;
+		} else if (privacySettings.containsValue(PrivacyStatus.AUTHENTICATED) && !isAuthenticated) {
+			return PrivacyStatus.AUTHENTICATED;
+		} else
+			return PrivacyStatus.ANY;
+	}
+
+	public static Status getObjectStatusFromPrivacy(boolean isAuthenticated, boolean isOwner,
+			PrivacyStatus priorityStatus) {
+		if (priorityStatus.equals(PrivacyStatus.ANY)) {
+			return null;
+		} else if (priorityStatus.equals(PrivacyStatus.NONE)) {
+			return Status.REMOVED;
+		} else if (priorityStatus.equals(PrivacyStatus.OWNER)) {
+			return Status.PRIVATE;
+		} else if (priorityStatus.equals(PrivacyStatus.AUTHENTICATED)) {
+			return Status.PRIVATE;
+		} else
+			return null;
+	}
+
+	public static Remark getObjectRemarkFromPrivacy(boolean isAuthenticated, boolean isOwner,
+			PrivacyStatus priorityStatus) {
+		if (priorityStatus.equals(PrivacyStatus.ANY)) {
+			return null;
+		} else if (priorityStatus.equals(PrivacyStatus.NONE)) {
+			return new Remark(RemarkType.OBJECT_AUTHORIZATION);
+		} else if (priorityStatus.equals(PrivacyStatus.OWNER)) {
+			return new Remark(RemarkType.OBJECT_AUTHORIZATION);
+		} else if (priorityStatus.equals(PrivacyStatus.AUTHENTICATED)) {
+			return new Remark(RemarkType.OBJECT_AUTHORIZATION);
+		} else
+			return new Remark(RemarkType.OBJECT_UNEXPLAINABLE);
+	}
+
+	public static Remark getTermsOfServiceNotice(String filePath) throws FileNotFoundException {
+		return Util.readNoticesFromFiles(filePath).get(0);
 	}
 }
