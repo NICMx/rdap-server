@@ -1,5 +1,6 @@
 package mx.nic.rdap.server.result;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserInfo;
 import mx.nic.rdap.server.catalog.OperationalProfile;
 import mx.nic.rdap.server.operational.profile.OperationalProfileValidator;
+import mx.nic.rdap.server.operational.profile.TermsOfServiceAdder;
 import mx.nic.rdap.server.renderer.json.EntityJsonWriter;
 
 /**
@@ -32,7 +34,8 @@ public class EntitySearchResult extends RdapResult {
 	// Indicate is the search has more results than the answered to the user
 	Boolean resultSetWasLimitedByUserConfiguration;
 
-	public EntitySearchResult(String header, String contextPath, SearchResultStruct result, String userName) {
+	public EntitySearchResult(String header, String contextPath, SearchResultStruct result, String userName,
+			String realPath) throws FileNotFoundException {
 		notices = new ArrayList<Remark>();
 		this.entities = new ArrayList<EntityDAO>();
 		this.userInfo = new UserInfo(userName);
@@ -43,6 +46,8 @@ public class EntitySearchResult extends RdapResult {
 			entities.add(dao);
 			dao.addSelfLinks(header, contextPath);
 		}
+		result.getResults().get(0)
+				.setRemarks(TermsOfServiceAdder.listWithTerms(realPath, result.getResults().get(0).getRemarks()));
 		validateResponse();
 	}
 
@@ -72,21 +77,23 @@ public class EntitySearchResult extends RdapResult {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see mx.nic.rdap.server.RdapResult#validateResponse()
 	 */
 	@Override
 	public void validateResponse() {
-		if(!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)){
-			for(Entity entity:entities)
-			if(entity.getEntities()!=null&&!entity.getEntities().isEmpty()){
-				for(Entity ent:entity.getEntities()){
-					OperationalProfileValidator.validateEntityEvents(ent);
+		if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)) {
+			for (Entity entity : entities)
+				if (entity.getEntities() != null && !entity.getEntities().isEmpty()) {
+					for (Entity ent : entity.getEntities()) {
+						OperationalProfileValidator.validateEntityEvents(ent);
+					}
 				}
-			}
 		}
 	}
-	
+
 	public List<EntityDAO> getEntities() {
 		return entities;
 	}

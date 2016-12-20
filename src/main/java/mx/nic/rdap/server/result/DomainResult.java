@@ -1,5 +1,6 @@
 package mx.nic.rdap.server.result;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import javax.json.JsonObject;
@@ -12,6 +13,7 @@ import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserInfo;
 import mx.nic.rdap.server.catalog.OperationalProfile;
 import mx.nic.rdap.server.operational.profile.OperationalProfileValidator;
+import mx.nic.rdap.server.operational.profile.TermsOfServiceAdder;
 import mx.nic.rdap.server.renderer.json.DomainJsonWriter;
 
 /**
@@ -21,11 +23,13 @@ public class DomainResult extends RdapResult {
 
 	private DomainDAO domain;
 
-	public DomainResult(String header, String contextPath, DomainDAO domain, String userName) {
+	public DomainResult(String header, String contextPath, DomainDAO domain, String userName, String realPath)
+			throws FileNotFoundException {
 		notices = new ArrayList<Remark>();
 		this.domain = domain;
 		this.userInfo = new UserInfo(userName);
 		this.domain.addSelfLinks(header, contextPath);
+		this.domain.setRemarks(TermsOfServiceAdder.listWithTerms(realPath, this.domain.getRemarks()));
 		validateResponse();
 	}
 
@@ -50,14 +54,16 @@ public class DomainResult extends RdapResult {
 		// At the moment, there is no notices for this request
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see mx.nic.rdap.server.RdapResult#validateResponse()
 	 */
 	@Override
 	public void validateResponse() {
-		if(!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)){
-			if(domain.getEntities()!=null&&!domain.getEntities().isEmpty()){
-				for(Entity ent:domain.getEntities()){
+		if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)) {
+			if (domain.getEntities() != null && !domain.getEntities().isEmpty()) {
+				for (Entity ent : domain.getEntities()) {
 					OperationalProfileValidator.validateEntityEvents(ent);
 				}
 			}

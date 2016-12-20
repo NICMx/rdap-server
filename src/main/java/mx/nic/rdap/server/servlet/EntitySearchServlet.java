@@ -1,5 +1,6 @@
 package mx.nic.rdap.server.servlet;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -56,7 +57,8 @@ public class EntitySearchServlet extends RdapServlet {
 			}
 		}
 
-		return new EntitySearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), result, userName);
+		return new EntitySearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), result, userName,
+				httpRequest.getServletContext().getRealPath(File.separator));
 	}
 
 	@Override

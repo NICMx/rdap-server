@@ -1,5 +1,6 @@
 package mx.nic.rdap.server.servlet;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -66,8 +67,8 @@ public class NameserverSearchServlet extends RdapServlet {
 			}
 		}
 
-		return new NameserverSearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), result,
-				username);
+		return new NameserverSearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), result, username,
+				httpRequest.getServletContext().getRealPath(File.separator));
 	}
 
 	/*

@@ -1,5 +1,6 @@
 package mx.nic.rdap.server.servlet;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -56,7 +57,8 @@ public class DomainServlet extends RdapServlet {
 				throw new ObjectNotFoundException("The RDAP server doesn't have information about the requested zone");
 			}
 
-			result = new DomainResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), domain, userName);
+			result = new DomainResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), domain, userName,
+					httpRequest.getServletContext().getRealPath(File.separator));
 		}
 		return result;
 	}

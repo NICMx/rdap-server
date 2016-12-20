@@ -3,6 +3,8 @@
  */
 package mx.nic.rdap.server.result;
 
+import java.io.FileNotFoundException;
+
 import javax.json.JsonObject;
 
 import mx.nic.rdap.core.db.Entity;
@@ -12,16 +14,19 @@ import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserInfo;
 import mx.nic.rdap.server.catalog.OperationalProfile;
 import mx.nic.rdap.server.operational.profile.OperationalProfileValidator;
+import mx.nic.rdap.server.operational.profile.TermsOfServiceAdder;
 import mx.nic.rdap.server.renderer.json.AutnumJsonWriter;
 
 public class AutnumResult extends RdapResult {
 
 	private AutnumDAO autnum;
 
-	public AutnumResult(String header, String contextPath, AutnumDAO autnum, String username) {
+	public AutnumResult(String header, String contextPath, AutnumDAO autnum, String username, String realPath)
+			throws FileNotFoundException {
 		this.autnum = autnum;
 		this.userInfo = new UserInfo(username);
 		this.autnum.addSelfLinks(header, contextPath);
+		autnum.setRemarks(TermsOfServiceAdder.listWithTerms(realPath, autnum.getRemarks()));
 		validateResponse();
 	}
 
@@ -45,14 +50,16 @@ public class AutnumResult extends RdapResult {
 		// At the moment, there is no notices for this request
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see mx.nic.rdap.server.RdapResult#validateResponse()
 	 */
 	@Override
 	public void validateResponse() {
-		if(!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)){
-			if(autnum.getEntities()!=null&&!autnum.getEntities().isEmpty()){
-				for(Entity ent:autnum.getEntities()){
+		if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)) {
+			if (autnum.getEntities() != null && !autnum.getEntities().isEmpty()) {
+				for (Entity ent : autnum.getEntities()) {
 					OperationalProfileValidator.validateEntityEvents(ent);
 				}
 			}

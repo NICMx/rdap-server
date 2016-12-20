@@ -1,5 +1,6 @@
 package mx.nic.rdap.server.result;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import javax.json.JsonObject;
@@ -12,17 +13,21 @@ import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserInfo;
 import mx.nic.rdap.server.catalog.OperationalProfile;
 import mx.nic.rdap.server.operational.profile.OperationalProfileValidator;
+import mx.nic.rdap.server.operational.profile.TermsOfServiceAdder;
 import mx.nic.rdap.server.renderer.json.IpNetworkJsonWriter;
 
 public class IpResult extends RdapResult {
 
 	private IpNetworkDAO ipNetwork;
 
-	public IpResult(String header, String contextPath, IpNetworkDAO ipNetwork, String userName) {
+	public IpResult(String header, String contextPath, IpNetworkDAO ipNetwork, String userName, String realPath)
+			throws FileNotFoundException {
 		notices = new ArrayList<Remark>();
 		this.ipNetwork = ipNetwork;
 		this.userInfo = new UserInfo(userName);
 		this.ipNetwork.addSelfLinks(header, contextPath);
+		this.ipNetwork.setRemarks(TermsOfServiceAdder.listWithTerms(realPath, this.ipNetwork.getRemarks()));
+
 	}
 
 	@Override
@@ -39,15 +44,17 @@ public class IpResult extends RdapResult {
 	public void fillNotices() {
 		// At the moment, there is no notices for this request
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see mx.nic.rdap.server.RdapResult#validateResponse()
 	 */
 	@Override
 	public void validateResponse() {
-		if(!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)){
-			if(ipNetwork.getEntities()!=null&&!ipNetwork.getEntities().isEmpty()){
-				for(Entity ent:ipNetwork.getEntities()){
+		if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)) {
+			if (ipNetwork.getEntities() != null && !ipNetwork.getEntities().isEmpty()) {
+				for (Entity ent : ipNetwork.getEntities()) {
 					OperationalProfileValidator.validateEntityEvents(ent);
 				}
 			}

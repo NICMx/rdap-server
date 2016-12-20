@@ -1,5 +1,6 @@
 package mx.nic.rdap.server.servlet;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.IDN;
 import java.sql.Connection;
@@ -100,7 +101,8 @@ public class DomainSearchServlet extends RdapServlet {
 
 		}
 
-		return new DomainSearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), result, username);
+		return new DomainSearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), result, username,
+				httpRequest.getServletContext().getRealPath(File.separator));
 	}
 
 	/*

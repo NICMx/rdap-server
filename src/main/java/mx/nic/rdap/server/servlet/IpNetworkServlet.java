@@ -1,5 +1,6 @@
 package mx.nic.rdap.server.servlet;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.sql.Connection;
@@ -50,7 +51,7 @@ public class IpNetworkServlet extends RdapServlet {
 				ipNetwork = IpNetworkModel.getByInetAddress(request.getIp(), con);
 			}
 			result = new IpResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), (IpNetworkDAO) ipNetwork,
-					userName);
+					userName, httpRequest.getServletContext().getRealPath(File.separator));
 
 		} catch (UnknownHostException e) {
 			throw new MalformedRequestException("Invalid IP address", e);

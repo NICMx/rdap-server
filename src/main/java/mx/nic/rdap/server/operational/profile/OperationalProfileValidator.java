@@ -7,6 +7,7 @@ import mx.nic.rdap.core.catalog.EventAction;
 import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Event;
+import mx.nic.rdap.core.db.VCard;
 import mx.nic.rdap.server.RdapConfiguration;
 
 public class OperationalProfileValidator {
@@ -20,28 +21,42 @@ public class OperationalProfileValidator {
 			logger.log(Level.WARNING, warningMessage);
 			return;
 		}
-		boolean containsRegistration=false;
-		boolean containgsLastUpdate=false;
-		for(Event event:entity.getEvents()){
-			if(event.getEventAction().equals(EventAction.REGISTRATION)){
-				containsRegistration=true;
-			}
-			else if(event.getEventAction().equals(EventAction.LAST_UPDATE_OF_RDAP_DATABASE)){
-				containgsLastUpdate=true;
+		boolean containsRegistration = false;
+		boolean containgsLastUpdate = false;
+		for (Event event : entity.getEvents()) {
+			if (event.getEventAction().equals(EventAction.REGISTRATION)) {
+				containsRegistration = true;
+			} else if (event.getEventAction().equals(EventAction.LAST_UPDATE_OF_RDAP_DATABASE)) {
+				containgsLastUpdate = true;
 			}
 		}
-		if(!containgsLastUpdate||!containsRegistration){
+		if (!containgsLastUpdate || !containsRegistration) {
 			logger.log(Level.WARNING, warningMessage);
 			return;
 		}
 	}
-	
+
 	// Point 1.5.3 of rdap operational profile by ICANN
-	public static void validateDomainStatus(Domain domain){
-		if(domain.getStatus()==null||domain.getStatus().isEmpty()){
+	public static void validateDomainStatus(Domain domain) {
+		if (domain.getStatus() == null || domain.getStatus().isEmpty()) {
 			logger.log(Level.WARNING, "When using profile " + RdapConfiguration.getServerProfile()
-			+ ",domain object in the RDAP response MUST contain a status member.");
-			
+					+ ",domain object in the RDAP response MUST contain a status member.");
+
 		}
 	}
+
+	// Point 1.4.5 of RDAP operational profile by ICANN
+	public static void validateEntityTel(Entity entity) {
+		String warningMessage = "When using profile " + RdapConfiguration.getServerProfile()
+				+ ", entity must have a tel parameter with a voice type";
+		if (entity.getVCardList() == null || entity.getVCardList().isEmpty()) {
+			logger.log(Level.WARNING, "Entity must have a VCard");
+		} else {
+			for (VCard vcard : entity.getVCardList()) {
+				if (vcard.getVoice() == null || vcard.getVoice().isEmpty())
+					logger.log(Level.WARNING, warningMessage);
+			}
+		}
+	}
+
 }

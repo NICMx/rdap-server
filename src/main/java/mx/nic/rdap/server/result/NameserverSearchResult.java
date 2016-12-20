@@ -1,5 +1,6 @@
 package mx.nic.rdap.server.result;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserInfo;
 import mx.nic.rdap.server.catalog.OperationalProfile;
 import mx.nic.rdap.server.operational.profile.OperationalProfileValidator;
+import mx.nic.rdap.server.operational.profile.TermsOfServiceAdder;
 import mx.nic.rdap.server.renderer.json.NameserverJsonWriter;
 
 /**
@@ -33,17 +35,20 @@ public class NameserverSearchResult extends RdapResult {
 	// Indicate is the search has more results than the answered to the user
 	Boolean resultSetWasLimitedByUserConfiguration;
 
-	public NameserverSearchResult(String header, String contextPath,SearchResultStruct result, String userName) {
-		notices=new ArrayList<Remark>();
-		this.nameservers=new ArrayList<NameserverDAO>();
+	public NameserverSearchResult(String header, String contextPath, SearchResultStruct result, String userName,
+			String realPath) throws FileNotFoundException {
+		notices = new ArrayList<Remark>();
+		this.nameservers = new ArrayList<NameserverDAO>();
 		this.userInfo = new UserInfo(userName);
 		this.setMaxNumberOfResultsForUser(result.getSearchResultsLimitForUser());
 		this.resultSetWasLimitedByUserConfiguration = result.getResultSetWasLimitedByUserConfiguration();
 		for (RdapObject nameserver : result.getResults()) {
-			NameserverDAO dao=(NameserverDAO) nameserver;
+			NameserverDAO dao = (NameserverDAO) nameserver;
 			nameservers.add(dao);
 			dao.addSelfLinks(header, contextPath);
 		}
+		result.getResults().get(0)
+				.setRemarks(TermsOfServiceAdder.listWithTerms(realPath, result.getResults().get(0).getRemarks()));
 	}
 
 	/*
@@ -56,14 +61,16 @@ public class NameserverSearchResult extends RdapResult {
 		JsonObjectBuilder builder = Json.createObjectBuilder();
 		JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 		for (Nameserver nameserver : nameservers) {
-			arrayBuilder.add(
-					NameserverJsonWriter.getJson(nameserver, userInfo.isUserAuthenticated(), userInfo.isOwner(nameserver)));
+			arrayBuilder.add(NameserverJsonWriter.getJson(nameserver, userInfo.isUserAuthenticated(),
+					userInfo.isOwner(nameserver)));
 		}
 		builder.add("nameserverSearchResults", arrayBuilder.build());
 		return builder.build();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see mx.nic.rdap.server.RdapResult#fillNotices()
 	 */
 	@Override
@@ -76,20 +83,23 @@ public class NameserverSearchResult extends RdapResult {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see mx.nic.rdap.server.RdapResult#validateResponse()
 	 */
 	@Override
 	public void validateResponse() {
-		if(!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)){
-			for(Nameserver nameserver:nameservers)
-			if(nameserver.getEntities()!=null&&!nameserver.getEntities().isEmpty()){
-				for(Entity ent:nameserver.getEntities()){
-					OperationalProfileValidator.validateEntityEvents(ent);
+		if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)) {
+			for (Nameserver nameserver : nameservers)
+				if (nameserver.getEntities() != null && !nameserver.getEntities().isEmpty()) {
+					for (Entity ent : nameserver.getEntities()) {
+						OperationalProfileValidator.validateEntityEvents(ent);
+					}
 				}
-			}
 		}
 	}
+
 	public Integer getMaxNumberOfResultsForUser() {
 		return maxNumberOfResultsForUser;
 	}

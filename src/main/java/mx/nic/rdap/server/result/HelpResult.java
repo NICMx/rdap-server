@@ -15,6 +15,7 @@ import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.server.PrivacyUtil;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.Util;
+import mx.nic.rdap.server.operational.profile.TermsOfServiceAdder;
 import mx.nic.rdap.server.renderer.json.RemarkJsonWriter;
 
 /**
@@ -26,13 +27,12 @@ public class HelpResult extends RdapResult {
 	private static String helpFolderPath;
 
 	public HelpResult(ServletContext servletContext) throws FileNotFoundException {
-		notices = new ArrayList<Remark>();
 		helpFolderPath = servletContext.getRealPath(File.separator) + "\\WEB-INF\\help\\";
-		if (notices == null || notices.isEmpty())
+		if (notices == null || notices.isEmpty()) {
 			notices = Util.readNoticesFromFiles(helpFolderPath);
+			notices = TermsOfServiceAdder.listWithTerms(servletContext.getRealPath(File.separator), notices);
+		}
 	}
-
-
 
 	/*
 	 * (non-Javadoc)
@@ -48,8 +48,6 @@ public class HelpResult extends RdapResult {
 		return objectBuilder.build();
 	}
 
-	
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -59,8 +57,10 @@ public class HelpResult extends RdapResult {
 	public void fillNotices() {
 		// At the moment, there is no notices for this request
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see mx.nic.rdap.server.RdapResult#validateResponse()
 	 */
 	@Override

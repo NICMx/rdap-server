@@ -1,5 +1,6 @@
 package mx.nic.rdap.server.servlet;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -43,7 +44,8 @@ public class AutnumServlet extends RdapServlet {
 		try (Connection con = DatabaseSession.getRdapConnection()) {
 			autnum = AutnumModel.getByRange(request.getAutnum(), con);
 		}
-		return new AutnumResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), autnum, username);
+		return new AutnumResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), autnum, username,
+				httpRequest.getServletContext().getRealPath(File.separator));
 	}
 
 	/*
