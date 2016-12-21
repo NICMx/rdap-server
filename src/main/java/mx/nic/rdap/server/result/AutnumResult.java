@@ -14,19 +14,17 @@ import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserInfo;
 import mx.nic.rdap.server.catalog.OperationalProfile;
 import mx.nic.rdap.server.operational.profile.OperationalProfileValidator;
-import mx.nic.rdap.server.operational.profile.TermsOfServiceAdder;
 import mx.nic.rdap.server.renderer.json.AutnumJsonWriter;
 
 public class AutnumResult extends RdapResult {
 
 	private AutnumDAO autnum;
 
-	public AutnumResult(String header, String contextPath, AutnumDAO autnum, String username, String realPath)
+	public AutnumResult(String header, String contextPath, AutnumDAO autnum, String username)
 			throws FileNotFoundException {
 		this.autnum = autnum;
 		this.userInfo = new UserInfo(username);
 		this.autnum.addSelfLinks(header, contextPath);
-		autnum.setRemarks(TermsOfServiceAdder.listWithTerms(realPath, autnum.getRemarks()));
 		validateResponse();
 	}
 

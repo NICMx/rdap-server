@@ -1,5 +1,7 @@
 package mx.nic.rdap.server.renderer.json;
 
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +30,8 @@ import mx.nic.rdap.server.catalog.PrivacyStatus;
  */
 public class JsonUtil {
 
+	private static List<Remark> termsOfService = new ArrayList<>();
+
 	public static JsonArray getRdapConformance(String... others) {
 		JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 		arrayBuilder.add("rdap_level_0");
@@ -45,7 +49,8 @@ public class JsonUtil {
 			Map<String, PrivacyStatus> eventPrivacySettings) {
 
 		Map<String, PrivacyStatus> allObjectPrivacySettings = getAllObjectPrivacySettings(object);
-		PrivacyStatus priorityStatus = Util.getPriorityPrivacyStatus(isAuthenticated, isOwner, allObjectPrivacySettings);
+		PrivacyStatus priorityStatus = Util.getPriorityPrivacyStatus(isAuthenticated, isOwner,
+				allObjectPrivacySettings);
 
 		String key = "handle";
 		if (PrivacyUtil.isObjectVisible(object.getHandle(), key, privacySettings.get(key), isAuthenticated, isOwner))
@@ -61,7 +66,8 @@ public class JsonUtil {
 
 		key = "links";
 		if (PrivacyUtil.isObjectVisible(object.getLinks(), key, privacySettings.get(key), isAuthenticated, isOwner))
-			builder.add(key, LinkJsonWriter.getJsonArray(object.getLinks(), isAuthenticated, isOwner, linkPrivacySettings));
+			builder.add(key,
+					LinkJsonWriter.getJsonArray(object.getLinks(), isAuthenticated, isOwner, linkPrivacySettings));
 
 		key = "events";
 		if (PrivacyUtil.isObjectVisible(object.getEvents(), key, privacySettings.get(key), isAuthenticated, isOwner))
@@ -176,10 +182,25 @@ public class JsonUtil {
 		return builder.build();
 	}
 
-
 	public static JsonValue getOperationalProfileRemark() {
 		return RemarkJsonWriter.getNoticeJsonObject(Util.getOperationalProfileRemark());
 	}
 
-	
+	// -------- -----------TODO modify help methods ----------------------------
+
+	public static void createTermsOfService(String realPath) throws FileNotFoundException {
+		if (termsOfService == null || termsOfService.isEmpty()) {
+			termsOfService = Util.readNoticesFromFiles(realPath + "\\WEB-INF\\terms-of-service\\");
+		}
+		List<Remark> newRemarks = new ArrayList<Remark>();
+		newRemarks.add(termsOfService.get(0));
+		return;
+	}
+
+	public static Remark getTermsOfServiceNotice() {
+		return termsOfService.get(0);
+	}
+
+	// ------------------------------------------------------------------------
+
 }

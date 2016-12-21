@@ -21,7 +21,6 @@ import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserInfo;
 import mx.nic.rdap.server.catalog.OperationalProfile;
 import mx.nic.rdap.server.operational.profile.OperationalProfileValidator;
-import mx.nic.rdap.server.operational.profile.TermsOfServiceAdder;
 import mx.nic.rdap.server.renderer.json.NameserverJsonWriter;
 
 /**
@@ -35,8 +34,8 @@ public class NameserverSearchResult extends RdapResult {
 	// Indicate is the search has more results than the answered to the user
 	Boolean resultSetWasLimitedByUserConfiguration;
 
-	public NameserverSearchResult(String header, String contextPath, SearchResultStruct result, String userName,
-			String realPath) throws FileNotFoundException {
+	public NameserverSearchResult(String header, String contextPath, SearchResultStruct result, String userName)
+			throws FileNotFoundException {
 		notices = new ArrayList<Remark>();
 		this.nameservers = new ArrayList<NameserverDAO>();
 		this.userInfo = new UserInfo(userName);
@@ -47,8 +46,6 @@ public class NameserverSearchResult extends RdapResult {
 			nameservers.add(dao);
 			dao.addSelfLinks(header, contextPath);
 		}
-		result.getResults().get(0)
-				.setRemarks(TermsOfServiceAdder.listWithTerms(realPath, result.getResults().get(0).getRemarks()));
 	}
 
 	/*

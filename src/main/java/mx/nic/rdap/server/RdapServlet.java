@@ -1,5 +1,6 @@
 package mx.nic.rdap.server;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.PriorityQueue;
@@ -11,8 +12,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import mx.nic.rdap.db.exception.ObjectNotFoundException;
 import mx.nic.rdap.server.AcceptHeaderFieldParser.Accept;
+import mx.nic.rdap.server.catalog.OperationalProfile;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.renderer.DefaultRenderer;
+import mx.nic.rdap.server.renderer.json.JsonUtil;
 
 /**
  * Main class of the RDAP Servlet.
@@ -54,6 +57,9 @@ public abstract class RdapServlet extends HttpServlet {
 			response.sendError(e.getHttpResponseStatusCode(), e.getMessage());
 			return;
 		}
+
+		if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE))
+			JsonUtil.createTermsOfService(request.getServletContext().getRealPath(File.separator));
 
 		Renderer renderer = findRenderer(request);
 		response.setCharacterEncoding("UTF-8");
@@ -117,8 +123,7 @@ public abstract class RdapServlet extends HttpServlet {
 	}
 
 	private interface HandleAction {
-		RdapResult handle(HttpServletRequest request)
-				throws IOException, SQLException, RequestHandleException;
+		RdapResult handle(HttpServletRequest request) throws IOException, SQLException, RequestHandleException;
 	}
 
 }

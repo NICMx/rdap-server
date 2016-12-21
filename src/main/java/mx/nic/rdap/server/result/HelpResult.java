@@ -15,7 +15,6 @@ import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.server.PrivacyUtil;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.Util;
-import mx.nic.rdap.server.operational.profile.TermsOfServiceAdder;
 import mx.nic.rdap.server.renderer.json.RemarkJsonWriter;
 
 /**
@@ -30,7 +29,6 @@ public class HelpResult extends RdapResult {
 		helpFolderPath = servletContext.getRealPath(File.separator) + "\\WEB-INF\\help\\";
 		if (notices == null || notices.isEmpty()) {
 			notices = Util.readNoticesFromFiles(helpFolderPath);
-			notices = TermsOfServiceAdder.listWithTerms(servletContext.getRealPath(File.separator), notices);
 		}
 	}
 

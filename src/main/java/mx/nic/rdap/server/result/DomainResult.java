@@ -13,7 +13,6 @@ import mx.nic.rdap.server.UserInfo;
 import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.catalog.OperationalProfile;
 import mx.nic.rdap.server.operational.profile.OperationalProfileValidator;
-import mx.nic.rdap.server.operational.profile.TermsOfServiceAdder;
 import mx.nic.rdap.server.renderer.json.DomainJsonWriter;
 
 /**
@@ -23,13 +22,12 @@ public class DomainResult extends RdapResult {
 
 	private DomainDAO domain;
 
-	public DomainResult(String header, String contextPath, DomainDAO domain, String userName, String realPath)
+	public DomainResult(String header, String contextPath, DomainDAO domain, String userName)
 			throws FileNotFoundException {
 		notices = new ArrayList<Remark>();
 		this.domain = domain;
 		this.userInfo = new UserInfo(userName);
 		this.domain.addSelfLinks(header, contextPath);
-		this.domain.setRemarks(TermsOfServiceAdder.listWithTerms(realPath, this.domain.getRemarks()));
 		validateResponse();
 	}
 

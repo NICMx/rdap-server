@@ -13,20 +13,18 @@ import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserInfo;
 import mx.nic.rdap.server.catalog.OperationalProfile;
 import mx.nic.rdap.server.operational.profile.OperationalProfileValidator;
-import mx.nic.rdap.server.operational.profile.TermsOfServiceAdder;
 import mx.nic.rdap.server.renderer.json.IpNetworkJsonWriter;
 
 public class IpResult extends RdapResult {
 
 	private IpNetworkDAO ipNetwork;
 
-	public IpResult(String header, String contextPath, IpNetworkDAO ipNetwork, String userName, String realPath)
+	public IpResult(String header, String contextPath, IpNetworkDAO ipNetwork, String userName)
 			throws FileNotFoundException {
 		notices = new ArrayList<Remark>();
 		this.ipNetwork = ipNetwork;
 		this.userInfo = new UserInfo(userName);
 		this.ipNetwork.addSelfLinks(header, contextPath);
-		this.ipNetwork.setRemarks(TermsOfServiceAdder.listWithTerms(realPath, this.ipNetwork.getRemarks()));
 
 	}
 

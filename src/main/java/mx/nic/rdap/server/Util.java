@@ -320,9 +320,11 @@ public class Util {
 		this.authenticatedMaxUserResultLimit = authenticatedMaxUserResultLimit;
 	}
 
+	// TODO new easier to use class, maybe-----------
+
 	@SuppressWarnings("unchecked")
 	public static List<Remark> readNoticesFromFiles(String filePath) throws FileNotFoundException {
-		List<Remark> notices=new ArrayList<Remark>();
+		List<Remark> notices = new ArrayList<Remark>();
 		List<List<Object>> noticesData = readFiles(filePath);
 		for (List<Object> noticeData : noticesData) {
 			Remark notice = new Remark();
@@ -353,7 +355,7 @@ public class Util {
 		return notices;
 
 	}
-	
+
 	private static Link parseLink(String linkData) throws InvalidadDataStructure {
 		Link link = new Link();
 		if (linkData != null && !linkData.trim().isEmpty()) {
@@ -372,7 +374,7 @@ public class Util {
 		}
 		return link;
 	}
-	
+
 	private static List<List<Object>> readFiles(String folderPath) {
 
 		File folder = new File(folderPath);
@@ -390,7 +392,7 @@ public class Util {
 		}
 
 		else {
-			throw new RuntimeException("There are no text files on folder "+folderPath);
+			throw new RuntimeException("There are no text files on folder " + folderPath);
 		}
 
 		return noticesData;
@@ -446,34 +448,35 @@ public class Util {
 			throw new RuntimeException(e.getMessage());
 		}
 	}
-	
-	public static Remark getOperationalProfileRemark(){
-		RemarkDAO remark=new RemarkDAO();
-		RemarkDescriptionDAO description =new RemarkDescriptionDAO();
-		description.setDescription("This response conforms to the RDAP Operational Profile for gTLD Registries and Registrars version 1.0");
+
+	public static Remark getOperationalProfileRemark() {
+		RemarkDAO remark = new RemarkDAO();
+		RemarkDescriptionDAO description = new RemarkDescriptionDAO();
+		description.setDescription(
+				"This response conforms to the RDAP Operational Profile for gTLD Registries and Registrars version 1.0");
 		remark.getDescriptions().add(description);
 		return remark;
 	}
-	
-	public static Remark getEppInformationRemark(){
-		RemarkDAO remark=new RemarkDAO();
+
+	public static Remark getEppInformationRemark() {
+		RemarkDAO remark = new RemarkDAO();
 		remark.setTitle("EPP Status Codes");
-		RemarkDescriptionDAO description =new RemarkDescriptionDAO();
+		RemarkDescriptionDAO description = new RemarkDescriptionDAO();
 		description.setDescription("For more information on domain status codes, please visit https://icann.org/epp");
 		remark.getDescriptions().add(description);
-		Link link=new Link();
+		Link link = new Link();
 		link.setHref("https://icann.org/epp");
 		remark.getLinks().add(link);
 		return remark;
 	}
-	
-	public static Remark getWhoisInaccuracyComplaintFormRemark(){
-		RemarkDAO remark=new RemarkDAO();
-		RemarkDescriptionDAO description =new RemarkDescriptionDAO();
+
+	public static Remark getWhoisInaccuracyComplaintFormRemark() {
+		RemarkDAO remark = new RemarkDAO();
+		RemarkDescriptionDAO description = new RemarkDescriptionDAO();
 		remark.setTitle("Whois Inaccuracy Complaint Form");
 		description.setDescription("URL of the ICANN Whois Inaccuracy Complaint Form: https://www.icann.org/wicf");
 		remark.getDescriptions().add(description);
-		Link link=new Link();
+		Link link = new Link();
 		link.setHref("https://www.icann.org/wicf");
 		remark.getLinks().add(link);
 		return remark;

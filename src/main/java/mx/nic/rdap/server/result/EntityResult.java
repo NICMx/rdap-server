@@ -13,7 +13,6 @@ import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserInfo;
 import mx.nic.rdap.server.catalog.OperationalProfile;
 import mx.nic.rdap.server.operational.profile.OperationalProfileValidator;
-import mx.nic.rdap.server.operational.profile.TermsOfServiceAdder;
 import mx.nic.rdap.server.renderer.json.EntityJsonWriter;
 
 /**
@@ -23,13 +22,12 @@ public class EntityResult extends RdapResult {
 
 	private EntityDAO entity;
 
-	public EntityResult(String header, String contextPath, EntityDAO entity, String userName, String realPath)
+	public EntityResult(String header, String contextPath, EntityDAO entity, String userName)
 			throws FileNotFoundException {
 		notices = new ArrayList<Remark>();
 		this.entity = entity;
 		this.userInfo = new UserInfo(userName);
 		this.entity.addSelfLinks(header, contextPath);
-		entity.setRemarks(TermsOfServiceAdder.listWithTerms(realPath, entity.getRemarks()));
 		validateResponse();
 	}
 

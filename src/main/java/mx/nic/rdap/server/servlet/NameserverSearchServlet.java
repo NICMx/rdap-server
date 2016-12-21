@@ -1,6 +1,5 @@
 package mx.nic.rdap.server.servlet;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -39,7 +38,7 @@ public class NameserverSearchServlet extends RdapServlet {
 	@Override
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
-		if(RdapConfiguration.useNameserverAsDomainAttribute()){
+		if (RdapConfiguration.useNameserverAsDomainAttribute()) {
 			throw new RequestHandleException(501, "Not implemented.");
 		}
 		NameserverSearchRequest request;
@@ -70,8 +69,8 @@ public class NameserverSearchServlet extends RdapServlet {
 			}
 		}
 
-		return new NameserverSearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), result, username,
-				httpRequest.getServletContext().getRealPath(File.separator));
+		return new NameserverSearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), result,
+				username);
 	}
 
 	/*
@@ -83,7 +82,7 @@ public class NameserverSearchServlet extends RdapServlet {
 	@Override
 	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
-		if(RdapConfiguration.useNameserverAsDomainAttribute()){
+		if (RdapConfiguration.useNameserverAsDomainAttribute()) {
 			throw new RequestHandleException(501, "Not implemented.");
 		}
 		NameserverSearchRequest request;

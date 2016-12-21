@@ -40,21 +40,18 @@ public class JsonRenderer implements Renderer {
 		JsonObjectBuilder object = Json.createObjectBuilder();
 		object.add("rdapConformance", JsonUtil.getRdapConformance());
 		result.fillNotices();
-//		// Point 1.4.4 of rdap operational profile by ICANN
-//		if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)) {
-//			try {
-//				result.getNotices().add(JsonUtil.getTermsOfServiceNotice("terms"));
-//			} catch (FileNotFoundException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
+
+		// Point 1.4.4 of rdap operational profile by ICANN
+		if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)) {
+			result.getNotices().add(JsonUtil.getTermsOfServiceNotice());
+		}
+
 		if (result.getNotices() != null && !result.getNotices().isEmpty()) {
 			object.add("notices", this.getNotices(result.getNotices()));
 		}
 		// Point 1.4.10 of rdap operational profile by ICANN
 		if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)) {
-				object.add("remarks", JsonUtil.getOperationalProfileRemark());
+			object.add("remarks", JsonUtil.getOperationalProfileRemark());
 		}
 		for (Entry<String, JsonValue> entry : result.toJson().entrySet()) {
 			object.add(entry.getKey(), entry.getValue());

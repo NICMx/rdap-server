@@ -1,6 +1,5 @@
 package mx.nic.rdap.server.servlet;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -42,8 +41,7 @@ public class EntityServlet extends RdapServlet {
 		RdapResult result = null;
 		try (Connection con = DatabaseSession.getRdapConnection()) {
 			EntityDAO entity = EntityModel.getByHandle(request.getHandle(), con);
-			result = new EntityResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), entity, userName,
-					httpRequest.getServletContext().getRealPath(File.separator));
+			result = new EntityResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), entity, userName);
 
 		}
 		return result;

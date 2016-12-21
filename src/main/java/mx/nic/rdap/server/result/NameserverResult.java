@@ -13,7 +13,6 @@ import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserInfo;
 import mx.nic.rdap.server.catalog.OperationalProfile;
 import mx.nic.rdap.server.operational.profile.OperationalProfileValidator;
-import mx.nic.rdap.server.operational.profile.TermsOfServiceAdder;
 import mx.nic.rdap.server.renderer.json.NameserverJsonWriter;
 
 /**
@@ -23,13 +22,12 @@ public class NameserverResult extends RdapResult {
 
 	private NameserverDAO nameserver;
 
-	public NameserverResult(String header, String contextPath, NameserverDAO nameserver, String userName,
-			String realPath) throws FileNotFoundException {
+	public NameserverResult(String header, String contextPath, NameserverDAO nameserver, String userName)
+			throws FileNotFoundException {
 		notices = new ArrayList<Remark>();
 		this.nameserver = nameserver;
 		this.userInfo = new UserInfo(userName);
 		this.nameserver.addSelfLinks(header, contextPath);
-		this.nameserver.setRemarks(TermsOfServiceAdder.listWithTerms(realPath, this.nameserver.getRemarks()));
 
 	}
 
