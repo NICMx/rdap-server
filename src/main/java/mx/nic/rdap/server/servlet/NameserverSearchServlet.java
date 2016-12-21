@@ -39,6 +39,9 @@ public class NameserverSearchServlet extends RdapServlet {
 	@Override
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
+		if(RdapConfiguration.useNameserverAsDomainAttribute()){
+			throw new RequestHandleException(501, "Not implemented.");
+		}
 		NameserverSearchRequest request;
 
 		try {
@@ -80,6 +83,9 @@ public class NameserverSearchServlet extends RdapServlet {
 	@Override
 	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
+		if(RdapConfiguration.useNameserverAsDomainAttribute()){
+			throw new RequestHandleException(501, "Not implemented.");
+		}
 		NameserverSearchRequest request;
 
 		try {

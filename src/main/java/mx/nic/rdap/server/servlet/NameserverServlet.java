@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.db.NameserverDAO;
 import mx.nic.rdap.db.model.NameserverModel;
+import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.Util;
@@ -36,6 +37,9 @@ public class NameserverServlet extends RdapServlet {
 	@Override
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
+		if(RdapConfiguration.useNameserverAsDomainAttribute()){
+			throw new RequestHandleException(501, "Not implemented.");
+		}
 		NameserverRequest request = new NameserverRequest(Util.getRequestParams(httpRequest)[0]);
 		NameserverDAO nameserver = null;
 		String userName = httpRequest.getRemoteUser();
@@ -55,6 +59,9 @@ public class NameserverServlet extends RdapServlet {
 	@Override
 	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
+		if(RdapConfiguration.useNameserverAsDomainAttribute()){
+			throw new RequestHandleException(501, "Not implemented.");
+		}
 		NameserverRequest request = new NameserverRequest(Util.getRequestParams(httpRequest)[0]);
 		try (Connection con = DatabaseSession.getRdapConnection()) {
 			NameserverModel.existByName(request.getName(), con);

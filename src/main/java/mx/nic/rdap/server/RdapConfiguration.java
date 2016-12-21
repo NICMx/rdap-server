@@ -36,6 +36,7 @@ public class RdapConfiguration {
 	private static final String IS_REVERSE_IPV4_ENABLED_KEY = "is_reverse_ipv4_enabled";
 	private static final String IS_REVERSE_IPV6_ENABLED_KEY = "is_reverse_ipv6_enabled";
 	private static final String OPERATIONAL_PROFILE_KEY = "operational_profile";
+	private static final String NAMESERVER_AS_DOMAIN_ATTRIBUTE_KEY = "nameserver.as.domain.attribute";
 	private static Set<Rol> objectOwnerRoles;
 
 	public RdapConfiguration() {
@@ -269,7 +270,10 @@ public class RdapConfiguration {
 			}
 			
 		}
-
+		if(systemProperties.getProperty(NAMESERVER_AS_DOMAIN_ATTRIBUTE_KEY)==null){
+			isValid = false;
+			invalidProperties.add(NAMESERVER_AS_DOMAIN_ATTRIBUTE_KEY);
+		}
 		if (!isValid) {
 			InvalidValueException invalidValueException = new InvalidValueException(
 					"The following required properties were not found or are invalid values in configuration file : "
@@ -295,5 +299,9 @@ public class RdapConfiguration {
 	public static OperationalProfile getServerProfile() {
 		String property = systemProperties.getProperty(OPERATIONAL_PROFILE_KEY).trim();
 		return OperationalProfile.valueOf(property.toUpperCase());
+	}
+	
+	public static boolean useNameserverAsDomainAttribute(){
+		return Boolean.parseBoolean(systemProperties.getProperty(NAMESERVER_AS_DOMAIN_ATTRIBUTE_KEY));
 	}
 }
