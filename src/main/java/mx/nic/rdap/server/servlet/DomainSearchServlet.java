@@ -55,7 +55,7 @@ public class DomainSearchServlet extends RdapServlet {
 
 		SearchResultStruct result = new SearchResultStruct();
 		String username = httpRequest.getRemoteUser();
-
+		boolean useNameserverAsAttribute=RdapConfiguration.useNameserverAsDomainAttribute();
 		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUnauthenticatedUser();// Default
 		try (Connection connection = DatabaseSession.getRdapConnection()) {
 			resultLimit = Util.getMaxNumberOfResultsForUser(username, connection);
@@ -75,23 +75,23 @@ public class DomainSearchServlet extends RdapServlet {
 					String zone = split[1];
 
 					try {
-						result = DomainModel.searchByName(domain, zone, resultLimit, connection);
+						result = DomainModel.searchByName(domain, zone, resultLimit,useNameserverAsAttribute, connection);
 					} catch (InvalidValueException e) {
 						e.printStackTrace();
 					}
 				} else {
 
 					// Search domain by it´s name without zone.
-					result = DomainModel.searchByName(domain, resultLimit, connection);
+					result = DomainModel.searchByName(domain, resultLimit,useNameserverAsAttribute, connection);
 				}
 				break;
 			case NAMESERVER_NAME:
 				// Gets´s domain by it´s Nameserver name
-				result = DomainModel.searchByNsLdhName(domain, resultLimit, connection);
+				result = DomainModel.searchByNsLdhName(domain, resultLimit,useNameserverAsAttribute, connection);
 				break;
 			case NAMESERVER_IP:
 				// Get´s domain by it´s Nameserver Ip
-				result = DomainModel.searchByNsIp(domain, resultLimit, connection);
+				result = DomainModel.searchByNsIp(domain, resultLimit,useNameserverAsAttribute, connection);
 				break;
 			default:
 

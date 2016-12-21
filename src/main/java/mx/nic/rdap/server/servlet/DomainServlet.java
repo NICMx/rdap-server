@@ -12,6 +12,7 @@ import mx.nic.rdap.db.exception.InvalidValueException;
 import mx.nic.rdap.db.exception.ObjectNotFoundException;
 import mx.nic.rdap.db.model.DomainModel;
 import mx.nic.rdap.db.model.ZoneModel;
+import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.Util;
@@ -51,7 +52,7 @@ public class DomainServlet extends RdapServlet {
 		try (Connection con = DatabaseSession.getRdapConnection()) {
 			DomainDAO domain = new DomainDAO();
 			try {
-				domain = DomainModel.findByLdhName(request.getDomainName(), request.getZoneId(), con);
+				domain = DomainModel.findByLdhName(request.getDomainName(), request.getZoneId(),RdapConfiguration.useNameserverAsDomainAttribute(), con);
 			} catch (InvalidValueException e) {
 				throw new ObjectNotFoundException("The RDAP server doesn't have information about the requested zone");
 			}
