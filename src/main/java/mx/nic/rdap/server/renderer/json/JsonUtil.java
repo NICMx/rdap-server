@@ -1,7 +1,6 @@
 package mx.nic.rdap.server.renderer.json;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +29,7 @@ import mx.nic.rdap.server.catalog.PrivacyStatus;
  */
 public class JsonUtil {
 
-	private static List<Remark> termsOfService = new ArrayList<>();
+	private static Remark termsOfService;
 
 	public static JsonArray getRdapConformance(String... others) {
 		JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
@@ -186,21 +185,19 @@ public class JsonUtil {
 		return RemarkJsonWriter.getNoticeJsonObject(Util.getOperationalProfileRemark());
 	}
 
-	// -------- -----------TODO modify help methods ----------------------------
-
 	public static void createTermsOfService(String realPath) throws FileNotFoundException {
-		if (termsOfService == null || termsOfService.isEmpty()) {
-			termsOfService = Util.readNoticesFromFiles(realPath + "\\WEB-INF\\terms-of-service\\");
+		if (termsOfService == null) {
+			List<Remark> remarks = Util.readNoticesFromFiles(realPath + "\\WEB-INF\\terms-of-service\\");
+			if (remarks == null || remarks.isEmpty())
+				return;
+			else
+				termsOfService = remarks.get(0);
 		}
-		List<Remark> newRemarks = new ArrayList<Remark>();
-		newRemarks.add(termsOfService.get(0));
 		return;
 	}
 
 	public static Remark getTermsOfServiceNotice() {
-		return termsOfService.get(0);
+		return termsOfService;
 	}
-
-	// ------------------------------------------------------------------------
 
 }
