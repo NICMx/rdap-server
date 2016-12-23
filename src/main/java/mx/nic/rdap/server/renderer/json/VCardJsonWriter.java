@@ -12,8 +12,8 @@ import ezvcard.parameter.TelephoneType;
 import ezvcard.property.Address;
 import mx.nic.rdap.core.db.VCard;
 import mx.nic.rdap.core.db.VCardPostalInfo;
-import mx.nic.rdap.server.PrivacyUtil;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
+import mx.nic.rdap.server.util.PrivacyUtil;
 
 public class VCardJsonWriter {
 

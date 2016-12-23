@@ -11,10 +11,10 @@ import javax.json.JsonObjectBuilder;
 
 import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.db.model.ZoneModel;
-import mx.nic.rdap.server.PrivacyUtil;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.catalog.OperationalProfile;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
+import mx.nic.rdap.server.util.PrivacyUtil;
 
 public class DomainJsonWriter {
 

@@ -13,8 +13,8 @@ import javax.json.JsonObjectBuilder;
 import mx.nic.rdap.core.catalog.VariantRelation;
 import mx.nic.rdap.core.db.Variant;
 import mx.nic.rdap.core.db.VariantName;
-import mx.nic.rdap.server.PrivacyUtil;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
+import mx.nic.rdap.server.util.PrivacyUtil;
 
 public class VariantJsonWriter {
 	public static JsonArray getJsonArray(List<Variant> variants, boolean isAuthenticated, boolean isOwner) {

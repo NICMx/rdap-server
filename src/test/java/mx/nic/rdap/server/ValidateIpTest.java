@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import junit.framework.TestCase;
 import mx.nic.rdap.server.exception.MalformedRequestException;
+import mx.nic.rdap.server.util.IpUtil;
 
 public class ValidateIpTest extends TestCase {
 
@@ -79,7 +80,7 @@ public class ValidateIpTest extends TestCase {
 	private static void testIpAddress(String ipAddress, boolean isValid) {
 		boolean exception = false;
 		try {
-			Util.validateIpAddress(ipAddress);
+			IpUtil.validateIpAddress(ipAddress);
 		} catch (MalformedRequestException e) {
 			exception = true;
 			System.out.println("invalid ip Address : " + ipAddress);

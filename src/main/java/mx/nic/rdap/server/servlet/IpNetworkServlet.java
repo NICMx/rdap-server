@@ -13,12 +13,12 @@ import mx.nic.rdap.db.IpNetworkDAO;
 import mx.nic.rdap.db.model.IpNetworkModel;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
-import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.IpResult;
 import mx.nic.rdap.server.result.OkResult;
+import mx.nic.rdap.server.util.RdapUrlParametersUtil;
 
 @WebServlet(name = "ip", urlPatterns = { "/ip/*" })
 public class IpNetworkServlet extends RdapServlet {
@@ -38,7 +38,7 @@ public class IpNetworkServlet extends RdapServlet {
 	@Override
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
-		IpRequest request = new IpRequest(Util.getRequestParams(httpRequest));
+		IpRequest request = new IpRequest(RdapUrlParametersUtil.getRequestParams(httpRequest));
 		String userName = httpRequest.getRemoteUser();
 
 		RdapResult result = null;
@@ -67,7 +67,7 @@ public class IpNetworkServlet extends RdapServlet {
 	@Override
 	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
-		IpRequest request = new IpRequest(Util.getRequestParams(httpRequest));
+		IpRequest request = new IpRequest(RdapUrlParametersUtil.getRequestParams(httpRequest));
 		try (Connection con = DatabaseSession.getRdapConnection()) {
 			if (request.hasCidr()) {
 				IpNetworkModel.existByInetAddress(request.getIp(), request.getCidr(), con);

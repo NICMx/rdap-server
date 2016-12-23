@@ -15,11 +15,11 @@ import mx.nic.rdap.db.model.ZoneModel;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
-import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.DomainResult;
 import mx.nic.rdap.server.result.OkResult;
+import mx.nic.rdap.server.util.RdapUrlParametersUtil;
 
 @WebServlet(name = "domain", urlPatterns = { "/domain/*" })
 public class DomainServlet extends RdapServlet {
@@ -41,7 +41,7 @@ public class DomainServlet extends RdapServlet {
 			throws RequestHandleException, IOException, SQLException {
 		DomainRequest request = null;
 		try {
-			request = new DomainRequest(Util.getRequestParams(httpRequest)[0]);
+			request = new DomainRequest(RdapUrlParametersUtil.getRequestParams(httpRequest)[0]);
 		} catch (InvalidValueException | ObjectNotFoundException e) {
 			throw new ObjectNotFoundException("The RDAP server doesn't have information about the requested zone");
 		}
@@ -52,7 +52,8 @@ public class DomainServlet extends RdapServlet {
 		try (Connection con = DatabaseSession.getRdapConnection()) {
 			DomainDAO domain = new DomainDAO();
 			try {
-				domain = DomainModel.findByLdhName(request.getDomainName(), request.getZoneId(),RdapConfiguration.useNameserverAsDomainAttribute(), con);
+				domain = DomainModel.findByLdhName(request.getDomainName(), request.getZoneId(),
+						RdapConfiguration.useNameserverAsDomainAttribute(), con);
 			} catch (InvalidValueException e) {
 				throw new ObjectNotFoundException("The RDAP server doesn't have information about the requested zone");
 			}
@@ -73,7 +74,7 @@ public class DomainServlet extends RdapServlet {
 			throws RequestHandleException, IOException, SQLException {
 		DomainRequest request = null;
 		try {
-			request = new DomainRequest(Util.getRequestParams(httpRequest)[0]);
+			request = new DomainRequest(RdapUrlParametersUtil.getRequestParams(httpRequest)[0]);
 		} catch (InvalidValueException | ObjectNotFoundException e) {
 			throw new ObjectNotFoundException("The RDAP server doesn't have information about the requested zone");
 		}

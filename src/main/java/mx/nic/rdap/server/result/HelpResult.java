@@ -12,10 +12,10 @@ import javax.json.JsonObjectBuilder;
 import javax.servlet.ServletContext;
 
 import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.server.PrivacyUtil;
 import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.renderer.json.RemarkJsonWriter;
+import mx.nic.rdap.server.util.PrivacyUtil;
+import mx.nic.rdap.server.util.Util;
 
 /**
  * A Result from a help request.

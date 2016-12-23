@@ -19,10 +19,10 @@ import mx.nic.rdap.core.db.IpNetwork;
 import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.RdapObject;
 import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.server.PrivacyUtil;
 import mx.nic.rdap.server.RdapConfiguration;
-import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
+import mx.nic.rdap.server.util.PrivacyUtil;
+import mx.nic.rdap.server.util.Util;
 
 /**
  * Utilities for json renderer
@@ -48,7 +48,7 @@ public class JsonUtil {
 			Map<String, PrivacyStatus> eventPrivacySettings) {
 
 		Map<String, PrivacyStatus> allObjectPrivacySettings = getAllObjectPrivacySettings(object);
-		PrivacyStatus priorityStatus = Util.getPriorityPrivacyStatus(isAuthenticated, isOwner,
+		PrivacyStatus priorityStatus = PrivacyUtil.getPriorityPrivacyStatus(isAuthenticated, isOwner,
 				allObjectPrivacySettings);
 
 		String key = "handle";
@@ -56,7 +56,7 @@ public class JsonUtil {
 			builder.add(key, object.getHandle());
 
 		key = "remarks";
-		Remark privacyRemark = Util.getObjectRemarkFromPrivacy(isAuthenticated, isOwner, priorityStatus);
+		Remark privacyRemark = PrivacyUtil.getObjectRemarkFromPrivacy(isAuthenticated, isOwner, priorityStatus);
 		if (privacyRemark != null)
 			object.getRemarks().add(privacyRemark);
 		if (PrivacyUtil.isObjectVisible(object.getRemarks(), key, privacySettings.get(key), isAuthenticated, isOwner))
@@ -75,7 +75,7 @@ public class JsonUtil {
 
 		// Verify is we have to include a Status of "privacy"
 		// (REMOVE,PRIVATE,OBSCURED)
-		Status privacyStatus = Util.getObjectStatusFromPrivacy(isAuthenticated, isOwner, priorityStatus);
+		Status privacyStatus = PrivacyUtil.getObjectStatusFromPrivacy(isAuthenticated, isOwner, priorityStatus);
 		if (privacyStatus != null)
 			object.getStatus().add(privacyStatus);
 

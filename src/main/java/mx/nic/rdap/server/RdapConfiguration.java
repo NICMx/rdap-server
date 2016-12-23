@@ -1,5 +1,6 @@
 package mx.nic.rdap.server;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import mx.nic.rdap.core.catalog.Rol;
 import mx.nic.rdap.db.exception.InvalidValueException;
 import mx.nic.rdap.db.exception.ObjectNotFoundException;
 import mx.nic.rdap.db.model.CountryCodeModel;
+import mx.nic.rdap.db.model.RdapUserModel;
 import mx.nic.rdap.db.model.ZoneModel;
 import mx.nic.rdap.server.catalog.OperationalProfile;
 import mx.nic.rdap.server.db.DatabaseSession;
@@ -27,6 +29,8 @@ import mx.nic.rdap.server.db.DatabaseSession;
 public class RdapConfiguration {
 	private final static Logger logger = Logger.getLogger(RdapConfiguration.class.getName());
 	private static Properties systemProperties;
+
+	// property keys
 	private static final String LANGUAGE_KEY = "language";
 	private static final String ZONE_KEY = "zones";
 	private static final String MINIMUN_SEARCH_PATTERN_LENGTH_KEY = "minimum_search_pattern_length";
@@ -36,14 +40,22 @@ public class RdapConfiguration {
 	private static final String IS_REVERSE_IPV4_ENABLED_KEY = "is_reverse_ipv4_enabled";
 	private static final String IS_REVERSE_IPV6_ENABLED_KEY = "is_reverse_ipv6_enabled";
 	private static final String OPERATIONAL_PROFILE_KEY = "operational_profile";
-	private static final String NAMESERVER_AS_DOMAIN_ATTRIBUTE_KEY = "nameserver.as.domain.attribute";
-	private static Set<Rol> objectOwnerRoles;
+	private static final String NAMESERVER_AS_DOMAIN_ATTRIBUTE_KEY = "nameserver_as_domain_attribute";
 
-	public RdapConfiguration() {
+	// Settings values
+	private static String serverLanguage;
+	private static Integer minimumSearchPatternLength;
+	private static Integer maxNumberOfResultsForAuthenticatedUser;
+	private static Integer maxNumberOfResultsForUnauthenticatedUser;
+	private static Set<Rol> objectOwnerRoles;
+	private static OperationalProfile operationalProfile;
+	private static Boolean nameserverAsDomainAttribute;
+
+	private RdapConfiguration() {
+		// no code.
 	}
 
 	static {
-
 		try (Connection con = DatabaseSession.getRdapConnection()) {
 			CountryCodeModel.loadAllFromDatabase(con);
 			ZoneModel.loadAllFromDatabase(con);
@@ -51,13 +63,6 @@ public class RdapConfiguration {
 			throw new RuntimeException(e);
 		}
 
-	}
-
-	/**
-	 * @return the systemProperties
-	 */
-	public static Properties getSystemProperties() {
-		return systemProperties;
 	}
 
 	/**
@@ -69,16 +74,6 @@ public class RdapConfiguration {
 	 */
 	public static void loadSystemProperties(Properties systemProperties) throws ObjectNotFoundException {
 		RdapConfiguration.systemProperties = systemProperties;
-	}
-
-	/**
-	 * Return the server language defined in the configuration file
-	 * 
-	 * @return
-	 */
-	public static String getServerLanguage() {
-		String lang = systemProperties.getProperty(LANGUAGE_KEY);
-		return lang.trim();
 	}
 
 	/**
@@ -98,15 +93,6 @@ public class RdapConfiguration {
 		}
 
 		return Collections.emptyList();
-	}
-
-	/**
-	 * Return the minimum search pattern length defined in configuration file
-	 * 
-	 * @return
-	 */
-	public static int getMinimumSearchPatternLength() {
-		return Integer.parseInt(systemProperties.getProperty(MINIMUN_SEARCH_PATTERN_LENGTH_KEY).trim());
 	}
 
 	/**
@@ -156,15 +142,6 @@ public class RdapConfiguration {
 		ZoneModel.setIdByZone(idByZoneForServer);
 	}
 
-	/**
-	 * Return the max number of results for the authenticated user
-	 * 
-	 * @return
-	 */
-	public static int getMaxNumberOfResultsForAuthenticatedUser() {
-		return Integer.parseInt(systemProperties.getProperty(MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER).trim());
-	}
-
 	public static void validateConfiguratedRoles() throws InvalidValueException {
 		String ownerRoles = systemProperties.getProperty(OWNER_ROLES_KEY);
 		if (ownerRoles == null) {
@@ -203,13 +180,15 @@ public class RdapConfiguration {
 			isValid = false;
 			invalidProperties.add(LANGUAGE_KEY);
 		}
+		serverLanguage = systemProperties.getProperty(LANGUAGE_KEY).trim();
 
 		if (systemProperties.getProperty(MINIMUN_SEARCH_PATTERN_LENGTH_KEY) == null) {
 			isValid = false;
 			invalidProperties.add(MINIMUN_SEARCH_PATTERN_LENGTH_KEY);
 		} else {
 			try {
-				getMinimumSearchPatternLength();
+				minimumSearchPatternLength = Integer
+						.parseInt(systemProperties.getProperty(MINIMUN_SEARCH_PATTERN_LENGTH_KEY).trim());
 			} catch (NumberFormatException e) {
 				isValid = false;
 				invalidProperties.add(MINIMUN_SEARCH_PATTERN_LENGTH_KEY);
@@ -222,7 +201,8 @@ public class RdapConfiguration {
 			invalidProperties.add(MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER);
 		} else {
 			try {
-				getMaxNumberOfResultsForAuthenticatedUser();
+				maxNumberOfResultsForAuthenticatedUser = Integer
+						.parseInt(systemProperties.getProperty(MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER).trim());
 			} catch (NumberFormatException e) {
 				isValid = false;
 				invalidProperties.add(MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER);
@@ -235,7 +215,8 @@ public class RdapConfiguration {
 			invalidProperties.add(MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER);
 		} else {
 			try {
-				getMaxNumberOfResultsForUnauthenticatedUser();
+				maxNumberOfResultsForUnauthenticatedUser = Integer
+						.parseInt(systemProperties.getProperty(MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER).trim());
 			} catch (NumberFormatException e) {
 				isValid = false;
 				invalidProperties.add(MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER);
@@ -250,30 +231,35 @@ public class RdapConfiguration {
 
 		if (systemProperties.getProperty(OPERATIONAL_PROFILE_KEY) != null) {
 			String property = systemProperties.getProperty(OPERATIONAL_PROFILE_KEY).trim();
-			
-			try{
-			OperationalProfile profile = OperationalProfile.valueOf(property.toUpperCase());
-			switch (profile) {
-			case REGISTRAR:
-				break;
-			case REGISTRY:
-				break;
-			case NONE:
-				break;
-			default:
+
+			try {
+				operationalProfile = OperationalProfile.valueOf(property.toUpperCase());
+				switch (operationalProfile) {
+				case REGISTRAR:
+					break;
+				case REGISTRY:
+					break;
+				case NONE:
+					break;
+				default:
+					isValid = false;
+					invalidProperties.add(OPERATIONAL_PROFILE_KEY);
+				}
+			} catch (IllegalArgumentException iae) {
 				isValid = false;
 				invalidProperties.add(OPERATIONAL_PROFILE_KEY);
 			}
-			}catch(IllegalArgumentException iae){
-				isValid = false;
-				invalidProperties.add(OPERATIONAL_PROFILE_KEY);
-			}
-			
+
 		}
-		if(systemProperties.getProperty(NAMESERVER_AS_DOMAIN_ATTRIBUTE_KEY)==null){
+
+		if (systemProperties.getProperty(NAMESERVER_AS_DOMAIN_ATTRIBUTE_KEY) == null) {
 			isValid = false;
 			invalidProperties.add(NAMESERVER_AS_DOMAIN_ATTRIBUTE_KEY);
+		} else {
+			nameserverAsDomainAttribute = Boolean
+					.parseBoolean(systemProperties.getProperty(NAMESERVER_AS_DOMAIN_ATTRIBUTE_KEY));
 		}
+
 		if (!isValid) {
 			InvalidValueException invalidValueException = new InvalidValueException(
 					"The following required properties were not found or are invalid values in configuration file : "
@@ -286,22 +272,70 @@ public class RdapConfiguration {
 	}
 
 	/**
+	 * Return the server language defined in the configuration file
+	 * 
+	 * @return
+	 */
+	public static String getServerLanguage() {
+		return serverLanguage;
+	}
+
+	/**
+	 * Return the minimum search pattern length defined in configuration file
+	 * 
+	 * @return
+	 */
+	public static int getMinimumSearchPatternLength() {
+		return minimumSearchPatternLength;
+	}
+
+	/**
+	 * Return the max number of results for the authenticated user
+	 * 
+	 * @return
+	 */
+	public static int getMaxNumberOfResultsForAuthenticatedUser() {
+		return maxNumberOfResultsForAuthenticatedUser;
+	}
+
+	/**
 	 * Return the max number of results for the authenticated user
 	 * 
 	 */
 	public static int getMaxNumberOfResultsForUnauthenticatedUser() {
-		return Integer.parseInt(systemProperties.getProperty(MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER).trim());
+		return maxNumberOfResultsForUnauthenticatedUser;
 	}
 
 	/**
-	 *Return the profile configurated for the server 
+	 * Return the profile configurated for the server
 	 */
 	public static OperationalProfile getServerProfile() {
-		String property = systemProperties.getProperty(OPERATIONAL_PROFILE_KEY).trim();
-		return OperationalProfile.valueOf(property.toUpperCase());
+		return operationalProfile;
 	}
-	
-	public static boolean useNameserverAsDomainAttribute(){
-		return Boolean.parseBoolean(systemProperties.getProperty(NAMESERVER_AS_DOMAIN_ATTRIBUTE_KEY));
+
+	public static boolean useNameserverAsDomainAttribute() {
+		return nameserverAsDomainAttribute;
+	}
+
+	/**
+	 * Get the max search results number allowed for the user
+	 * 
+	 * @return
+	 * @throws SQLException
+	 * @throws IOException
+	 */
+	public static Integer getMaxNumberOfResultsForUser(String username, Connection connection)
+			throws IOException, SQLException {
+		if (username != null) {
+			// Find if the user has a custom limit.
+			Integer limit = RdapUserModel.getMaxSearchResultsForAuthenticatedUser(username, connection);
+			if (limit != null && limit != 0) {
+				return limit;
+			} else {
+				// return server configuration.
+				return getMaxNumberOfResultsForAuthenticatedUser();
+			}
+		}
+		return getMaxNumberOfResultsForUnauthenticatedUser();
 	}
 }

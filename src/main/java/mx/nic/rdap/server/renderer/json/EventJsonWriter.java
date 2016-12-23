@@ -10,8 +10,8 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import mx.nic.rdap.core.db.Event;
-import mx.nic.rdap.server.PrivacyUtil;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
+import mx.nic.rdap.server.util.PrivacyUtil;
 
 public class EventJsonWriter {
 	public static JsonArray getJsonArray(List<Event> events, boolean isAuthenticated, boolean isOwner,

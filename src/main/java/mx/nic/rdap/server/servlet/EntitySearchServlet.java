@@ -13,11 +13,11 @@ import mx.nic.rdap.db.struct.SearchResultStruct;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
-import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.EntitySearchResult;
 import mx.nic.rdap.server.result.OkResult;
+import mx.nic.rdap.server.util.RdapUrlParametersUtil;
 
 @WebServlet(name = "entities", urlPatterns = { "/entities" })
 public class EntitySearchServlet extends RdapServlet {
@@ -42,10 +42,8 @@ public class EntitySearchServlet extends RdapServlet {
 		String userName = httpRequest.getRemoteUser();
 		SearchResultStruct result = new SearchResultStruct();
 
-		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUnauthenticatedUser();// Default
-
 		try (Connection connection = DatabaseSession.getRdapConnection()) {
-			resultLimit = Util.getMaxNumberOfResultsForUser(userName, connection);
+			Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(userName, connection);
 			switch (parameter) {
 			case FULL_NAME:
 				result = EntityModel.searchByVCardName(value.trim(), resultLimit, connection);
@@ -86,7 +84,7 @@ public class EntitySearchServlet extends RdapServlet {
 	}
 
 	private static void validateRequestParameter(HttpServletRequest request) throws UnprocessableEntityException {
-		Util.validateEntitySearchRequest(request, FULL_NAME, HANDLE);
+		RdapUrlParametersUtil.validateEntitySearchRequest(request, FULL_NAME, HANDLE);
 
 	}
 

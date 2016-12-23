@@ -14,8 +14,8 @@ import javax.json.JsonObjectBuilder;
 
 import mx.nic.rdap.core.db.Autnum;
 import mx.nic.rdap.db.model.CountryCodeModel;
-import mx.nic.rdap.server.PrivacyUtil;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
+import mx.nic.rdap.server.util.PrivacyUtil;
 
 public class AutnumJsonWriter {
 

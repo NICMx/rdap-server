@@ -14,12 +14,13 @@ import mx.nic.rdap.db.struct.SearchResultStruct;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
-import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.NameserverSearchResult;
 import mx.nic.rdap.server.result.OkResult;
+import mx.nic.rdap.server.util.IpUtil;
+import mx.nic.rdap.server.util.RdapUrlParametersUtil;
 
 @WebServlet(name = "nameservers", urlPatterns = { "/nameservers" })
 public class NameserverSearchServlet extends RdapServlet {
@@ -52,15 +53,13 @@ public class NameserverSearchServlet extends RdapServlet {
 		String username = httpRequest.getRemoteUser();
 		SearchResultStruct result = new SearchResultStruct();
 
-		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUnauthenticatedUser();// Default
-
 		try (Connection connection = DatabaseSession.getRdapConnection()) {
-			resultLimit = Util.getMaxNumberOfResultsForUser(username, connection);
+			Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username, connection);
 			if (request.getParameter().compareTo(NameserverSearchRequest.NAME_PARAMETER_KEY) == 0) {
 				result = NameserverModel.searchByName(request.getValue().trim(), resultLimit, connection);
 			} else {
 				String ipAddress = request.getValue().trim();
-				Util.validateIpAddress(ipAddress);
+				IpUtil.validateIpAddress(ipAddress);
 				try {
 					result = NameserverModel.searchByIp(ipAddress, resultLimit, connection);
 				} catch (InvalidValueException e) {
@@ -98,7 +97,7 @@ public class NameserverSearchServlet extends RdapServlet {
 				NameserverModel.existByName(request.getValue().trim(), connection);
 			} else {
 				String ipAddress = request.getValue().trim();
-				Util.validateIpAddress(ipAddress);
+				IpUtil.validateIpAddress(ipAddress);
 				try {
 					NameserverModel.existByIp(ipAddress, connection);
 				} catch (InvalidValueException e) {
@@ -120,11 +119,11 @@ public class NameserverSearchServlet extends RdapServlet {
 		public NameserverSearchRequest(HttpServletRequest httpRequest)
 				throws UnprocessableEntityException, MalformedRequestException {
 			super();
-			Util.validateDomainNameSearchRequest(httpRequest, IP_PARAMETER_KEY, NAME_PARAMETER_KEY);
+			RdapUrlParametersUtil.validateDomainNameSearchRequest(httpRequest, IP_PARAMETER_KEY, NAME_PARAMETER_KEY);
 			this.parameter = httpRequest.getParameterNames().nextElement();
 			this.value = httpRequest.getParameter(this.parameter);
 			if (this.parameter.equals(IP_PARAMETER_KEY)) {
-				Util.validateIpAddress(this.value);
+				IpUtil.validateIpAddress(this.value);
 			}
 			if (this.value.endsWith(".")) {
 				this.value = this.value.substring(0, this.value.length() - 1);

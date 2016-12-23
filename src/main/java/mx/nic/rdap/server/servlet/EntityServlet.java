@@ -11,11 +11,11 @@ import mx.nic.rdap.db.EntityDAO;
 import mx.nic.rdap.db.model.EntityModel;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
-import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.EntityResult;
 import mx.nic.rdap.server.result.OkResult;
+import mx.nic.rdap.server.util.RdapUrlParametersUtil;
 
 @WebServlet(name = "entity", urlPatterns = { "/entity/*" })
 public class EntityServlet extends RdapServlet {
@@ -35,9 +35,8 @@ public class EntityServlet extends RdapServlet {
 	@Override
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
-		EntityRequest request = new EntityRequest(Util.getRequestParams(httpRequest)[0]);
-		String userName = httpRequest.getRemoteUser();
-
+		EntityRequest request = new EntityRequest(RdapUrlParametersUtil.getRequestParams(httpRequest)[0]);
+		String userName = null;
 		RdapResult result = null;
 		try (Connection con = DatabaseSession.getRdapConnection()) {
 			EntityDAO entity = EntityModel.getByHandle(request.getHandle(), con);
@@ -56,7 +55,7 @@ public class EntityServlet extends RdapServlet {
 	@Override
 	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
-		EntityRequest request = new EntityRequest(Util.getRequestParams(httpRequest)[0]);
+		EntityRequest request = new EntityRequest(RdapUrlParametersUtil.getRequestParams(httpRequest)[0]);
 		try (Connection con = DatabaseSession.getRdapConnection()) {
 			EntityModel.existByHandle(request.getHandle(), con);
 		}

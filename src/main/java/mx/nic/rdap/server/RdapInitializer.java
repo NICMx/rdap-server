@@ -13,6 +13,8 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
 import mx.nic.rdap.db.exception.ObjectNotFoundException;
+import mx.nic.rdap.server.util.PrivacyUtil;
+import mx.nic.rdap.server.util.Util;
 
 @WebListener
 public class RdapInitializer implements ServletContextListener {

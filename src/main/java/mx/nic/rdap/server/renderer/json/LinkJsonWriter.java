@@ -11,8 +11,8 @@ import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
 import mx.nic.rdap.core.db.Link;
-import mx.nic.rdap.server.PrivacyUtil;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
+import mx.nic.rdap.server.util.PrivacyUtil;
 
 public class LinkJsonWriter {
 

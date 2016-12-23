@@ -16,12 +16,13 @@ import mx.nic.rdap.db.struct.SearchResultStruct;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
-import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.DomainSearchResult;
 import mx.nic.rdap.server.result.OkResult;
+import mx.nic.rdap.server.util.IpUtil;
+import mx.nic.rdap.server.util.RdapUrlParametersUtil;
 
 @WebServlet(name = "domains", urlPatterns = { "/domains" })
 public class DomainSearchServlet extends RdapServlet {
@@ -57,9 +58,8 @@ public class DomainSearchServlet extends RdapServlet {
 		SearchResultStruct result = new SearchResultStruct();
 		String username = httpRequest.getRemoteUser();
 		boolean useNameserverAsAttribute = RdapConfiguration.useNameserverAsDomainAttribute();
-		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUnauthenticatedUser();// Default
 		try (Connection connection = DatabaseSession.getRdapConnection()) {
-			resultLimit = Util.getMaxNumberOfResultsForUser(username, connection);
+			Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username, connection);
 			String domain = request.getValue();
 			if (IDN.toASCII(domain) != domain) {
 				domain = IDN.toASCII(domain);
@@ -169,11 +169,12 @@ public class DomainSearchServlet extends RdapServlet {
 		public DomainSearchRequest(HttpServletRequest httpRequest)
 				throws UnprocessableEntityException, MalformedRequestException {
 			super();
-			Util.validateDomainNameSearchRequest(httpRequest, DOMAIN_NAME, NAMESERVER_NAME, NAMESERVER_IP);
+			RdapUrlParametersUtil.validateDomainNameSearchRequest(httpRequest, DOMAIN_NAME, NAMESERVER_NAME,
+					NAMESERVER_IP);
 			this.parameter = httpRequest.getParameterNames().nextElement();
 			this.value = httpRequest.getParameter(parameter);
 			if (this.parameter.equals(NAMESERVER_IP)) {
-				Util.validateIpAddress(value);
+				IpUtil.validateIpAddress(value);
 			}
 
 			if (this.value.endsWith(".")) {

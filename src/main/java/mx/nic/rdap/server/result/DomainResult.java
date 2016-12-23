@@ -10,10 +10,10 @@ import mx.nic.rdap.db.DomainDAO;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserInfo;
-import mx.nic.rdap.server.Util;
 import mx.nic.rdap.server.catalog.OperationalProfile;
 import mx.nic.rdap.server.operational.profile.OperationalProfileValidator;
 import mx.nic.rdap.server.renderer.json.DomainJsonWriter;
+import mx.nic.rdap.server.util.Util;
 
 /**
  * A result from a Domain request
