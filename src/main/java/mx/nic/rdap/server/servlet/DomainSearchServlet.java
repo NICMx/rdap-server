@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import mx.nic.rdap.core.exception.UnprocessableEntityException;
 import mx.nic.rdap.db.exception.InvalidValueException;
 import mx.nic.rdap.db.model.DomainModel;
+import mx.nic.rdap.db.model.ZoneModel;
 import mx.nic.rdap.db.struct.SearchResultStruct;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
@@ -55,7 +56,7 @@ public class DomainSearchServlet extends RdapServlet {
 
 		SearchResultStruct result = new SearchResultStruct();
 		String username = httpRequest.getRemoteUser();
-		boolean useNameserverAsAttribute=RdapConfiguration.useNameserverAsDomainAttribute();
+		boolean useNameserverAsAttribute = RdapConfiguration.useNameserverAsDomainAttribute();
 		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUnauthenticatedUser();// Default
 		try (Connection connection = DatabaseSession.getRdapConnection()) {
 			resultLimit = Util.getMaxNumberOfResultsForUser(username, connection);
@@ -74,24 +75,29 @@ public class DomainSearchServlet extends RdapServlet {
 					}
 					String zone = split[1];
 
+					if (ZoneModel.getValidZoneIds() == null || ZoneModel.getValidZoneIds().isEmpty()) {
+						throw new RequestHandleException(501, "Not implemented yet.");
+					}
+
 					try {
-						result = DomainModel.searchByName(domain, zone, resultLimit,useNameserverAsAttribute, connection);
+						result = DomainModel.searchByName(domain, zone, resultLimit, useNameserverAsAttribute,
+								connection);
 					} catch (InvalidValueException e) {
 						e.printStackTrace();
 					}
 				} else {
 
 					// Search domain by it´s name without zone.
-					result = DomainModel.searchByName(domain, resultLimit,useNameserverAsAttribute, connection);
+					result = DomainModel.searchByName(domain, resultLimit, useNameserverAsAttribute, connection);
 				}
 				break;
 			case NAMESERVER_NAME:
 				// Gets´s domain by it´s Nameserver name
-				result = DomainModel.searchByNsLdhName(domain, resultLimit,useNameserverAsAttribute, connection);
+				result = DomainModel.searchByNsLdhName(domain, resultLimit, useNameserverAsAttribute, connection);
 				break;
 			case NAMESERVER_IP:
 				// Get´s domain by it´s Nameserver Ip
-				result = DomainModel.searchByNsIp(domain, resultLimit,useNameserverAsAttribute, connection);
+				result = DomainModel.searchByNsIp(domain, resultLimit, useNameserverAsAttribute, connection);
 				break;
 			default:
 
