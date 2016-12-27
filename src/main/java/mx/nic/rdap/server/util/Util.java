@@ -46,8 +46,6 @@ public class Util {
 		return result;
 	}
 
-	// TODO new easier to use class, maybe-----------
-
 	@SuppressWarnings("unchecked")
 	public static List<Remark> readNoticesFromFiles(String filePath) throws FileNotFoundException {
 		List<Remark> notices = new ArrayList<Remark>();
