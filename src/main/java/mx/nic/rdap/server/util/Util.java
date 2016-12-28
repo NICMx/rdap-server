@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -14,17 +16,44 @@ import java.util.List;
 import java.util.Properties;
 import java.util.stream.Stream;
 
+import javax.servlet.http.HttpServletRequest;
+
 import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.core.db.RemarkDescription;
 import mx.nic.rdap.db.RemarkDAO;
 import mx.nic.rdap.db.RemarkDescriptionDAO;
 import mx.nic.rdap.db.exception.InvalidadDataStructure;
+import mx.nic.rdap.server.exception.RequestHandleException;
 
 /**
  * Random miscellaneous functions useful anywhere.
  */
 public class Util {
+
+	/**
+	 * If the request's URI is /rdap/ip/192.0.2.0/24, then this returns
+	 * ["192.0.2.0", "24"].
+	 * 
+	 * @param request
+	 *            request you want the arguments from.
+	 * @return request arguments.
+	 * @throws RequestHandleException
+	 *             <code>request</code> is not a valid RDAP URI.
+	 * @throws UnsupportedEncodingException
+	 */
+	public static String[] getRequestParams(HttpServletRequest request)
+			throws RequestHandleException, UnsupportedEncodingException {
+		String[] labels = URLDecoder.decode(request.getRequestURI(), "UTF-8").split("/");
+
+		if (labels.length < 4) {
+			// TODO improve error message.
+			throw new RequestHandleException(404, "I need more arguments than that. Try /rdap/sample/192.0.2.1");
+		}
+
+		// resourceType = labels[2];
+		return Arrays.copyOfRange(labels, 3, labels.length);
+	}
 
 	/**
 	 * Loads the properties configuration file

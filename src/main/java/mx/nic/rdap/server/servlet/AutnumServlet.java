@@ -17,7 +17,7 @@ import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.AutnumResult;
 import mx.nic.rdap.server.result.OkResult;
-import mx.nic.rdap.server.util.RdapUrlParametersUtil;
+import mx.nic.rdap.server.util.Util;
 
 @WebServlet(name = "autnum", urlPatterns = { "/autnum/*" })
 public class AutnumServlet extends RdapServlet {
@@ -37,7 +37,7 @@ public class AutnumServlet extends RdapServlet {
 	@Override
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
-		AutnumRequest request = new AutnumRequest(RdapUrlParametersUtil.getRequestParams(httpRequest)[0]);
+		AutnumRequest request = new AutnumRequest(Util.getRequestParams(httpRequest)[0]);
 		AutnumDAO autnum = null;
 		String username = httpRequest.getRemoteUser();
 		if (RdapConfiguration.isAnonymousUsername(username)) {
@@ -59,7 +59,7 @@ public class AutnumServlet extends RdapServlet {
 	@Override
 	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
-		AutnumRequest request = new AutnumRequest(RdapUrlParametersUtil.getRequestParams(httpRequest)[0]);
+		AutnumRequest request = new AutnumRequest(Util.getRequestParams(httpRequest)[0]);
 		try (Connection con = DatabaseSession.getRdapConnection()) {
 			AutnumModel.existByRange(request.getAutnum(), con);
 		}

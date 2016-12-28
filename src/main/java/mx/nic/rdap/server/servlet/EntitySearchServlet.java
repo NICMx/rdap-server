@@ -12,12 +12,12 @@ import mx.nic.rdap.db.model.EntityModel;
 import mx.nic.rdap.db.struct.SearchResultStruct;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
+import mx.nic.rdap.server.RdapSearchRequest;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.EntitySearchResult;
 import mx.nic.rdap.server.result.OkResult;
-import mx.nic.rdap.server.util.RdapUrlParametersUtil;
 
 @WebServlet(name = "entities", urlPatterns = { "/entities" })
 public class EntitySearchServlet extends RdapServlet {
@@ -31,64 +31,102 @@ public class EntitySearchServlet extends RdapServlet {
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
 
+		RdapSearchRequest searchRequest = null;
 		try {
-			validateRequestParameter(httpRequest);
+			searchRequest = RdapSearchRequest.getSearchRequest(httpRequest, true, FULL_NAME, HANDLE);
 		} catch (UnprocessableEntityException e) {
 			throw new RequestHandleException(e.getHttpResponseStatusCode(), e.getMessage());
 		}
 
-		String parameter = httpRequest.getParameterNames().nextElement();
-		String value = httpRequest.getParameter(parameter);
 		String username = httpRequest.getRemoteUser();
 		if (RdapConfiguration.isAnonymousUsername(username)) {
 			username = null;
 		}
-		SearchResultStruct result = new SearchResultStruct();
 
-		try (Connection connection = DatabaseSession.getRdapConnection()) {
-			Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username, connection);
-			switch (parameter) {
-			case FULL_NAME:
-				result = EntityModel.searchByVCardName(value.trim(), resultLimit, connection);
-				break;
-			case HANDLE:
-				result = EntityModel.searchByHandle(value.trim(), resultLimit, connection);
-				break;
-			}
+		SearchResultStruct result = null;
+		switch (searchRequest.getType()) {
+		case PARTIAL_SEARCH:
+			result = getPartialSearch(username, searchRequest);
+			break;
+		case REGEX_SEARCH:
+			result = getRegexSearch(username, searchRequest);
+			break;
+		default:
+			throw new RequestHandleException(501, "Not implemented.");
 		}
 
 		return new EntitySearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), result, username);
 	}
 
+	private SearchResultStruct getPartialSearch(String username, RdapSearchRequest searchRequest)
+			throws SQLException, IOException {
+		SearchResultStruct result = new SearchResultStruct();
+
+		try (Connection connection = DatabaseSession.getRdapConnection()) {
+			Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username, connection);
+			switch (searchRequest.getParameterName()) {
+			case FULL_NAME:
+				result = EntityModel.searchByVCardName(searchRequest.getParameterValue().trim(), resultLimit,
+						connection);
+				break;
+			case HANDLE:
+				result = EntityModel.searchByHandle(searchRequest.getParameterValue().trim(), resultLimit, connection);
+				break;
+			}
+		}
+
+		return result;
+	}
+
+	private SearchResultStruct getRegexSearch(String username, RdapSearchRequest searchRequest)
+			throws SQLException, IOException, RequestHandleException {
+		throw new RequestHandleException(501, "Not implemented yet.");
+	}
+
 	@Override
 	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
+		RdapSearchRequest searchRequest = null;
 		try {
-			validateRequestParameter(httpRequest);
+			searchRequest = RdapSearchRequest.getSearchRequest(httpRequest, true, FULL_NAME, HANDLE);
 		} catch (UnprocessableEntityException e) {
 			throw new RequestHandleException(e.getHttpResponseStatusCode(), e.getMessage());
 		}
 
-		String parameter = httpRequest.getParameterNames().nextElement();
-		String value = httpRequest.getParameter(parameter);
+		String username = httpRequest.getRemoteUser();
+		if (RdapConfiguration.isAnonymousUsername(username)) {
+			username = null;
+		}
 
-		try (Connection connection = DatabaseSession.getRdapConnection()) {
-			switch (parameter) {
-			case FULL_NAME:
-				EntityModel.existByVCardName(value.trim(), connection);
-				break;
-			case HANDLE:
-				EntityModel.existByHandle(value.trim(), connection);
-				break;
-			}
+		switch (searchRequest.getType()) {
+		case PARTIAL_SEARCH:
+			doRdapHeadPartialSearch(searchRequest);
+			break;
+		case REGEX_SEARCH:
+			doRdapHeadRegexSearch();
+			break;
+		default:
+			throw new RequestHandleException(501, "Not implemented.");
 		}
 
 		return new OkResult();
 	}
 
-	private static void validateRequestParameter(HttpServletRequest request) throws UnprocessableEntityException {
-		RdapUrlParametersUtil.validateEntitySearchRequest(request, FULL_NAME, HANDLE);
+	private void doRdapHeadPartialSearch(RdapSearchRequest searchRequest) throws SQLException {
+		try (Connection connection = DatabaseSession.getRdapConnection()) {
+			switch (searchRequest.getParameterName()) {
+			case FULL_NAME:
+				EntityModel.existByVCardName(searchRequest.getParameterValue().trim(), connection);
+				break;
+			case HANDLE:
+				EntityModel.existByHandle(searchRequest.getParameterValue().trim(), connection);
+				break;
+			}
+		}
+	}
 
+	private void doRdapHeadRegexSearch() throws RequestHandleException {
+		throw new RequestHandleException(501, "Not implemented yet.");
 	}
 
 }

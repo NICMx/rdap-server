@@ -16,7 +16,7 @@ import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.EntityResult;
 import mx.nic.rdap.server.result.OkResult;
-import mx.nic.rdap.server.util.RdapUrlParametersUtil;
+import mx.nic.rdap.server.util.Util;
 
 @WebServlet(name = "entity", urlPatterns = { "/entity/*" })
 public class EntityServlet extends RdapServlet {
@@ -36,7 +36,7 @@ public class EntityServlet extends RdapServlet {
 	@Override
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
-		EntityRequest request = new EntityRequest(RdapUrlParametersUtil.getRequestParams(httpRequest)[0]);
+		EntityRequest request = new EntityRequest(Util.getRequestParams(httpRequest)[0]);
 		String username = httpRequest.getRemoteUser();
 		if (RdapConfiguration.isAnonymousUsername(username)) {
 			username = null;
@@ -58,7 +58,7 @@ public class EntityServlet extends RdapServlet {
 	@Override
 	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
-		EntityRequest request = new EntityRequest(RdapUrlParametersUtil.getRequestParams(httpRequest)[0]);
+		EntityRequest request = new EntityRequest(Util.getRequestParams(httpRequest)[0]);
 		try (Connection con = DatabaseSession.getRdapConnection()) {
 			EntityModel.existByHandle(request.getHandle(), con);
 		}

@@ -19,7 +19,7 @@ import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.DomainResult;
 import mx.nic.rdap.server.result.OkResult;
-import mx.nic.rdap.server.util.RdapUrlParametersUtil;
+import mx.nic.rdap.server.util.Util;
 
 @WebServlet(name = "domain", urlPatterns = { "/domain/*" })
 public class DomainServlet extends RdapServlet {
@@ -41,7 +41,7 @@ public class DomainServlet extends RdapServlet {
 			throws RequestHandleException, IOException, SQLException {
 		DomainRequest request = null;
 		try {
-			request = new DomainRequest(RdapUrlParametersUtil.getRequestParams(httpRequest)[0]);
+			request = new DomainRequest(Util.getRequestParams(httpRequest)[0]);
 		} catch (InvalidValueException | ObjectNotFoundException e) {
 			throw new ObjectNotFoundException("The RDAP server doesn't have information about the requested zone");
 		}
@@ -73,7 +73,7 @@ public class DomainServlet extends RdapServlet {
 			throws RequestHandleException, IOException, SQLException {
 		DomainRequest request = null;
 		try {
-			request = new DomainRequest(RdapUrlParametersUtil.getRequestParams(httpRequest)[0]);
+			request = new DomainRequest(Util.getRequestParams(httpRequest)[0]);
 		} catch (InvalidValueException | ObjectNotFoundException e) {
 			throw new ObjectNotFoundException("The RDAP server doesn't have information about the requested zone");
 		}

@@ -1,6 +1,7 @@
 package mx.nic.rdap.server.servlet;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -13,6 +14,7 @@ import mx.nic.rdap.db.model.NameserverModel;
 import mx.nic.rdap.db.struct.SearchResultStruct;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
+import mx.nic.rdap.server.RdapSearchRequest;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.MalformedRequestException;
@@ -20,15 +22,12 @@ import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.NameserverSearchResult;
 import mx.nic.rdap.server.result.OkResult;
 import mx.nic.rdap.server.util.IpUtil;
-import mx.nic.rdap.server.util.RdapUrlParametersUtil;
 
 @WebServlet(name = "nameservers", urlPatterns = { "/nameservers" })
 public class NameserverSearchServlet extends RdapServlet {
 	private static final long serialVersionUID = 1L;
-
-	public NameserverSearchServlet() throws IOException {
-		super();
-	}
+	private static final String IP_PARAMETER_KEY = "ip";
+	private static final String NAME_PARAMETER_KEY = "name";
 
 	/*
 	 * (non-Javadoc)
@@ -42,10 +41,12 @@ public class NameserverSearchServlet extends RdapServlet {
 		if (RdapConfiguration.useNameserverAsDomainAttribute()) {
 			throw new RequestHandleException(501, "Not implemented.");
 		}
-		NameserverSearchRequest request;
 
+		RdapSearchRequest searchRequest;
 		try {
-			request = new NameserverSearchRequest(httpRequest);
+			searchRequest = RdapSearchRequest.getSearchRequest(httpRequest, false, IP_PARAMETER_KEY,
+					NAME_PARAMETER_KEY);
+			validateSearchRequest(searchRequest);
 		} catch (UnprocessableEntityException e) {
 			throw new RequestHandleException(e.getHttpResponseStatusCode(), e.getMessage());
 		}
@@ -54,25 +55,46 @@ public class NameserverSearchServlet extends RdapServlet {
 		if (RdapConfiguration.isAnonymousUsername(username)) {
 			username = null;
 		}
-		SearchResultStruct result = new SearchResultStruct();
 
+		SearchResultStruct result = null;
+		switch (searchRequest.getType()) {
+		case PARTIAL_SEARCH:
+			result = getPartialSearch(username, searchRequest);
+			break;
+		case REGEX_SEARCH:
+			result = getRegexSearch();
+			break;
+		default:
+			throw new RequestHandleException(501, "Not implemented.");
+		}
+		return new NameserverSearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), result,
+				username);
+	}
+
+	private SearchResultStruct getPartialSearch(String username, RdapSearchRequest request)
+			throws SQLException, IOException, RequestHandleException {
+		SearchResultStruct result = new SearchResultStruct();
 		try (Connection connection = DatabaseSession.getRdapConnection()) {
 			Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username, connection);
-			if (request.getParameter().compareTo(NameserverSearchRequest.NAME_PARAMETER_KEY) == 0) {
-				result = NameserverModel.searchByName(request.getValue().trim(), resultLimit, connection);
-			} else {
-				String ipAddress = request.getValue().trim();
-				IpUtil.validateIpAddress(ipAddress);
+
+			switch (request.getParameterName()) {
+			case NAME_PARAMETER_KEY:
+				result = NameserverModel.searchByName(request.getParameterValue().trim(), resultLimit, connection);
+				break;
+			case IP_PARAMETER_KEY:
 				try {
-					result = NameserverModel.searchByIp(ipAddress, resultLimit, connection);
+					result = NameserverModel.searchByIp(request.getParameterValue().trim(), resultLimit, connection);
 				} catch (InvalidValueException e) {
 					throw new RequestHandleException(e.getMessage());
 				}
+				break;
 			}
 		}
+		return result;
+	}
 
-		return new NameserverSearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), result,
-				username);
+	private SearchResultStruct getRegexSearch() throws RequestHandleException {
+		throw new RequestHandleException(501, "Not implemented.");
 	}
 
 	/*
@@ -87,65 +109,64 @@ public class NameserverSearchServlet extends RdapServlet {
 		if (RdapConfiguration.useNameserverAsDomainAttribute()) {
 			throw new RequestHandleException(501, "Not implemented.");
 		}
-		NameserverSearchRequest request;
 
+		RdapSearchRequest searchRequest;
 		try {
-			request = new NameserverSearchRequest(httpRequest);
+			searchRequest = RdapSearchRequest.getSearchRequest(httpRequest, false, IP_PARAMETER_KEY,
+					NAME_PARAMETER_KEY);
+			validateSearchRequest(searchRequest);
 		} catch (UnprocessableEntityException e) {
 			throw new RequestHandleException(e.getHttpResponseStatusCode(), e.getMessage());
 		}
 
-		try (Connection connection = DatabaseSession.getRdapConnection()) {
-			if (request.getParameter().compareTo(NameserverSearchRequest.NAME_PARAMETER_KEY) == 0) {
-				NameserverModel.existByName(request.getValue().trim(), connection);
-			} else {
-				String ipAddress = request.getValue().trim();
-				IpUtil.validateIpAddress(ipAddress);
-				try {
-					NameserverModel.existByIp(ipAddress, connection);
-				} catch (InvalidValueException e) {
-					throw new RequestHandleException(e.getMessage());
-				}
-			}
+		switch (searchRequest.getType()) {
+		case PARTIAL_SEARCH:
+			doRdapHeadPartialSearch(searchRequest);
+			break;
+		case REGEX_SEARCH:
+			doRdapHeadRegexSearch();
+			break;
+		default:
+			throw new RequestHandleException(501, "Not implemented.");
 		}
 
 		return new OkResult();
 	}
 
-	private class NameserverSearchRequest {
-
-		public static final String IP_PARAMETER_KEY = "ip";
-		public static final String NAME_PARAMETER_KEY = "name";
-		private String parameter;
-		private String value;
-
-		public NameserverSearchRequest(HttpServletRequest httpRequest)
-				throws UnprocessableEntityException, MalformedRequestException {
-			super();
-			RdapUrlParametersUtil.validateDomainNameSearchRequest(httpRequest, IP_PARAMETER_KEY, NAME_PARAMETER_KEY);
-			this.parameter = httpRequest.getParameterNames().nextElement();
-			this.value = httpRequest.getParameter(this.parameter);
-			if (this.parameter.equals(IP_PARAMETER_KEY)) {
-				IpUtil.validateIpAddress(this.value);
+	private void doRdapHeadPartialSearch(RdapSearchRequest request)
+			throws SQLException, UnknownHostException, RequestHandleException {
+		try (Connection connection = DatabaseSession.getRdapConnection()) {
+			switch (request.getParameterName()) {
+			case NAME_PARAMETER_KEY:
+				NameserverModel.existByName(request.getParameterValue().trim(), connection);
+				break;
+			case IP_PARAMETER_KEY:
+				try {
+					NameserverModel.existByIp(request.getParameterValue().trim(), connection);
+				} catch (InvalidValueException e) {
+					throw new RequestHandleException(e.getMessage());
+				}
+				break;
 			}
-			if (this.value.endsWith(".")) {
-				this.value = this.value.substring(0, this.value.length() - 1);
-			}
-		}
 
-		/**
-		 * @return the parameter
-		 */
-		public String getParameter() {
-			return parameter;
 		}
-
-		/**
-		 * @return the value
-		 */
-		public String getValue() {
-			return value;
-		}
-
 	}
+
+	private void doRdapHeadRegexSearch() throws RequestHandleException {
+		throw new RequestHandleException(501, "Not implemented yet.");
+	}
+
+	private static void validateSearchRequest(RdapSearchRequest searchRequest) throws MalformedRequestException {
+		String parameter = searchRequest.getParameterName();
+		String value = searchRequest.getParameterValue();
+
+		if (parameter.equals(IP_PARAMETER_KEY)) {
+			IpUtil.validateIpAddress(value);
+		}
+
+		if (value.endsWith(".")) {
+			searchRequest.setParameterValue(value.substring(0, value.length() - 1));
+		}
+	}
+
 }

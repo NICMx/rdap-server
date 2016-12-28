@@ -2,6 +2,7 @@ package mx.nic.rdap.server.servlet;
 
 import java.io.IOException;
 import java.net.IDN;
+import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -15,6 +16,7 @@ import mx.nic.rdap.db.model.ZoneModel;
 import mx.nic.rdap.db.struct.SearchResultStruct;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
+import mx.nic.rdap.server.RdapSearchRequest;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.MalformedRequestException;
@@ -22,22 +24,17 @@ import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.DomainSearchResult;
 import mx.nic.rdap.server.result.OkResult;
 import mx.nic.rdap.server.util.IpUtil;
-import mx.nic.rdap.server.util.RdapUrlParametersUtil;
 
 @WebServlet(name = "domains", urlPatterns = { "/domains" })
 public class DomainSearchServlet extends RdapServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	public final String DOMAIN_NAME = "name";
+	public final static String DOMAIN_NAME = "name";
 
-	public final String NAMESERVER_NAME = "nsLdhName";
+	public final static String NAMESERVER_NAME = "nsLdhName";
 
-	public final String NAMESERVER_IP = "nsIp";
-
-	public DomainSearchServlet() throws IOException {
-		super();
-	}
+	public final static String NAMESERVER_IP = "nsIp";
 
 	/*
 	 * (non-Javadoc)
@@ -48,31 +45,51 @@ public class DomainSearchServlet extends RdapServlet {
 	@Override
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
-		DomainSearchRequest request;
+		RdapSearchRequest searchRequest;
 		try {
-			request = new DomainSearchRequest(httpRequest);
+			searchRequest = RdapSearchRequest.getSearchRequest(httpRequest, false, DOMAIN_NAME, NAMESERVER_IP,
+					NAMESERVER_NAME);
+			validateSearchRequest(searchRequest);
 		} catch (UnprocessableEntityException e) {
 			throw new RequestHandleException(e.getHttpResponseStatusCode(), e.getMessage());
 		}
 
-		SearchResultStruct result = new SearchResultStruct();
 		String username = httpRequest.getRemoteUser();
 		if (RdapConfiguration.isAnonymousUsername(username)) {
 			username = null;
 		}
 
+		SearchResultStruct result = null;
+		switch (searchRequest.getType()) {
+		case PARTIAL_SEARCH:
+			result = getPartialSearch(username, searchRequest);
+			break;
+		case REGEX_SEARCH:
+			result = getRegexSearch(username, searchRequest);
+			break;
+		default:
+			throw new RequestHandleException(501, "Not implemented.");
+		}
+
+		return new DomainSearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), result, username);
+	}
+
+	private SearchResultStruct getPartialSearch(String username, RdapSearchRequest request)
+			throws RequestHandleException, SQLException, IOException {
+		SearchResultStruct result = new SearchResultStruct();
 		boolean useNameserverAsAttribute = RdapConfiguration.useNameserverAsDomainAttribute();
 		try (Connection connection = DatabaseSession.getRdapConnection()) {
 			Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username, connection);
-			String domain = request.getValue();
+
+			String domain = request.getParameterValue();
 			if (IDN.toASCII(domain) != domain) {
 				domain = IDN.toASCII(domain);
 			}
-			switch (request.getParameter()) {
+			switch (request.getParameterName()) {
 			case DOMAIN_NAME:
 				// Gets domain by its name with zone
-				if (request.getValue().contains(".")) {
-					String[] split = request.getValue().split("\\.", 2);
+				if (request.getParameterValue().contains(".")) {
+					String[] split = request.getParameterValue().split("\\.", 2);
 					domain = split[0];
 					if (IDN.toASCII(domain) != domain) {
 						domain = IDN.toASCII(domain);
@@ -80,6 +97,9 @@ public class DomainSearchServlet extends RdapServlet {
 					String zone = split[1];
 
 					if (ZoneModel.getValidZoneIds() == null || ZoneModel.getValidZoneIds().isEmpty()) {
+						// If there are no available zones is valid, because the
+						// rdap could only respond to autnum and ip networks
+						// (RIR).
 						throw new RequestHandleException(501, "Not implemented yet.");
 					}
 
@@ -104,13 +124,18 @@ public class DomainSearchServlet extends RdapServlet {
 				result = DomainModel.searchByNsIp(domain, resultLimit, useNameserverAsAttribute, connection);
 				break;
 			default:
-
-				break;
+				throw new RequestHandleException(501, "Not implemented.");
 			}
 
 		}
 
-		return new DomainSearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), result, username);
+		return result;
+
+	}
+
+	private SearchResultStruct getRegexSearch(String username, RdapSearchRequest request)
+			throws RequestHandleException {
+		throw new RequestHandleException(501, "Not implemented yet.");
 	}
 
 	/*
@@ -122,22 +147,46 @@ public class DomainSearchServlet extends RdapServlet {
 	@Override
 	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
-		DomainSearchRequest request;
+		RdapSearchRequest searchRequest;
 		try {
-			request = new DomainSearchRequest(httpRequest);
+			searchRequest = RdapSearchRequest.getSearchRequest(httpRequest, false, DOMAIN_NAME, NAMESERVER_IP,
+					NAMESERVER_NAME);
+			validateSearchRequest(searchRequest);
 		} catch (UnprocessableEntityException e) {
 			throw new RequestHandleException(e.getHttpResponseStatusCode(), e.getMessage());
 		}
-		String domain = request.getValue();
+
+		String username = httpRequest.getRemoteUser();
+		if (RdapConfiguration.isAnonymousUsername(username)) {
+			username = null;
+		}
+
+		switch (searchRequest.getType()) {
+		case PARTIAL_SEARCH:
+			doRdapHeadPartialSearch(searchRequest);
+			break;
+		case REGEX_SEARCH:
+			doRdapHeadRegexSearch();
+			break;
+		default:
+			throw new RequestHandleException(501, "Not implemented.");
+		}
+
+		return new OkResult();
+
+	}
+
+	private void doRdapHeadPartialSearch(RdapSearchRequest request) throws SQLException, UnknownHostException {
+		String domain = request.getParameterValue();
 		if (IDN.toASCII(domain) != domain) {
 			domain = IDN.toASCII(domain);
 		}
 		try (Connection connection = DatabaseSession.getRdapConnection()) {
-			switch (request.getParameter()) {
+			switch (request.getParameterName()) {
 			case DOMAIN_NAME:
 				// Gets domain by its name with zone
-				if (request.getValue().contains(".")) {
-					String[] split = request.getValue().split("\\.", 2);
+				if (request.getParameterValue().contains(".")) {
+					String[] split = request.getParameterValue().split("\\.", 2);
 					domain = split[0];
 					domain = IDN.toASCII(domain);
 					String zone = split[1];
@@ -160,40 +209,23 @@ public class DomainSearchServlet extends RdapServlet {
 			}
 
 		}
-
-		return new OkResult();
 	}
 
-	private class DomainSearchRequest {
+	private void doRdapHeadRegexSearch() throws RequestHandleException {
+		throw new RequestHandleException(501, "Not implemented yet.");
+	}
 
-		private String parameter;
+	private static void validateSearchRequest(RdapSearchRequest searchRequest) throws MalformedRequestException {
+		String parameter = searchRequest.getParameterName();
+		String value = searchRequest.getParameterValue();
 
-		private String value;
-
-		public DomainSearchRequest(HttpServletRequest httpRequest)
-				throws UnprocessableEntityException, MalformedRequestException {
-			super();
-			RdapUrlParametersUtil.validateDomainNameSearchRequest(httpRequest, DOMAIN_NAME, NAMESERVER_NAME,
-					NAMESERVER_IP);
-			this.parameter = httpRequest.getParameterNames().nextElement();
-			this.value = httpRequest.getParameter(parameter);
-			if (this.parameter.equals(NAMESERVER_IP)) {
-				IpUtil.validateIpAddress(value);
-			}
-
-			if (this.value.endsWith(".")) {
-				this.value = this.value.substring(0, this.value.length() - 1);
-			}
+		if (parameter.equals(NAMESERVER_IP)) {
+			IpUtil.validateIpAddress(value);
 		}
 
-		public String getParameter() {
-			return parameter;
+		if (value.endsWith(".")) {
+			searchRequest.setParameterValue(value.substring(0, value.length() - 1));
 		}
-
-		public String getValue() {
-			return value;
-		}
-
 	}
 
 }
