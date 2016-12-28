@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.db.EntityDAO;
 import mx.nic.rdap.db.model.EntityModel;
+import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.db.DatabaseSession;
@@ -36,14 +37,16 @@ public class EntityServlet extends RdapServlet {
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
 		EntityRequest request = new EntityRequest(RdapUrlParametersUtil.getRequestParams(httpRequest)[0]);
-		String userName = null;
-		RdapResult result = null;
+		String username = httpRequest.getRemoteUser();
+		if (RdapConfiguration.isAnonymousUsername(username)) {
+			username = null;
+		}
+		EntityDAO entity = null;
 		try (Connection con = DatabaseSession.getRdapConnection()) {
-			EntityDAO entity = EntityModel.getByHandle(request.getHandle(), con);
-			result = new EntityResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), entity, userName);
+			entity = EntityModel.getByHandle(request.getHandle(), con);
 
 		}
-		return result;
+		return new EntityResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), entity, username);
 	}
 
 	/*

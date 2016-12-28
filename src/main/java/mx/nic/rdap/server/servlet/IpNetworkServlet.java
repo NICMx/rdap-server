@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import mx.nic.rdap.core.db.IpNetwork;
 import mx.nic.rdap.db.IpNetworkDAO;
 import mx.nic.rdap.db.model.IpNetworkModel;
+import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.db.DatabaseSession;
@@ -39,23 +40,25 @@ public class IpNetworkServlet extends RdapServlet {
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
 		IpRequest request = new IpRequest(RdapUrlParametersUtil.getRequestParams(httpRequest));
-		String userName = httpRequest.getRemoteUser();
+		String username = httpRequest.getRemoteUser();
+		if (RdapConfiguration.isAnonymousUsername(username)) {
+			username = null;
+		}
 
-		RdapResult result = null;
+		IpNetwork ipNetwork = null;
 		try (Connection con = DatabaseSession.getRdapConnection()) {
-			IpNetwork ipNetwork = null;
 			if (request.hasCidr()) {
 				ipNetwork = IpNetworkModel.getByInetAddress(request.getIp(), request.getCidr(), con);
 			} else {
 				ipNetwork = IpNetworkModel.getByInetAddress(request.getIp(), con);
 			}
-			result = new IpResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), (IpNetworkDAO) ipNetwork,
-					userName);
 
 		} catch (UnknownHostException e) {
 			throw new MalformedRequestException("Invalid IP address", e);
 		}
-		return result;
+
+		return new IpResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), (IpNetworkDAO) ipNetwork,
+				username);
 	}
 
 	/*

@@ -41,6 +41,7 @@ public class RdapConfiguration {
 	private static final String IS_REVERSE_IPV6_ENABLED_KEY = "is_reverse_ipv6_enabled";
 	private static final String OPERATIONAL_PROFILE_KEY = "operational_profile";
 	private static final String NAMESERVER_AS_DOMAIN_ATTRIBUTE_KEY = "nameserver_as_domain_attribute";
+	private static final String ANONYMOUS_USERNAME_KEY = "anonymous_username";
 
 	// Settings values
 	private static String serverLanguage;
@@ -50,6 +51,7 @@ public class RdapConfiguration {
 	private static Set<Rol> objectOwnerRoles;
 	private static OperationalProfile operationalProfile;
 	private static Boolean nameserverAsDomainAttribute;
+	private static String anonymousUsername;
 
 	private RdapConfiguration() {
 		// no code.
@@ -260,6 +262,13 @@ public class RdapConfiguration {
 					.parseBoolean(systemProperties.getProperty(NAMESERVER_AS_DOMAIN_ATTRIBUTE_KEY));
 		}
 
+		if (systemProperties.getProperty(ANONYMOUS_USERNAME_KEY) == null) {
+			isValid = false;
+			invalidProperties.add(ANONYMOUS_USERNAME_KEY);
+		} else {
+			anonymousUsername = systemProperties.getProperty(ANONYMOUS_USERNAME_KEY).trim();
+		}
+
 		if (!isValid) {
 			InvalidValueException invalidValueException = new InvalidValueException(
 					"The following required properties were not found or are invalid values in configuration file : "
@@ -272,27 +281,21 @@ public class RdapConfiguration {
 	}
 
 	/**
-	 * Return the server language defined in the configuration file
-	 * 
-	 * @return
+	 * @return the server language defined in the configuration file
 	 */
 	public static String getServerLanguage() {
 		return serverLanguage;
 	}
 
 	/**
-	 * Return the minimum search pattern length defined in configuration file
-	 * 
-	 * @return
+	 * @return the minimum search pattern length defined in configuration file
 	 */
 	public static int getMinimumSearchPatternLength() {
 		return minimumSearchPatternLength;
 	}
 
 	/**
-	 * Return the max number of results for the authenticated user
-	 * 
-	 * @return
+	 * @return the max number of results for the authenticated user
 	 */
 	public static int getMaxNumberOfResultsForAuthenticatedUser() {
 		return maxNumberOfResultsForAuthenticatedUser;
@@ -337,5 +340,15 @@ public class RdapConfiguration {
 			}
 		}
 		return getMaxNumberOfResultsForUnauthenticatedUser();
+	}
+
+	/**
+	 * @param username
+	 *            username to evaluate if it is an anonymous username
+	 * @return <code>true</code> if username is anonymous or null, otherwise
+	 *         <code>false</code>
+	 */
+	public static boolean isAnonymousUsername(String username) {
+		return (username == null || anonymousUsername.equalsIgnoreCase(username));
 	}
 }

@@ -57,6 +57,10 @@ public class DomainSearchServlet extends RdapServlet {
 
 		SearchResultStruct result = new SearchResultStruct();
 		String username = httpRequest.getRemoteUser();
+		if (RdapConfiguration.isAnonymousUsername(username)) {
+			username = null;
+		}
+
 		boolean useNameserverAsAttribute = RdapConfiguration.useNameserverAsDomainAttribute();
 		try (Connection connection = DatabaseSession.getRdapConnection()) {
 			Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username, connection);

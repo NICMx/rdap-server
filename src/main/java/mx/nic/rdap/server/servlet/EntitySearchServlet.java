@@ -39,11 +39,14 @@ public class EntitySearchServlet extends RdapServlet {
 
 		String parameter = httpRequest.getParameterNames().nextElement();
 		String value = httpRequest.getParameter(parameter);
-		String userName = httpRequest.getRemoteUser();
+		String username = httpRequest.getRemoteUser();
+		if (RdapConfiguration.isAnonymousUsername(username)) {
+			username = null;
+		}
 		SearchResultStruct result = new SearchResultStruct();
 
 		try (Connection connection = DatabaseSession.getRdapConnection()) {
-			Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(userName, connection);
+			Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username, connection);
 			switch (parameter) {
 			case FULL_NAME:
 				result = EntityModel.searchByVCardName(value.trim(), resultLimit, connection);
@@ -54,7 +57,7 @@ public class EntitySearchServlet extends RdapServlet {
 			}
 		}
 
-		return new EntitySearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), result, userName);
+		return new EntitySearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), result, username);
 	}
 
 	@Override

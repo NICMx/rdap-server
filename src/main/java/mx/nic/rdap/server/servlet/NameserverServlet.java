@@ -41,11 +41,16 @@ public class NameserverServlet extends RdapServlet {
 		}
 		NameserverRequest request = new NameserverRequest(RdapUrlParametersUtil.getRequestParams(httpRequest)[0]);
 		NameserverDAO nameserver = null;
-		String userName = httpRequest.getRemoteUser();
+
+		String username = httpRequest.getRemoteUser();
+		if (RdapConfiguration.isAnonymousUsername(username)) {
+			username = null;
+		}
+
 		try (Connection con = DatabaseSession.getRdapConnection()) {
 			nameserver = NameserverModel.findByName(request.getName(), con);
 		}
-		return new NameserverResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), nameserver, userName);
+		return new NameserverResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), nameserver, username);
 	}
 
 	/*

@@ -51,6 +51,9 @@ public class NameserverSearchServlet extends RdapServlet {
 		}
 
 		String username = httpRequest.getRemoteUser();
+		if (RdapConfiguration.isAnonymousUsername(username)) {
+			username = null;
+		}
 		SearchResultStruct result = new SearchResultStruct();
 
 		try (Connection connection = DatabaseSession.getRdapConnection()) {

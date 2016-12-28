@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.db.AutnumDAO;
 import mx.nic.rdap.db.model.AutnumModel;
+import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.db.DatabaseSession;
@@ -39,6 +40,9 @@ public class AutnumServlet extends RdapServlet {
 		AutnumRequest request = new AutnumRequest(RdapUrlParametersUtil.getRequestParams(httpRequest)[0]);
 		AutnumDAO autnum = null;
 		String username = httpRequest.getRemoteUser();
+		if (RdapConfiguration.isAnonymousUsername(username)) {
+			username = null;
+		}
 
 		try (Connection con = DatabaseSession.getRdapConnection()) {
 			autnum = AutnumModel.getByRange(request.getAutnum(), con);
