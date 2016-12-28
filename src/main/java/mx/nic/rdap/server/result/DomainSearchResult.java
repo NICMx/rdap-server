@@ -16,7 +16,6 @@ import mx.nic.rdap.core.catalog.RemarkType;
 import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.core.db.RdapObject;
 import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.db.DomainDAO;
 import mx.nic.rdap.db.struct.SearchResultStruct;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
@@ -31,7 +30,7 @@ import mx.nic.rdap.server.util.Util;
  */
 public class DomainSearchResult extends RdapResult {
 
-	private List<DomainDAO> domains;
+	private List<Domain> domains;
 	// The max number of results allowed for the user
 	private Integer maxNumberOfResultsForUser;
 	// Indicate is the search has more results than the answered to the user
@@ -40,14 +39,12 @@ public class DomainSearchResult extends RdapResult {
 	public DomainSearchResult(String header, String contextPath, SearchResultStruct result, String userName)
 			throws FileNotFoundException {
 		notices = new ArrayList<Remark>();
-		this.domains = new ArrayList<DomainDAO>();
+		this.domains = new ArrayList<Domain>();
 		this.userInfo = new UserInfo(userName);
 		this.setMaxNumberOfResultsForUser(result.getSearchResultsLimitForUser());
 		this.resultSetWasLimitedByUserConfiguration = result.getResultSetWasLimitedByUserConfiguration();
 		for (RdapObject domain : result.getResults()) {
-			DomainDAO dao = (DomainDAO) domain;
-			domains.add(dao);
-			dao.addSelfLinks(header, contextPath);
+			DomainResult.addSelfLinks(header, contextPath, (Domain) domain);
 		}
 	}
 
@@ -102,11 +99,11 @@ public class DomainSearchResult extends RdapResult {
 		}
 	}
 
-	public List<DomainDAO> getDomains() {
+	public List<Domain> getDomains() {
 		return domains;
 	}
 
-	public void setDomains(List<DomainDAO> domains) {
+	public void setDomains(List<Domain> domains) {
 		this.domains = domains;
 	}
 

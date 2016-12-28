@@ -6,8 +6,9 @@ import java.util.ArrayList;
 import javax.json.JsonObject;
 
 import mx.nic.rdap.core.db.Entity;
+import mx.nic.rdap.core.db.IpNetwork;
 import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.db.EntityDAO;
+import mx.nic.rdap.db.LinkDAO;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserInfo;
@@ -20,14 +21,14 @@ import mx.nic.rdap.server.renderer.json.EntityJsonWriter;
  */
 public class EntityResult extends RdapResult {
 
-	private EntityDAO entity;
+	private Entity entity;
 
-	public EntityResult(String header, String contextPath, EntityDAO entity, String userName)
+	public EntityResult(String header, String contextPath, Entity entity, String userName)
 			throws FileNotFoundException {
 		notices = new ArrayList<Remark>();
 		this.entity = entity;
 		this.userInfo = new UserInfo(userName);
-		this.entity.addSelfLinks(header, contextPath);
+		addSelfLinks(header, contextPath, entity);
 		validateResponse();
 	}
 
@@ -68,4 +69,24 @@ public class EntityResult extends RdapResult {
 			}
 		}
 	}
+
+	/**
+	 * Generates a link with the self information and add it to the domain and
+	 * it's attributes
+	 */
+	public static void addSelfLinks(String header, String contextPath, Entity entity) {
+		LinkDAO self = new LinkDAO(header, contextPath, "entity", entity.getHandle());
+		entity.getLinks().add(self);
+
+		for (Entity ent : entity.getEntities()) {
+			self = new LinkDAO(header, contextPath, "entity", ent.getHandle());
+			ent.getLinks().add(self);
+		}
+
+		for (IpNetwork ip : entity.getIpNetworks()) {
+			self = new LinkDAO(header, contextPath, "ip", ip.getStartAddress().getHostAddress() + "/" + ip.getCidr());
+			ip.getLinks().add(self);
+		}
+	}
+
 }

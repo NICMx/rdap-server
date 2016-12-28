@@ -41,9 +41,7 @@ public class EntitySearchResult extends RdapResult {
 		this.setMaxNumberOfResultsForUser(result.getSearchResultsLimitForUser());
 		this.resultSetWasLimitedByUserConfiguration = result.getResultSetWasLimitedByUserConfiguration();
 		for (RdapObject entity : result.getResults()) {
-			EntityDAO dao = (EntityDAO) entity;
-			entities.add(dao);
-			dao.addSelfLinks(header, contextPath);
+			EntityResult.addSelfLinks(header, contextPath, (Entity) entity);
 		}
 		validateResponse();
 	}

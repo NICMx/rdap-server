@@ -7,8 +7,9 @@ import java.io.FileNotFoundException;
 
 import javax.json.JsonObject;
 
+import mx.nic.rdap.core.db.Autnum;
 import mx.nic.rdap.core.db.Entity;
-import mx.nic.rdap.db.AutnumDAO;
+import mx.nic.rdap.db.LinkDAO;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserInfo;
@@ -18,13 +19,13 @@ import mx.nic.rdap.server.renderer.json.AutnumJsonWriter;
 
 public class AutnumResult extends RdapResult {
 
-	private AutnumDAO autnum;
+	private Autnum autnum;
 
-	public AutnumResult(String header, String contextPath, AutnumDAO autnum, String username)
+	public AutnumResult(String header, String contextPath, Autnum autnum, String username)
 			throws FileNotFoundException {
 		this.autnum = autnum;
 		this.userInfo = new UserInfo(username);
-		this.autnum.addSelfLinks(header, contextPath);
+		addSelfLinks(header, contextPath, autnum);
 		validateResponse();
 	}
 
@@ -62,6 +63,19 @@ public class AutnumResult extends RdapResult {
 					OperationalProfileValidator.validateEntityTel(ent);
 				}
 			}
+		}
+	}
+
+	/**
+	 * Generates a link with the self information and add it to the domain
+	 */
+	private static void addSelfLinks(String header, String contextPath, Autnum autnum) {
+		LinkDAO self = new LinkDAO(header, contextPath, "autnum", autnum.getStartAutnum().toString());
+		autnum.getLinks().add(self);
+
+		for (Entity ent : autnum.getEntities()) {
+			self = new LinkDAO(header, contextPath, "entity", ent.getHandle());
+			ent.getLinks().add(self);
 		}
 	}
 

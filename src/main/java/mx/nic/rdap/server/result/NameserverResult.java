@@ -6,8 +6,9 @@ import java.util.ArrayList;
 import javax.json.JsonObject;
 
 import mx.nic.rdap.core.db.Entity;
+import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.db.NameserverDAO;
+import mx.nic.rdap.db.LinkDAO;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserInfo;
@@ -20,14 +21,14 @@ import mx.nic.rdap.server.renderer.json.NameserverJsonWriter;
  */
 public class NameserverResult extends RdapResult {
 
-	private NameserverDAO nameserver;
+	private Nameserver nameserver;
 
-	public NameserverResult(String header, String contextPath, NameserverDAO nameserver, String userName)
+	public NameserverResult(String header, String contextPath, Nameserver nameserver, String userName)
 			throws FileNotFoundException {
 		notices = new ArrayList<Remark>();
 		this.nameserver = nameserver;
 		this.userInfo = new UserInfo(userName);
-		this.nameserver.addSelfLinks(header, contextPath);
+		addSelfLinks(header, contextPath, nameserver);
 
 	}
 
@@ -68,6 +69,21 @@ public class NameserverResult extends RdapResult {
 		}
 		if (RdapConfiguration.getServerProfile().equals(OperationalProfile.REGISTRY)) {
 			OperationalProfileValidator.validateNameserverName(nameserver);
+		}
+	}
+
+	/**
+	 * Generates a link with the self information and add it to the domain
+	 * 
+	 * @param nameserver
+	 */
+	public static void addSelfLinks(String header, String contextPath, Nameserver nameserver) {
+		LinkDAO self = new LinkDAO(header, contextPath, "nameserver", nameserver.getLdhName());
+		nameserver.getLinks().add(self);
+
+		for (Entity ent : nameserver.getEntities()) {
+			self = new LinkDAO(header, contextPath, "entity", ent.getHandle());
+			ent.getLinks().add(self);
 		}
 	}
 }
