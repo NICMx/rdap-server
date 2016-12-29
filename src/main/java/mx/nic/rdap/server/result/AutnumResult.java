@@ -9,7 +9,7 @@ import javax.json.JsonObject;
 
 import mx.nic.rdap.core.db.Autnum;
 import mx.nic.rdap.core.db.Entity;
-import mx.nic.rdap.db.LinkDAO;
+import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserInfo;
@@ -70,11 +70,11 @@ public class AutnumResult extends RdapResult {
 	 * Generates a link with the self information and add it to the domain
 	 */
 	private static void addSelfLinks(String header, String contextPath, Autnum autnum) {
-		LinkDAO self = new LinkDAO(header, contextPath, "autnum", autnum.getStartAutnum().toString());
+		Link self = new Link(header, contextPath, "autnum", autnum.getStartAutnum().toString());
 		autnum.getLinks().add(self);
 
 		for (Entity ent : autnum.getEntities()) {
-			self = new LinkDAO(header, contextPath, "entity", ent.getHandle());
+			self = new Link(header, contextPath, "entity", ent.getHandle());
 			ent.getLinks().add(self);
 		}
 	}

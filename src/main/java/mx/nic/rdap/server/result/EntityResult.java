@@ -7,8 +7,8 @@ import javax.json.JsonObject;
 
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.IpNetwork;
+import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.db.LinkDAO;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserInfo;
@@ -75,16 +75,16 @@ public class EntityResult extends RdapResult {
 	 * it's attributes
 	 */
 	public static void addSelfLinks(String header, String contextPath, Entity entity) {
-		LinkDAO self = new LinkDAO(header, contextPath, "entity", entity.getHandle());
+		Link self = new Link(header, contextPath, "entity", entity.getHandle());
 		entity.getLinks().add(self);
 
 		for (Entity ent : entity.getEntities()) {
-			self = new LinkDAO(header, contextPath, "entity", ent.getHandle());
+			self = new Link(header, contextPath, "entity", ent.getHandle());
 			ent.getLinks().add(self);
 		}
 
 		for (IpNetwork ip : entity.getIpNetworks()) {
-			self = new LinkDAO(header, contextPath, "ip", ip.getStartAddress().getHostAddress() + "/" + ip.getCidr());
+			self = new Link(header, contextPath, "ip", ip.getStartAddress().getHostAddress() + "/" + ip.getCidr());
 			ip.getLinks().add(self);
 		}
 	}

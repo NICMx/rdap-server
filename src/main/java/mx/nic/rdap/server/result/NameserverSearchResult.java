@@ -14,7 +14,6 @@ import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.RdapObject;
 import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.db.NameserverDAO;
 import mx.nic.rdap.db.struct.SearchResultStruct;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
@@ -28,7 +27,7 @@ import mx.nic.rdap.server.renderer.json.NameserverJsonWriter;
  */
 public class NameserverSearchResult extends RdapResult {
 
-	private List<NameserverDAO> nameservers;
+	private List<Nameserver> nameservers;
 	// The max number of results allowed for the user
 	private Integer maxNumberOfResultsForUser;
 	// Indicate is the search has more results than the answered to the user
@@ -37,7 +36,7 @@ public class NameserverSearchResult extends RdapResult {
 	public NameserverSearchResult(String header, String contextPath, SearchResultStruct result, String userName)
 			throws FileNotFoundException {
 		notices = new ArrayList<Remark>();
-		this.nameservers = new ArrayList<NameserverDAO>();
+		this.nameservers = new ArrayList<Nameserver>();
 		this.userInfo = new UserInfo(userName);
 		this.setMaxNumberOfResultsForUser(result.getSearchResultsLimitForUser());
 		this.resultSetWasLimitedByUserConfiguration = result.getResultSetWasLimitedByUserConfiguration();

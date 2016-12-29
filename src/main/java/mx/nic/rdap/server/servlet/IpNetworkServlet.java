@@ -9,7 +9,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.core.db.IpNetwork;
-import mx.nic.rdap.db.IpNetworkDAO;
 import mx.nic.rdap.db.model.IpNetworkModel;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
@@ -57,8 +56,7 @@ public class IpNetworkServlet extends RdapServlet {
 			throw new MalformedRequestException("Invalid IP address", e);
 		}
 
-		return new IpResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), (IpNetworkDAO) ipNetwork,
-				username);
+		return new IpResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), ipNetwork, username);
 	}
 
 	/*

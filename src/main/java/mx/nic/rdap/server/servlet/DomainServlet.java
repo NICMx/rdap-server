@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
-import mx.nic.rdap.db.DomainDAO;
+import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.db.exception.InvalidValueException;
 import mx.nic.rdap.db.exception.ObjectNotFoundException;
 import mx.nic.rdap.db.model.DomainModel;
@@ -49,7 +49,7 @@ public class DomainServlet extends RdapServlet {
 		if (RdapConfiguration.isAnonymousUsername(username)) {
 			username = null;
 		}
-		DomainDAO domain = null;
+		Domain domain = null;
 		try (Connection con = DatabaseSession.getRdapConnection()) {
 			try {
 				domain = DomainModel.findByLdhName(request.getDomainName(), request.getZoneId(),

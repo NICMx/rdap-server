@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
-import mx.nic.rdap.db.EntityDAO;
+import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.db.model.EntityModel;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
@@ -41,7 +41,7 @@ public class EntityServlet extends RdapServlet {
 		if (RdapConfiguration.isAnonymousUsername(username)) {
 			username = null;
 		}
-		EntityDAO entity = null;
+		Entity entity = null;
 		try (Connection con = DatabaseSession.getRdapConnection()) {
 			entity = EntityModel.getByHandle(request.getHandle(), con);
 

@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
-import mx.nic.rdap.db.AutnumDAO;
+import mx.nic.rdap.core.db.Autnum;
 import mx.nic.rdap.db.model.AutnumModel;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
@@ -38,7 +38,7 @@ public class AutnumServlet extends RdapServlet {
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
 		AutnumRequest request = new AutnumRequest(Util.getRequestParams(httpRequest)[0]);
-		AutnumDAO autnum = null;
+		Autnum autnum = null;
 		String username = httpRequest.getRemoteUser();
 		if (RdapConfiguration.isAnonymousUsername(username)) {
 			username = null;

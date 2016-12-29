@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
-import mx.nic.rdap.db.NameserverDAO;
+import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.db.model.NameserverModel;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
@@ -40,7 +40,7 @@ public class NameserverServlet extends RdapServlet {
 			throw new RequestHandleException(501, "Not implemented.");
 		}
 		NameserverRequest request = new NameserverRequest(Util.getRequestParams(httpRequest)[0]);
-		NameserverDAO nameserver = null;
+		Nameserver nameserver = null;
 
 		String username = httpRequest.getRemoteUser();
 		if (RdapConfiguration.isAnonymousUsername(username)) {

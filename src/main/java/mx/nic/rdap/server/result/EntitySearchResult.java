@@ -13,7 +13,6 @@ import mx.nic.rdap.core.catalog.RemarkType;
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.RdapObject;
 import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.db.EntityDAO;
 import mx.nic.rdap.db.struct.SearchResultStruct;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
@@ -27,7 +26,7 @@ import mx.nic.rdap.server.renderer.json.EntityJsonWriter;
  */
 public class EntitySearchResult extends RdapResult {
 
-	private List<EntityDAO> entities;
+	private List<Entity> entities;
 	// The max number of results allowed for the user
 	private Integer maxNumberOfResultsForUser;
 	// Indicate is the search has more results than the answered to the user
@@ -36,7 +35,7 @@ public class EntitySearchResult extends RdapResult {
 	public EntitySearchResult(String header, String contextPath, SearchResultStruct result, String userName)
 			throws FileNotFoundException {
 		notices = new ArrayList<Remark>();
-		this.entities = new ArrayList<EntityDAO>();
+		this.entities = new ArrayList<Entity>();
 		this.userInfo = new UserInfo(userName);
 		this.setMaxNumberOfResultsForUser(result.getSearchResultsLimitForUser());
 		this.resultSetWasLimitedByUserConfiguration = result.getResultSetWasLimitedByUserConfiguration();
@@ -93,11 +92,11 @@ public class EntitySearchResult extends RdapResult {
 		}
 	}
 
-	public List<EntityDAO> getEntities() {
+	public List<Entity> getEntities() {
 		return entities;
 	}
 
-	public void setEntities(List<EntityDAO> entities) {
+	public void setEntities(List<Entity> entities) {
 		this.entities = entities;
 	}
 

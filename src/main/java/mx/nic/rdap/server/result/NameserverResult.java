@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import javax.json.JsonObject;
 
 import mx.nic.rdap.core.db.Entity;
+import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.db.LinkDAO;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserInfo;
@@ -78,11 +78,11 @@ public class NameserverResult extends RdapResult {
 	 * @param nameserver
 	 */
 	public static void addSelfLinks(String header, String contextPath, Nameserver nameserver) {
-		LinkDAO self = new LinkDAO(header, contextPath, "nameserver", nameserver.getLdhName());
+		Link self = new Link(header, contextPath, "nameserver", nameserver.getLdhName());
 		nameserver.getLinks().add(self);
 
 		for (Entity ent : nameserver.getEntities()) {
-			self = new LinkDAO(header, contextPath, "entity", ent.getHandle());
+			self = new Link(header, contextPath, "entity", ent.getHandle());
 			ent.getLinks().add(self);
 		}
 	}

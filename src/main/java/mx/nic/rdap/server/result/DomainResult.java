@@ -7,9 +7,9 @@ import javax.json.JsonObject;
 
 import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.core.db.Entity;
+import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.db.LinkDAO;
 import mx.nic.rdap.db.model.ZoneModel;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
@@ -77,22 +77,22 @@ public class DomainResult extends RdapResult {
 	 * Generates a link with the self information and add it to the domain
 	 */
 	public static void addSelfLinks(String header, String contextPath, Domain domain) {
-		LinkDAO self = new LinkDAO(header, contextPath, "domain",
+		Link self = new Link(header, contextPath, "domain",
 				domain.getLdhName() + "." + ZoneModel.getZoneNameById(domain.getZoneId()));
 		domain.getLinks().add(self);
 
 		for (Nameserver ns : domain.getNameServers()) {
-			self = new LinkDAO(header, contextPath, "nameserver", ns.getLdhName());
+			self = new Link(header, contextPath, "nameserver", ns.getLdhName());
 			ns.getLinks().add(self);
 		}
 
 		for (Entity ent : domain.getEntities()) {
-			self = new LinkDAO(header, contextPath, "entity", ent.getHandle());
+			self = new Link(header, contextPath, "entity", ent.getHandle());
 			ent.getLinks().add(self);
 		}
 
 		if (domain.getIpNetwork() != null) {
-			self = new LinkDAO(header, contextPath, "ip", domain.getIpNetwork().getStartAddress().getHostAddress());
+			self = new Link(header, contextPath, "ip", domain.getIpNetwork().getStartAddress().getHostAddress());
 			domain.getIpNetwork().getLinks().add(self);
 		}
 	}
