@@ -45,6 +45,7 @@ public class DomainSearchResult extends RdapResult {
 		this.resultSetWasLimitedByUserConfiguration = result.getResultSetWasLimitedByUserConfiguration();
 		for (RdapObject domain : result.getResults()) {
 			DomainResult.addSelfLinks(header, contextPath, (Domain) domain);
+			this.domains.add((Domain) domain);
 		}
 	}
 

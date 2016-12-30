@@ -42,6 +42,7 @@ public class NameserverSearchResult extends RdapResult {
 		this.resultSetWasLimitedByUserConfiguration = result.getResultSetWasLimitedByUserConfiguration();
 		for (RdapObject nameserver : result.getResults()) {
 			NameserverResult.addSelfLinks(header, contextPath, (Nameserver) nameserver);
+			this.nameservers.add((Nameserver) nameserver);
 		}
 	}
 

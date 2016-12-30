@@ -10,7 +10,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.core.exception.UnprocessableEntityException;
-import mx.nic.rdap.db.exception.InvalidValueException;
 import mx.nic.rdap.db.model.DomainModel;
 import mx.nic.rdap.db.model.ZoneModel;
 import mx.nic.rdap.db.struct.SearchResultStruct;
@@ -87,8 +86,15 @@ public class DomainSearchServlet extends RdapServlet {
 			}
 			switch (request.getParameterName()) {
 			case DOMAIN_NAME:
-				// Gets domain by its name with zone
+				if (ZoneModel.getValidZoneIds() == null || ZoneModel.getValidZoneIds().isEmpty()) {
+					// Is valid if there are no available zones, because the
+					// rdap could only respond to autnum and ip networks
+					// (RIR).
+					throw new RequestHandleException(501, "Not implemented yet.");
+				}
+
 				if (request.getParameterValue().contains(".")) {
+					// Gets domain by its name with zone
 					String[] split = request.getParameterValue().split("\\.", 2);
 					domain = split[0];
 					if (IDN.toASCII(domain) != domain) {
@@ -96,19 +102,7 @@ public class DomainSearchServlet extends RdapServlet {
 					}
 					String zone = split[1];
 
-					if (ZoneModel.getValidZoneIds() == null || ZoneModel.getValidZoneIds().isEmpty()) {
-						// If there are no available zones is valid, because the
-						// rdap could only respond to autnum and ip networks
-						// (RIR).
-						throw new RequestHandleException(501, "Not implemented yet.");
-					}
-
-					try {
-						result = DomainModel.searchByName(domain, zone, resultLimit, useNameserverAsAttribute,
-								connection);
-					} catch (InvalidValueException e) {
-						e.printStackTrace();
-					}
+					result = DomainModel.searchByName(domain, zone, resultLimit, useNameserverAsAttribute, connection);
 				} else {
 
 					// Search domain by it´s name without zone.
@@ -134,8 +128,54 @@ public class DomainSearchServlet extends RdapServlet {
 	}
 
 	private SearchResultStruct getRegexSearch(String username, RdapSearchRequest request)
-			throws RequestHandleException {
-		throw new RequestHandleException(501, "Not implemented yet.");
+			throws RequestHandleException, SQLException, IOException {
+		SearchResultStruct result = new SearchResultStruct();
+		boolean useNameserverAsAttribute = RdapConfiguration.useNameserverAsDomainAttribute();
+		try (Connection connection = DatabaseSession.getRdapConnection()) {
+			Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username, connection);
+
+			switch (request.getParameterName()) {
+			case DOMAIN_NAME:
+				if (ZoneModel.getValidZoneIds() == null || ZoneModel.getValidZoneIds().isEmpty()) {
+					// Is valid if there are no available zones, because the
+					// rdap could only respond to autnum and ip networks
+					// (RIR).
+					throw new RequestHandleException(501, "Not implemented yet.");
+				}
+
+				String domain = request.getParameterValue();
+				if (request.getParameterValue().contains("\\.")) {
+					// Gets domain by its name with zone
+					String[] split = request.getParameterValue().split("\\.", 2);
+					domain = split[0];
+					String zone = split[1];
+
+					result = DomainModel.searchByRegexName(domain, zone, resultLimit, useNameserverAsAttribute,
+							connection);
+				} else {
+
+					// Search domain by it´s name without zone.
+					result = DomainModel.searchByRegexName(domain, resultLimit, useNameserverAsAttribute, connection);
+				}
+				break;
+			case NAMESERVER_NAME:
+				// Gets´s domain by it´s Nameserver name
+				result = DomainModel.searchByRegexNsLdhName(request.getParameterValue(), resultLimit,
+						useNameserverAsAttribute, connection);
+				break;
+			case NAMESERVER_IP:
+				throw new RequestHandleException(501, "Not implemented.");
+				// Get´s domain by it´s Nameserver Ip
+				// result =
+				// DomainModel.searchByNsIp(request.getParameterValue(),
+				// resultLimit, useNameserverAsAttribute, connection);
+			default:
+				throw new RequestHandleException(501, "Not implemented.");
+			}
+
+		}
+
+		return result;
 	}
 
 	/*

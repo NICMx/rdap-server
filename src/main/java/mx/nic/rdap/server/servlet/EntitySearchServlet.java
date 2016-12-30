@@ -60,7 +60,7 @@ public class EntitySearchServlet extends RdapServlet {
 
 	private SearchResultStruct getPartialSearch(String username, RdapSearchRequest searchRequest)
 			throws SQLException, IOException {
-		SearchResultStruct result = new SearchResultStruct();
+		SearchResultStruct result = null;
 
 		try (Connection connection = DatabaseSession.getRdapConnection()) {
 			Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username, connection);
@@ -80,7 +80,23 @@ public class EntitySearchServlet extends RdapServlet {
 
 	private SearchResultStruct getRegexSearch(String username, RdapSearchRequest searchRequest)
 			throws SQLException, IOException, RequestHandleException {
-		throw new RequestHandleException(501, "Not implemented yet.");
+		SearchResultStruct result = null;
+
+		try (Connection connection = DatabaseSession.getRdapConnection()) {
+			Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username, connection);
+			switch (searchRequest.getParameterName()) {
+			case FULL_NAME:
+				result = EntityModel.searchByRegexName(searchRequest.getParameterValue().trim(), resultLimit,
+						connection);
+				break;
+			case HANDLE:
+				result = EntityModel.searchByRegexHandle(searchRequest.getParameterValue().trim(), resultLimit,
+						connection);
+				break;
+			}
+		}
+
+		return result;
 	}
 
 	@Override

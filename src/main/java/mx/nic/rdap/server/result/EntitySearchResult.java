@@ -41,6 +41,7 @@ public class EntitySearchResult extends RdapResult {
 		this.resultSetWasLimitedByUserConfiguration = result.getResultSetWasLimitedByUserConfiguration();
 		for (RdapObject entity : result.getResults()) {
 			EntityResult.addSelfLinks(header, contextPath, (Entity) entity);
+			this.entities.add((Entity) entity);
 		}
 		validateResponse();
 	}

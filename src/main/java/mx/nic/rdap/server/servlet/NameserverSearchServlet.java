@@ -62,7 +62,7 @@ public class NameserverSearchServlet extends RdapServlet {
 			result = getPartialSearch(username, searchRequest);
 			break;
 		case REGEX_SEARCH:
-			result = getRegexSearch();
+			result = getRegexSearch(username, searchRequest);
 			break;
 		default:
 			throw new RequestHandleException(501, "Not implemented.");
@@ -93,8 +93,29 @@ public class NameserverSearchServlet extends RdapServlet {
 		return result;
 	}
 
-	private SearchResultStruct getRegexSearch() throws RequestHandleException {
-		throw new RequestHandleException(501, "Not implemented.");
+	private SearchResultStruct getRegexSearch(String username, RdapSearchRequest request)
+			throws SQLException, IOException, RequestHandleException {
+		SearchResultStruct result = new SearchResultStruct();
+		try (Connection connection = DatabaseSession.getRdapConnection()) {
+			Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username, connection);
+
+			switch (request.getParameterName()) {
+			case NAME_PARAMETER_KEY:
+				result = NameserverModel.searchByRegexName(request.getParameterValue().trim(), resultLimit, connection);
+				break;
+			case IP_PARAMETER_KEY:
+				throw new RequestHandleException(501, "Not implemented yet.");
+				// try {
+				// result =
+				// NameserverModel.searchByIp(request.getParameterValue().trim(),
+				// resultLimit, connection);
+				// } catch (InvalidValueException e) {
+				// throw new RequestHandleException(e.getMessage());
+				// }
+				// break;
+			}
+		}
+		return result;
 	}
 
 	/*
