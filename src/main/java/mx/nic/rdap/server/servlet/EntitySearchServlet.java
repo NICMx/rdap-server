@@ -3,6 +3,7 @@ package mx.nic.rdap.server.servlet;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLSyntaxErrorException;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -94,6 +95,8 @@ public class EntitySearchServlet extends RdapServlet {
 						connection);
 				break;
 			}
+		} catch (SQLSyntaxErrorException e) {
+			throw new RequestHandleException(400, e.getMessage());
 		}
 
 		return result;

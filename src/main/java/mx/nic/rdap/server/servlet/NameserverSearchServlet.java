@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLSyntaxErrorException;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -114,6 +115,8 @@ public class NameserverSearchServlet extends RdapServlet {
 				// }
 				// break;
 			}
+		} catch (SQLSyntaxErrorException e) {
+			throw new RequestHandleException(400, e.getMessage());
 		}
 		return result;
 	}

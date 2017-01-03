@@ -5,6 +5,7 @@ import java.net.IDN;
 import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLSyntaxErrorException;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -95,7 +96,7 @@ public class DomainSearchServlet extends RdapServlet {
 
 				if (request.getParameterValue().contains(".")) {
 					// Gets domain by its name with zone
-					String[] split = request.getParameterValue().split("\\.", 2);
+					String[] split = request.getParameterValue().split("\\\\.", 2);
 					domain = split[0];
 					if (IDN.toASCII(domain) != domain) {
 						domain = IDN.toASCII(domain);
@@ -173,6 +174,8 @@ public class DomainSearchServlet extends RdapServlet {
 				throw new RequestHandleException(501, "Not implemented.");
 			}
 
+		} catch (SQLSyntaxErrorException e) {
+			throw new RequestHandleException(400, e.getMessage());
 		}
 
 		return result;
@@ -216,7 +219,8 @@ public class DomainSearchServlet extends RdapServlet {
 
 	}
 
-	private void doRdapHeadPartialSearch(RdapSearchRequest request) throws SQLException, UnknownHostException {
+	private void doRdapHeadPartialSearch(RdapSearchRequest request)
+			throws SQLException, UnknownHostException, RequestHandleException {
 		String domain = request.getParameterValue();
 		if (IDN.toASCII(domain) != domain) {
 			domain = IDN.toASCII(domain);
