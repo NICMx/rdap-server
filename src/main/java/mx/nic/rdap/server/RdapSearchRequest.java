@@ -2,8 +2,8 @@ package mx.nic.rdap.server;
 
 import java.net.IDN;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Base64;
-import java.util.Enumeration;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,16 +28,13 @@ public class RdapSearchRequest {
 	 */
 	private static final String SEARCH_TYPE_KEY_PARAM = "searchtype";
 
-	private static final String SEARCHTYPE_REGEX = "regex";
+	private static final String SEARCHTYPE_REGEX_VALUE = "regex";
+	private static final String SEARCHTYPE_PARTIAL_VALUE = "partial";
+
 	/**
 	 * Type of search.
 	 */
 	private RequestSearchType type;
-
-	/**
-	 * Parameter value of the parameter 'searchtype'
-	 */
-	private String searchTypeValue;
 
 	private String parameterName;
 
@@ -45,40 +42,43 @@ public class RdapSearchRequest {
 
 	public static RdapSearchRequest getSearchRequest(HttpServletRequest request, boolean isEntityObject,
 			String... parameters) throws UnprocessableEntityException {
-		int paramSize = request.getParameterMap().size();
+		if (request.getParameterMap().isEmpty()) {
+			throw new UnprocessableEntityException(
+					"The request must contain one valid parameter : " + Arrays.asList(parameters));
+		}
 		RdapSearchRequest searchReq = new RdapSearchRequest();
-		Enumeration<String> parameterNames = request.getParameterNames();
-		if (paramSize == 1) {
-			searchReq.type = RequestSearchType.PARTIAL_SEARCH;
+		String searchTypeValue = request.getParameter(SEARCH_TYPE_KEY_PARAM);
+		if (searchTypeValue == null) {
+			searchTypeValue = SEARCHTYPE_PARTIAL_VALUE;
+		}
 
-			searchReq.parameterName = parameterNames.nextElement();
-			searchReq.parameterValue = request.getParameter(searchReq.getParameterName());
-		} else if (paramSize == 2) {
-			do {
-				String paramName = parameterNames.nextElement();
-				if (paramName.equals(SEARCH_TYPE_KEY_PARAM)) {
-					searchReq.searchTypeValue = request.getParameter(SEARCH_TYPE_KEY_PARAM);
-				} else {
-					searchReq.parameterName = paramName;
-					searchReq.parameterValue = request.getParameter(paramName);
-				}
-			} while (parameterNames.hasMoreElements());
-
-			if (searchReq.searchTypeValue == null) {
+		boolean hasValidParameter = false;
+		for (String parameter : parameters) {
+			String paramValue = request.getParameter(parameter);
+			if (paramValue == null) {
+				continue;
+			}
+			if (hasValidParameter) {
 				throw new UnprocessableEntityException(
-						"The request must contain a '" + SEARCH_TYPE_KEY_PARAM + "' parameter.");
+						"The request must contain only one valid parameter : " + Arrays.asList(parameters));
 			}
+			hasValidParameter = true;
+			searchReq.parameterName = parameter;
+			searchReq.parameterValue = paramValue;
+		}
 
-			switch (searchReq.searchTypeValue) {
-			case SEARCHTYPE_REGEX:
-				searchReq.type = RequestSearchType.REGEX_SEARCH;
-				break;
-			default:
-				throw new UnprocessableEntityException("Unimplemented searchtype : " + searchReq.searchTypeValue);
-			}
+		if (searchReq.parameterName == null) {
+			throw new UnprocessableEntityException(
+					"The request must contain one valid parameter : " + Arrays.asList(parameters));
+		}
 
-		} else {
-			throw new UnprocessableEntityException("The request must contain one or two parameter");
+		switch (searchTypeValue) {
+		case SEARCHTYPE_REGEX_VALUE:
+			searchReq.type = RequestSearchType.REGEX_SEARCH;
+			break;
+		default:
+			searchReq.type = RequestSearchType.PARTIAL_SEARCH;
+			break;
 		}
 
 		searchReq.validateSearchRequest(isEntityObject, parameters);
@@ -102,12 +102,10 @@ public class RdapSearchRequest {
 
 	private void validatePartialSearchRequest(boolean isEntityObject, String... validParameters)
 			throws UnprocessableEntityException {
-		validateSearchRequestParameters(this.parameterName, validParameters);
-		validateSearchValue(this.parameterValue, isEntityObject);
+		validatePartialSearchValue(this.parameterValue, isEntityObject);
 	}
 
 	private void validateRegexSearchRequest(String... validParameters) throws UnprocessableEntityException {
-		validateSearchRequestParameters(this.parameterName, validParameters);
 		try {
 			byte[] decode = Base64.getUrlDecoder().decode(this.parameterValue);
 			this.parameterValue = new String(decode, StandardCharsets.UTF_8);
@@ -118,32 +116,13 @@ public class RdapSearchRequest {
 	}
 
 	/**
-	 * Validate if the search parameters are valid
-	 */
-	public static void validateSearchRequestParameters(String parameter, String... params)
-			throws UnprocessableEntityException {
-		// Validate if the parameter if a valid parameter for the request
-		String validParametersMessage = "";
-		for (String paramName : params) {
-			if (paramName.compareTo(parameter) == 0) {
-				return;
-			}
-			if (!validParametersMessage.isEmpty()) {
-				validParametersMessage = validParametersMessage.concat(" or " + paramName);
-			} else {
-				validParametersMessage = paramName;
-			}
-		}
-		throw new UnprocessableEntityException("Valid parameters:" + validParametersMessage);
-	}
-
-	/**
 	 * Validate if the search patterns are valid
 	 * 
 	 * @param valuePattern
 	 * @throws UnprocessableEntityException
 	 */
-	public static void validateSearchValue(String valuePattern, boolean isEntity) throws UnprocessableEntityException {
+	public static void validatePartialSearchValue(String valuePattern, boolean isEntity)
+			throws UnprocessableEntityException {
 
 		// Validate if the length of the pattern is valid
 		if (valuePattern.length() < RdapConfiguration.getMinimumSearchPatternLength()) {
@@ -189,10 +168,6 @@ public class RdapSearchRequest {
 		return type;
 	}
 
-	public String getSearchTypeValue() {
-		return searchTypeValue;
-	}
-
 	public String getParameterName() {
 		return parameterName;
 	}
@@ -211,10 +186,6 @@ public class RdapSearchRequest {
 
 	public void setParameterValue(String parameterValue) {
 		this.parameterValue = parameterValue;
-	}
-
-	public void setSearchTypeValue(String searchTypeValue) {
-		this.searchTypeValue = searchTypeValue;
 	}
 
 }
