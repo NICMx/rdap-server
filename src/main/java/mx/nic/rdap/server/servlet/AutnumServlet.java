@@ -74,8 +74,11 @@ public class AutnumServlet extends RdapServlet {
 			super();
 			try {
 				this.autnum = Long.parseLong(autnum);
+				if (this.autnum > 4294967295L || this.autnum < 0) {
+					throw new MalformedRequestException("Autnum must be a positive 32 bit or less number.");
+				}
 			} catch (NumberFormatException e) {
-				throw new MalformedRequestException("Autnum must be an Int number");
+				throw new MalformedRequestException("Autnum must be a positive 32 bit or less number.");
 			}
 		}
 
