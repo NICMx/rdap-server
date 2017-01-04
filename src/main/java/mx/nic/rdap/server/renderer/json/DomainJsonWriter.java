@@ -42,14 +42,15 @@ public class DomainJsonWriter {
 		if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
 			builder.add(key, value);
 		// Point 1.5.2 of rdap operational profile by ICANN
-		if (RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)
-				|| (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)
-						&& domain.getLdhName().compareTo(domain.getUnicodeName()) != 0)) {
-			key = "unicodeName";
-			value = domain.getUnicodeName() + "." + ZoneModel.getZoneNameById(domain.getZoneId());
-			if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
-				builder.add(key, value);
-		}
+		if (domain.getUnicodeName() != null)
+			if (RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)
+					|| (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)
+							&& domain.getLdhName().compareTo(domain.getUnicodeName()) != 0)) {
+				key = "unicodeName";
+				value = domain.getUnicodeName() + "." + ZoneModel.getZoneNameById(domain.getZoneId());
+				if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
+					builder.add(key, value);
+			}
 
 		key = "variants";
 		if (PrivacyUtil.isObjectVisible(domain.getVariants(), key, settings.get(key), isAuthenticated, isOwner))

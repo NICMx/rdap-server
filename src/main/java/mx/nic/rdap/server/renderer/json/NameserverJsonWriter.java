@@ -34,24 +34,25 @@ public class NameserverJsonWriter {
 		JsonObjectBuilder builder = Json.createObjectBuilder();
 
 		builder.add("objectClassName", "nameserver");
-		if(!RdapConfiguration.useNameserverAsDomainAttribute())
-		JsonUtil.fillCommonRdapJsonObject(builder, nameserver, isAuthenticated, isOwner, settings,
-				PrivacyUtil.getNameserverRemarkPrivacySettings(), PrivacyUtil.getNameserverLinkPrivacySettings(),
-				PrivacyUtil.getNameserverEventPrivacySettings());
+		if (!RdapConfiguration.useNameserverAsDomainAttribute())
+			JsonUtil.fillCommonRdapJsonObject(builder, nameserver, isAuthenticated, isOwner, settings,
+					PrivacyUtil.getNameserverRemarkPrivacySettings(), PrivacyUtil.getNameserverLinkPrivacySettings(),
+					PrivacyUtil.getNameserverEventPrivacySettings());
 
 		String key = "ldhName";
 		String value = nameserver.getLdhName();
 		if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
 			builder.add(key, value);
 		// Point 2.9.4 of rdap operational profile by ICANN
-		if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.REGISTRY)
-				|| (RdapConfiguration.getServerProfile().equals(OperationalProfile.REGISTRY)
-						&& nameserver.getLdhName().compareTo(nameserver.getUnicodeName()) != 0)) {
-			key = "unicodeName";
-			value = nameserver.getUnicodeName();
-			if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
-				builder.add(key, value);
-		}
+		if (nameserver.getUnicodeName() != null)
+			if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.REGISTRY)
+					|| (RdapConfiguration.getServerProfile().equals(OperationalProfile.REGISTRY)
+							&& nameserver.getLdhName().compareTo(nameserver.getUnicodeName()) != 0)) {
+				key = "unicodeName";
+				value = nameserver.getUnicodeName();
+				if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
+					builder.add(key, value);
+			}
 
 		fillIpAddresses(builder, nameserver.getIpAddresses(), isAuthenticated, isOwner, settings);
 
