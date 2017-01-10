@@ -1,18 +1,17 @@
 package mx.nic.rdap.server.servlet;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.core.db.Autnum;
-import mx.nic.rdap.db.model.AutnumModel;
+import mx.nic.rdap.db.exception.RdapDatabaseException;
+import mx.nic.rdap.db.services.AutnumService;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
-import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.AutnumResult;
@@ -36,7 +35,7 @@ public class AutnumServlet extends RdapServlet {
 	 */
 	@Override
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException {
+			throws RequestHandleException, IOException, SQLException, RdapDatabaseException {
 		AutnumRequest request = new AutnumRequest(Util.getRequestParams(httpRequest)[0]);
 		Autnum autnum = null;
 		String username = httpRequest.getRemoteUser();
@@ -44,9 +43,7 @@ public class AutnumServlet extends RdapServlet {
 			username = null;
 		}
 
-		try (Connection con = DatabaseSession.getRdapConnection()) {
-			autnum = AutnumModel.getByRange(request.getAutnum(), con);
-		}
+		autnum = AutnumService.getByRange(request.getAutnum());
 		return new AutnumResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), autnum, username);
 	}
 
@@ -58,11 +55,9 @@ public class AutnumServlet extends RdapServlet {
 	 */
 	@Override
 	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException {
+			throws RequestHandleException, IOException, SQLException, RdapDatabaseException {
 		AutnumRequest request = new AutnumRequest(Util.getRequestParams(httpRequest)[0]);
-		try (Connection con = DatabaseSession.getRdapConnection()) {
-			AutnumModel.existByRange(request.getAutnum(), con);
-		}
+		AutnumService.existByRange(request.getAutnum());
 		return new OkResult();
 	}
 

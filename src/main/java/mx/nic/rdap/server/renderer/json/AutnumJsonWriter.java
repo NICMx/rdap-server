@@ -13,7 +13,6 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import mx.nic.rdap.core.db.Autnum;
-import mx.nic.rdap.db.model.CountryCodeModel;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
 import mx.nic.rdap.server.util.PrivacyUtil;
 
@@ -53,8 +52,8 @@ public class AutnumJsonWriter {
 			builder.add(key, autnum.getType());
 
 		key = "country";
-		if (PrivacyUtil.isObjectVisible(autnum.getCountry(), key, settings.get(key), isAuthenticated, isOwner))
-			builder.add(key, CountryCodeModel.getCountryNameById(autnum.getCountry()));
+		if (PrivacyUtil.isObjectVisible(autnum.getCountryCode(), key, settings.get(key), isAuthenticated, isOwner))
+			builder.add(key, autnum.getCountryCode());
 
 		return builder.build();
 	}

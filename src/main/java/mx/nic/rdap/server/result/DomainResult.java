@@ -10,7 +10,6 @@ import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.db.model.ZoneModel;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.UserInfo;
@@ -77,8 +76,7 @@ public class DomainResult extends RdapResult {
 	 * Generates a link with the self information and add it to the domain
 	 */
 	public static void addSelfLinks(String header, String contextPath, Domain domain) {
-		Link self = new Link(header, contextPath, "domain",
-				domain.getLdhName() + "." + ZoneModel.getZoneNameById(domain.getZoneId()));
+		Link self = new Link(header, contextPath, "domain", domain.getFQDN());
 		domain.getLinks().add(self);
 
 		for (Nameserver ns : domain.getNameServers()) {

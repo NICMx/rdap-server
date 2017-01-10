@@ -1,18 +1,17 @@
 package mx.nic.rdap.server.servlet;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.core.db.Nameserver;
-import mx.nic.rdap.db.model.NameserverModel;
+import mx.nic.rdap.db.exception.RdapDatabaseException;
+import mx.nic.rdap.db.services.NameserverService;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
-import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.NameserverResult;
 import mx.nic.rdap.server.result.OkResult;
@@ -35,7 +34,7 @@ public class NameserverServlet extends RdapServlet {
 	 */
 	@Override
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException {
+			throws RequestHandleException, IOException, SQLException, RdapDatabaseException {
 		if (RdapConfiguration.useNameserverAsDomainAttribute()) {
 			throw new RequestHandleException(501, "Not implemented.");
 		}
@@ -47,9 +46,7 @@ public class NameserverServlet extends RdapServlet {
 			username = null;
 		}
 
-		try (Connection con = DatabaseSession.getRdapConnection()) {
-			nameserver = NameserverModel.findByName(request.getName(), con);
-		}
+		nameserver = NameserverService.getByName(request.getName());
 		return new NameserverResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), nameserver, username);
 	}
 
@@ -61,14 +58,12 @@ public class NameserverServlet extends RdapServlet {
 	 */
 	@Override
 	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException {
+			throws RequestHandleException, IOException, SQLException, RdapDatabaseException {
 		if (RdapConfiguration.useNameserverAsDomainAttribute()) {
 			throw new RequestHandleException(501, "Not implemented.");
 		}
 		NameserverRequest request = new NameserverRequest(Util.getRequestParams(httpRequest)[0]);
-		try (Connection con = DatabaseSession.getRdapConnection()) {
-			NameserverModel.existByName(request.getName(), con);
-		}
+		NameserverService.existByName(request.getName());
 		return new OkResult();
 	}
 

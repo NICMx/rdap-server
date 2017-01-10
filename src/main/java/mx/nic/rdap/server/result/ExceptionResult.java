@@ -31,34 +31,36 @@ public class ExceptionResult extends RdapResult {
 	public ExceptionResult(HttpServletRequest httpRequest) {
 		notices = new ArrayList<Remark>();
 		errorCode = httpRequest.getAttribute("javax.servlet.error.status_code").toString();
-		if (errorCode != null) {
-			switch (errorCode) {
-			case "401":
-				errorTitle = "Forbidden request";
-				errorDescription = "Must loggin to process the request";
-				break;
-			case "403":
-				errorTitle = "Forbidden request";
-				errorDescription = httpRequest.getAttribute("javax.servlet.error.message").toString()
-						+ ". Verify User role";
-				break;
-			case "404":
-				errorTitle = "Object not found";
-				errorDescription = httpRequest.getAttribute("javax.servlet.error.message").toString();
-				break;
-			case "422":
-				errorTitle = "Unprocessable Entity";
-				errorDescription = httpRequest.getAttribute("javax.servlet.error.message").toString();
-				break;
-			case "500":
-				errorTitle = "Internal server error";
-				errorDescription = httpRequest.getAttribute("javax.servlet.error.message").toString();
-				break;
-			}
-			logger.log(Level.WARNING,
-					errorCode + ":" + httpRequest.getAttribute("javax.servlet.error.message").toString());
+		if (errorCode == null) {
+			return;
 		}
-
+		switch (errorCode) {
+		case "400":
+			errorDescription = httpRequest.getAttribute("javax.servlet.error.message").toString();
+			break;
+		case "401":
+			errorTitle = "Forbidden request";
+			errorDescription = "Must loggin to process the request";
+			break;
+		case "403":
+			errorTitle = "Forbidden request";
+			errorDescription = httpRequest.getAttribute("javax.servlet.error.message").toString()
+					+ ". Verify User role";
+			break;
+		case "404":
+			errorTitle = "Object not found";
+			errorDescription = httpRequest.getAttribute("javax.servlet.error.message").toString();
+			break;
+		case "422":
+			errorTitle = "Unprocessable Entity";
+			errorDescription = httpRequest.getAttribute("javax.servlet.error.message").toString();
+			break;
+		case "500":
+			errorTitle = "Internal server error";
+			errorDescription = httpRequest.getAttribute("javax.servlet.error.message").toString();
+			break;
+		}
+		logger.log(Level.WARNING, errorCode + ":" + httpRequest.getAttribute("javax.servlet.error.message").toString());
 	}
 
 	/*
@@ -92,7 +94,9 @@ public class ExceptionResult extends RdapResult {
 		// At the moment, there is no notices for this request
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see mx.nic.rdap.server.RdapResult#validateResponse()
 	 */
 	@Override

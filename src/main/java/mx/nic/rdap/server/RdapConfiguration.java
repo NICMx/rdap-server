@@ -1,33 +1,25 @@
 package mx.nic.rdap.server;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import mx.nic.rdap.core.catalog.Rol;
 import mx.nic.rdap.db.exception.InvalidValueException;
 import mx.nic.rdap.db.exception.ObjectNotFoundException;
-import mx.nic.rdap.db.model.CountryCodeModel;
-import mx.nic.rdap.db.model.RdapUserModel;
-import mx.nic.rdap.db.model.ZoneModel;
+import mx.nic.rdap.db.exception.RdapDatabaseException;
+import mx.nic.rdap.db.services.RdapUserService;
 import mx.nic.rdap.server.catalog.OperationalProfile;
-import mx.nic.rdap.server.db.DatabaseSession;
 
 /**
  * Class containing the configuration of the rdap server
  */
 public class RdapConfiguration {
-	private final static Logger logger = Logger.getLogger(RdapConfiguration.class.getName());
 	private static Properties systemProperties;
 
 	// property keys
@@ -52,19 +44,13 @@ public class RdapConfiguration {
 	private static OperationalProfile operationalProfile;
 	private static Boolean nameserverAsDomainAttribute;
 	private static String anonymousUsername;
+	private static Set<String> validZones;
+
+	public static String REVERSE_IP_V4 = "in-addr.arpa";
+	public static String REVERSE_IP_V6 = "ip6.arpa";
 
 	private RdapConfiguration() {
 		// no code.
-	}
-
-	static {
-		try (Connection con = DatabaseSession.getRdapConnection()) {
-			CountryCodeModel.loadAllFromDatabase(con);
-			ZoneModel.loadAllFromDatabase(con);
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-
 	}
 
 	/**
@@ -83,13 +69,19 @@ public class RdapConfiguration {
 	 * 
 	 * @return
 	 */
-	public static List<String> getServerZones() {
+	private static List<String> getServerZones() {
 		if (systemProperties.containsKey(ZONE_KEY)) {
 			String zones[] = systemProperties.getProperty(ZONE_KEY).trim().split(",");
 			List<String> trimmedZones = new ArrayList<String>();
 			for (String zone : zones) {
-				if (!zone.trim().isEmpty())
-					trimmedZones.add(zone.trim());
+				zone = zone.trim();
+				if (zone.isEmpty())
+					continue;
+				if (zone.endsWith("."))
+					zone = zone.substring(0, zone.length() - 1);
+				if (zone.startsWith("."))
+					zone = zone.substring(1);
+				trimmedZones.add(zone);
 			}
 			return trimmedZones;
 		}
@@ -103,45 +95,22 @@ public class RdapConfiguration {
 	 * @throws ObjectNotFoundException
 	 */
 	public static void validateConfiguratedZones() throws ObjectNotFoundException {
-		List<String> configuratedZones = RdapConfiguration.getServerZones();
-		Map<Integer, String> zoneByIdForServer = new HashMap<Integer, String>();
-		Map<String, Integer> idByZoneForServer = new HashMap<String, Integer>();
+		List<String> propertiesZone = RdapConfiguration.getServerZones();
 
+		validZones = new HashSet<>(propertiesZone);
 		// Configure reverse zones
 		if (Boolean.parseBoolean(systemProperties.getProperty(IS_REVERSE_IPV4_ENABLED_KEY))) {
-			String zone = ZoneModel.REVERSE_IP_V4;
-			if (ZoneModel.getIdByZone().get(zone) != null) {
-				zoneByIdForServer.put(ZoneModel.getIdByZone().get(zone), zone);
-				idByZoneForServer.put(zone, ZoneModel.getIdByZoneName(zone));
-			} else {
-				logger.log(Level.WARNING, "Configurated zone not found in database : " + zone);
-			}
+			validZones.add(REVERSE_IP_V4);
+		} else {
+			validZones.remove(REVERSE_IP_V4);
 		}
-		configuratedZones.remove(ZoneModel.REVERSE_IP_V4);
 
 		if (Boolean.parseBoolean(systemProperties.getProperty(IS_REVERSE_IPV6_ENABLED_KEY))) {
-			String zone = ZoneModel.REVERSE_IP_V6;
-			if (ZoneModel.getIdByZone().get(zone) != null) {
-				zoneByIdForServer.put(ZoneModel.getIdByZone().get(zone), zone);
-				idByZoneForServer.put(zone, ZoneModel.getIdByZoneName(zone));
-			} else {
-				logger.log(Level.WARNING, "Configurated zone not found in database : " + zone);
-			}
-		}
-		configuratedZones.remove(ZoneModel.REVERSE_IP_V6);
-
-		for (String zone : configuratedZones) {
-			if (ZoneModel.getIdByZone().get(zone) == null) {
-				logger.log(Level.SEVERE, "Configurated zone not found in database:" + zone);
-				throw new ObjectNotFoundException("Configurated zone not found in database:" + zone);
-			}
-			zoneByIdForServer.put(ZoneModel.getIdByZone().get(zone), zone);
-			idByZoneForServer.put(zone, ZoneModel.getIdByZoneName(zone));
+			validZones.add(REVERSE_IP_V6);
+		} else {
+			validZones.remove(REVERSE_IP_V6);
 		}
 
-		// Ovewrite the hashmaps to only use the configurated zones
-		ZoneModel.setZoneById(zoneByIdForServer);
-		ZoneModel.setIdByZone(idByZoneForServer);
 	}
 
 	public static void validateConfiguratedRoles() throws InvalidValueException {
@@ -327,11 +296,10 @@ public class RdapConfiguration {
 	 * @throws SQLException
 	 * @throws IOException
 	 */
-	public static Integer getMaxNumberOfResultsForUser(String username, Connection connection)
-			throws IOException, SQLException {
+	public static Integer getMaxNumberOfResultsForUser(String username) throws RdapDatabaseException {
 		if (username != null) {
 			// Find if the user has a custom limit.
-			Integer limit = RdapUserModel.getMaxSearchResultsForAuthenticatedUser(username, connection);
+			Integer limit = RdapUserService.getMaxSearchResults(username);
 			if (limit != null && limit != 0) {
 				return limit;
 			} else {
@@ -350,5 +318,35 @@ public class RdapConfiguration {
 	 */
 	public static boolean isAnonymousUsername(String username) {
 		return (username == null || anonymousUsername.equalsIgnoreCase(username));
+	}
+
+	public static boolean isValidZone(String domain) {
+		String[] split = domain.split("\\.", 2);
+		String zone = split[1].trim();
+		if (zone.endsWith(".")) {
+			zone = zone.substring(0, zone.length() - 1);
+		}
+
+		return validZones.contains(zone);
+	}
+
+	/**
+	 * validate if a address is in reverse lookup
+	 * 
+	 */
+	public static boolean isReverseAddress(String address) {
+		return address.trim().endsWith(REVERSE_IP_V4) || address.trim().endsWith(REVERSE_IP_V6);
+	}
+
+	public static boolean hasZoneConfigured() {
+		if (validZones == null || validZones.isEmpty()) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public static Properties getServerProperties() {
+		return systemProperties;
 	}
 }

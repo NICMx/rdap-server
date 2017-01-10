@@ -12,7 +12,10 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+import mx.nic.rdap.db.DBConnection;
 import mx.nic.rdap.db.exception.ObjectNotFoundException;
+import mx.nic.rdap.db.services.InitializeService;
+import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.util.PrivacyUtil;
 import mx.nic.rdap.server.util.Util;
 
@@ -36,7 +39,7 @@ public class RdapInitializer implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
 		servletContext = event.getServletContext();
-
+		DBConnection.loadDatasource(DatabaseSession.getDataSource());
 		try {
 			loadRenderers();
 			loadRdapConfiguration();
@@ -45,6 +48,8 @@ public class RdapInitializer implements ServletContextListener {
 			RdapConfiguration.validateConfiguratedZones();
 			RdapConfiguration.validateConfiguratedRoles();
 			PrivacyUtil.loadAllPrivacySettings();
+
+			InitializeService.init(RdapConfiguration.getServerProperties());
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}

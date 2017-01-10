@@ -1,18 +1,17 @@
 package mx.nic.rdap.server.servlet;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.core.db.Entity;
-import mx.nic.rdap.db.model.EntityModel;
+import mx.nic.rdap.db.exception.RdapDatabaseException;
+import mx.nic.rdap.db.services.EntityService;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
-import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.EntityResult;
 import mx.nic.rdap.server.result.OkResult;
@@ -35,17 +34,15 @@ public class EntityServlet extends RdapServlet {
 	 */
 	@Override
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException {
+			throws RequestHandleException, IOException, SQLException, RdapDatabaseException {
 		EntityRequest request = new EntityRequest(Util.getRequestParams(httpRequest)[0]);
 		String username = httpRequest.getRemoteUser();
 		if (RdapConfiguration.isAnonymousUsername(username)) {
 			username = null;
 		}
 		Entity entity = null;
-		try (Connection con = DatabaseSession.getRdapConnection()) {
-			entity = EntityModel.getByHandle(request.getHandle(), con);
-
-		}
+		EntityService serviceInstance = EntityService.getInstance();
+		entity = serviceInstance.getByHandle(request.getHandle());
 		return new EntityResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), entity, username);
 	}
 
@@ -57,11 +54,9 @@ public class EntityServlet extends RdapServlet {
 	 */
 	@Override
 	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException {
+			throws RequestHandleException, IOException, SQLException, RdapDatabaseException {
 		EntityRequest request = new EntityRequest(Util.getRequestParams(httpRequest)[0]);
-		try (Connection con = DatabaseSession.getRdapConnection()) {
-			EntityModel.existByHandle(request.getHandle(), con);
-		}
+		EntityService.getInstance().existsByHandle(request.getHandle());
 		return new OkResult();
 	}
 

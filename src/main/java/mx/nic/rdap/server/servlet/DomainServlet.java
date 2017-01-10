@@ -1,7 +1,6 @@
 package mx.nic.rdap.server.servlet;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.servlet.annotation.WebServlet;
@@ -10,12 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.db.exception.InvalidValueException;
 import mx.nic.rdap.db.exception.ObjectNotFoundException;
-import mx.nic.rdap.db.model.DomainModel;
-import mx.nic.rdap.db.model.ZoneModel;
+import mx.nic.rdap.db.exception.RdapDatabaseException;
+import mx.nic.rdap.db.services.DomainService;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
-import mx.nic.rdap.server.db.DatabaseSession;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.DomainResult;
 import mx.nic.rdap.server.result.OkResult;
@@ -38,7 +36,7 @@ public class DomainServlet extends RdapServlet {
 	 */
 	@Override
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException {
+			throws RequestHandleException, IOException, SQLException, RdapDatabaseException {
 		DomainRequest request = null;
 		try {
 			request = new DomainRequest(Util.getRequestParams(httpRequest)[0]);
@@ -50,15 +48,13 @@ public class DomainServlet extends RdapServlet {
 			username = null;
 		}
 		Domain domain = null;
-		try (Connection con = DatabaseSession.getRdapConnection()) {
-			try {
-				domain = DomainModel.findByLdhName(request.getDomainName(), request.getZoneId(),
-						RdapConfiguration.useNameserverAsDomainAttribute(), con);
-			} catch (InvalidValueException e) {
-				throw new ObjectNotFoundException("The RDAP server doesn't have information about the requested zone");
-			}
-
+		try {
+			domain = DomainService.getByName(request.getFullRequestValue(),
+					RdapConfiguration.useNameserverAsDomainAttribute());
+		} catch (InvalidValueException e) {
+			throw new ObjectNotFoundException("The RDAP server doesn't have information about the requested zone");
 		}
+
 		return new DomainResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), domain, username);
 	}
 
@@ -70,16 +66,14 @@ public class DomainServlet extends RdapServlet {
 	 */
 	@Override
 	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException {
+			throws RequestHandleException, IOException, SQLException, RdapDatabaseException {
 		DomainRequest request = null;
 		try {
 			request = new DomainRequest(Util.getRequestParams(httpRequest)[0]);
 		} catch (InvalidValueException | ObjectNotFoundException e) {
 			throw new ObjectNotFoundException("The RDAP server doesn't have information about the requested zone");
 		}
-		try (Connection con = DatabaseSession.getRdapConnection()) {
-			DomainModel.existByLdhName(request.getDomainName(), request.getZoneId(), con);
-		}
+		DomainService.existByName(request.getFullRequestValue());
 		return new OkResult();
 	}
 
@@ -91,8 +85,6 @@ public class DomainServlet extends RdapServlet {
 
 		private String zoneName;
 
-		private Integer zoneId;
-
 		public DomainRequest(String requestValue) throws ObjectNotFoundException, InvalidValueException {
 			super();
 			if (requestValue.endsWith(".")) {
@@ -100,30 +92,27 @@ public class DomainServlet extends RdapServlet {
 			}
 			this.fullRequestValue = requestValue;
 
-			DomainModel.validateDomainZone(requestValue);
-
-			if (ZoneModel.isReverseAddress(requestValue)) {
-				domainName = ZoneModel.getAddressWithoutArpaZone(requestValue);
-				zoneId = ZoneModel.getZoneIdForArpaZone(requestValue);
-				zoneName = ZoneModel.getZoneNameById(zoneId);
-			} else {
-				int indexOf = requestValue.indexOf('.');
-
-				if (indexOf <= 0) {
-					throw new InvalidValueException("Zone", "DomainServlet", "Domain");
-				}
-
-				zoneName = requestValue.substring(indexOf + 1, requestValue.length());
-				domainName = requestValue.substring(0, indexOf);
-				zoneId = ZoneModel.getIdByZoneName(zoneName);
-			}
+			// TODO validate if zone is handle by this server
+			// if (RdapConfiguration.isReverseAddress(requestValue)) {
+			// } else {
+			// int indexOf = requestValue.indexOf('.');
+			//
+			// if (indexOf <= 0) {
+			// throw new InvalidValueException("Zone", "DomainServlet",
+			// "Domain");
+			// }
+			//
+			// zoneName = requestValue.substring(indexOf + 1,
+			// requestValue.length());
+			// domainName = requestValue.substring(0, indexOf);
+			// }
 		}
 
-		@SuppressWarnings("unused")
 		public String getFullRequestValue() {
 			return fullRequestValue;
 		}
 
+		@SuppressWarnings("unused")
 		public String getDomainName() {
 			return domainName;
 		}
@@ -131,10 +120,6 @@ public class DomainServlet extends RdapServlet {
 		@SuppressWarnings("unused")
 		public String getZoneName() {
 			return zoneName;
-		}
-
-		public Integer getZoneId() {
-			return zoneId;
 		}
 
 	}

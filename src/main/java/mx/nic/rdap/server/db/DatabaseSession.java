@@ -25,4 +25,8 @@ public class DatabaseSession {
 		return getEnvironmentDataSource(RDAP_DB).getConnection();
 	}
 
+	public static DataSource getDataSource() {
+		return getEnvironmentDataSource(RDAP_DB);
+	}
+
 }

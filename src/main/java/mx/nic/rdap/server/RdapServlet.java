@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import mx.nic.rdap.db.exception.ObjectNotFoundException;
+import mx.nic.rdap.db.exception.RdapDatabaseException;
 import mx.nic.rdap.server.AcceptHeaderFieldParser.Accept;
 import mx.nic.rdap.server.catalog.OperationalProfile;
 import mx.nic.rdap.server.exception.RequestHandleException;
@@ -50,7 +51,7 @@ public abstract class RdapServlet extends HttpServlet {
 		} catch (ObjectNotFoundException e) {
 			response.sendError(404, e.getMessage());
 			return;
-		} catch (SQLException | IOException e) {
+		} catch (SQLException | IOException | RdapDatabaseException e) {
 			response.sendError(500, e.getMessage());
 			return;
 		} catch (RequestHandleException e) {
@@ -82,7 +83,7 @@ public abstract class RdapServlet extends HttpServlet {
 	 *             Errors found handling `request`.
 	 */
 	protected abstract RdapResult doRdapGet(HttpServletRequest request)
-			throws RequestHandleException, IOException, SQLException;
+			throws RequestHandleException, IOException, SQLException, RdapDatabaseException;
 
 	/**
 	 * Handles the `request` HEAD request and builds a response. Think of it as
@@ -99,7 +100,7 @@ public abstract class RdapServlet extends HttpServlet {
 	 *             Errors found handling `request`.
 	 */
 	protected abstract RdapResult doRdapHead(HttpServletRequest request)
-			throws RequestHandleException, IOException, SQLException;
+			throws RequestHandleException, IOException, SQLException, RdapDatabaseException;
 
 	/**
 	 * Tries hard to find the best suitable renderer for
@@ -123,7 +124,8 @@ public abstract class RdapServlet extends HttpServlet {
 	}
 
 	private interface HandleAction {
-		RdapResult handle(HttpServletRequest request) throws IOException, SQLException, RequestHandleException;
+		RdapResult handle(HttpServletRequest request)
+				throws IOException, SQLException, RequestHandleException, RdapDatabaseException;
 	}
 
 }
