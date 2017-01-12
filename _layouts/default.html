@@ -9,33 +9,24 @@
 <body>
 
 	<div id="top-menu">
-		<img src="img/logo-reddog.png" />
+		<img id="reddog-logo" src="img/logo-reddog.png" />
 		<span><a href="index.html">Home</a></span>
-		<span><a href="documentation.html">Documentation</a></span>
+		<span>
+			<a class="selected" href="documentation.html">Documentation</a>
+			<br />
+			<img src="img/menu-select.png" />
+		</span>
 		<span>Download</span>
 		<span>FAQ</span>
 		<span>Report a Bug/Github</span>
 		<span>About</span>
 		<span>Contact</span>
 	</div>
-	<div id="header">
-		<p>
-			<strong>Red Dog</strong> is a free and open
-			source Java implementation of an RDAP
-			server currently under development.
-		</p>
-		<p class="continue-reading">
-			Continue Reading
-		</p>
-	</div>
 	<div id="content">
 		{{ content }}
 	</div>
-	<div id="show-more">
-		<img src="img/show-more.png" alt="Show More" />
-	</div>
 	<div id="copyright">
-		© RedDog
+		© RedDog 2017
 	</div>
 	<div id="logos">
 		<img src="img/logo-tec.png" />

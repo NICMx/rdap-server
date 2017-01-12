@@ -1,35 +1,31 @@
 ---
-layout: default
+layout: index
 title: Home
 ---
 
-# Home
+# NEWS
 
-## Introduction
+## 2016-09-19
 
-### What is RDAP?
+Jool 3.4.5 was released.
 
-RDAP (_Registration Data Access Protocol_) is a successor of WHOIS--a protocol used for querying information regarding Internet resources (such as domain names, IP addresses and autonomous system numbers).
+1. Added support for [kernels 4.6 and 4.7](https://github.com/NICMx/Jool/issues/219).
+2. Deleted constant warning due to an empty pool6.
+3. [Improved](https://github.com/NICMx/Jool/issues/223) the implicit blacklist:
+	- Blacklisted directed broadcast.
+	- Applied the implicit blacklist to EAMT-based translation.  
+	  (Among other things, this prevents an overly-intrusive EAMT from hogging packets intended for the translator.)
+4. `jool` and `jool_siit` can now be modprobed in the same namespace [without suffering a Netlink socket collision](https://github.com/NICMx/Jool/issues/224).
 
-Some advantages of RDAP over WHOIS are
+## 2016-09-19
 
-- Standardized request and response formats, in contrast to WHOIS' provider-defined arbitrary text.
-- Reliance on Representational State Transfer (REST) technologies, a strong base which is widely known.
-- Bootstrapping, the automatic determination of where a query should be sent.
-- Support for Internationalized Domain Names and support for localized registration data.
-- Support for identification, authentication and access control to the service.
+Jool 3.4.5 was released.
 
-### What is Red Dog?
-
-Red Dog is a free and open source Java implementation of an RDAP server currently under development.
-
-## Status
-
-There are three development phases planned as of 2016-09-20:
-
-1. Lookup Path Segment, rate-limit, basic authentication, JSON render, help command.
-2. Search Path Segment, Digest authentication, rate-limit penalization, Apache Proxy support, access configuration, indexing.
-3. Federated Authentication, HTML render, redirection, extensions, internationalization, query cache, client, API, installer.
-
-Phase 1 is currently under development.
+1. Added support for [kernels 4.6 and 4.7](https://github.com/NICMx/Jool/issues/219).
+2. Deleted constant warning due to an empty pool6.
+3. [Improved](https://github.com/NICMx/Jool/issues/223) the implicit blacklist:
+	- Blacklisted directed broadcast.
+	- Applied the implicit blacklist to EAMT-based translation.  
+	  (Among other things, this prevents an overly-intrusive EAMT from hogging packets intended for the translator.)
+4. `jool` and `jool_siit` can now be modprobed in the same namespace [without suffering a Netlink socket collision](https://github.com/NICMx/Jool/issues/224).
 
