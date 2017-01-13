@@ -1,5 +1,6 @@
 ---
 layout: default
+category: Documentation
 title: What is SIIT/NAT64?
 ---
 

@@ -1,5 +1,6 @@
 ---
 layout: index
+category: Home
 title: Home
 ---
 

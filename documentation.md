@@ -1,5 +1,6 @@
 ---
 layout: default
+category: Documentation
 title: Documentation Index
 ---
 
@@ -7,14 +8,12 @@ title: Documentation Index
 
 ## Introduction
 
-1. What is RDAP?
-2. What is Red Dog?
+1. [What is RDAP/Red Dog](intro.html)?
 
 ## Installation
 
-1. Installing the Server
-2. Migrating the Database
-3. Deploying the Server
+1. [Installing/Deploying the Server](server-install.html)
+2. [Migrating the Database](migration.html)
 
 ## ...
 

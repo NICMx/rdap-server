@@ -91,7 +91,6 @@ body div {
 	font-size: medium;
 	margin-top: 1.5em;
 	margin-left: -2em;
-	margin-bottom: -2em;
 }
 
 #content h2 {
@@ -112,7 +111,7 @@ body div {
 	/* padding-left: 6em; */
 }
 
-#content a {
+#content a, .continue-reading a {
 	color: #ed544c;
 	text-decoration: none;
 }
@@ -172,5 +171,4 @@ code {
 
 .continue-reading {
 	text-align: right;
-	color: #ee554e;
 }

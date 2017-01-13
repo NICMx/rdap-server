@@ -1,26 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<title>{{ page.title }}</title>
-	<link href="css/screen.css" rel="stylesheet" type="text/css" media="screen" />
-	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet"> 
+	{% include head.html %}
 </head>
 <body>
 
 	<div id="top-menu">
-		<img id="reddog-logo" src="img/logo-reddog.png" />
-		<span>
-			<a class="selected" href="index.html">Home</a>
-			<br />
-			<img src="img/menu-select.png" />
-		</span>
-		<span><a href="documentation.html">Documentation</a></span>
-		<span>Download</span>
-		<span>FAQ</span>
-		<span>Report a Bug/Github</span>
-		<span>About</span>
-		<span>Contact</span>
+		{% include top-menu.html %}
 	</div>
 	<div id="header">
 		<p>
@@ -32,7 +18,7 @@
 			<strong>RDAP</strong> (<em>Registration Data Access Protocol</em>) is a successor of WHOIS&mdash;a protocol used for querying information regarding Internet resources (such as domain names, IP addresses and autonomous system numbers).
 		</p>
 		<p class="continue-reading">
-			Continue Reading
+			<a href="intro.html">Continue Reading</a>
 		</p>
 	</div>
 	<div id="content" class="news">

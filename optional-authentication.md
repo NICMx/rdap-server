@@ -1,5 +1,6 @@
 ---
 layout: default
+category: Documentation
 title: Optional Authentication
 ---
 
