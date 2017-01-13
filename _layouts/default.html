@@ -1,41 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<title>{{ page.title }}</title>
-	<link href="css/screen.css" rel="stylesheet" type="text/css" media="screen" />
-	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet"> 
+	{% include head.html %}
 </head>
 <body>
 
 	<div id="top-menu">
-		<img src="img/logo-reddog.png" />
-		<span><a href="index.html">Home</a></span>
-		<span><a href="documentation.html">Documentation</a></span>
-		<span>Download</span>
-		<span>FAQ</span>
-		<span>Report a Bug/Github</span>
-		<span>About</span>
-		<span>Contact</span>
-	</div>
-	<div id="header">
-		<p>
-			<strong>Red Dog</strong> is a free and open
-			source Java implementation of an RDAP
-			server currently under development.
-		</p>
-		<p class="continue-reading">
-			Continue Reading
-		</p>
+		{% include top-menu.html %}
 	</div>
 	<div id="content">
 		{{ content }}
 	</div>
-	<div id="show-more">
-		<img src="img/show-more.png" alt="Show More" />
-	</div>
 	<div id="copyright">
-		© RedDog
+		© RedDog 2017
 	</div>
 	<div id="logos">
 		<img src="img/logo-tec.png" />

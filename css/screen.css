@@ -13,56 +13,142 @@ body div {
 }
 
 #top-menu {
+	font-weight: bold;
 	text-align: center;
-	/* letter-spacing: -30px; */
+	letter-spacing: -0.1em;
 	color: #ffffff;
-	background-image: url("../img/header.png");
-	padding: 0;
+	background-color: #ee554e;
+	padding: 5em 0 0 0; /* top | right | bottom | left */
 }
 
+/* Red Dog logo */
+#reddog-logo {
+	position: absolute;
+	top: 40px;
+	left: 55px;
+}
+
+/* Containers of the top menu links */
 #top-menu span {
-	vertical-align: middle;
-	margin-right: 1em;
+	display: inline-table;
+	margin-right: 2em;
+	/* TODO warning: Pixel units here. Will this scale well? */
+	line-height: 18px;
+	margin-bottom: -4px;
 }
 
-#top-menu img {
-	vertical-align: middle;
-	margin-right: 2em;
+/* top menu links */
+#top-menu span a {
+	text-decoration: none;
+	color: #ffffff;
+}
+
+#top-menu span a.selected {
+	color: #f3e30a;
+}
+
+/* top menu section indicator (the yellow square) */
+.current-section-indicator {
+	width: 30px;
+	height: 10px;
+	background-color: #f3e20c;
 }
 
 #header {
 	text-align: left;
 	color: #2f2f2f;
-	padding-top: 50pt;
-	padding-bottom: 50pt;
-	display: none; /* TODO remove this */
+	padding-top: 4em;
+	padding-bottom: 2em;
 }
 
 #content {
+	font-size: 0.9em;
 	text-align: left;
 	color: #000000;
+	padding-top: 2.5em;
+	padding-bottom: 3em;
+
+	/* Target pixels: */
+	/* |------------------ 1350 ------------------| */
+	/* |----350---|-----------------|-----275-----| */
+	padding-left: 26%;
+	padding-right: 20%;
+}
+
+.news {
 	background-color: #f3efef;
-	padding-top: 50pt;
-	padding-bottom: 100pt;
+}
+
+#breadcrumbs {
+	margin-left: -5em;
+	padding-left: 0;
+	font-size: 1.1em;
+}
+
+#content h1 {
+	font-weight: bold;
+	color: #ed544c;
+	font-size: medium;
+	margin-top: 1.5em;
+	margin-left: -2em;
+}
+
+#content h2 {
+	font-weight: bold;
+	font-size: medium;
+	margin-top: 3em;
+	margin-left: -1em;
+}
+
+/*
+#content h3 {
+	font-weight: bold;
+	font-size: medium;
+}
+*/
+
+#content p, #content ul, #content ol {
+	/* padding-left: 6em; */
+}
+
+#content a, .continue-reading a {
+	color: #ed544c;
+	text-decoration: none;
 }
 
 #show-more {
-	text-align: center;
-	padding-top: 20pt;
 	padding-bottom: 20pt;
+	background-color: #f3efef;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#show-more a {
+	color: #ed544c;
+	font-weight: bold;
+	font-size: 1.5em;
+}
+
+#show-more a.selected {
+	color: #f2c40c;
+}
+
+#show-more a, #show-more img {
+	margin-left: 0.4em;
 }
 
 #copyright {
-	background-color: #ee554e;
-}
-
-#logos {
-	background-color: #ff8b7f;
+	font-weight: bold;
+	font-size: 0.8em;
+	letter-spacing: -0.1em;
 }
 
 #copyright, #logos {
 	text-align: center;
 	color: #ffffff;
+	background-color: #ee554e;
 	padding-top: 10pt;
 	padding-bottom: 10pt;
 }
@@ -85,5 +171,4 @@ code {
 
 .continue-reading {
 	text-align: right;
-	color: #ee554e;
 }

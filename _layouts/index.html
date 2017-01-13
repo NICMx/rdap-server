@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	{% include head.html %}
+</head>
+<body>
+
+	<div id="top-menu">
+		{% include top-menu.html %}
+	</div>
+	<div id="header">
+		<p>
+			<strong>Red Dog</strong> is a free and open
+			source Java implementation of an RDAP
+			server currently under development.
+		</p>
+		<p>
+			<strong>RDAP</strong> (<em>Registration Data Access Protocol</em>) is a successor of WHOIS&mdash;a protocol used for querying information regarding Internet resources (such as domain names, IP addresses and autonomous system numbers).
+		</p>
+		<p class="continue-reading">
+			<a href="intro.html">Continue Reading</a>
+		</p>
+	</div>
+	<div id="content" class="news">
+		{{ content }}
+	</div>
+	<div id="show-more">
+		<a href="potato">&lt;</a>
+		<img src="img/logo-dog.png" alt="Show More" />
+		<a href="potato" class="selected">1</a>
+		<a href="potato">2</a>
+		<a href="potato">3</a>
+		<a href="potato">4</a>
+		<a href="potato">5</a>
+		<a href="potato">6</a>
+		<a href="potato">7</a>
+		<a href="potato">8</a>
+		<a href="potato">9</a>
+		<a href="potato">10</a>
+		<a href="potato">&gt;</a>
+	</div>
+	<div id="copyright">
+		© RedDog 2017
+	</div>
+	<div id="logos" style="background-color: #ff8b7e">
+		<img src="img/logo-tec.png" />
+		<img src="img/logo-nic.png" />
+	</div>
+
+</body>
+</html>

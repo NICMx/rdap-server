@@ -1,0 +1,30 @@
+<img id="reddog-logo" src="img/logo-reddog.png" />
+<span>
+	<a {% if page.category == 'Home'          %}class="selected"{% endif %} href="index.html">Home</a>
+	{% if page.category == 'Home' %}<br /><img src="img/menu-select.png" />{% endif %}
+</span>
+<span>
+	<a {% if page.category == 'Documentation' %}class="selected"{% endif %} href="documentation.html">Documentation</a>
+	{% if page.category == 'Documentation' %}<br /><img src="img/menu-select.png" />{% endif %}
+</span>
+<span>
+	<a {% if page.category == 'Download'      %}class="selected"{% endif %} href="download.html">Download</a>
+	{% if page.category == 'Download' %}<br /><img src="img/menu-select.png" />{% endif %}
+</span>
+<span>
+	<a {% if page.category == 'FAQ'           %}class="selected"{% endif %} href="faq.html">FAQ</a>
+	{% if page.category == 'FAQ' %}<br /><img src="img/menu-select.png" />{% endif %}
+</span>
+<span>
+	<a {% if page.category == 'ReportBug'     %}class="selected"{% endif %} href="{{ site.repository-url }}/issues">Report a Bug/Github</a>
+	{% if page.category == 'ReportBug' %}<br /><img src="img/menu-select.png" />{% endif %}
+</span>
+<span>
+	<a {% if page.category == 'About'         %}class="selected"{% endif %} href="about.html">About</a>
+	{% if page.category == 'About' %}<br /><img src="img/menu-select.png" />{% endif %}
+</span>
+<span>
+	<a {% if page.category == 'Contact'       %}class="selected"{% endif %} href="contact.html">Contact</a>
+	{% if page.category == 'Contact' %}<br /><img src="img/menu-select.png" />{% endif %}
+</span>
+
