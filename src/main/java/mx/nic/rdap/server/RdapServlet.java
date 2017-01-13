@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import mx.nic.rdap.db.exception.InvalidValueException;
 import mx.nic.rdap.db.exception.ObjectNotFoundException;
 import mx.nic.rdap.db.exception.RdapDatabaseException;
 import mx.nic.rdap.server.AcceptHeaderFieldParser.Accept;
@@ -50,6 +51,9 @@ public abstract class RdapServlet extends HttpServlet {
 			result = predicate.handle(request);
 		} catch (ObjectNotFoundException e) {
 			response.sendError(404, e.getMessage());
+			return;
+		} catch (InvalidValueException e) {
+			response.sendError(422, e.getMessage());
 			return;
 		} catch (SQLException | IOException | RdapDatabaseException e) {
 			response.sendError(500, e.getMessage());

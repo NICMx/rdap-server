@@ -10,7 +10,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.core.exception.UnprocessableEntityException;
-import mx.nic.rdap.db.exception.InvalidValueException;
 import mx.nic.rdap.db.exception.RdapDatabaseException;
 import mx.nic.rdap.db.services.DomainService;
 import mx.nic.rdap.db.struct.SearchResultStruct;
@@ -77,38 +76,33 @@ public class DomainSearchServlet extends RdapServlet {
 			throws RequestHandleException, SQLException, IOException, RdapDatabaseException {
 		SearchResultStruct result = new SearchResultStruct();
 		boolean useNameserverAsAttribute = RdapConfiguration.useNameserverAsDomainAttribute();
-		try {
-			Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
+		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
 
-			String domain = request.getParameterValue();
-			if (IDN.toASCII(domain) != domain) {
-				domain = IDN.toASCII(domain);
-			}
-			switch (request.getParameterName()) {
-			case DOMAIN_NAME:
-				if (RdapConfiguration.hasZoneConfigured()) {
-					// Is valid if there are no available zones, because the
-					// rdap could only respond to autnum and ip networks
-					// (RIR).
-					throw new RequestHandleException(501, "Not implemented yet.");
-				}
-
-				result = DomainService.searchByName(domain, resultLimit, useNameserverAsAttribute);
-				break;
-			case NAMESERVER_NAME:
-				// Gets´s domain by it´s Nameserver name
-				result = DomainService.searchByNsName(domain, resultLimit, useNameserverAsAttribute);
-				break;
-			case NAMESERVER_IP:
-				// Get´s domain by it´s Nameserver Ip
-				result = DomainService.searchByNsIp(domain, resultLimit, useNameserverAsAttribute);
-				break;
-			default:
-				throw new RequestHandleException(501, "Not implemented.");
+		String domain = request.getParameterValue();
+		if (IDN.toASCII(domain) != domain) {
+			domain = IDN.toASCII(domain);
+		}
+		switch (request.getParameterName()) {
+		case DOMAIN_NAME:
+			if (!RdapConfiguration.hasZoneConfigured()) {
+				// Is valid if there are no available zones, because the
+				// rdap could only respond to autnum and ip networks
+				// (RIR).
+				throw new RequestHandleException(501, "Not implemented yet.");
 			}
 
-		} catch (InvalidValueException e) {
-			// TODO
+			result = DomainService.searchByName(domain, resultLimit, useNameserverAsAttribute);
+			break;
+		case NAMESERVER_NAME:
+			// Gets´s domain by it´s Nameserver name
+			result = DomainService.searchByNsName(domain, resultLimit, useNameserverAsAttribute);
+			break;
+		case NAMESERVER_IP:
+			// Get´s domain by it´s Nameserver Ip
+			result = DomainService.searchByNsIp(domain, resultLimit, useNameserverAsAttribute);
+			break;
+		default:
+			throw new RequestHandleException(501, "Not implemented.");
 		}
 
 		return result;
@@ -125,13 +119,12 @@ public class DomainSearchServlet extends RdapServlet {
 			String domain = request.getParameterValue();
 			switch (request.getParameterName()) {
 			case DOMAIN_NAME:
-				if (RdapConfiguration.hasZoneConfigured()) {
+				if (!RdapConfiguration.hasZoneConfigured()) {
 					// Is valid if there are no available zones, because the
 					// rdap could only respond to autnum and ip networks
 					// (RIR).
 					throw new RequestHandleException(501, "Not implemented yet.");
 				}
-
 				result = DomainService.searchByRegexName(domain, resultLimit, useNameserverAsAttribute);
 				break;
 			case NAMESERVER_NAME:
@@ -169,6 +162,11 @@ public class DomainSearchServlet extends RdapServlet {
 
 		if (parameter.equals(NAMESERVER_IP)) {
 			IpUtil.validateIpAddress(value);
+		}
+
+		if (value.endsWith("\\.")) {
+			value = value.substring(0, value.length() - 2);
+			searchRequest.setParameterValue(value);
 		}
 
 		if (value.endsWith(".")) {

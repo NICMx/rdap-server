@@ -17,14 +17,10 @@
 	<dependencies>
 		<dependency>
 			<groupId>mx.nic.rdap</groupId>
-			<artifactId>rdap-core</artifactId>
-			<version>0.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>mx.nic.rdap</groupId>
-			<artifactId>rdap-db</artifactId>
-			<version>0.0.1</version>
-		</dependency>
+			<artifactId>rdap-sql-provider</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency> 
+
 
 		<dependency>
 			<groupId>javax.servlet</groupId>
