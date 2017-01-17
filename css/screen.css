@@ -6,17 +6,13 @@ body {
 	font-family: 'Open Sans', sans-serif;
 }
 
-body div {
-	margin: 0;
+body > div {
 	padding-left: 25%;
 	padding-right: 25%;
 }
 
 #top-menu {
-	font-weight: bold;
 	text-align: center;
-	letter-spacing: -0.1em;
-	color: #ffffff;
 	padding: 5em 0 0 0; /* top | right | bottom | left */
 }
 
@@ -29,6 +25,8 @@ body div {
 
 /* Containers of the top menu links */
 #top-menu span {
+	font-weight: bold;
+	letter-spacing: -0.1em;
 	display: inline-table;
 	margin-right: 2em;
 	/* TODO warning: Pixel units here. Will this scale well? */
@@ -46,21 +44,6 @@ body div {
 	color: #f3e30a;
 }
 
-/* top menu section indicator (the yellow square) */
-.current-section-indicator {
-	width: 30px;
-	height: 10px;
-	background-color: #f3e20c;
-}
-
-#header {
-	text-align: left;
-	color: #2f2f2f;
-	background-color: #ffffff;
-	padding-top: 4em;
-	padding-bottom: 2em;
-}
-
 .content {
 	font-size: 0.9em;
 	text-align: left;
@@ -68,12 +51,6 @@ body div {
 	background-color: #ffffff;
 	padding-top: 2.5em;
 	padding-bottom: 3em;
-
-	/* Target pixels: */
-	/* |------------------ 1350 ------------------| */
-	/* |----350---|-----------------|-----275-----| */
-	padding-left: 26%;
-	padding-right: 20%;
 }
 
 .content h1 {
@@ -94,6 +71,20 @@ body div {
 .content a {
 	color: #ed544c;
 	text-decoration: none;
+}
+
+.content pre code {
+	display: block;
+	overflow: auto;
+	padding: 0.5em 3em;
+}
+
+.content code {
+	background-color: #e0e0e0;
+}
+
+.content .continue-reading {
+	text-align: right;
 }
 
 #news {
@@ -128,6 +119,7 @@ body div {
 }
 
 #copyright {
+	color: #ffffff;
 	font-weight: bold;
 	font-size: 0.8em;
 	letter-spacing: -0.1em;
@@ -135,7 +127,6 @@ body div {
 
 #copyright, #logos {
 	text-align: center;
-	color: #ffffff;
 	padding-top: 10pt;
 	padding-bottom: 10pt;
 }
@@ -145,17 +136,3 @@ body div {
 	margin-right: 1em;
 }
 
-pre code {
-	/* font-size: 13px; */
-	display: block;
-	overflow: auto;
-	padding: 0.5em 3em;
-}
-
-code {
-	background-color: #e0e0e0;
-}
-
-.continue-reading {
-	text-align: right;
-}

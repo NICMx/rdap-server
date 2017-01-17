@@ -15,6 +15,14 @@ title: Documentation Index
 
 ## ...
 
+1. [Database Schema](database-schema.html)
+2. [Datasource](datasource.html)
+3. [Help Command](help-command.html)
+4. [Migration](migration.html)
+5. [Response Privacy](response-privacy.html)
+6. [Search Request](search-request.html)
+7. [User Authentication](user-authentication.html)
+
 ## Miscellaneous
 
 1. [Optional Authentication](optional-authentication.html)
