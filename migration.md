@@ -66,14 +66,16 @@ This section tells you how to set up the batch configuration and the database co
 
 4.	Replace _<mydb\_user>_ and _<mydb\_pass>_ with your actual database credentials.
 
-5.	Replace _<mydb\_url>_ with the URL for your Database. For example:  
- a.	**A localhost mysql database**: jdbc:mysql://localhost  
- b.	**A remote mysql database**: jdbc:mysql://exampledb.com/mydb  
- c.	**A remote Oracle database**: jdbc:oracle:thin:@example.mydb.com:1521:db  
+5.	Replace _<mydb\_url>_ with the URL for your Database. For example:
 
-6.	Replace _<mydb\_driver\_class\_name>_ with the Java class name of the JDBC drive to be use. For example:  
-a.	**Oracle**: oracle.jdbc.OracleDriver  
-b.	**MySql**: com.mysql.jdbc.Driver  
+	1.	**A localhost mysql database**: jdbc:mysql://localhost
+	2.	**A remote mysql database**: jdbc:mysql://exampledb.com/mydb
+	3.	**A remote Oracle database**: jdbc:oracle:thin:@example.mydb.com:1521:db
+
+6.	Replace `<mydb_driver_class_name>` with the Java class name of the JDBC drive to be use. For example:
+
+	1.	**Oracle**: oracle.jdbc.OracleDriver
+	2.	**MySql**: com.mysql.jdbc.Driver
 
 7.	Configure the destination database connection, which is the Database that will contain the information that will be migrated from the origin database. Find the **config/destination.database.properties** file, it contains the same structure from the origin.database.properties file, so you have to repeat steps  3 to 6 using the data for the rdap database. 
 8.	Create the file that will contains the selects statements for the migration. Create the **config/migration.sql** with the following structure:
@@ -400,7 +402,7 @@ The ip address attributes are described in the following table:
 
 ### EntityData
 
-This data structure represents the entities (see Entity section) and their roles (see Rol section) in reference with the containing object. Each entityData must have the following form:
+This data structure represents the entities [(see Entity section)] and their roles [(see Rol section)] in reference with the containing object. Each entityData must have the following form:
 
         “handle | rol”
     
@@ -589,20 +591,20 @@ The following values have been registered in the "RDAP JSON Values" registry for
 
 ### Country codes
 
-RedDog uses the standard for area codes used by the [United Nations Statistics Division](https://en.wikipedia.org/wiki/United_Nations_Statistics_Division).The complete list of country codes can be found [here](http://www.nationsonline.org/oneworld/country_code_list.htm). 
+RedDog uses the standard for area codes used by the [United Nations Statistics Division](https://en.wikipedia.org/wiki/United_Nations_Statistics_Division).The complete list of country codes can be found [here](http://www.nationsonline.org/oneworld/country_code_list.htm "One World Nations Online Country List"). 
 
-[(See  Status section)]:#status
-[(See EventData section)]:#eventdata
-[(See EntityData section)]:#entitydata
-[(See PublicIdData section)]:#publiciddata
-[VCardData]:#vcarddata
-[(See IpAddressData section)]:#ipaddressdata
-[(See VariantData section)]:#variantdata
-[(See SecureDNSData section)]:#securednsdata
-[(See DSData section)]:#dsdata
-[(See Country code section)]:#country-codes
-[(See Events section)]:#eventaction
-
-
+[(See  Status section)]:#status "Status"
+[(See EventData section)]:#eventdata "Event Data"
+[(See EntityData section)]:#entitydata "Entity Data"
+[(See PublicIdData section)]:#publiciddata "Public Id Data"
+[VCardData]:#vcarddata "VCard Data"
+[(See IpAddressData section)]:#ipaddressdata "Ip Address Data"
+[(See VariantData section)]:#variantdata "Variant Data"
+[(See SecureDNSData section)]:#securednsdata "Secure DNS Data"
+[(See DSData section)]:#dsdata "DS Data"
+[(See Country code section)]:#country-codes "Country Codes"
+[(See Events section)]:#eventaction "Events Catalog"
+[(see Entity section)]:#entity "Entity"
+[(see Rol section)]:#rol "Roles catalog"
 
 

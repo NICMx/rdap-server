@@ -30,10 +30,13 @@ Other relevant notes:
 * **WEB-INF** folder is the default location for the **configuration.properties** file, but you can configure the folder where the server will read that file:
     1.	In the **WEB-INF/web.xml**, find the following lines:
  
-        	<!-- </context-param> --><!-- <context-param> -->
-        		<!-- <param-name>rdapConfigurationUserPath</param-name> -->
-        		<!-- <param-value></param-value> -->
-        	<!-- </context-param> -->
+		<!-- <context-param> -->
+			<!-- <param-name>
+				rdapConfigurationUserPath
+			</param-name> -->
+			<!-- <param-value>
+			</param-value> -->
+		<!-- </context-param> -->
 
     2.	Uncomment them, and write a valid directory path in the “_param-value_”.
     3.	Save the changes and test the configuration.

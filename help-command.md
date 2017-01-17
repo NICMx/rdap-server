@@ -24,11 +24,11 @@ This document tells you how to set up _RedDog_ help response:
 
 3.**Fill each notice.** Each notice can have the following information:
   
-  * **Title**: For this just replace **\<title\>** with the description’s heading.
+  * **Title**: For this just replace `<title>` with the description’s heading.
   
-  * **Description**: This description is formed of one or more **\<paragraph\>**, each paragraph is separated by one or more white lines and also is recommended to separate links from the description with a white line.
+  * **Description**: This description is formed of one or more `<paragraph>`, each paragraph is separated by one or more white lines and also is recommended to separate links from the description with a white line.
   
-  * **Link**: A description can add one or more links with relevant information, for this you can add one or more lines staring with the word link, an “=” symbol and the **<link\_data>**. The link data must have the following form:  
+  * **Link**: A description can add one or more links with relevant information, for this you can add one or more lines staring with the word link, an “=” symbol and the `<link_data>`. The link data must have the following form:
 
 		value|rel|href|hreflang|title|media|type
 

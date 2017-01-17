@@ -34,17 +34,22 @@ This document tells you how to set up the RedDog server response privacy.
 
 Other relevant notes:
 * **WEB-INF** folder is the default location for the privacy configuration, but you can configure the folder where the server will read the privacy properties:
-   1.   In the **WEB-INF/web.xml**, find the following lines:  
 
-```
-<!-- <context-param> -->
-	<!-- <param-name>privacySettingsUserPath</param-name> -->
-	<!-- <param-value></param-value> -->
-<!-- </context-param> -->
-```
+	1.   In the **WEB-INF/web.xml**, find the following lines:
 
-   2.	Uncomment them, and write a valid directory path in the “_param-value_”.
-   3.	Save the changes and test the configuration.
+			```
+			<!-- <context-param> -->
+				<!-- <param-name>
+					privacySettingsUserPath
+				</param-name> -->
+				<!-- <param-value>
+				</param-value> -->
+			<!-- </context-param> -->
+			```
+
+	2.	Uncomment them, and write a valid directory path in the _“param-value”_.
+
+	3.	Save the changes and test the configuration.
 
 * The default value of privacy is commented in each file.  
 * Each object has its file for privacy configuration.
