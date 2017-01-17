@@ -1,6 +1,4 @@
 ---
-layout: default
-category: Documentation
 title: Built-in Rate Limit Filter
 ---
 

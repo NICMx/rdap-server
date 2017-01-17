@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	{% include head.html %}
+	{% include head %}
 </head>
 <body>
 
 	<div id="top-menu">
-		{% include top-menu.html %}
+		{% include top-menu %}
 	</div>
-	<div id="header">
+	<div class="content">
 		<p>
 			<strong>Red Dog</strong> is a free and open
 			source Java implementation of an RDAP
@@ -18,33 +18,22 @@
 			<strong>RDAP</strong> (<em>Registration Data Access Protocol</em>) is a successor of WHOIS&mdash;a protocol used for querying information regarding Internet resources (such as domain names, IP addresses and autonomous system numbers).
 		</p>
 		<p class="continue-reading">
-			<a href="intro.html">Continue Reading</a>
+			<a href="{{ site.baseurl }}/intro.html">Continue Reading</a>
 		</p>
 	</div>
-	<div id="content" class="news">
+	<div id="news" class="content">
+		<h1>NEWS</h1>
 		{{ content }}
 	</div>
-	<div id="show-more">
-		<a href="potato">&lt;</a>
-		<img src="img/logo-dog.png" alt="Show More" />
-		<a href="potato" class="selected">1</a>
-		<a href="potato">2</a>
-		<a href="potato">3</a>
-		<a href="potato">4</a>
-		<a href="potato">5</a>
-		<a href="potato">6</a>
-		<a href="potato">7</a>
-		<a href="potato">8</a>
-		<a href="potato">9</a>
-		<a href="potato">10</a>
-		<a href="potato">&gt;</a>
+	<div id="breadcrumb">
+		{% include news-breadcrumb %}
 	</div>
 	<div id="copyright">
 		© RedDog 2017
 	</div>
-	<div id="logos" style="background-color: #ff8b7e">
-		<img src="img/logo-tec.png" />
-		<img src="img/logo-nic.png" />
+	<div id="logos">
+		<a href="http://www.itesm.mx"><img src="{{ site.baseurl }}/img/logo-tec.png" /></a>
+		<a href="http://www.nicmexico.mx/"><img src="{{ site.baseurl }}/img/logo-nic.png" /></a>
 	</div>
 
 </body>

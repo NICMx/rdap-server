@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	{% include head.html %}
+	{% include head %}
 </head>
 <body>
 
 	<div id="top-menu">
-		{% include top-menu.html %}
+		{% include top-menu %}
 	</div>
-	<div id="content">
+	<div class="content">
 		{{ content }}
 	</div>
 	<div id="copyright">
 		© RedDog 2017
 	</div>
 	<div id="logos">
-		<img src="img/logo-tec.png" />
-		<img src="img/logo-nic.png" />
+		<img src="{{ site.baseurl }}/img/logo-tec.png" />
+		<img src="{{ site.baseurl }}/img/logo-nic.png" />
 	</div>
 
 </body>

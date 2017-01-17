@@ -1,6 +1,4 @@
 ---
-layout: default
-category: Documentation
 title: Documentation Index
 ---
 

@@ -1,7 +1,7 @@
 body {
 	padding: 0;
 	margin: 0;
-	background-color: #ffffff;
+	background-color: #ee554e;
 	font-size: 12pt;
 	font-family: 'Open Sans', sans-serif;
 }
@@ -17,7 +17,6 @@ body div {
 	text-align: center;
 	letter-spacing: -0.1em;
 	color: #ffffff;
-	background-color: #ee554e;
 	padding: 5em 0 0 0; /* top | right | bottom | left */
 }
 
@@ -57,14 +56,16 @@ body div {
 #header {
 	text-align: left;
 	color: #2f2f2f;
+	background-color: #ffffff;
 	padding-top: 4em;
 	padding-bottom: 2em;
 }
 
-#content {
+.content {
 	font-size: 0.9em;
 	text-align: left;
 	color: #000000;
+	background-color: #ffffff;
 	padding-top: 2.5em;
 	padding-bottom: 3em;
 
@@ -75,17 +76,7 @@ body div {
 	padding-right: 20%;
 }
 
-.news {
-	background-color: #f3efef;
-}
-
-#breadcrumbs {
-	margin-left: -5em;
-	padding-left: 0;
-	font-size: 1.1em;
-}
-
-#content h1 {
+.content h1 {
 	font-weight: bold;
 	color: #ed544c;
 	font-size: medium;
@@ -93,50 +84,47 @@ body div {
 	margin-left: -2em;
 }
 
-#content h2 {
+.content h2 {
 	font-weight: bold;
 	font-size: medium;
 	margin-top: 3em;
 	margin-left: -1em;
 }
 
-/*
-#content h3 {
-	font-weight: bold;
-	font-size: medium;
-}
-*/
-
-#content p, #content ul, #content ol {
-	/* padding-left: 6em; */
-}
-
-#content a, .continue-reading a {
+.content a {
 	color: #ed544c;
 	text-decoration: none;
 }
 
-#show-more {
+#news {
+	background-color: #f3efef;
+}
+
+#breadcrumb {
 	padding-bottom: 20pt;
 	background-color: #f3efef;
+	font-size: 1.5em;
+	font-weight: bold;
 
 	display: flex;
 	justify-content: center;
 	align-items: center;
 }
 
-#show-more a {
-	color: #ed544c;
-	font-weight: bold;
-	font-size: 1.5em;
-}
-
-#show-more a.selected {
-	color: #f2c40c;
-}
-
-#show-more a, #show-more img {
+#breadcrumb * {
 	margin-left: 0.4em;
+}
+
+#breadcrumb span.ellipsis {
+	font-weight: normal;
+}
+
+#breadcrumb a {
+	color: #ed544c;
+}
+
+#breadcrumb a.selected {
+	color: #f2c40c;
 }
 
 #copyright {
@@ -148,7 +136,6 @@ body div {
 #copyright, #logos {
 	text-align: center;
 	color: #ffffff;
-	background-color: #ee554e;
 	padding-top: 10pt;
 	padding-bottom: 10pt;
 }

@@ -1,5 +1,4 @@
 ---
-layout: default
 category: Contact
 title: Contact
 ---

@@ -4,29 +4,19 @@ category: Home
 title: Home
 ---
 
-# NEWS
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta HTTP-EQUIV="REFRESH" content="0; url={{ site.baseurl }}{{ site.posts.first.url }}" />
+		<title>Redirect</title>
+	</head>
+	<body>
+		Redirecting to <a href="{{ site.baseurl }}{{ site.posts.first.url }}">{{ site.posts.first.url }}</a>...
 
-## 2016-09-19
-
-Jool 3.4.5 was released.
-
-1. Added support for [kernels 4.6 and 4.7](https://github.com/NICMx/Jool/issues/219).
-2. Deleted constant warning due to an empty pool6.
-3. [Improved](https://github.com/NICMx/Jool/issues/223) the implicit blacklist:
-	- Blacklisted directed broadcast.
-	- Applied the implicit blacklist to EAMT-based translation.  
-	  (Among other things, this prevents an overly-intrusive EAMT from hogging packets intended for the translator.)
-4. `jool` and `jool_siit` can now be modprobed in the same namespace [without suffering a Netlink socket collision](https://github.com/NICMx/Jool/issues/224).
-
-## 2016-09-19
-
-Jool 3.4.5 was released.
-
-1. Added support for [kernels 4.6 and 4.7](https://github.com/NICMx/Jool/issues/219).
-2. Deleted constant warning due to an empty pool6.
-3. [Improved](https://github.com/NICMx/Jool/issues/223) the implicit blacklist:
-	- Blacklisted directed broadcast.
-	- Applied the implicit blacklist to EAMT-based translation.  
-	  (Among other things, this prevents an overly-intrusive EAMT from hogging packets intended for the translator.)
-4. `jool` and `jool_siit` can now be modprobed in the same namespace [without suffering a Netlink socket collision](https://github.com/NICMx/Jool/issues/224).
-
+		<!--
+			This is "SHA256 reddog" according to DuckDuckGo.
+			e501c35bdff69476d8bf5b4234b27d1fc70d566353a054d2bafb3f9e0bfab66b
+		-->
+	</body>
+</html>
