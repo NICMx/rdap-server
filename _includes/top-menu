@@ -1,0 +1,30 @@
+<a href="{{ site.baseurl }}/index.html"><img id="reddog-logo" src="{{ site.baseurl }}/img/logo-reddog.png" /></a>
+<span>
+	<a {% if page.category == 'Home'          %}class="selected"{% endif %} href="{{ site.baseurl }}/index.html">Home</a>
+	{% if page.category == 'Home' %}<br /><img src="{{ site.baseurl }}/img/menu-select.png" />{% endif %}
+</span>
+<span>
+	<a {% if page.category == 'Documentation' %}class="selected"{% endif %} href="{{ site.baseurl }}/documentation.html">Documentation</a>
+	{% if page.category == 'Documentation' %}<br /><img src="{{ site.baseurl }}/img/menu-select.png" />{% endif %}
+</span>
+<span>
+	<a {% if page.category == 'Download'      %}class="selected"{% endif %} href="{{ site.baseurl }}/download.html">Download</a>
+	{% if page.category == 'Download' %}<br /><img src="{{ site.baseurl }}/img/menu-select.png" />{% endif %}
+</span>
+<span>
+	<a {% if page.category == 'FAQ'           %}class="selected"{% endif %} href="{{ site.baseurl }}/faq.html">FAQ</a>
+	{% if page.category == 'FAQ' %}<br /><img src="{{ site.baseurl }}/img/menu-select.png" />{% endif %}
+</span>
+<span>
+	<a {% if page.category == 'ReportBug'     %}class="selected"{% endif %} href="{{ site.repository-url }}/issues">Report a Bug/Github</a>
+	{% if page.category == 'ReportBug' %}<br /><img src="{{ site.baseurl }}/img/menu-select.png" />{% endif %}
+</span>
+<span>
+	<a {% if page.category == 'About'         %}class="selected"{% endif %} href="{{ site.baseurl }}/about.html">About</a>
+	{% if page.category == 'About' %}<br /><img src="{{ site.baseurl }}/img/menu-select.png" />{% endif %}
+</span>
+<span>
+	<a {% if page.category == 'Contact'       %}class="selected"{% endif %} href="{{ site.baseurl }}/contact.html">Contact</a>
+	{% if page.category == 'Contact' %}<br /><img src="{{ site.baseurl }}/img/menu-select.png" />{% endif %}
+</span>
+

@@ -1,5 +1,4 @@
 ---
-layout: default
 title: Built-in Rate Limit Filter
 ---
 

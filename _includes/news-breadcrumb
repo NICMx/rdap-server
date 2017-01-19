@@ -1,0 +1,56 @@
+<!-- < -->
+{% if page.next %}
+	<a href="{{ site.baseurl }}{{ page.next.url }}">&lt;</a>
+{% else %}
+	<span>&lt;</span>
+{% endif %}
+
+<img src="img/logo-dog.png" alt="Show More" />
+
+<!-- Find the array index of the post we're currently in. -->
+{% assign postindex = 0 %} <!-- Just in case. -->
+{% for post in site.posts %}
+	{% if post.id == page.id %}
+		{% assign postindex = forloop.index0 %}
+		{% break %}
+	{% endif %}
+{% endfor %}
+
+<!-- Ellipsis if there are too many posts. -->
+{% if postindex > 4 %}
+	<a href="{{ site.baseurl }}{{ site.posts.first.url }}">1</a>
+	{% if postindex > 5 %}
+		<span class="ellipsis">&hellip;</span>
+	{% endif %}
+{% endif %}
+
+<!-- Current page and four potential entries at each side. -->
+{% assign min = postindex | minus: 4 %}
+{% assign max = postindex | plus: 4 %}
+{% for post in (min..max) %}
+	{% if 0 <= post and post < site.posts.size %}
+		{% if post != postindex %}
+			<a href="{{ site.baseurl }}{{ site.posts[post].url }}">{{ post | plus: 1 }}</a>
+		{% else %}
+			<span class="selected">{{ post | plus: 1 }}</span>
+		{% endif %}
+	{% endif %}
+{% endfor %}
+
+<!-- Ellipsis again if there are too many posts. -->
+{% assign limit = site.posts.size | minus: 5 %}
+{% if postindex < limit %}
+	{% assign limit = site.posts.size | minus: 6 %}
+	{% if postindex < limit %}
+		<span class="ellipsis">&hellip;</span>
+	{% endif %}
+
+	<a href="{{ site.baseurl }}{{ site.posts.last.url }}">{{ site.posts.size }}</a>
+{% endif %}
+
+<!-- > -->
+{% if page.previous %}
+	<a href="{{ site.baseurl }}{{ page.previous.url }}">&gt;</a>
+{% else %}
+	<span>&gt;</span>
+{% endif %}

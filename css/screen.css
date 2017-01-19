@@ -1,68 +1,132 @@
 body {
 	padding: 0;
 	margin: 0;
-	background-color: #ffffff;
+	background-color: #ee554e;
 	font-size: 12pt;
 	font-family: 'Open Sans', sans-serif;
 }
 
-body div {
-	margin: 0;
+body > div {
 	padding-left: 25%;
 	padding-right: 25%;
 }
 
 #top-menu {
 	text-align: center;
-	/* letter-spacing: -30px; */
-	color: #ffffff;
-	background-image: url("../img/header.png");
-	padding: 0;
+	padding: 5em 0 0 0; /* top | right | bottom | left */
 }
 
+/* Red Dog logo */
+#reddog-logo {
+	position: absolute;
+	top: 40px;
+	left: 55px;
+}
+
+/* Containers of the top menu links */
 #top-menu span {
-	vertical-align: middle;
-	margin-right: 1em;
-}
-
-#top-menu img {
-	vertical-align: middle;
+	font-weight: bold;
+	letter-spacing: -0.1em;
+	display: inline-table;
 	margin-right: 2em;
+	/* TODO warning: Pixel units here. Will this scale well? */
+	line-height: 18px;
+	margin-bottom: -4px;
 }
 
-#header {
-	text-align: left;
-	color: #2f2f2f;
-	padding-top: 50pt;
-	padding-bottom: 50pt;
-	display: none; /* TODO remove this */
+/* top menu links */
+#top-menu span a {
+	text-decoration: none;
+	color: #ffffff;
 }
 
-#content {
+#top-menu span a.selected {
+	color: #f3e30a;
+}
+
+.content {
+	font-size: 0.9em;
 	text-align: left;
 	color: #000000;
-	background-color: #f3efef;
-	padding-top: 50pt;
-	padding-bottom: 100pt;
+	background-color: #ffffff;
+	padding-top: 2.5em;
+	padding-bottom: 3em;
 }
 
-#show-more {
-	text-align: center;
-	padding-top: 20pt;
+.content h1 {
+	font-weight: bold;
+	color: #ed544c;
+	font-size: medium;
+	margin-top: 1.5em;
+	margin-left: -2em;
+}
+
+.content h2 {
+	font-weight: bold;
+	font-size: medium;
+	margin-top: 3em;
+	margin-left: -1em;
+}
+
+.content a {
+	color: #ed544c;
+	text-decoration: none;
+}
+
+.content pre code {
+	display: block;
+	overflow: auto;
+	padding: 0.5em 3em;
+}
+
+.content code {
+	background-color: #e0e0e0;
+}
+
+.content .continue-reading {
+	text-align: right;
+}
+
+#news {
+	background-color: #f3efef;
+}
+
+#breadcrumb {
 	padding-bottom: 20pt;
+	background-color: #f3efef;
+	font-size: 1.5em;
+	font-weight: bold;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#breadcrumb * {
+	margin-left: 0.4em;
+}
+
+#breadcrumb span.ellipsis {
+	font-weight: normal;
+}
+
+#breadcrumb a {
+	color: #ed544c;
+}
+
+#breadcrumb a.selected {
+	color: #f2c40c;
 }
 
 #copyright {
-	background-color: #ee554e;
-}
-
-#logos {
-	background-color: #ff8b7f;
+	color: #ffffff;
+	font-weight: bold;
+	font-size: 0.8em;
+	letter-spacing: -0.1em;
 }
 
 #copyright, #logos {
 	text-align: center;
-	color: #ffffff;
 	padding-top: 10pt;
 	padding-bottom: 10pt;
 }
@@ -72,18 +136,3 @@ body div {
 	margin-right: 1em;
 }
 
-pre code {
-	/* font-size: 13px; */
-	display: block;
-	overflow: auto;
-	padding: 0.5em 3em;
-}
-
-code {
-	background-color: #e0e0e0;
-}
-
-.continue-reading {
-	text-align: right;
-	color: #ee554e;
-}

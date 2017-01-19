@@ -1,5 +1,4 @@
 ---
-layout: default
 title: Configuring Datasource
 ---
 
