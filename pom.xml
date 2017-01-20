@@ -19,7 +19,18 @@
 			<groupId>mx.nic.rdap</groupId>
 			<artifactId>rdap-sql-provider</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-		</dependency> 
+			<exclusions>
+				<exclusion>
+					<!--
+						This is excluded because the driver is supposed to live in the servlet container's global
+						library pool. If the webapp is the one holding the jar, memory can be leaked.
+						See http://stackoverflow.com/questions/6981564 
+					-->
+					<groupId>mysql</groupId>
+					<artifactId>mysql-connector-java</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
 
 		<dependency>
