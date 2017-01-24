@@ -4,17 +4,19 @@ title: Database Schema
 
 # Setting up RDAP Database schema- MySQL
 
-The first step to run the RedDog Rdap Server is set up the Database schema. This document tells you how to set up a MySQL database schema.
+To facilitate the data migration from your old WHOIS server to a new RDAP server, in RedDog we have defined a database table schema based on the old protocol, the Registry-Registrar relation and including the necessary adjustments to meet the new requirements. In this document we explain how to create the database; the procedure is the following:
+
 1.	Run the Tables.sql script to create all the tables required.
-2.	Run the Catalogs.sql script to fill the catalogs tables.  
+2.	Run the Catalogs.sql script to fill the catalogs tables.
 
 [![image1](img\tables-file.png)](https://github.com/NICMx/rdap-documentation/blob/master/database/catalogs.sql "SQL file with tables")
 [![image2](img\catalogs-file.png)](https://github.com/NICMx/rdap-documentation/blob/master/database/catalogs.sql "SQL file with catalogs")
 
   
-The next step is configuring the connection with the database that you just created. The configuration process is explained in [this document].
+The next step is configuring the connection with the database that you just created. The configuration process is explained in [this document](datasource.html "Datasource configuration").
 
-[this document]:datasource.html "Datasource configuration"
+If you want to know more about the RedDog database definition, like table names, column types and more, you can check out [this document](database-tables-definition.html "Database Tables Definiton").
+
 
 
 

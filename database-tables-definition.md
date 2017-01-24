@@ -5,7 +5,9 @@ title: Database Tables Definition
 
 # RDAP Database Tables Definition
 
-This document describes database table's definition. RedDog's database contains 62 tables
+This document describes database table's definition, we hope this can hel you to understand our application design and maybe, will help you to migrate your old WHOIS database information. 
+
+RedDog's database contains 62 tables:
 
 1. [asn_entity_roles](#asn_entity_roles)
 2. [asn_events](#asn_events)

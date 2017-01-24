@@ -4,8 +4,12 @@ title: Configuring Datasource
 
 # Configuring a Datasource for _RedDog_ Server in Apache Tomcat
 
-This document tells you how to set up a datasource connection for the _RedDog_ server.
-1.	Create the **WEB-INF/content.xml** file in your installation directory.
+Now that wwe already have created the database, as explained in this previous [document](database-schema.html "Database Schema"), we have to configure the connection between that database and your RDAP server, the procedure is the following:
+
+1.	Create the **META-INF/content.xml** file in the directory where you extract the project. In Windows, it should look  like this.
+
+	![DATASOURCE PATH](img\datasource-path.png)
+
 2.	Add the following lines:
  
         <?xml version="1.0" encoding="UTF-8"?>
@@ -23,7 +27,7 @@ This document tells you how to set up a datasource connection for the _RedDog_ s
         
 3.	Replace `<mydb_user>` and `<mydb_pass>` with your actual database credentials.
 
-4.	Replace `<mydb_url>` with the URL for your Database.For example:
+4.	Replace `<mydb_url>` with the URL for your Database. For example:
 
 	1.	**A localhost mysql database:** jdbc:mysql://localhost
 	2.	**A remote mysql database:** jdbc:mysql://exampledb.com/rdap
@@ -35,15 +39,23 @@ This document tells you how to set up a datasource connection for the _RedDog_ s
 	2.	**MySql:** com.mysql.jdbc.Driver
 
 
-6.	Run the server and test the connection.
+6.	Run the server to test the configuration above.
 
-See the [Apache Tomcat 8 Datasource documentation] for more information.
+	1.	If everything is okay, you will see a screen like this:
+
+		![SERVER OK IMAGE](img\server-ok-image.png)
+
+	2.	If something is wrong, you will see some error messages like this:
+
+		![ERROR IMAGE](img\server-error-image.png)
+
+Some common mistakes are usually misspelled username/passwords or wrong database urls, so watch out for this and you can always check some extra information in the [Apache Tomcat 8 Datasource documentation] page.
+
+That's all for the database configuration.
 
 Note:
 
-+	The validationQuery _“select 1 from dual”_ could not work in other Database installations, like SqlServer, so you would have to specify an appropriate validationQuery.
-+	In order to successfully  run the server, you must configure the server search request as explained in [this file].
++	The validationQuery “`select 1 from dual`” could not work in other Database installations, like SqlServer, so you would have to specify an appropriate validationQuery just to see if everything is fine with your connection.
 
-[this file]: search-request.html "Search request configuration"
 [Apache Tomcat 8 Datasource documentation]: http://tomcat.apache.org/tomcat-8.0-doc/jndi-datasource-examples-howto.html "Apache Tomcat"
 
