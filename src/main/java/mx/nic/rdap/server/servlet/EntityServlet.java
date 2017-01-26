@@ -40,9 +40,7 @@ public class EntityServlet extends RdapServlet {
 		if (RdapConfiguration.isAnonymousUsername(username)) {
 			username = null;
 		}
-		Entity entity = null;
-		EntityService serviceInstance = EntityService.getInstance();
-		entity = serviceInstance.getByHandle(request.getHandle());
+		Entity entity = EntityService.getByHandle(request.getHandle());
 		return new EntityResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), entity, username);
 	}
 
@@ -56,7 +54,7 @@ public class EntityServlet extends RdapServlet {
 	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException, RdapDatabaseException {
 		EntityRequest request = new EntityRequest(Util.getRequestParams(httpRequest)[0]);
-		EntityService.getInstance().existsByHandle(request.getHandle());
+		EntityService.existsByHandle(request.getHandle());
 		return new OkResult();
 	}
 
