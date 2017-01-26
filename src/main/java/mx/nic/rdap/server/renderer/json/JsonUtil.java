@@ -1,6 +1,7 @@
 package mx.nic.rdap.server.renderer.json;
 
 import java.io.FileNotFoundException;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -187,7 +188,8 @@ public class JsonUtil {
 
 	public static void createTermsOfService(String realPath) throws FileNotFoundException {
 		if (termsOfService == null) {
-			List<Remark> remarks = Util.readNoticesFromFiles(realPath + "\\WEB-INF\\terms-of-service\\");
+			String path = Paths.get(realPath, "WEB-INF", "terms-of-service").toString();
+			List<Remark> remarks = Util.readNoticesFromFiles(path);
 			if (remarks == null || remarks.isEmpty())
 				return;
 			else

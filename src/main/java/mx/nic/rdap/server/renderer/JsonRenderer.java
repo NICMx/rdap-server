@@ -1,6 +1,7 @@
 package mx.nic.rdap.server.renderer;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -43,15 +44,18 @@ public class JsonRenderer implements Renderer {
 		result.fillNotices();
 
 		// Point 1.4.4 of rdap operational profile by ICANN
+		Remark termsOfService = JsonUtil.getTermsOfServiceNotice();
 		if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)) {
 			if (OperationalProfileValidator.validateTermsOfService()) {
-				result.getNotices().add(JsonUtil.getTermsOfServiceNotice());
+				if (result.getNotices() == null)
+					result.setNotices(new ArrayList<Remark>());
+				result.getNotices().add(termsOfService);
 			}
 		}
-
 		if (result.getNotices() != null && !result.getNotices().isEmpty()) {
 			object.add("notices", this.getNotices(result.getNotices()));
 		}
+
 		// Point 1.4.10 of rdap operational profile by ICANN
 		if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)) {
 			object.add("remarks", JsonUtil.getOperationalProfileRemark());
