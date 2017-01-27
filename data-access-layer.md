@@ -16,17 +16,22 @@ Therefore, if you want to add your own data provider, you must implement each on
 +	mx.nic.rdap.db.spi.IpNetworkSpi
 +	mx.nic.rdap.db.spi.NameserverSpi
 +	mx.nic.rdap.db.spi.RdapUserSpi
-+	mx.nic.rdap.db.spi.InitializerSpi
++	mx.nic.rdap.db.spi.InitializeSpi*
 
-In addition, inside the **"META-INF/services"** server folder you must add a file called the same as each one of our interfaces, so the server can recognize your implementation as a service. These files must contain the full name of your interfaces implementation, in example, for an implementation for the **AutnumSpi** interface called **"MyCustomAutnumImp"** in the package **"com.example.rdap.provider"** there must  be a file in **"META-INF/services"** called **"mx.nic.rdap.db.spi.AutnumSpi"** with the text **"com.example.rdap.provider.MyCustomAutnumImp"** inside.
+In addition, inside the **"META-INF/services"** server folder you must add a file called the same as each one of our interfaces, so the server can recognize your implementation as a service, it should look like this:
+
+![DATA ACCESS PATH](img\data-access-path.png)
+
+These files must contain the full name of your interfaces implementation, in example, for an implementation for the **AutnumSpi** interface called **"MyCustomAutnumImp"** in the package **"com.example.rdap.provider"** there must  be a file in **"META-INF/services"** called **"mx.nic.rdap.db.spi.AutnumSpi"** with the text **"com.example.rdap.provider.MyCustomAutnumImp"** inside.
 
 Each one of these interfaces define a basic set of functions, like gets and insert to database functions, that we think should help in the majority of cases, but if you don't want to implement an specific function, you can throw a **"NotImplementedException"** always, It will cause the server to send an **"http code 501""** error message.
 
 Some restrictions about the implementations:
 
-+	The RDAP must load only one data provider or it can throw a **"RuntimeException"**.
++	The RDAP server must load only one data provider or it can throw a **"RuntimeException"**.
 
 +	The implementation has to be thread-safe because the server will be used as a **Singleton**.
 
-+	The **"InitializeSpi"** interface is optional to implement. The main purpose of this class is to send configuration info relevant for data access. If you prefer to avoid implementing this interface, you must omit the **META-INF/services/mx.nic.rdap.db.spi.InitializerSpi** file.
++	The **"InitializeSpi"** interface is optional to implement. The main purpose of this class is to send configuration info relevant for data access. If you prefer to avoid implementing this interface, you must omit the **META-INF/services/mx.nic.rdap.db.spi.InitializeSpi** file in your project.
 
+Remember, if you have a question, you can always check out our "rdap-sql-provider" project as a data provider example.

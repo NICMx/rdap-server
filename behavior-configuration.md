@@ -58,4 +58,6 @@ Other relevant notes:
     2.	Uncomment them, and write a valid directory path in the “_param-value_”.
     3.	Save the changes and test the configuration.
 
+# Where to go next
 
+A lot of options, don't you think? However, what about user access? With all the options above, you may kiij for some options of grant access to the server resources to a special group of users, let's look this [document](response-privacy.html "Response Privacy Configuration").

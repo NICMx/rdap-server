@@ -75,4 +75,8 @@ Other relevant notes:
 * When a user attempts to access a protected resource for the first time, Tomcat will call the `authenticate()` method of this Realm. Once a user has been authenticated, the user (and his or her associated roles) are cached within Tomcat for the duration of the user's login, that means until the user closes their browser. The cached user is not saved and restored across sessions serialisations. Any changes to the database information for an already authenticated user will not be reflected until the next time that user logs on again.
 * Administrating the information in the users and user roles table is the responsibility of your own implementation. 
 
+# Where to go next
+
+At this moment, you can say that your server is ready to answer some user requests, don't you think? But, what about information that will be showed in these answers? Do you really want all your users to know all the data that you have? maybe not. Therefore, in [this document](response-privacy.html "Response Privacy Configuration") we will show you how to decide which data will be shown to which user.
+
 

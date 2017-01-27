@@ -65,5 +65,9 @@ Other relevant notes:
 
 +	 Each object has its file for privacy configuration.
 
-+	 Check [RFC 7483](https://tools.ietf.org/html/rfc7483 "JSON Responses for the Registration Data Access Protocol (RDAP)") for a list of each object and attribute that form a RDAP response. 
++	 Check [RFC 7483](https://tools.ietf.org/html/rfc7483 "JSON Responses for the Registration Data Access Protocol (RDAP)") for a list of each object and attribute that form a RDAP response.
+
+# Where to go next
+
+Congratulations , your RDAP server is ready! However, maybe your users aren't. What can you do to help them? Exactly! A help command; let's check this [document](help-response.html "Help Command Configuration") about that functionality.
  

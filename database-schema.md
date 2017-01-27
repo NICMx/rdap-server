@@ -12,10 +12,11 @@ To facilitate the data migration from your old WHOIS server to a new RDAP server
 [![image1](img\tables-file.png)](https://github.com/NICMx/rdap-documentation/blob/master/database/catalogs.sql "SQL file with tables")
 [![image2](img\catalogs-file.png)](https://github.com/NICMx/rdap-documentation/blob/master/database/catalogs.sql "SQL file with catalogs")
 
-  
-The next step is configuring the connection with the database that you just created. The configuration process is explained in [this document](datasource.html "Datasource configuration").
-
 If you want to know more about the RedDog database definition, like table names, column types and more, you can check out [this document](database-tables-definition.html "Database Tables Definiton").
+
+# Where to go next 
+
+The next step is configuring the connection with the database that you just created. The configuration process is explained in [this document](datasource.html "Datasource configuration").
 
 
 

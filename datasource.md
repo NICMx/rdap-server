@@ -57,5 +57,9 @@ Note:
 
 +	The validationQuery “`select 1 from dual`” could not work in other Database installations, like SqlServer, so you would have to specify an appropriate validationQuery just to see if everything is fine with your connection.
 
+# Where to go next
+
+At this time, you have a fully functional RDAP server, now; let's look for some advance configuration for the server behavior in this [document](behavior-configuration.html "Behavior Configuration")
+
 [Apache Tomcat 8 Datasource documentation]: http://tomcat.apache.org/tomcat-8.0-doc/jndi-datasource-examples-howto.html "Apache Tomcat"
 
