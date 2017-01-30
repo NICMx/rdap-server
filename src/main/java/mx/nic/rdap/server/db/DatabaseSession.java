@@ -15,7 +15,7 @@ public class DatabaseSession {
 	private static DataSource getEnvironmentDataSource(String name) {
 		try {
 			Context initContext = new InitialContext();
-			return (DataSource) initContext.lookup("java:/comp/env/jdbc/" + name);
+			return (DataSource) initContext.lookup("java:comp/env/jdbc/" + name);
 		} catch (NamingException e) {
 			throw new IllegalArgumentException(e);
 		}
