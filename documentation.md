@@ -8,20 +8,19 @@ title: Documentation Index
 
 1. [What is RDAP/Red Dog](intro.html)?
 
-## Installation
+## Installation/Configuration
 
 1. [Installing/Deploying the Server](server-install.html)
-2. [Migrating the Database](migration.html)
-
-## ...
-
-1. [Database Schema](database-schema.html)
-2. [Datasource](datasource.html)
-3. [Help Command](help-command.html)
-4. [Migration](migration.html)
+2. [Database Schema](database-schema.html)
+3. [Datasource](datasource.html)
+4. [Behavior Configuration](behavior-configuration.html)
 5. [Response Privacy](response-privacy.html)
-6. [Search Request](search-request.html)
-7. [User Authentication](user-authentication.html)
+6. [Help response](help-response.html)
+
+## ?
+
+1. [Migration](migration.html)
+2. [User Authentication](user-authentication.html)
 
 ## Miscellaneous
 

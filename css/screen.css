@@ -136,3 +136,26 @@ body > div {
 	margin-right: 1em;
 }
 
+/* Code selectors */
+
+.codeblock-menu {
+	text-align: right;
+	margin-right: 1em;
+	margin-bottom: -1em;
+}
+
+.code-selector-tab {
+	background-color: #F8F8F8;
+	font-size: 80%;
+	font-weight: bold;
+	padding: 1px 1em;
+	border: 1px solid #DDD;
+	border-bottom-style: none;
+	border-radius: 5px 5px 0px 0px;
+	cursor: pointer;
+}
+
+.code-selector-tab:hover, .code-selector-tab.selected {
+	background-color: #DDD;
+}
+
