@@ -1,7 +1,7 @@
 /**
  * 
  */
-package mx.nic.rdap.server;
+package mx.nic.rdap.server.demo;
 
 import java.io.File;
 
@@ -26,16 +26,15 @@ public class WebServerLauncher {
 			webPort = "8080";
 		}
 		tomcat.setPort(Integer.valueOf(webPort));
-		// TODO get context to load all servlets
 		StandardContext ctx = (StandardContext) tomcat.addWebapp("/", new File(webappDirLocation).getAbsolutePath());
 		((StandardJarScanner) ctx.getJarScanner()).setScanAllDirectories(true);
 		// declare an alternate location for your "WEB-INF/classes" dir:
-		File additionWebInfClasses = new File("target/classes");
+		File classes = new File("target/classes");
 		WebResourceRoot resources = new StandardRoot(ctx);
 		resources.addPreResources(
-				new DirResourceSet(resources, "/WEB-INF/classes", additionWebInfClasses.getAbsolutePath(), "/"));
+				new DirResourceSet(resources, "/WEB-INF/classes", classes.getAbsolutePath(), "/"));
 		ctx.setResources(resources);
-
+		ctx.setPath("rdap-server");
 		tomcat.start();
 		tomcat.getServer().await();
 	}
