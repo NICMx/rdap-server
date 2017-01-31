@@ -8,8 +8,6 @@ title: Optional Authentication
 
 # Optional Authentication
 
-## TEST H2 1
-
 Typically, stock HTTP authentication operates in an all-or-nothing model:
 
 1. Client requests resource anonymously.
@@ -20,8 +18,6 @@ Typically, stock HTTP authentication operates in an all-or-nothing model:
 (Technically, users can provide credentials prematurely if they foresee the 401 and want to skip the first and second steps, but the above is more practical.)
 
 As a result, protected objects are *completely* concealed until clients have identified themselves. Even if the servlet knows that some information should be made public, HTTP bans any access lacking _Authorization_. If you want to support "optional" authentication (allowing partial objects to be accesed by anonymous users), you often need to work around the model.
-
-## TEST H2 2
 
 One way to do it is by providing "default" authentication to anonymous users. In other words, you register a dummy, "anonymous" user in your servlet container, and you append a corresponding *Auhorization* header to every request lacking one before it reaches the server. The servlet then takes care of returning only "public" information to this user, and reveal other information normally to others.
 

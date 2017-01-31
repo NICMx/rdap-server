@@ -2,11 +2,11 @@
 title: Response privacy
 ---
 
-# Configuring _RedDog_ server response privacy
+# Configuring _Red Dog_ server response privacy
 
-As we already said, the RedDog team is concerned about information privacy, that's why we provide the option for you to decide which data should be presented to your server users.
+As we already said, the Red Dog team is concerned about information privacy, that's why we provide the option for you to decide which data should be presented to your server users.
 Depending if is an anonym user, an authenticated user or the data owner(You define which entity role should be taken as the information owner in the [configuration](behavior-configuration.html "Server Behavior Configuration") file)
-This document tells you how to set up the RedDog server response privacy, remember, you can configure each property of every rdap object.
+This document tells you how to set up the Red Dog server response privacy, remember, you can configure each property of every rdap object.
 
 1.	Find the **WEB-INF/privacy_default** folder in your installation directory. It should look like this:
 	

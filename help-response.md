@@ -2,9 +2,9 @@
 title: Help Response
 ---
 
-# Configuring RedDog Help Response
+# Configuring Red Dog Help Response
 
-RedDog RDAP server gives you the option to implement your own answer to a user help query, as defined in [RDAP RFC 7482 section 3.1.6](http://tools.ietf.org/html/rfc7482#section-3.1.6 "Help Path Segment Specification"). We defined a specific file structure; based in a main folder called help, containing multiple files or "notices",  each one containing information that will be shown to the user when help is requested. This document tells you how to set up that help response:
+Red Dog RDAP server gives you the option to implement your own answer to a user help query, as defined in [RDAP RFC 7482 section 3.1.6](http://tools.ietf.org/html/rfc7482#section-3.1.6 "Help Path Segment Specification"). We defined a specific file structure; based in a main folder called help, containing multiple files or "notices",  each one containing information that will be shown to the user when help is requested. This document tells you how to set up that help response:
 
 1.	Find the **WEB-INF/help** folder in your installation directory. It contains a text file called **1Example**, it contains an example of message showed when querying for help. Here is the content of this file:
 

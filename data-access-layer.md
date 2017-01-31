@@ -4,7 +4,7 @@ title: Data Access Layer
 
 # Data Access Layer
 
-Within RDAP server projects package that you have downloaded, there is a project called **"rdap-sql-provider"**, this is our default implementation for the connection with our database implemented in MySQl, which we use as a Database server provider. In RedDog, we believe that some of you may want to use another database, with different table names and other rules, so we provide you a way to do it.
+Within RDAP server projects package that you have downloaded, there is a project called **"rdap-sql-provider"**, this is our default implementation for the connection with our database implemented in MySQl, which we use as a Database server provider. In Red Dog, we believe that some of you may want to use another database, with different table names and other rules, so we provide you a way to do it.
 
 In general, the server must load a valid implementation of a data access layer, in other words, an appropiate project that extends from our **"rdap-db"** project and must add it to the classpath or, if you prefer to use Maven, to the project POM file.
 

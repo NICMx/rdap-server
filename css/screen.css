@@ -136,6 +136,12 @@ body > div {
 	margin-right: 1em;
 }
 
+blockquote {
+	padding: 1em;
+	border: 1px solid #ddd;
+	font-size: 90%;
+}
+
 /* Code selectors */
 
 .codeblock-menu {

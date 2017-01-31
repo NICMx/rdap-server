@@ -39,7 +39,7 @@ cd $CATALINA_HOME/lib
 wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.40.zip
 unzip -j mysql-connector-java-5.1.40.zip mysql-connector-java-5.1.40/mysql-connector-java-5.1.40-bin.jar
 
-# Install RedDog on Tomcat.
+# Install Red Dog on Tomcat.
 cd $CATALINA_BASE/webapps
 # www.reddog.mx/download.html
 wget www.reddog.mx/download/reddog-server.war

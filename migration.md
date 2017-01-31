@@ -4,7 +4,7 @@ title: Migration
 
 # Conventions used in this document:
   
-The application: RedDog migration tool.
+The application: Red Dog migration tool.
 
 Main objects: Entity, Domain, Nameserver, IpNetwork, Autonomous System number.
 
@@ -13,23 +13,23 @@ Common objects: Events, Remarks, Links.
 RDAP objects: The main objects and the common objects.
 
 
-# RedDog migration tool
+# Red Dog migration tool
 
-The purpose of this document is help you in the data migration process from your Whois server to the RedDog RDAP server.
+The purpose of this document is help you in the data migration process from your Whois server to the Red Dog RDAP server.
 
-In the following sections we explain the attributes of each RDAP objects, as defined in the RFC7483, and how is mapped to the RedDog RDAP database. Red Dog’s database uses a relational database design, so the main objects are generally distributed in more than one table.
+In the following sections we explain the attributes of each RDAP objects, as defined in the RFC7483, and how is mapped to the Red Dog RDAP database. Red Dog’s database uses a relational database design, so the main objects are generally distributed in more than one table.
 
 # Migration process
 
-The process of migration using the RedDog migration tool is:
+The process of migration using the Red Dog migration tool is:
 1.	You build the “select” statements with exactly the same types that we define.
 2.	The application reads the SQL file for each main object.
 3.	The application executes that statements in your database.
 4.	The application maps the resultSet of the statements to RDAP objects and validate the data types.
-5.	The application stores the objects in the RedDog RDAP database.
+5.	The application stores the objects in the Red Dog RDAP database.
 
 Some relevant points:
-1.	The id requested in the querys are only to associated the objects that are going to be stored in the database; The RedDog RDAP database assign automatic ids to the main objects.
+1.	The id requested in the querys are only to associated the objects that are going to be stored in the database; The Red Dog RDAP database assign automatic ids to the main objects.
 2.	The common objects that belongs to the main objects are optional.
 
 > The migrator will commit the changes in the database only if all the statements are successfully executed, if something fails between the execution, the migrator will stop and will do a rollback to this changes.
@@ -525,7 +525,7 @@ The following values have been registered in the "RDAP JSON Values" registry for
 
 
 
-If you give us an epp_status column in the Select statements of an object, RedDog migration tool will map it to their RDAP equivalent if exist.  
+If you give us an epp_status column in the Select statements of an object, Red Dog migration tool will map it to their RDAP equivalent if exist.  
 
 ### EventAction
 
@@ -590,7 +590,7 @@ The following values have been registered in the "RDAP JSON Values" registry for
 
 ### Country codes
 
-RedDog uses the standard for area codes used by the [United Nations Statistics Division](https://en.wikipedia.org/wiki/United_Nations_Statistics_Division).The complete list of country codes can be found [here](http://www.nationsonline.org/oneworld/country_code_list.htm "One World Nations Online Country List"). 
+Red Dog uses the standard for area codes used by the [United Nations Statistics Division](https://en.wikipedia.org/wiki/United_Nations_Statistics_Division).The complete list of country codes can be found [here](http://www.nationsonline.org/oneworld/country_code_list.htm "One World Nations Online Country List"). 
 
 [(See  Status section)]:#status "Status"
 [(See EventData section)]:#eventdata "Event Data"

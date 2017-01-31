@@ -2,7 +2,7 @@
 title: Configuring Datasource
 ---
 
-# Configuring a Datasource for _RedDog_ Server in Apache Tomcat
+# Configuring a Datasource for _Red Dog_ Server in Apache Tomcat
 
 Now that wwe already have created the database, as explained in this previous [document](database-schema.html "Database Schema"), we have to configure the connection between that database and your RDAP server, the procedure is the following:
 

@@ -2,7 +2,7 @@
 title: Server Behavior Configuration
 ---
 
-# Configuring RedDog server behavior
+# Configuring Red Dog server behavior
 
 This document tells you how to set up your RDAP server behavior, from which should be the response language, which zones request it it should respond, till if it should respond to a reverse address lookup.
 

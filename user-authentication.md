@@ -2,9 +2,9 @@
 title: User Authentication
 ---
 
-# Configuring Basic user authentication for RedDog Server in Apache Tomcat
+# Configuring Basic user authentication for Red Dog Server in Apache Tomcat
 
-In RedDog we care about the information privacy, so our RDAP server provides the option to use a basic authorization schema (user/pass) to the server resources that you may want to protect or grant access only to a group of users. This document tells you how to set up that basic authentication for the user request on the RedDog server.
+In Red Dog we care about the information privacy, so our RDAP server provides the option to use a basic authorization schema (user/pass) to the server resources that you may want to protect or grant access only to a group of users. This document tells you how to set up that basic authentication for the user request on the Red Dog server.
 
 1.	Open the META-INF/context.xml file in your installation directory. In Windows, it should look like this:
 
