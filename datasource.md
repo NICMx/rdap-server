@@ -6,9 +6,27 @@ title: Configuring Datasource
 
 Now that wwe already have created the database, as explained in this previous [document](database-schema.html "Database Schema"), we have to configure the connection between that database and your RDAP server, the procedure is the following:
 
+> **TODO** typo: "wwe"
+
 1.	Create the **META-INF/content.xml** file in the directory where you extract the project. In Windows, it should look  like this.
 
+> **TODO** "it should look like this" es una verdad a medias.
+> 
+> La imagen incluye archivos de Eclipse (Workspace, .settings, target, src, main, y quizá otros como test), los cuales el usuario no va a tener.
+> 
+> Deberían quitar estos archivos de la imagen, porque van a causar confusión.
+> 
+> Recomiendo que generen el WAR con Maven para saber cuáles archivos va a tener el usuario.
+
+> **TODO** La expresión "In Windows" sobra; el workspace no se va a ver significativamente diferente en otros sistemas operativos.
+>
+> Adicionalmente, mencionar a Windows es de "mala educación". A mucha gente (que son un buen porcentaje de nuestros usuarios) le cae mal. Es como si se pusieran a hablar del Corán en un libro de física.
+> 
+> Pero más importantemente, no creo que mucha gente vaya a levantar al server en Windows. La mayoría de los servers en la vida real son Unix.
+
 	![DATASOURCE PATH](img\datasource-path.png)
+
+> **TODO** por favor no usen backslashes en directorios; esta documentación va a ser servida por un Unix.
 
 2.	Add the following lines:
  
@@ -25,6 +43,7 @@ Now that wwe already have created the database, as explained in this previous [d
 			validationQuery="select 1 from dual" />	
         </Context> 
         
+
 3.	Replace `<mydb_user>` and `<mydb_pass>` with your actual database credentials.
 
 4.	Replace `<mydb_url>` with the URL for your Database. For example:
@@ -38,6 +57,9 @@ Now that wwe already have created the database, as explained in this previous [d
 	1.	**Oracle:** oracle.jdbc.OracleDriver 
 	2.	**MySql:** com.mysql.jdbc.Driver
 
+> **TODO** Creo que deberían configurar las cosas en este orden: driver, URL, user, y al final password.
+> 
+> Siento que se vería más intuitivo porque se estaría yendo de general a particular.
 
 6.	Run the server to test the configuration above.
 
@@ -45,9 +67,15 @@ Now that wwe already have created the database, as explained in this previous [d
 
 		![SERVER OK IMAGE](img\server-ok-image.png)
 
+> **TODO** Por favor a acostúmbense a usar la palabra "TODO" cuando dejen algo pendiente.
+> 
+> De lo contrario se les va a olvidar.
+
 	2.	If something is wrong, you will see some error messages like this:
 
 		![ERROR IMAGE](img\server-error-image.png)
+
+> **TODO** Aquí también falta un TODO.
 
 Some common mistakes are usually misspelled username/passwords or wrong database urls, so watch out for this and you can always check some extra information in the [Apache Tomcat 8 Datasource documentation] page.
 

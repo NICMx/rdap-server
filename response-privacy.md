@@ -8,6 +8,10 @@ As we already said, the Red Dog team is concerned about information privacy, tha
 Depending if is an anonym user, an authenticated user or the data owner(You define which entity role should be taken as the information owner in the [configuration](behavior-configuration.html "Server Behavior Configuration") file)
 This document tells you how to set up the Red Dog server response privacy, remember, you can configure each property of every rdap object.
 
+> **TODO** este párrafo se siente algo pretensioso; cosas como "the Red Dog team is concerned about information privacy" y "remember" suenan a lavado de cerebro.
+> 
+> La verdadera razón por la cual tenemos un feature de response privacy es porque los RFCs nos lo piden...
+
 1.	Find the **WEB-INF/privacy_default** folder in your installation directory. It should look like this:
 	
 	![PRIVACY CONFIGURATION PATH](img/privacy-configuration-path.png)
@@ -71,3 +75,9 @@ Other relevant notes:
 
 Congratulations , your RDAP server is ready! However, maybe your users aren't. What can you do to help them? Exactly! A help command; let's check this [document](help-response.html "Help Command Configuration") about that functionality.
  
+> **TODO** SEÑORESSSSSSSSSSSS
+> 
+> "What can you do to help them? Exactly! A help command"
+> 
+> Estamos hablando con profesionales, no con niños del kinder...
+

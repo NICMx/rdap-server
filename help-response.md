@@ -27,6 +27,10 @@ Red Dog RDAP server gives you the option to implement your own answer to a user 
   
   * **Description**: This description is formed of one or more `<paragraph>`, each paragraph is separated by one or more white lines and also is recommended to separate links from the description with a white line.
   
+> **TODO** ¿qué es lo que va a pasar si no pongo una línea en blanco entre la descripción y los links?
+
+> **TODO** En general, el formato del archivo se siente mal diseñado. ¿Por qué no es un Json o un XML? ¿Por qué parece un properties pero no lo es? ¿Qué pasa si quiero poner comentarios? Si la descripción es el único campo multilínea, ¿no sería menos propenso a errores que esté hasta el final? ¿Qué pasa si quiero que una de las líneas dentro de la descripción comience con "link ="? ¿Por qué estamos usando un archivo en lugar de guardar esta info en la BD, igual que el resto de los comandos?
+
   * **Link**: A description can add one or more links with relevant information, for this you can add one or more lines staring with the word link, an “=” symbol and the `<link_data>`. The link data must have the following form:
 
 		value|rel|href|hreflang|title|media|type

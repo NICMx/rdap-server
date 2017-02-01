@@ -10,6 +10,8 @@ This document tells you how to set up your RDAP server behavior, from which shou
 
 	![CONFIGURATION PATH](img\configuration-path.png)
 
+> **TODO** <del>In Windows</del>, backslash, archivos de Eclipse de la imagen
+
 	It contains the following lines
 
         #Optional.Language of the server. Values en=english, es=español. Default:en
@@ -61,3 +63,8 @@ Other relevant notes:
 # Where to go next
 
 A lot of options, don't you think? However, what about user access? With all the options above, you may kiij for some options of grant access to the server resources to a special group of users, let's look this [document](response-privacy.html "Response Privacy Configuration").
+
+> **TODO** Este párrafo está algo informal.
+
+> **TODO** ¿Qué es "kiij"?
+
