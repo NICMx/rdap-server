@@ -9,7 +9,7 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="304"
+   width="320"
    height="368"
    id="svg2"
    version="1.1"
@@ -68,7 +68,7 @@
      inkscape:pageopacity="0.5372549"
      inkscape:pageshadow="2"
      inkscape:zoom="2.3451087"
-     inkscape:cx="152"
+     inkscape:cx="160"
      inkscape:cy="184"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -107,9 +107,9 @@
      id="layer1"
      transform="translate(0,-684.36218)">
     <rect
-       style="fill:#ccffaa;fill-opacity:0.50196078;stroke:#008000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:9, 9;stroke-dashoffset:0"
+       style="fill:#ccccff;fill-opacity:0.50196078;stroke:#000080;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:9, 9;stroke-dashoffset:0"
        id="rect3802"
-       width="288"
+       width="304"
        height="248"
        x="8"
        y="152"
@@ -117,14 +117,14 @@
     <rect
        style="fill:#ffd5d5;fill-opacity:0.50196078;stroke:#800000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:9, 9;stroke-dashoffset:0"
        id="rect3832"
-       width="272"
+       width="288"
        height="136"
        x="16"
        y="0"
        transform="translate(0,796.36218)" />
     <path
        style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#Arrow1Sstart);marker-end:none"
-       d="m 224,828.36218 0,-40"
+       d="m 240,828.36218 0,-40"
        id="path3861"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
@@ -141,18 +141,14 @@
       <text
          sodipodi:linespacing="125%"
          id="text2989"
-         y="833.15125"
-         x="79.610352"
+         y="839.67273"
+         x="79.460938"
          style="font-size:12px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
          xml:space="preserve"><tspan
-           y="833.15125"
-           x="79.610352"
-           id="tspan2991"
-           sodipodi:role="line">RDAP</tspan><tspan
            id="tspan3005"
-           y="848.15125"
-           x="79.610352"
-           sodipodi:role="line">Server</tspan></text>
+           y="839.67273"
+           x="79.460938"
+           sodipodi:role="line">rdap-server</tspan></text>
     </g>
     <g
        id="g3813"
@@ -167,36 +163,52 @@
       <text
          sodipodi:linespacing="125%"
          id="text2993"
-         y="956.36218"
+         y="948.67761"
          x="216"
          style="font-size:12px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
          xml:space="preserve"><tspan
-           y="956.36218"
+           y="948.67761"
            x="216"
            id="tspan2995"
-           sodipodi:role="line">Client</tspan></text>
+           sodipodi:role="line">HTTP</tspan><tspan
+           y="963.67761"
+           x="216"
+           sodipodi:role="line"
+           id="tspan3812">Client</tspan></text>
     </g>
     <g
        id="g3052"
        transform="translate(16,0)">
       <rect
-         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         style="fill:#f6ffd5;fill-opacity:1;stroke:#000000;stroke-width:1.50000000000000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
          id="rect3025"
-         width="80"
+         width="112"
          height="80"
          x="168"
          y="836.36218" />
       <text
          sodipodi:linespacing="125%"
          id="text3001"
-         y="880.81531"
-         x="207.99121"
+         y="856.98816"
+         x="223.9502"
          style="font-size:12px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
          xml:space="preserve"><tspan
            id="tspan3009"
-           y="880.81531"
-           x="207.99121"
-           sodipodi:role="line">?</tspan></text>
+           y="856.98816"
+           x="223.9502"
+           sodipodi:role="line">Your own</tspan><tspan
+           y="871.98816"
+           x="223.9502"
+           sodipodi:role="line"
+           id="tspan3872">implementation</tspan><tspan
+           y="886.98816"
+           x="223.9502"
+           sodipodi:role="line"
+           id="tspan3874">of the</tspan><tspan
+           y="901.98816"
+           x="223.9502"
+           sodipodi:role="line"
+           id="tspan3878">rdap-db API</tspan></text>
     </g>
     <path
        style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:none"
@@ -245,7 +257,7 @@
          y="980.36218">Internet</tspan></text>
     <g
        id="g3044"
-       transform="translate(16,0)">
+       transform="translate(32,0)">
       <path
          sodipodi:type="arc"
          style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"

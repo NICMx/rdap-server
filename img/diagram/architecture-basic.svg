@@ -68,7 +68,7 @@
      inkscape:pageopacity="0.5372549"
      inkscape:pageshadow="2"
      inkscape:zoom="1.8283898"
-     inkscape:cx="78.818075"
+     inkscape:cx="180"
      inkscape:cy="236"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -107,7 +107,7 @@
      id="layer1"
      transform="translate(0,-580.36218)">
     <rect
-       style="fill:#ccffaa;fill-opacity:0.50196078;stroke:#008000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:9, 9;stroke-dashoffset:0"
+       style="fill:#ccccff;fill-opacity:0.50196081000000004;stroke:#000080;stroke-width:1.50000000000000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:9, 9;stroke-dashoffset:0"
        id="rect3832"
        width="344"
        height="351.99994"
@@ -154,14 +154,18 @@
       <text
          sodipodi:linespacing="125%"
          id="text2993"
-         y="956.36218"
+         y="948.67761"
          x="216"
          style="font-size:12px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
          xml:space="preserve"><tspan
-           y="956.36218"
+           y="948.67761"
            x="216"
            id="tspan2995"
-           sodipodi:role="line">Client</tspan></text>
+           sodipodi:role="line">HTTP</tspan><tspan
+           y="963.67761"
+           x="216"
+           sodipodi:role="line"
+           id="tspan3826">Client</tspan></text>
     </g>
     <path
        style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:none"
@@ -282,7 +286,7 @@
          sodipodi:cy="344"
          sodipodi:rx="40"
          sodipodi:ry="8"
-         d="m 400,344 a 40,8 0 1 1 -80,0 40,8 0 1 1 80,0 z"
+         d="m 400,344 c 0,4.41828 -17.90861,8 -40,8 -22.09139,0 -40,-3.58172 -40,-8 0,-4.41828 17.90861,-8 40,-8 22.09139,0 40,3.58172 40,8 z"
          transform="translate(-88,328.36218)" />
       <path
          style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
@@ -298,7 +302,7 @@
          sodipodi:cy="288"
          sodipodi:rx="40"
          sodipodi:ry="8"
-         d="m 400,288 a 40,8 0 1 1 -80,0 40,8 0 1 1 80,0 z"
+         d="m 400,288 c 0,4.41828 -17.90861,8 -40,8 -22.09139,0 -40,-3.58172 -40,-8 0,-4.41828 17.90861,-8 40,-8 22.09139,0 40,3.58172 40,8 z"
          transform="translate(-88,320.36218)" />
       <text
          xml:space="preserve"

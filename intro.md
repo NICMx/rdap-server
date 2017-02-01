@@ -62,13 +62,13 @@ If you want to deploy this form, you have to provide the following configuration
 
 ### Advanced Form
 
-You will have access to this form if you have coding horsepower.
+This form allows you to use your own schema and/or database system but requires some programming.
 
 ![Fig.3 - Advanced Architecture](img/diagram/architecture-advanced.svg)
 
 By implementing the [`rdap-db`](https://github.com/NICMx/rdap-db) API, you can wrap `Your Main Database` to `rdap-server` in any way you want, which can range as anything from direct queries to `Your Main Database` to queries to non-relational databases.
 
-If you want to deploy this form, you have to provide the following configuration:
+If you want to deploy this form, you have to provide the following:
 
 1. [Deploy `rdap-server`](server-install.html), a typical Java web application in your favorite servlet container.
 2. [Implement the `rdap-db` API](TODO).
