@@ -174,12 +174,12 @@ public class Util {
 							description = description.trim() + " " + line;
 							line = iterator.next().trim();
 							description = description.trim();
-						} while (!line.isEmpty() && !line.startsWith("link"));
+						} while (iterator.hasNext() && !line.isEmpty() && !line.startsWith("link"));
 						if (!description.equals(" ") || !description.isEmpty()) {
 							descriptions.add(description);
 							description = "";
 						}
-					} while (!line.startsWith("link"));
+					} while (iterator.hasNext() && !line.startsWith("link"));
 				}
 				if (line.trim().startsWith("link")) {
 					descriptionChecker = false;
