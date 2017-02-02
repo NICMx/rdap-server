@@ -4,6 +4,8 @@
 package mx.nic.rdap.server.demo;
 
 import java.io.File;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import javax.servlet.ServletException;
 
@@ -21,11 +23,31 @@ public class WebServerLauncher {
 		String webappDirLocation = "src/main/webapp/";
 		Tomcat tomcat = new Tomcat();
 		// Set port
-		String webPort = System.getenv("PORT");
-		if (webPort == null || webPort.isEmpty()) {
-			webPort = "8080";
+		String webPort ="8080";
+		if(args.length>0){
+			
+				try {
+					InetAddress.getByName(args[0]);
+					tomcat.getConnector().setProperty("address", args[0].trim());
+					
+				} catch (UnknownHostException e) {
+					throw new RuntimeException("Invalid address");
+				}
+			
+			if(args.length>1){
+				try{
+					Integer.parseInt(args[1]);
+					webPort=args[1].trim();
+				}catch(NumberFormatException nfe){
+					throw new RuntimeException("Invalid port");
+				}
+			}
 		}
-		tomcat.setPort(Integer.valueOf(webPort));
+		tomcat.getConnector().setProperty("port", webPort);
+	
+		
+		
+		
 		StandardContext ctx = (StandardContext) tomcat.addWebapp("/", new File(webappDirLocation).getAbsolutePath());
 		((StandardJarScanner) ctx.getJarScanner()).setScanAllDirectories(true);
 		// declare an alternate location for your "WEB-INF/classes" dir:
