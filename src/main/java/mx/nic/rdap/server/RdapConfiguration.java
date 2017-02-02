@@ -321,20 +321,31 @@ public class RdapConfiguration {
 	}
 
 	public static boolean isValidZone(String domain) {
+		if (isReverseAddress(domain))
+			return isValidReverseAddress(domain);
 		String[] split = domain.split("\\.", 2);
 		String zone = split[1].trim();
 		if (zone.endsWith(".")) {
 			zone = zone.substring(0, zone.length() - 1);
 		}
-
 		return validZones.contains(zone);
+	}
+
+	// Validates if a reverse address is a valid zone
+	private static boolean isValidReverseAddress(String domain) {
+		if (domain.endsWith(REVERSE_IP_V4))
+			return validZones.contains(REVERSE_IP_V4);
+		if (domain.endsWith(REVERSE_IP_V6))
+			return validZones.contains(REVERSE_IP_V6);
+
+		return false;
 	}
 
 	/**
 	 * validate if a address is in reverse lookup
 	 * 
 	 */
-	public static boolean isReverseAddress(String address) {
+	private static boolean isReverseAddress(String address) {
 		return address.trim().endsWith(REVERSE_IP_V4) || address.trim().endsWith(REVERSE_IP_V6);
 	}
 

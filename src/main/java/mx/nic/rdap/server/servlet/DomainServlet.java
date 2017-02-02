@@ -92,20 +92,9 @@ public class DomainServlet extends RdapServlet {
 			}
 			this.fullRequestValue = requestValue;
 
-			// TODO validate if zone is handle by this server
-			// if (RdapConfiguration.isReverseAddress(requestValue)) {
-			// } else {
-			// int indexOf = requestValue.indexOf('.');
-			//
-			// if (indexOf <= 0) {
-			// throw new InvalidValueException("Zone", "DomainServlet",
-			// "Domain");
-			// }
-			//
-			// zoneName = requestValue.substring(indexOf + 1,
-			// requestValue.length());
-			// domainName = requestValue.substring(0, indexOf);
-			// }
+			if (!RdapConfiguration.isValidZone(requestValue))
+				throw new ObjectNotFoundException("Zone not found.");
+
 		}
 
 		public String getFullRequestValue() {
