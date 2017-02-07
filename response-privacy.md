@@ -4,15 +4,12 @@ title: Response privacy
 
 # Configuring _Red Dog_ server response privacy
 
-As we already said, the Red Dog team is concerned about information privacy, that's why we provide the option for you to decide which data should be presented to your server users.
+As required by the RFC 7481, our server give you the  option for you to decide which data should be presented to your server users.
 Depending if is an anonym user, an authenticated user or the data owner(You define which entity role should be taken as the information owner in the [configuration](behavior-configuration.html "Server Behavior Configuration") file)
-This document tells you how to set up the Red Dog server response privacy, remember, you can configure each property of every rdap object.
+This document tells you how to set up the Red Dog server response privacy,you can configure each property of every rdap object.
 
-> **TODO** este párrafo se siente algo pretensioso; cosas como "the Red Dog team is concerned about information privacy" y "remember" suenan a lavado de cerebro.
-> 
-> La verdadera razón por la cual tenemos un feature de response privacy es porque los RFCs nos lo piden...
 
-1.	Find the **WEB-INF/privacy_default** folder in your installation directory. It should look like this:
+1.	Find the **WEB-INF/privacy** folder in your installation directory. It should look like this:
 	
 	![PRIVACY CONFIGURATION PATH](img/privacy-configuration-path.png)
 
@@ -73,11 +70,7 @@ Other relevant notes:
 
 # Where to go next
 
-Congratulations , your RDAP server is ready! However, maybe your users aren't. What can you do to help them? Exactly! A help command; let's check this [document](help-response.html "Help Command Configuration") about that functionality.
- 
-> **TODO** SEÑORESSSSSSSSSSSS
-> 
-> "What can you do to help them? Exactly! A help command"
-> 
-> Estamos hablando con profesionales, no con niños del kinder...
+Now that your RDAP server is ready, let's configure the[help command](help-response.html "Help Command Configuration").
+
+
 
