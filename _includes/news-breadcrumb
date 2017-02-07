@@ -5,7 +5,7 @@
 	<span>&lt;</span>
 {% endif %}
 
-<img src="img/logo-dog.png" alt="Show More" />
+<img src="{{ site.baseurl }}/img/logo-dog.png" alt="Show More" />
 
 <!-- Find the array index of the post we're currently in. -->
 {% assign postindex = 0 %} <!-- Just in case. -->

@@ -6,11 +6,9 @@ title: Server Behavior Configuration
 
 This document tells you how to set up your RDAP server behavior, from which should be the response language, which zones request it it should respond, till if it should respond to a reverse address lookup.
 
-1.	Find the **WEB-INF/configuration.properties** file in your installation directory. In Windows it should look like this:
+1.	Find the **WEB-INF/configuration.properties** file in your installation directory. It should look like this:
 
-	![CONFIGURATION PATH](img\configuration-path.png)
-
-> **TODO** <del>In Windows</del>, backslash, archivos de Eclipse de la imagen
+	![CONFIGURATION PATH](img/configuration-path.jpg)
 
 	It contains the following lines
 
@@ -62,9 +60,5 @@ Other relevant notes:
 
 # Where to go next
 
-A lot of options, don't you think? However, what about user access? With all the options above, you may kiij for some options of grant access to the server resources to a special group of users, let's look this [document](response-privacy.html "Response Privacy Configuration").
-
-> **TODO** Este párrafo está algo informal.
-
-> **TODO** ¿Qué es "kiij"?
+Now that we have finished the basic configuration to start the server, we can continue with the optional configuration, we recommend to continue with the option to grant access to the server resources to a select group of users, this information can be searched in this [document](response-privacy.html "Response Privacy Configuration").
 

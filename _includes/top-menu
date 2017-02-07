@@ -12,10 +12,6 @@
 	{% if page.category == 'Download' %}<br /><img src="{{ site.baseurl }}/img/menu-select.png" />{% endif %}
 </span>
 <span>
-	<a {% if page.category == 'FAQ'           %}class="selected"{% endif %} href="{{ site.baseurl }}/faq.html">FAQ</a>
-	{% if page.category == 'FAQ' %}<br /><img src="{{ site.baseurl }}/img/menu-select.png" />{% endif %}
-</span>
-<span>
 	<a {% if page.category == 'ReportBug'     %}class="selected"{% endif %} href="{{ site.repository-url }}/issues">Report a Bug/Github</a>
 	{% if page.category == 'ReportBug' %}<br /><img src="{{ site.baseurl }}/img/menu-select.png" />{% endif %}
 </span>

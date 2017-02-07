@@ -4,20 +4,11 @@ title: Server Installation
 
 # Server Installation
 
-## Index
-
-1. [Installation and Deployment](#installation-and-deployment)
-2. [Configuration](#configuration)
-
-## Installation and Deployment
-
-There's not much to say here. The server is your typical servlet Java WAR using a MySQL database. Toss it into your favorite servlet container and watch the fireworks go. The following is an improvised sample on how you might do this; if you favor other means, knock yourself out.
+The server is your typical servlet Java WAR using a MySQL database; simply toss it into your favorite servlet container. The following is an improvised sample on how you might do this; if you favor other means, knock yourself out.
 
 <div class="codeblock-menu">
 	<span class="code-selector-tab" onclick="showCodeBlock(this);">Tomcat</span>
 	<span class="code-selector-tab" onclick="showCodeBlock(this);">Glassfish/Payara</span>
-	<span class="code-selector-tab" onclick="showCodeBlock(this);">JBoss</span>
-	<span class="code-selector-tab" onclick="showCodeBlock(this);">Jetty</span>
 </div>
 
 <!-- Tomcat -->
@@ -66,25 +57,12 @@ payara41/bin/asadmin undeploy rdap
 payara41/bin/asadmin stop-domain
 {% endhighlight %}
 
-<!-- Jboss -->
-{% highlight bash %}
-TODO
-{% endhighlight %}
-
-<!-- Jetty -->
-{% highlight bash %}
-TODO
-{% endhighlight %}
-
 Your Red Dog server is now running.
 
-![TODO - Sample Firefox screenshot](Sample)
+![Sample Firefox screenshot](img/index-html-firefox.jpg)
 
 It doesn't yet have any information to serve, though. Keep reading to learn how to configure it.
 
-## Configuration
+# Where to go next
 
-Blah blah blah server.xml and context.xml.
-
-The next step is to [populate the database](migration.html).
-
+Start by [creating the database](database-schema.html).
