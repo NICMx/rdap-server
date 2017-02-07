@@ -1,7 +1,7 @@
 body {
 	padding: 0;
 	margin: 0;
-	background-color: #ee554e;
+	background-color: #fff;
 	font-size: 12pt;
 	font-family: 'Open Sans', sans-serif;
 }
@@ -14,12 +14,13 @@ body > div {
 #top-menu {
 	text-align: center;
 	padding: 5em 0 0 0; /* top | right | bottom | left */
+	background-color: #ee554e;
 }
 
 /* Red Dog logo */
 #reddog-logo {
 	position: absolute;
-	top: 40px;
+	top: 0;
 	left: 55px;
 }
 
@@ -120,6 +121,7 @@ body > div {
 
 #copyright {
 	color: #ffffff;
+	background-color: #ee554e;
 	font-weight: bold;
 	font-size: 0.8em;
 	letter-spacing: -0.1em;
