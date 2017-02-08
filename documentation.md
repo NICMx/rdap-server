@@ -17,13 +17,15 @@ title: Documentation Index
 5. [Response Privacy](response-privacy.html)
 6. [Help response](help-response.html)
 
-## ?
 
-1. [Migration](migration.html)
-2. [User Authentication](user-authentication.html)
+## Custom Implementation
+
+1. [Data Access Layer](data-access-layer.html)
+2. [Extensibility](extensibility.html)
 
 ## Miscellaneous
 
 1. [Optional Authentication](optional-authentication.html)
 2. [Rate-Limit](rate-limit.html)
-
+3. [User Authentication](user-authentication.html)
+4. [Database Tables Definition](database-tables-definition.html)
