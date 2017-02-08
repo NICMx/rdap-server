@@ -51,7 +51,7 @@ If you want to deploy this form, you have to provide the following configuration
 
 1. [Deploy `rdap-server`](server-install.html), a typical Java web application in your favorite servlet container.
 2. [Prepare the `RDAP Database`](database-schema.html). Only MySQL has been tested so far.
-3. [Configure `rdap-migrator`](migrator.html), which involves providing export queries that will periodically copy the relevant information from `Your Main Database` to the `RDAP Database` so `rdap-server` can query it.
+3. [Configure `rdap-migrator`](migration.html), which involves providing export queries that will periodically copy the relevant information from `Your Main Database` to the `RDAP Database` so `rdap-server` can query it.
 4. (Optional) Fine-tune `rdap-server`:
 	1. [Server behavior](behavior-configuration.html)
 	2. [Server response privacy](response-privacy.html)
@@ -89,5 +89,4 @@ There are three development phases planned as of 2016-09-20:
 2. Search Path Segment, Digest authentication, rate-limit penalization, Apache Proxy support, access configuration, indexing.
 3. Federated Authentication, HTML render, redirection, extensions, internationalization, query cache, client, API, installer.
 
-<del>Phase 1 is currently under development.</del> TODO
 

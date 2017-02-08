@@ -144,6 +144,14 @@ blockquote {
 	font-size: 90%;
 }
 
+/*
+ * Some versions of Jekyll surround code blocks (pre codes) with figures.
+ * The margins get in the way.
+ */
+figure {
+	margin: 0;	
+}
+
 /* Code selectors */
 
 .codeblock-menu {
