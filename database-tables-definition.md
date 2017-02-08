@@ -110,7 +110,7 @@ This table contains the relation between an ASN and its links. Its fields are th
 
 ## asn_remarks
 
-This table contains the relation between an ASN and its events. Its fields are the following:
+This table contains the relation between an ASN and its remarks. Its fields are the following:
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -158,7 +158,7 @@ This table contains the catalog of the two-character country code. Its fields ar
 **Primary key**: ccd\_id
 
 ## domain
-This table contains the catalog of the two-character country code. Its fields are the following:
+This table contains the information about the domain registration. Its fields are the following:
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -367,7 +367,7 @@ This table contains the relation between an Entity and its public ids. Its field
 
 ## entity_remarks
 
-This table contains the relation between a Domain and its remarks. Its fields are the following:
+This table contains the relation between an Entity and its remarks. Its fields are the following:
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -378,7 +378,7 @@ This table contains the relation between a Domain and its remarks. Its fields ar
 
 ## entity_status
 
-This table contains the relation between a Domain and its status. Its fields are the following:
+This table contains the relation between an Entity and its status. Its fields are the following:
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -601,7 +601,7 @@ This table contains the relation between a Nameserver and its links. Its fields 
 
 ## nameserver_remarks
 
-This table contains the relation between a Domain and its remarks. Its fields are the following:
+This table contains the relation between a Nameserver and its remarks. Its fields are the following:
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -635,7 +635,7 @@ This table contains the information about links. Its fields are the following:
 
 ## rdap_user
 
-This table contains the information about the user's roles. Its fields are the following:
+This table contains the information about the users. Its fields are the following:
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -754,7 +754,7 @@ This table contains information about the domain's variants. Its fields are the 
 
 ## variant_name
 
-This table contains the catalog of status. Its fields are the following:
+This table contains the variants names. Its fields are the following:
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -776,7 +776,7 @@ This table contains the relation between a Variant and its relation. Its fields 
 
 ## vcard
 
-This table contains the catalog of status. Its fields are the following:
+This table contains the entities vcards. Its fields are the following:
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -794,7 +794,7 @@ This table contains the catalog of status. Its fields are the following:
 
 ## vcard_postal_info
 
-This table contains the catalog of status. Its fields are the following:
+This table contains the vcards postal information like country, city, postal code, etc. Its fields are the following:
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|

@@ -24,7 +24,7 @@ In addition, inside the **"META-INF/services"** server folder you must add a fil
 
 These files must contain the full name of your interfaces implementation, in example, for an implementation for the **AutnumSpi** interface called **"MyCustomAutnumImp"** in the package **"com.example.rdap.provider"** there must  be a file in **"META-INF/services"** called **"mx.nic.rdap.db.spi.AutnumSpi"** with the text **"com.example.rdap.provider.MyCustomAutnumImp"** inside.
 
-Each one of these interfaces define a basic set of functions, like gets and insert to database functions, that we think should help in the majority of cases, but if you don't want to implement an specific function, you can throw a **"NotImplementedException"** always, It will cause the server to send an **"http code 501""** error message.
+Each one of these interfaces define a basic set of functions, like gets and insert to database functions, that we think should help in the majority of cases, but if you don't want to implement an specific function, you can throw a **"NotImplementedException"** always, It will cause the server to send an **"http code 501"** error message.
 
 Some restrictions about the implementations:
 

@@ -71,8 +71,8 @@ By implementing the [`rdap-db`](https://github.com/NICMx/rdap-db) API, you can w
 If you want to deploy this form, you have to provide the following:
 
 1. [Deploy `rdap-server`](server-install.html), a typical Java web application in your favorite servlet container.
-2. [Implement the `rdap-db` API](TODO).
-3. [Instruct the `rdap-server` to use your implementation](TODO).
+2. [Implement the your data access layer.](datta-access-layer.html)
+3. Instruct the `rdap-server` to use your implementation.
 4. (Optional) Fine-tune `rdap-server`:
 	1. [Server behavior](behavior-configuration.html)
 	2. [Server response privacy](response-privacy.html)
