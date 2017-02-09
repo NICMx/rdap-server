@@ -37,7 +37,7 @@ public class IpNetworkServlet extends RdapServlet {
 	 */
 	@Override
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException {
+			throws RequestHandleException, IOException, SQLException, RdapDatabaseException {
 		IpRequest request = new IpRequest(Util.getRequestParams(httpRequest));
 		String username = httpRequest.getRemoteUser();
 		if (RdapConfiguration.isAnonymousUsername(username)) {
@@ -56,9 +56,6 @@ public class IpNetworkServlet extends RdapServlet {
 			throw new MalformedRequestException("Invalid IP address", e);
 		} catch (InvalidValueException e) {
 			throw new MalformedRequestException(e.getMessage(), e);
-		} catch (RdapDatabaseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 
 		return new IpResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), ipNetwork, username);
@@ -72,7 +69,7 @@ public class IpNetworkServlet extends RdapServlet {
 	 */
 	@Override
 	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException {
+			throws RequestHandleException, IOException, SQLException, RdapDatabaseException {
 		IpRequest request = new IpRequest(Util.getRequestParams(httpRequest));
 		try {
 			if (request.hasCidr()) {
@@ -85,9 +82,6 @@ public class IpNetworkServlet extends RdapServlet {
 			throw new MalformedRequestException("Invalid IP address", e);
 		} catch (InvalidValueException e) {
 			throw new MalformedRequestException(e.getMessage(), e);
-		} catch (RdapDatabaseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		return new OkResult();
 	}

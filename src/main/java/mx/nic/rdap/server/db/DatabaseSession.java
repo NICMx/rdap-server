@@ -21,16 +21,16 @@ public class DatabaseSession {
 
 	public static final String RDAP_DB = "rdap";
 
-	private static DataSource getEnvironmentDataSource(String name) throws SQLException, ParserConfigurationException, SAXException {
+	private static DataSource getEnvironmentDataSource(String name)
+			throws SQLException, ParserConfigurationException, SAXException {
 		try {
-			
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			SAXParser parser = factory.newSAXParser();
 			ContextXmlHandler handler = new ContextXmlHandler();
-			DataSource rdapDataSource=null;
+			DataSource rdapDataSource = null;
 			try {
 				parser.parse(new File("src/main/resources/META-INF/context.xml"), handler);
-				 rdapDataSource = handler.getRdapDataSource();
+				rdapDataSource = handler.getRdapDataSource();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -40,7 +40,8 @@ public class DatabaseSession {
 
 			// Note: "All @AfterClass methods are guaranteed to run even if a
 			// BeforeClass method throws an exception".
-			// This method no longer needs to worry about closing the data sources.
+			// This method no longer needs to worry about closing the data
+			// sources.
 
 			// Store the data sources in the context.
 			System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
@@ -51,8 +52,7 @@ public class DatabaseSession {
 			context.createSubcontext("java:/comp/env");
 			context.createSubcontext("java:/comp/env/jdbc");
 			context.bind("java:/comp/env/jdbc/" + DatabaseSession.RDAP_DB, rdapDataSource);
-			
-			
+
 			return rdapDataSource;
 		} catch (NamingException e) {
 			throw new IllegalArgumentException(e);

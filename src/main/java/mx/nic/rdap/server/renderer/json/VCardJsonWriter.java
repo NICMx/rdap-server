@@ -7,9 +7,6 @@ import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 
-import ezvcard.parameter.AddressType;
-import ezvcard.parameter.TelephoneType;
-import ezvcard.property.Address;
 import mx.nic.rdap.core.db.VCard;
 import mx.nic.rdap.core.db.VCardPostalInfo;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
@@ -215,101 +212,6 @@ public class VCardJsonWriter {
 		attributeArray.add(postalInfoArray.build());
 
 		return attributeArray.build();
-	}
-
-	public static String getJsonString(VCard vCard, boolean isAuthenticated, boolean isOwner) {
-
-		Map<String, PrivacyStatus> settings = PrivacyUtil.getVCardPrivacySettings();
-
-		ezvcard.VCard zvcard = new ezvcard.VCard();
-
-		String key = "name";
-		String value = vCard.getName();
-		if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
-			zvcard.setFormattedName(value);
-
-		key = "companyName";
-		value = vCard.getCompanyName();
-		if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
-			zvcard.setOrganization(value);
-
-		key = "companyUrl";
-		value = vCard.getCompanyURL();
-		if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
-			zvcard.addUrl(vCard.getCompanyURL());
-
-		key = "mail";
-		value = vCard.getEmail();
-		if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
-			zvcard.addEmail(vCard.getEmail());
-
-		key = "voice";
-		value = vCard.getVoice();
-		if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
-			zvcard.addTelephoneNumber(vCard.getVoice(), TelephoneType.VOICE);
-
-		key = "cellphone";
-		value = vCard.getCellphone();
-		zvcard.addTelephoneNumber(vCard.getCellphone(), TelephoneType.CELL);
-
-		key = "fax";
-		value = vCard.getFax();
-		if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
-			zvcard.addTelephoneNumber(vCard.getFax(), TelephoneType.FAX);
-
-		key = "jobTitle";
-		value = vCard.getJobTitle();
-		if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
-			zvcard.addTitle(vCard.getJobTitle());
-
-		key = "postalInfo";
-		if (PrivacyUtil.isObjectVisible(vCard.getPostalInfo(), key, settings.get(key), isAuthenticated, isOwner)) {
-			for (VCardPostalInfo postalInfo : vCard.getPostalInfo()) {
-				Address address = new Address();
-
-				key = "type";
-				value = postalInfo.getType();
-				address.getTypes().add(AddressType.WORK);
-
-				key = "street1";
-				value = postalInfo.getStreet1();
-				if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
-					address.getStreetAddresses().add(value);
-
-				key = "street2";
-				value = postalInfo.getStreet2();
-				if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
-					address.getStreetAddresses().add(value);
-
-				key = "street3";
-				value = postalInfo.getStreet3();
-				if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
-					address.getStreetAddresses().add(value);
-
-				key = "city";
-				value = postalInfo.getCity();
-				if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
-					address.setLocality(postalInfo.getCity());
-
-				key = "state";
-				value = postalInfo.getState();
-				if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
-					address.setRegion(postalInfo.getState());
-
-				key = "postalCode";
-				value = postalInfo.getPostalCode();
-				if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
-					address.setPostalCode(postalInfo.getPostalCode());
-
-				key = "country";
-				value = postalInfo.getCountry();
-				if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
-					address.setCountry(postalInfo.getCountry());
-
-				zvcard.addAddress(address);
-			}
-		}
-		return zvcard.writeJson();
 	}
 
 }
