@@ -66,7 +66,7 @@ This form allows you to use your own schema and/or database system but requires 
 
 ![Fig.3 - Advanced Architecture](img/diagram/architecture-advanced.svg)
 
-By implementing the [`rdap-db`](https://github.com/NICMx/rdap-db) API, you can wrap `Your Main Database` to `rdap-server` in any way you want, which can range as anything from direct queries to `Your Main Database` to queries to non-relational databases.
+By implementing the `rdap-db` API as your [Data access layer](data-access-layer.html), you can wrap `Your Main Database` to `rdap-server` in any way you want, which can range as anything from direct queries to `Your Main Database` to queries to non-relational databases.
 
 If you want to deploy this form, you have to provide the following:
 
