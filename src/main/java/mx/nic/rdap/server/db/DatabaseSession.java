@@ -1,7 +1,7 @@
 package mx.nic.rdap.server.db;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -28,8 +28,8 @@ public class DatabaseSession {
 			SAXParser parser = factory.newSAXParser();
 			ContextXmlHandler handler = new ContextXmlHandler();
 			DataSource rdapDataSource = null;
-			try {
-				parser.parse(new File("src/main/resources/META-INF/context.xml"), handler);
+			try (InputStream in = DatabaseSession.class.getClassLoader().getResourceAsStream("META-INF/context.xml");) {
+				parser.parse(in, handler);
 				rdapDataSource = handler.getRdapDataSource();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

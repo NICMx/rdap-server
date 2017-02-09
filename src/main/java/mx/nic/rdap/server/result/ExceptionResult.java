@@ -40,7 +40,7 @@ public class ExceptionResult extends RdapResult {
 			break;
 		case "401":
 			errorTitle = "Forbidden request";
-			errorDescription = "Must loggin to process the request";
+			errorDescription = "Must log in to process the request";
 			break;
 		case "403":
 			errorTitle = "Forbidden request";
