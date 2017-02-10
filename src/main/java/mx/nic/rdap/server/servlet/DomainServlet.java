@@ -14,6 +14,7 @@ import mx.nic.rdap.db.services.DomainService;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
+import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.DomainResult;
 import mx.nic.rdap.server.result.OkResult;
@@ -85,13 +86,16 @@ public class DomainServlet extends RdapServlet {
 
 		private String zoneName;
 
-		public DomainRequest(String requestValue) throws ObjectNotFoundException, InvalidValueException {
+		public DomainRequest(String requestValue)
+				throws ObjectNotFoundException, InvalidValueException, MalformedRequestException {
 			super();
 			if (requestValue.endsWith(".")) {
 				requestValue = requestValue.substring(0, requestValue.length() - 1);
 			}
 			this.fullRequestValue = requestValue;
 
+			if (!requestValue.contains("."))
+				throw new MalformedRequestException("Domain must contain a zone.");
 			if (!RdapConfiguration.isValidZone(requestValue))
 				throw new ObjectNotFoundException("Zone not found.");
 
