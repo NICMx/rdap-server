@@ -8,24 +8,28 @@ title: Documentation Index
 
 1. [What is RDAP/Red Dog](intro.html)?
 
-## Installation/Configuration
+## Installation/Configuration (Basic form)
 
-1. [Installing/Deploying the Server](server-install.html)
-2. [Database Schema](database-schema.html)
-3. [Datasource](datasource.html)
-4. [Behavior Configuration](behavior-configuration.html)
-5. [Response Privacy](response-privacy.html)
-6. [Help response](help-response.html)
+1. [Deploying `rdap-server` and the RDAP Database](server-install.html).
+2. [Configuring `rdap-migrator`](migration.html).
+	1. [Database Tables Definition](database-tables-definition.html)
+3. (Optional) Fine-tune `rdap-server`:
+	1. [Server behavior](behavior-configuration.html)
+	2. [Server response privacy](response-privacy.html)
+	3. [Help Response](help-response.html)
+	4. [User authentication](user-authentication.html)
+	5. [Optional Authentication](optional-authentication.html)
+	6. [Rate Limit](rate-limit.html)
 
+## Installation/Configuration (Custom form)
 
-## Custom Implementation
+2. [Implementing your data access layer](data-access-layer.html).
+1. [Deploying `rdap-server`](server-install.html).
+4. (Optional) Fine-tune `rdap-server`:
+	1. [Server behavior](behavior-configuration.html)
+	2. [Server response privacy](response-privacy.html)
+	3. [Help Response](help-response.html)
+	4. [User authentication](user-authentication.html)
+	5. [Optional Authentication](optional-authentication.html)
+	6. [Rate Limit](rate-limit.html)
 
-1. [Data Access Layer](data-access-layer.html)
-2. [Extensibility](extensibility.html)
-
-## Miscellaneous
-
-1. [Optional Authentication](optional-authentication.html)
-2. [Rate-Limit](rate-limit.html)
-3. [User Authentication](user-authentication.html)
-4. [Database Tables Definition](database-tables-definition.html)

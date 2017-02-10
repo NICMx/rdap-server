@@ -10,7 +10,7 @@ title: Introduction to RDAP/Red Dog
 2. [What is Red Dog?](#what-is-red-dog)
 3. [Architecture](#architecture)
 	1. [Basic Form](#basic-form)
-	2. [Advanced Form](#advanced-form)
+	2. [Custom Form](#custom-form)
 4. [Status](#status)
 
 ## What is RDAP?
@@ -49,8 +49,7 @@ Red Dog's basic database is a predefined relational schema:
 
 If you want to deploy this form, you have to provide the following configuration:
 
-1. [Deploy `rdap-server`](server-install.html), a typical Java web application in your favorite servlet container.
-2. [Prepare the `RDAP Database`](database-schema.html). Only MySQL has been tested so far.
+1. [Deploy `rdap-server` and the RDAP Database](server-install.html).
 3. [Configure `rdap-migrator`](migration.html), which involves providing export queries that will periodically copy the relevant information from `Your Main Database` to the `RDAP Database` so `rdap-server` can query it.
 4. (Optional) Fine-tune `rdap-server`:
 	1. [Server behavior](behavior-configuration.html)
@@ -60,19 +59,18 @@ If you want to deploy this form, you have to provide the following configuration
 	5. [Optional Authentication](optional-authentication.html)
 	6. [Rate Limit](rate-limit.html)
 
-### Advanced Form
+### Custom Form
 
 This form allows you to use your own schema and/or database system but requires some programming.
 
-![Fig.3 - Advanced Architecture](img/diagram/architecture-advanced.svg)
+![Fig.3 - Custom Architecture](img/diagram/architecture-advanced.svg)
 
-By implementing the `rdap-db` API as your [Data access layer](data-access-layer.html), you can wrap `Your Main Database` to `rdap-server` in any way you want, which can range as anything from direct queries to `Your Main Database` to queries to non-relational databases.
+By implementing the `rdap-data-access-api` API as your [Data access layer](data-access-layer.html), you can wrap `Your Main Database` to `rdap-server` in any way you want, which can range as anything from direct queries to `Your Main Database` to queries to non-relational databases.
 
 If you want to deploy this form, you have to provide the following:
 
-1. [Deploy `rdap-server`](server-install.html), a typical Java web application in your favorite servlet container.
 2. [Implement your data access layer.](data-access-layer.html)
-3. Instruct the `rdap-server` to use your implementation.
+1. [Deploy `rdap-server`](server-install.html), instructing the `rdap-server` to use your implementation.
 4. (Optional) Fine-tune `rdap-server`:
 	1. [Server behavior](behavior-configuration.html)
 	2. [Server response privacy](response-privacy.html)

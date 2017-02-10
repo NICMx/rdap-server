@@ -4,65 +4,67 @@ title: Server Installation
 
 # Server Installation
 
-The server is your typical servlet Java WAR using a MySQL database; simply toss it into your favorite servlet container. The following is an improvised sample on how you might do this; if you favor other means, knock yourself out.
+The server is your typical servlet Java WAR using a MySQL database; simply toss it into your favorite servlet container. The following is an improvised example on how you might do this in Ubuntu/Tomcat; if you favor other means or environments, knock yourself out.
 
-<div class="codeblock-menu">
-	<span class="code-selector-tab" onclick="showCodeBlock(this);">Tomcat</span>
-	<span class="code-selector-tab" onclick="showCodeBlock(this);">Glassfish/Payara</span>
-</div>
+## Tomcat
 
-<!-- Tomcat -->
-{% highlight bash %}
-# Install and start MySQL if you haven't already.
-sudo apt-get install mysql-server
+Install Java:
 
-# Install Tomcat if you haven't already.
-# I'm not using the Ubuntu repositories because their Tomcat is rather old.
-wget www-us.apache.org/dist/tomcat/tomcat-8/v8.5.9/bin/apache-tomcat-8.5.9.zip
-unzip apache-tomcat-8.5.9.zip
-CATALINA_HOME=$(pwd)/apache-tomcat-8.5.9
-chmod +x $(CATALINA_HOME)/bin/*.sh
-JRE_HOME=/usr/lib/jvm/java-8-oracle/jre
+	sudo apt-get install openjdk-8-jre
 
-# Install the MySQL driver on Tomcat.
-cd $CATALINA_HOME/lib
-# https://dev.mysql.com/downloads/connector/j/
-wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.40.zip
-unzip -j mysql-connector-java-5.1.40.zip mysql-connector-java-5.1.40/mysql-connector-java-5.1.40-bin.jar
+Install and start MySQL:
 
-# Install Red Dog on Tomcat.
-cd $CATALINA_BASE/webapps
-# www.reddog.mx/download.html
-wget www.reddog.mx/download/reddog-server.war
+	sudo apt-get install mysql-server
 
-# Start Tomcat.
-$CATALINA_HOME/bin/startup.sh
-{% endhighlight %}
+[Prepare the database schema](database-schema.html).
 
-<!-- Glassfish/Payara -->
-{% highlight bash %}
-unzip payara-4.1.1.164.zip
-cp mysql-connector-java-5.1.39-bin.jar payara41/glassfish/domains/domain1/lib	
-payara41/bin/asadmin start-domain
+Install Tomcat:
 
-payara41/bin/asadmin create-jdbc-connection-pool --datasourceclassname com.mysql.jdbc.jdbc2.optional.MysqlDataSource --restype javax.sql.DataSource --property user=client:password=cSK2Qv8McT7rHvsh:url="jdbc\:mysql\://200.34.22.164/rdap" RdapPool
-payara41/bin/asadmin create-jdbc-resource --connectionpoolid RdapPool jdbc/rdap
-payara41/bin/asadmin ping-connection-pool RdapPool
+	# I'm not using the Ubuntu repositories because their Tomcat is rather old.
+	# You will probably need to adapt this link because it keeps changing.
+	# See www-us.apache.org/dist/tomcat/tomcat-8
+	wget www-us.apache.org/dist/tomcat/tomcat-8/v8.5.11/bin/apache-tomcat-8.5.11.zip
+	unzip apache-tomcat-8.5.11.zip
+	CATALINA_HOME=$(pwd)/apache-tomcat-8.5.11
+	chmod +x $CATALINA_HOME/bin/*.sh
+	JRE_HOME=/usr/lib/jvm/java-8-oracle/jre
 
-payara41/bin/asadmin deploy ~/Downloads/rdap.war
+Install the MySQL driver on Tomcat:
 
-...
+	cd $CATALINA_HOME/lib
+	# https://dev.mysql.com/downloads/connector/j/
+	wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.40.zip
+	unzip -j mysql-connector-java-5.1.40.zip mysql-connector-java-5.1.40/mysql-connector-java-5.1.40-bin.jar
+	mv mysql-connector-java-5.1.40-bin.jar $CATALINA_HOME/lib
 
-payara41/bin/asadmin undeploy rdap
-payara41/bin/asadmin stop-domain
-{% endhighlight %}
+Create the data source that will link Red Dog and the database by adding the following tag to `<GlobalNamingResources>` in `$CATALINA_BASE/conf/server.xml`:
+
+	<Resource name="jdbc/rdap"
+	    type="javax.sql.DataSource"
+	    auth="Container"
+	    driverClassName="[mydb_driver_class_name]"
+	    url="[mydb_url]"
+	    username="[mydb_user]"
+	    password="[mydb_pass]"
+	    validationQuery="select 1 from dual" />
+
+Install Red Dog on Tomcat:
+
+	cd $CATALINA_HOME/webapps
+	# www.reddog.mx/download.html
+	wget www.reddog.mx/download/reddog-server.war
+
+Start Tomcat:
+
+	$CATALINA_HOME/bin/startup.sh
 
 Your Red Dog server is now running.
 
 ![Sample Firefox screenshot](img/index-html-firefox.jpg)
 
-It doesn't yet have any information to serve, though. Keep reading to learn how to configure it.
+It doesn't yet have any information to serve, though.
 
-# Where to go next
+## Where to go next
 
-Start by [creating the database](database-schema.html).
+Keep reading to learn [how to populate the database](migration.html).
+
