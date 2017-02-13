@@ -37,7 +37,7 @@ Install the MySQL driver on Tomcat:
 	unzip -j mysql-connector-java-5.1.40.zip mysql-connector-java-5.1.40/mysql-connector-java-5.1.40-bin.jar
 	mv mysql-connector-java-5.1.40-bin.jar $CATALINA_HOME/lib
 
-Create the data source that will link Red Dog and the database by adding the following tag to `<GlobalNamingResources>` in `$CATALINA_BASE/conf/server.xml`:
+Create the data source that will link Red Dog and the database by adding the following tag to `<GlobalNamingResources>` in `$CATALINA_HOME/conf/server.xml`:
 
 	<Resource name="jdbc/rdap"
 	    type="javax.sql.DataSource"

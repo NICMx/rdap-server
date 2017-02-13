@@ -49,7 +49,7 @@ Red Dog's basic database is a predefined relational schema:
 
 If you want to deploy this form, you have to provide the following configuration:
 
-1. [Deploy `rdap-server` and the RDAP Database](server-install.html).
+1. [Deploy `rdap-server` and the RDAP Database](server-install-basic.html).
 3. [Configure `rdap-migrator`](migration.html), which involves providing export queries that will periodically copy the relevant information from `Your Main Database` to the `RDAP Database` so `rdap-server` can query it.
 4. (Optional) Fine-tune `rdap-server`:
 	1. [Server behavior](behavior-configuration.html)
@@ -70,7 +70,7 @@ By implementing the `rdap-data-access-api` API as your [Data access layer](data-
 If you want to deploy this form, you have to provide the following:
 
 2. [Implement your data access layer.](data-access-layer.html)
-1. [Deploy `rdap-server`](server-install.html), instructing the `rdap-server` to use your implementation.
+1. [Deploy `rdap-server`](server-install-custom.html), instructing the `rdap-server` to use your implementation.
 4. (Optional) Fine-tune `rdap-server`:
 	1. [Server behavior](behavior-configuration.html)
 	2. [Server response privacy](response-privacy.html)
