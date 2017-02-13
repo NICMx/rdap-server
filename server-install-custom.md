@@ -25,7 +25,7 @@ The server is your typical servlet Java WAR; simply toss it into your favorite s
 
 > ![Warning!](img/warning.svg) This step is only necessary due to an implementation oversight (a redundant dependency) that will be worked on in the near future. The database is actually never queried by Red Dog.
 > 
-> Once issue TODO is fixed, this step will no longer be required.
+> Once [issue 21](https://github.com/NICMx/rdap-server/issues/21) is fixed, this step will no longer be required.
 
 A relatively straightforward way to do this is to add an in-memory database so you don't actually need an SQL server.
 
@@ -60,7 +60,7 @@ Add the following tag to `<GlobalNamingResources>` in `$CATALINA_HOME/conf/serve
 > 
 > In the future, `rdap-server` will allow multiple implementations in the classpath and will allow you to specify the active one via configuration.
 > 
-> See issue TODO.
+> See [issue 22](https://github.com/NICMx/rdap-server/issues/22).
 
 Make sure Red Dog's WAR is expanded.
 

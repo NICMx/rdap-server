@@ -27,7 +27,7 @@ Some advantages of RDAP over WHOIS are
 
 ## What is Red Dog?
 
-Red Dog is a free and open source Java implementation of an RDAP server currently under development.
+Red Dog is a free and open source Java implementation of an RDAP server *currently under development*.
 
 ## Architecture
 
@@ -42,6 +42,8 @@ Ideally, Red Dog's database is a separate entity that caches the relevant inform
 You can deploy this in two separate ways:
 
 ### Basic Form
+
+> ![Warning!](img/warning.svg) The `rdap-migrator` project is still in the testing phase and as such this form cannot be fully deployed still. The migrator will be released soon.
 
 Red Dog's basic database is a predefined relational schema:
 
@@ -61,11 +63,13 @@ If you want to deploy this form, you have to provide the following configuration
 
 ### Custom Form
 
+> ![Warning!](img/warning.svg) This form is still under development. If you wish to implement it prematurely, please consider that certain components, such as the data access API, are bound to change in the near future.
+
 This form allows you to use your own schema and/or database system but requires some programming.
 
 ![Fig.3 - Custom Architecture](img/diagram/architecture-advanced.svg)
 
-By implementing the `rdap-data-access-api` API as your [Data access layer](data-access-layer.html), you can wrap `Your Main Database` to `rdap-server` in any way you want, which can range as anything from direct queries to `Your Main Database` to queries to non-relational databases.
+By implementing the [data access API](https://github.com/NICMx/rdap-data-access-api) as your [Data access layer](data-access-layer.html), you can wrap `Your Main Database` to `rdap-server` in any way you want, which can range as anything from direct queries to `Your Main Database` to queries to non-relational databases.
 
 If you want to deploy this form, you have to provide the following:
 
