@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.core.exception.UnprocessableEntityException;
 import mx.nic.rdap.db.exception.RdapDatabaseException;
 import mx.nic.rdap.db.services.DomainService;
@@ -54,7 +55,7 @@ public class DomainSearchServlet extends RdapServlet {
 			username = null;
 		}
 
-		SearchResultStruct result = null;
+		SearchResultStruct<Domain> result = null;
 		switch (searchRequest.getType()) {
 		case PARTIAL_SEARCH:
 			result = getPartialSearch(username, searchRequest);
@@ -69,9 +70,9 @@ public class DomainSearchServlet extends RdapServlet {
 		return new DomainSearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), result, username);
 	}
 
-	private SearchResultStruct getPartialSearch(String username, RdapSearchRequest request)
+	private SearchResultStruct<Domain> getPartialSearch(String username, RdapSearchRequest request)
 			throws RequestHandleException, SQLException, IOException, RdapDatabaseException {
-		SearchResultStruct result = new SearchResultStruct();
+		SearchResultStruct<Domain> result = new SearchResultStruct<Domain>();
 		boolean useNameserverAsAttribute = RdapConfiguration.useNameserverAsDomainAttribute();
 		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
 
@@ -106,9 +107,9 @@ public class DomainSearchServlet extends RdapServlet {
 
 	}
 
-	private SearchResultStruct getRegexSearch(String username, RdapSearchRequest request)
+	private SearchResultStruct<Domain> getRegexSearch(String username, RdapSearchRequest request)
 			throws RequestHandleException, SQLException, IOException, RdapDatabaseException {
-		SearchResultStruct result = new SearchResultStruct();
+		SearchResultStruct<Domain> result = new SearchResultStruct<Domain>();
 		boolean useNameserverAsAttribute = RdapConfiguration.useNameserverAsDomainAttribute();
 		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
 

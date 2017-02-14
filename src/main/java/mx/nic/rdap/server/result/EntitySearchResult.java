@@ -11,7 +11,6 @@ import javax.json.JsonObjectBuilder;
 
 import mx.nic.rdap.core.catalog.RemarkType;
 import mx.nic.rdap.core.db.Entity;
-import mx.nic.rdap.core.db.RdapObject;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.db.struct.SearchResultStruct;
 import mx.nic.rdap.server.RdapConfiguration;
@@ -32,16 +31,16 @@ public class EntitySearchResult extends RdapResult {
 	// Indicate is the search has more results than the answered to the user
 	Boolean resultSetWasLimitedByUserConfiguration;
 
-	public EntitySearchResult(String header, String contextPath, SearchResultStruct result, String userName)
+	public EntitySearchResult(String header, String contextPath, SearchResultStruct<Entity> result, String userName)
 			throws FileNotFoundException {
 		notices = new ArrayList<Remark>();
 		this.entities = new ArrayList<Entity>();
 		this.userInfo = new UserInfo(userName);
 		this.setMaxNumberOfResultsForUser(result.getSearchResultsLimitForUser());
 		this.resultSetWasLimitedByUserConfiguration = result.getResultSetWasLimitedByUserConfiguration();
-		for (RdapObject entity : result.getResults()) {
-			EntityResult.addSelfLinks(header, contextPath, (Entity) entity);
-			this.entities.add((Entity) entity);
+		for (Entity entity : result.getResults()) {
+			EntityResult.addSelfLinks(header, contextPath, entity);
+			this.entities.add(entity);
 		}
 		validateResponse();
 	}

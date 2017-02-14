@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.exception.UnprocessableEntityException;
 import mx.nic.rdap.db.exception.InvalidValueException;
 import mx.nic.rdap.db.exception.RdapDatabaseException;
@@ -53,7 +54,7 @@ public class NameserverSearchServlet extends RdapServlet {
 			username = null;
 		}
 
-		SearchResultStruct result = null;
+		SearchResultStruct<Nameserver> result = null;
 		switch (searchRequest.getType()) {
 		case PARTIAL_SEARCH:
 			result = getPartialSearch(username, searchRequest);
@@ -68,9 +69,9 @@ public class NameserverSearchServlet extends RdapServlet {
 				username);
 	}
 
-	private SearchResultStruct getPartialSearch(String username, RdapSearchRequest request)
+	private SearchResultStruct<Nameserver> getPartialSearch(String username, RdapSearchRequest request)
 			throws SQLException, IOException, RequestHandleException, RdapDatabaseException {
-		SearchResultStruct result = new SearchResultStruct();
+		SearchResultStruct<Nameserver> result = new SearchResultStruct<Nameserver>();
 		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
 
 		switch (request.getParameterName()) {
@@ -88,9 +89,9 @@ public class NameserverSearchServlet extends RdapServlet {
 		return result;
 	}
 
-	private SearchResultStruct getRegexSearch(String username, RdapSearchRequest request)
+	private SearchResultStruct<Nameserver> getRegexSearch(String username, RdapSearchRequest request)
 			throws SQLException, IOException, RequestHandleException, RdapDatabaseException {
-		SearchResultStruct result = new SearchResultStruct();
+		SearchResultStruct<Nameserver> result = new SearchResultStruct<Nameserver>();
 		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
 
 		switch (request.getParameterName()) {

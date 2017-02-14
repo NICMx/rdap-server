@@ -14,7 +14,6 @@ import javax.json.JsonObjectBuilder;
 
 import mx.nic.rdap.core.catalog.RemarkType;
 import mx.nic.rdap.core.db.Domain;
-import mx.nic.rdap.core.db.RdapObject;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.db.struct.SearchResultStruct;
 import mx.nic.rdap.server.RdapConfiguration;
@@ -36,16 +35,16 @@ public class DomainSearchResult extends RdapResult {
 	// Indicate is the search has more results than the answered to the user
 	Boolean resultSetWasLimitedByUserConfiguration;
 
-	public DomainSearchResult(String header, String contextPath, SearchResultStruct result, String userName)
+	public DomainSearchResult(String header, String contextPath, SearchResultStruct<Domain> result, String userName)
 			throws FileNotFoundException {
 		notices = new ArrayList<Remark>();
 		this.domains = new ArrayList<Domain>();
 		this.userInfo = new UserInfo(userName);
 		this.setMaxNumberOfResultsForUser(result.getSearchResultsLimitForUser());
 		this.resultSetWasLimitedByUserConfiguration = result.getResultSetWasLimitedByUserConfiguration();
-		for (RdapObject domain : result.getResults()) {
-			DomainResult.addSelfLinks(header, contextPath, (Domain) domain);
-			this.domains.add((Domain) domain);
+		for (Domain domain : result.getResults()) {
+			DomainResult.addSelfLinks(header, contextPath, domain);
+			this.domains.add(domain);
 		}
 	}
 

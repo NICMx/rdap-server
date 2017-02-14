@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.exception.UnprocessableEntityException;
 import mx.nic.rdap.db.exception.RdapDatabaseException;
 import mx.nic.rdap.db.services.EntityService;
@@ -41,7 +42,7 @@ public class EntitySearchServlet extends RdapServlet {
 			username = null;
 		}
 
-		SearchResultStruct result = null;
+		SearchResultStruct<Entity> result = null;
 		switch (searchRequest.getType()) {
 		case PARTIAL_SEARCH:
 			result = getPartialSearch(username, searchRequest);
@@ -56,9 +57,9 @@ public class EntitySearchServlet extends RdapServlet {
 		return new EntitySearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), result, username);
 	}
 
-	private SearchResultStruct getPartialSearch(String username, RdapSearchRequest searchRequest)
+	private SearchResultStruct<Entity> getPartialSearch(String username, RdapSearchRequest searchRequest)
 			throws SQLException, IOException, RdapDatabaseException {
-		SearchResultStruct result = null;
+		SearchResultStruct<Entity> result = null;
 
 		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
 		switch (searchRequest.getParameterName()) {
@@ -73,9 +74,9 @@ public class EntitySearchServlet extends RdapServlet {
 		return result;
 	}
 
-	private SearchResultStruct getRegexSearch(String username, RdapSearchRequest searchRequest)
+	private SearchResultStruct<Entity> getRegexSearch(String username, RdapSearchRequest searchRequest)
 			throws SQLException, IOException, RequestHandleException, RdapDatabaseException {
-		SearchResultStruct result = null;
+		SearchResultStruct<Entity> result = null;
 
 		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
 		switch (searchRequest.getParameterName()) {

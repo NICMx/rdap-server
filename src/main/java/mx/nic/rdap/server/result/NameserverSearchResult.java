@@ -12,7 +12,6 @@ import javax.json.JsonObjectBuilder;
 import mx.nic.rdap.core.catalog.RemarkType;
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Nameserver;
-import mx.nic.rdap.core.db.RdapObject;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.db.struct.SearchResultStruct;
 import mx.nic.rdap.server.RdapConfiguration;
@@ -33,16 +32,16 @@ public class NameserverSearchResult extends RdapResult {
 	// Indicate is the search has more results than the answered to the user
 	Boolean resultSetWasLimitedByUserConfiguration;
 
-	public NameserverSearchResult(String header, String contextPath, SearchResultStruct result, String userName)
-			throws FileNotFoundException {
+	public NameserverSearchResult(String header, String contextPath, SearchResultStruct<Nameserver> result,
+			String userName) throws FileNotFoundException {
 		notices = new ArrayList<Remark>();
 		this.nameservers = new ArrayList<Nameserver>();
 		this.userInfo = new UserInfo(userName);
 		this.setMaxNumberOfResultsForUser(result.getSearchResultsLimitForUser());
 		this.resultSetWasLimitedByUserConfiguration = result.getResultSetWasLimitedByUserConfiguration();
-		for (RdapObject nameserver : result.getResults()) {
-			NameserverResult.addSelfLinks(header, contextPath, (Nameserver) nameserver);
-			this.nameservers.add((Nameserver) nameserver);
+		for (Nameserver nameserver : result.getResults()) {
+			NameserverResult.addSelfLinks(header, contextPath, nameserver);
+			this.nameservers.add(nameserver);
 		}
 	}
 
