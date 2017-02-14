@@ -16,6 +16,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.catalina.webresources.DirResourceSet;
 import org.apache.catalina.webresources.StandardRoot;
 import org.apache.tomcat.JarScanner;
 import org.apache.tomcat.util.scan.StandardJarScanner;
@@ -65,12 +66,15 @@ public class WebServerLauncher {
 
 		WebResourceRoot resources = new StandardRoot(ctx);
 
-		// File classes = new File("target/classes");
-		// resources.addPreResources(new DirResourceSet(resources,
-		// "/WEB-INF/classes", classes.getAbsolutePath(), "/"));
-
-		resources.createWebResourceSet(WebResourceRoot.ResourceSetType.RESOURCE_JAR, "/WEB-INF/classes",
-				"target/rdap-server-0.0.1-SNAPSHOT.jar", null, "/");
+		Path jarPath = Paths.get("target", "rdap-server.jar");
+		if (Files.exists(jarPath)) {
+			resources.createWebResourceSet(WebResourceRoot.ResourceSetType.RESOURCE_JAR, "/WEB-INF/classes",
+					jarPath.toString(), null, "/");
+		} else {
+			File classes = new File("target/classes");
+			resources
+					.addPreResources(new DirResourceSet(resources, "/WEB-INF/classes", classes.getAbsolutePath(), "/"));
+		}
 
 		ctx.setResources(resources);
 		ctx.setPath("rdap-server");
