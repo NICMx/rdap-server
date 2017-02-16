@@ -4,16 +4,18 @@ title: Response privacy
 
 # Configuring _Red Dog_ server response privacy
 
-As required by the RFC 7481, our server give you the  option for you to decide which data should be presented to your server users.
-Depending if is an anonym user, an authenticated user or the data owner (You define which entity role should be taken as the information owner in the [configuration](behavior-configuration.html "Server Behavior Configuration") file)
-This document tells you how to set up the Red Dog server response privacy, you can configure each property of every rdap object.
+As required by RFC 7481, the Red Dog server allows you to protect data with authentication schemes.
+
+Data can be served to everyone, authenticated users, only to its owners or to no one. You define which entity role should be considered the information owner in the [configuration](behavior-configuration.html "Server Behavior Configuration") file.
+
+To set up the Red Dog server response privacy, perform the following steps:
 
 
 1.	Find the **WEB-INF/privacy** folder in your installation directory. It should look like this:
 	
 	![PRIVACY CONFIGURATION PATH](img/privacy-configuration-path.png)
 
-	It contains a “_properties_” file for each object used in the server response and has a similar structure. In example, here is the content of the **domain.properties** file: 
+	It contains a “_properties_” file for each object used in the server response and has a similar structure. For example, here is the content of the **domain.properties** file: 
 
 		#For each attribute you can use the values: owner, authenticate, any or none.
 		#The owner value specify that only the owner of the object can see the attribute.
@@ -71,6 +73,4 @@ Other relevant notes:
 # Where to go next
 
 Now that your RDAP server is ready, let's configure the [help command](help-response.html "Help Command Configuration").
-
-
 

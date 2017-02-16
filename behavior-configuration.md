@@ -4,7 +4,7 @@ title: Server Behavior Configuration
 
 # Configuring Red Dog server behavior
 
-This document tells you how to set up your RDAP server behavior, from which should be the response language, which zones request it it should respond, till if it should respond to a reverse address lookup.
+This document explains how to tweak a Red Dog server's behavior.
 
 1.	Find the **WEB-INF/configuration.properties** file in your installation directory. It should look like this:
 
@@ -35,15 +35,15 @@ This document tells you how to set up your RDAP server behavior, from which shou
         #Optional. anonymous, username. Default 'anonymous'.
         anonymous_username = 
 
-2.	Set up the variables that you want, each one is preceded by a small description of it.
+2.	Adjust the variables however you see fit. Each one is preceded by a small description of it.
 
 3.	Run the server and make a request to test the configuration.
 
 Other relevant notes:
 
-* **WEB-INF** folder is the default location for the **configuration.properties** file, but you can configure the folder where the server will read that file:
+* The **WEB-INF** folder is the default location of the **configuration.properties** file, but you can define a new location by following these steps:
 
-    1.	In the **WEB-INF/web.xml**, find the following lines:
+    1.	In **WEB-INF/web.xml**, find the following lines:
  
 			```
 			<!-- <context-param> -->
@@ -55,7 +55,7 @@ Other relevant notes:
 			<!-- </context-param> -->
 			```
 
-    2.	Uncomment them, and write a valid directory path in the “_param-value_”.
+    2.	Uncomment them, and write a valid directory path in `param-value`.
     3.	Save the changes and test the configuration.
 
 # Where to go next
