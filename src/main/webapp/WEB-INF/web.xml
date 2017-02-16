@@ -10,27 +10,6 @@
 		<location>/exception</location>
 	</error-page>
 	
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>Search pages</web-resource-name>
-			<description>Wildcard means whole app requires authentication</description>
-			<url-pattern>/nameservers</url-pattern>
-			<url-pattern>/domains</url-pattern>
-			<url-pattern>/entities</url-pattern>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>AUTHENTICATED</role-name>
-		</auth-constraint>
-	</security-constraint>
-
-	<security-role>
-		<role-name>AUTHENTICATED</role-name>
-	</security-role>
-	
-	<login-config>
-		<auth-method>BASIC</auth-method>
-	</login-config>
-
 	<welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list> 
