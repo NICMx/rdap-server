@@ -35,3 +35,7 @@ title: Documentation Index
 		1. [Server response privacy](response-privacy.html)
 		3. [Optional authentication](optional-authentication.html)
 
+
+## Miscellanius
+
+1. [RDAP Demo Server](demo-server.html).

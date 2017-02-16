@@ -7,7 +7,7 @@ title: Introduction to RDAP/Red Dog
 ## Index
 
 1. [What is RDAP?](#what-is-rdap)
-2. [What is Red Dog?](#what-is-red-dog)
+2. [What is Red Dog?](#what-is-red-dog)	
 3. [Architecture](#architecture)
 	1. [Basic Form](#basic-form)
 	2. [Custom Form](#custom-form)
@@ -28,6 +28,14 @@ Some advantages of RDAP over WHOIS are
 ## What is Red Dog?
 
 Red Dog is a free and open source Java implementation of an RDAP server *currently under development*.
+
+Red Dog RDAP server contains the specification defined in RFCs [7480](https://tools.ietf.org/html/rfc7480), [7481](https://tools.ietf.org/html/rfc7481), [7482](https://tools.ietf.org/html/rfc7482) and [7483](https://tools.ietf.org/html/rfc7483),also the following features:
+
+- A default Data-Access layer based on MySQL, which can be overridden by implementing an interface.  
+- Ability to limit the maximum number of results depending on authentication  
+- Support for Nameservers as Domain attributes  
+- [Regex Searchs](https://www.ietf.org/id/draft-fregly-regext-rdap-search-regex-00.txt)
+
 
 ## Architecture
 

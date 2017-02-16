@@ -1,5 +1,5 @@
 ---
-title: Data Access Layer
+title: RDAP Demo Server
 ---
 
 # RDAP Demo Server
@@ -10,21 +10,21 @@ The only requirement is Java 8 or superior.
 
 ## Download
 
-You can download the demo server contained in a zip file from this link (TODO). It contains demo.jar, which will be used to run the demo, and two folders containing important files for the application. These folders will be explained later in this document. (TODO ¿dónde? No lo veo.)
+You can download the demo server contained in a zip file from this [link](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-demo-1.0.zip). It contains demo.jar, which will be used to run the demo.
 
 ## Running the demo
 
 Expand the compressed zip and run the jar normally:
 
-	unzip rdap-server-demo.zip
+	unzip rdap-server-demo-1.0.zip
 	cd rdap-server-demo
-	java –jar demo.jar
+	java -jar demo.jar
 
-The server will run at http://localhost:8080/rdap-server/ by default. You can change the binding IP and port, using the java –jar demo.jar [your-IP-address] [your-port] syntax. As an example:
+The server will run at http://localhost:8080/rdap-server/ by default. You can change the binding IP and port, using the java -jar demo.jar [your-IP-address] [your-port] syntax. As an example:
 
-	java –jar demo.jar 127.0.0.5 9090
+	java -jar demo.jar 127.0.0.5 9090
 	
-When the server starts, the console will log messages as shown below. As long as you don’t get SEVEREs (as opposed to INFOs), the server is underway.
+When the server starts, the console will log messages as shown below. As long as you don't get SEVEREs (as opposed to INFOs), the server is underway.
 
 ![SERVER CONSOLE](img/demo-console.jpg)
  
@@ -43,23 +43,22 @@ As a demo version, this server has limited features compared to the ones defined
 + Entities search: http://localhost:8080/rdap-server/entities?...
 + Nameservers search: http://localhost:8080/rdap-server/nameservers?...
 
-The features available on the full server can be found here (TODO: features document path).
 
 ## Available Configuration
 
-In the configuration file (TODO: configuration file path) you can change the demo server’s behavior by modifying the following properties:
+In the configuration file (WEB-INF/configuration.properties) you can change the demo server's behavior by modifying the following properties:
 
 |Property Name|	Description|	Example|
 |:------------|:-----------|:----------|
-|Zones|	Zones managed by the server (separated by commas).<br /> The server will only serve domains that match this zone. <br /> Sample value: com, example, test	|If you manage the “com” zone, and a user requests domain “test.example”, then the server will respond 404, since it doesn’t manage the “example” zone. (Even if the requested domain record exists in the database.)|
-|minimum_search_pattern_length|	Minimum length of the search pattern. Defaults to 5. Searches whose request strings have a lower length than this will be rejected.|	If the property value is 5 and a user attempts to search for “test”, the server will respond an error message.|
-|max_number_result_unauthenticated_user|	Maximum number of results for unauthenticated users. Defaults to 10.|	If the value of the property is 5 and the database contains 10 records that match an authenticated user’s search pattern, the server will truncate the response to only 5 records.|
+|Zones|	Zones managed by the server (separated by commas).<br /> The server will only serve domains that match this zone. <br /> Sample value: com, example, test	|If you manage the "com" zone, and a user requests domain "test.example", then the server will respond 404, since it doesn't manage the "example" zone. (Even if the requested domain record exists in the database.)
+|minimum_search_pattern_length|	Minimum length of the search pattern. Defaults to 5. Searches whose request strings have a lower length than this will be rejected.|	If the property value is 5 and a user attempts to search for "test", the server will respond an error message.|
+|max_number_result_unauthenticated_user|	Maximum number of results for unauthenticated users. Defaults to 10.|	If the value of the property is 5 and the database contains 10 records that match an authenticated user's search pattern, the server will truncate the response to only 5 records.|
 |is_reverse_ipv4_enabled|	Indicates whether this RDAP server should respond to reverse IPv4s domain searches.|	If true, the server will search in its database domains that are stored in a reverse IPv4 form when a user send a request of a domain using reverse IPv4 lookup.|
 |is_reverse_ipv6_enabled|	Indicates whether this RDAP server should respond to reverse IPv6s domain searches.|	If true, the server will search in its database domains that are stored in a reverse IPv6 form when a user send a request of a domain using reverse IPv6 lookup.|
 
 ## Dummy data 
 
-The demo’s database ships with the following test data:
+The demo's database ships with the following test data:
 
 ### Domain data
 
@@ -83,8 +82,8 @@ The demo’s database ships with the following test data:
 |DOM4|	choco|		|test|
 |DOMLAT|	moka|		|test|
 |XXX6|	1.0.168.192|	|in-addr.arpa|
-|1238|	xn--mxico-bsa|	méxico|	test|
-|xnxn|	xn--elpjaroamarillo-pjb	|elpájaroamarillo|	test|
+|1238|	xn--mxico-bsa|	mÃ©xico|	test|
+|xnxn|	xn--elpjaroamarillo-pjb	|elpÃ¡jaroamarillo|	test|
 
 ### Entity data
 
@@ -130,9 +129,9 @@ The demo’s database ships with the following test data:
 |NSE13|	ns3.bright.info	|		|					|
 |NSE14|	ns4.bright.info	|		|					|
 |NSE15|	ns5.bright.info	|		|					|
-|NSE16|	ns1.camión.test|	ns1.xn—camin-3ta.test|	|	
-|NSE17|	ns2.camión.test|	ns2.xn—camin-3ta.test|	|
-|NSE18|	ns3.camión.test|	ns3.xn—camin-3ta.test|	|
-|NSE19|	ns4.camión.test|	ns4.xn—camin-3ta.test|	|
-|NSE20|	ns5.camión.test|	ns5.xn—camin-3ta.test|	|
+|NSE16|	ns1.camiÃ³n.test|	ns1.xn--camin-3ta.test|	|	
+|NSE17|	ns2.camiÃ³n.test|	ns2.xn--camin-3ta.test|	|
+|NSE18|	ns3.camiÃ³n.test|	ns3.xn--camin-3ta.test|	|
+|NSE19|	ns4.camiÃ³n.test|	ns4.xn--camin-3ta.test|	|
+|NSE20|	ns5.camiÃ³n.test|	ns5.xn--camin-3ta.test|	|
 
