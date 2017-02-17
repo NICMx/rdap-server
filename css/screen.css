@@ -144,6 +144,15 @@ blockquote {
 	font-size: 90%;
 }
 
+table, th, td {
+   border-collapse: collapse;
+}
+
+
+table, th, td {
+   border: 1px solid black;
+}
+
 /*
  * Some versions of Jekyll surround code blocks (pre codes) with figures.
  * The margins get in the way.
