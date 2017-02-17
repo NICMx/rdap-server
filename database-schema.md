@@ -8,7 +8,7 @@ To help you on the migration from your old WHOIS server to a new RDAP server, in
 
 1.	Run the database.sql file, this script will create the schema, database tables and inserts constants data used by the application, like country codes, event types, etc.
 
-[![image1](img\database-file.png)](https://github.com/NICMx/rdap-documentation/blob/master/database/Database.sql "SQL file with tables")
+[![image1](img\database-file.png)](https://raw.githubusercontent.com/NICMx/rdap-sql-provider/master/src/main/resources/META-INF/sql/Database.sql "SQL file with tables")
 
 
 If you want to know more about the Red Dog database definition, like table names, column types and more, you can check out [this document](database-tables-definition.html "Database Tables Definiton").
