@@ -10,7 +10,7 @@ Normally, and assuming this is considered misbehavior, one would handle this pro
 
 Red Dog's rate limiter is simply a [servlet filter](http://www.oracle.com/technetwork/java/filters-137243.html) that prevents each IP address from making too many requests at once. If a client exceeds a predefined limit, the filter will return [HTTP 429](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#4xx_Client_Error).
 
-Notice that all this does is reduce request floods from well-behaved clients. The client is free to continue sending simultaneous requests so this is by no means a DOS attack prevention system. It also prevents the server from having to waste resources handling the whole request, but notice that servlet filters happen fairly late during a packet processing pipeline.
+Notice that all this does is reduce request floods from well-behaved clients. The client is free to continue sending simultaneous requests so this is by no means a DOS attack prevention system. It also prevents the server from wasting too many resources handling the whole request, but notice that servlet filters happen fairly late during a packet processing pipeline.
 
 If this fulfills your needs, add to your `web.xml` something in the lines of
 

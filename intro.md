@@ -29,13 +29,12 @@ Some advantages of RDAP over WHOIS are
 
 Red Dog is a free and open source Java implementation of an RDAP server *currently under development*.
 
-Red Dog RDAP server contains the specification defined in RFCs [7480](https://tools.ietf.org/html/rfc7480), [7481](https://tools.ietf.org/html/rfc7481), [7482](https://tools.ietf.org/html/rfc7482) and [7483](https://tools.ietf.org/html/rfc7483),also the following features:
+The Red Dog RDAP server implements the specification defined in RFCs [7480](https://tools.ietf.org/html/rfc7480), [7481](https://tools.ietf.org/html/rfc7481), [7482](https://tools.ietf.org/html/rfc7482), [7483](https://tools.ietf.org/html/rfc7483), and also the following features:
 
-- A default Data-Access layer based on MySQL, which can be overridden by implementing an interface.  
-- Ability to limit the maximum number of results depending on authentication  
-- Support for Nameservers as Domain attributes  
-- [Regex Searchs](https://www.ietf.org/id/draft-fregly-regext-rdap-search-regex-00.txt)
-
+- A default Data-Access layer based on MySQL, which can be overridden by implementing an interface.
+- Ability to limit the maximum number of results depending on authentication.
+- Support for Nameservers as Domain attributes.
+- [Regex Searches](https://www.ietf.org/id/draft-fregly-regext-rdap-search-regex-00.txt).
 
 ## Architecture
 
@@ -61,13 +60,14 @@ If you want to deploy this form, you have to provide the following configuration
 
 1. [Deploy `rdap-server` and the RDAP Database](server-install-basic.html).
 3. [Configure `rdap-migrator`](migration.html), which involves providing export queries that will periodically copy the relevant information from `Your Main Database` to the `RDAP Database` so `rdap-server` can query it.
-4. (Optional) Fine-tune `rdap-server`:
-	1. [Server behavior](behavior-configuration.html)
-	2. [Server response privacy](response-privacy.html)
-	3. [Help Response](help-response.html)
-	4. [User authentication](user-authentication.html)
-	5. [Optional Authentication](optional-authentication.html)
-	6. [Rate Limit](rate-limit.html)
+3. [Adding content to the Help Response](help-response.html)
+4. (Optional) Fine-tuning the server:
+	1. [configuration.properties](behavior-configuration.html)
+	2. [Rate Limit](rate-limit.html)
+	3. [User authentication](authentication.html)
+		1. [Basic authentication in Tomcat](basic-authentication-tomcat.html)
+		2. [Server response privacy](response-privacy.html)
+		3. [Optional authentication](optional-authentication.html)
 
 ### Custom Form
 
@@ -83,13 +83,14 @@ If you want to deploy this form, you have to provide the following:
 
 2. [Implement your data access layer.](data-access-layer.html)
 1. [Deploy `rdap-server`](server-install-custom.html), instructing the `rdap-server` to use your implementation.
-4. (Optional) Fine-tune `rdap-server`:
-	1. [Server behavior](behavior-configuration.html)
-	2. [Server response privacy](response-privacy.html)
-	3. [Help Response](help-response.html)
-	4. [User authentication](user-authentication.html)
-	5. [Optional Authentication](optional-authentication.html)
-	6. [Rate Limit](rate-limit.html)
+3. [Adding content to the Help Response](help-response.html)
+4. (Optional) Fine-tuning the server:
+	1. [configuration.properties](behavior-configuration.html)
+	2. [Rate Limit](rate-limit.html)
+	3. [User authentication](authentication.html)
+		1. [Basic authentication in Tomcat](basic-authentication-tomcat.html)
+		2. [Server response privacy](response-privacy.html)
+		3. [Optional authentication](optional-authentication.html)
 
 ## Status
 

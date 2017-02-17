@@ -144,13 +144,13 @@ blockquote {
 	font-size: 90%;
 }
 
-table, th, td {
-   border-collapse: collapse;
+table {
+	border-collapse: collapse;
 }
 
-
-table, th, td {
-   border: 1px solid black;
+th, td {
+	border: 1px solid black;
+	padding: 0.5em;
 }
 
 /*

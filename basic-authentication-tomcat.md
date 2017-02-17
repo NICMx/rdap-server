@@ -1,8 +1,8 @@
 ---
-title: User Authentication
+title: Configuring Basic user authentication for Red Dog in Apache Tomcat
 ---
 
-# Configuring Basic user authentication for Red Dog Server in Apache Tomcat
+# Configuring Basic user authentication for Red Dog in Apache Tomcat
 
 In Red Dog we care about the information privacy, so our RDAP server provides the option to use a basic authorization schema (user/pass) to the server resources that you may want to protect or grant access only to a group of users. This document tells you how to set up that basic authentication for the user request on the Red Dog server.
 
