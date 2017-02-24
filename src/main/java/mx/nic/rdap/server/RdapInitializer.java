@@ -6,17 +6,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
-import javax.sql.DataSource;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 import mx.nic.rdap.db.exception.ObjectNotFoundException;
 import mx.nic.rdap.db.service.DataAccessService;
@@ -33,12 +30,14 @@ public class RdapInitializer implements ServletContextListener {
 
 	private static ServletContext servletContext;
 
-	private static final String DEFAULT_RENDERER_FILE_PATH = "WEB-INF/" + RENDERERS_FILE + ".properties";
-	private static final String DEFAULT_CONFIGURATION_FILE_PATH = "WEB-INF/" + CONFIGURATION_FILE + ".properties";
+	private static final String DEFAULT_USER_RENDERER_FILE_PATH = "WEB-INF/" + RENDERERS_FILE + ".properties";
+	private static final String DEFAULT_USER_CONFIGURATION_FILE_PATH = "WEB-INF/" + CONFIGURATION_FILE + ".properties";
+	private static final String DEFAULT_NOTICES_FOLDER_PATH = "WEB-INF/notices";
 
 	private static final String RENDERER_CONTEXT_PARAM_NAME = "renderersUserPath";
 	private static final String RDAP_CONFIGURATION_PARAM_NAME = "rdapConfigurationUserPath";
 	public static final String PRIVACY_SETTINGS_PARAM_NAME = "privacySettingsUserPath";
+	private static final String NOTICES_FOLDER_PATH_PARAM_NAME = "noticesUserPath";
 
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
@@ -51,6 +50,7 @@ public class RdapInitializer implements ServletContextListener {
 			RdapConfiguration.validateConfiguratedZones();
 			RdapConfiguration.validateConfiguratedRoles();
 			PrivacyUtil.loadAllPrivacySettings();
+			loadUserNotices();
 
 			DataAccessService.getImplementation().init(RdapConfiguration.getServerProperties());
 		} catch (Exception e) {
@@ -73,7 +73,7 @@ public class RdapInitializer implements ServletContextListener {
 		Properties p = Util.loadProperties(RENDERERS_FILE);
 		String userFilePath = servletContext.getInitParameter(RENDERER_CONTEXT_PARAM_NAME);
 		if (userFilePath == null) {
-			userFilePath = DEFAULT_RENDERER_FILE_PATH;
+			userFilePath = DEFAULT_USER_RENDERER_FILE_PATH;
 		} else {
 			Path path = Paths.get(userFilePath, RENDERERS_FILE + ".properties");
 			userFilePath = path.toString();
@@ -92,7 +92,7 @@ public class RdapInitializer implements ServletContextListener {
 		Properties p = Util.loadProperties(CONFIGURATION_FILE);
 		String userFilePath = servletContext.getInitParameter(RDAP_CONFIGURATION_PARAM_NAME);
 		if (userFilePath == null) {
-			userFilePath = DEFAULT_CONFIGURATION_FILE_PATH;
+			userFilePath = DEFAULT_USER_CONFIGURATION_FILE_PATH;
 		} else {
 			Path path = Paths.get(userFilePath, CONFIGURATION_FILE + ".properties");
 			userFilePath = path.toString();
@@ -105,6 +105,15 @@ public class RdapInitializer implements ServletContextListener {
 		}
 
 		RdapConfiguration.loadSystemProperties(p);
+	}
+
+	private void loadUserNotices() throws SAXException, IOException, ParserConfigurationException {
+		String userPath = servletContext.getInitParameter(NOTICES_FOLDER_PATH_PARAM_NAME);
+		if (userPath == null || userPath.trim().isEmpty()) {
+			userPath = DEFAULT_NOTICES_FOLDER_PATH;
+		}
+
+		UserNotices.init(userPath);
 	}
 
 }

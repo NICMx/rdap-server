@@ -1,0 +1,60 @@
+package mx.nic.rdap.server;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.List;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
+
+import mx.nic.rdap.core.db.Remark;
+import mx.nic.rdap.server.catalog.OperationalProfile;
+
+/**
+ * Holder for the Help, Terms of services and notices remarks.
+ */
+public class UserNotices {
+
+	// XML file names
+	private static final String HELP_FILE_NAME = "help.xml";
+	private static final String TOS_FILE_NAME = "tos.xml";
+
+	// Holder for remarks
+	private static List<Remark> help;
+	private static List<Remark> tos;
+
+	/**
+	 * Reads the XML files and stores the information from the XML.
+	 * 
+	 * @param userPath
+	 *            User path that contains the xml files.
+	 * @throws SAXException
+	 *             When the XML file content has an invalid format.
+	 * @throws IOException
+	 *             Problems reading the XML file.
+	 */
+	public static void init(String userPath) throws SAXException, IOException, ParserConfigurationException {
+		help = NoticesReader.parseHelpXML(Paths.get(userPath, HELP_FILE_NAME).toString());
+
+		// if the server has no operational profile, the terms of service will
+		// be optional.
+		try {
+			tos = NoticesReader.parseTOSXML(Paths.get(userPath, TOS_FILE_NAME).toString());
+		} catch (FileNotFoundException e) {
+			if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)) {
+				throw e;
+			}
+		}
+	}
+
+	public static List<Remark> getHelp() {
+		return help;
+	}
+
+	public static List<Remark> getTos() {
+		return tos;
+	}
+
+}

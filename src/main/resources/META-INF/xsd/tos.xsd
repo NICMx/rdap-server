@@ -1,0 +1,55 @@
+<xs:schema attributeFormDefault="unqualified"
+	elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	
+	<xs:element name="tos">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="notice" minOccurs="1" maxOccurs="1"
+					type="notice_info" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="notice_info">
+		<xs:sequence>
+			<xs:element type="xs:string" name="title" minOccurs="0"
+				maxOccurs="1" />
+			<xs:element type="xs:string" name="type" minOccurs="0"
+				maxOccurs="1" />
+			<xs:element name="description" minOccurs="1" maxOccurs="1"
+				type="description_type" />
+			<xs:element name="links" minOccurs="1" maxOccurs="1"
+				type="links_type">
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="description_type">
+		<xs:sequence>
+			<xs:element type="xs:string" name="line" maxOccurs="unbounded"
+				minOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="links_type">
+		<xs:sequence>
+			<xs:element name="link" maxOccurs="unbounded" minOccurs="1"
+				type="link_info">
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="link_info">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute type="xs:string" name="rel" use="optional" />
+				<xs:attribute type="xs:string" name="href" use="required" />
+				<xs:attribute type="xs:string" name="hreflang" use="optional" />
+				<xs:attribute type="xs:string" name="title" use="optional" />
+				<xs:attribute type="xs:string" name="media" use="optional" />
+				<xs:attribute type="xs:string" name="type" use="optional" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+</xs:schema>
+

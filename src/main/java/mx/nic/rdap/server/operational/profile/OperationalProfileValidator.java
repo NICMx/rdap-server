@@ -12,7 +12,7 @@ import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.VCard;
 import mx.nic.rdap.core.db.VCardPostalInfo;
 import mx.nic.rdap.server.RdapConfiguration;
-import mx.nic.rdap.server.renderer.json.JsonUtil;
+import mx.nic.rdap.server.UserNotices;
 
 public class OperationalProfileValidator {
 	private final static Logger logger = Logger.getLogger(OperationalProfileValidator.class.getName());
@@ -262,7 +262,7 @@ public class OperationalProfileValidator {
 	public static boolean validateTermsOfService() {
 		String warningMessage = "When using profile " + RdapConfiguration.getServerProfile()
 				+ ", a terms Of Service notice must be added for al requests.";
-		if (JsonUtil.getTermsOfServiceNotice() == null) {
+		if (UserNotices.getTos() == null || UserNotices.getTos().isEmpty()) {
 			logger.log(Level.WARNING, warningMessage);
 			return false;
 		}

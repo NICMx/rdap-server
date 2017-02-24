@@ -16,6 +16,7 @@ import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.Renderer;
+import mx.nic.rdap.server.UserNotices;
 import mx.nic.rdap.server.catalog.OperationalProfile;
 import mx.nic.rdap.server.operational.profile.OperationalProfileValidator;
 import mx.nic.rdap.server.renderer.json.JsonUtil;
@@ -44,12 +45,11 @@ public class JsonRenderer implements Renderer {
 		result.fillNotices();
 
 		// Point 1.4.4 of rdap operational profile by ICANN
-		Remark termsOfService = JsonUtil.getTermsOfServiceNotice();
 		if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)) {
 			if (OperationalProfileValidator.validateTermsOfService()) {
 				if (result.getNotices() == null)
 					result.setNotices(new ArrayList<Remark>());
-				result.getNotices().add(termsOfService);
+				result.getNotices().addAll(UserNotices.getTos());
 			}
 		}
 		if (result.getNotices() != null && !result.getNotices().isEmpty()) {

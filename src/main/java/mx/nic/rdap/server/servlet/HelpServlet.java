@@ -30,7 +30,7 @@ public class HelpServlet extends RdapServlet {
 	@Override
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException {
-		RdapResult result = new HelpResult(httpRequest.getServletContext());
+		RdapResult result = new HelpResult();
 		return result;
 	}
 
