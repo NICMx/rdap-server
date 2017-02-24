@@ -7,8 +7,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.core.db.Nameserver;
-import mx.nic.rdap.db.exception.RdapDatabaseException;
-import mx.nic.rdap.db.services.NameserverService;
+import mx.nic.rdap.db.exception.RdapDataAccessException;
+import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
@@ -34,7 +34,7 @@ public class NameserverServlet extends RdapServlet {
 	 */
 	@Override
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException, RdapDatabaseException {
+			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		if (RdapConfiguration.useNameserverAsDomainAttribute()) {
 			throw new RequestHandleException(501, "Not implemented.");
 		}
@@ -46,7 +46,7 @@ public class NameserverServlet extends RdapServlet {
 			username = null;
 		}
 
-		nameserver = NameserverService.getByName(request.getName());
+		nameserver = DataAccessService.getNameserverDAO().getByName(request.getName());
 		return new NameserverResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), nameserver, username);
 	}
 
@@ -58,12 +58,12 @@ public class NameserverServlet extends RdapServlet {
 	 */
 	@Override
 	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException, RdapDatabaseException {
+			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		if (RdapConfiguration.useNameserverAsDomainAttribute()) {
 			throw new RequestHandleException(501, "Not implemented.");
 		}
 		NameserverRequest request = new NameserverRequest(Util.getRequestParams(httpRequest)[0]);
-		NameserverService.existByName(request.getName());
+		DataAccessService.getNameserverDAO().existByName(request.getName());
 		return new OkResult();
 	}
 

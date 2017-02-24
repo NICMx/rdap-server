@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.core.exception.UnprocessableEntityException;
-import mx.nic.rdap.db.exception.RdapDatabaseException;
-import mx.nic.rdap.db.services.DomainService;
+import mx.nic.rdap.db.exception.RdapDataAccessException;
+import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.db.struct.SearchResultStruct;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
@@ -40,7 +40,7 @@ public class DomainSearchServlet extends RdapServlet {
 	 */
 	@Override
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException, RdapDatabaseException {
+			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		RdapSearchRequest searchRequest;
 		try {
 			searchRequest = RdapSearchRequest.getSearchRequest(httpRequest, false, DOMAIN_NAME, NAMESERVER_IP,
@@ -71,7 +71,7 @@ public class DomainSearchServlet extends RdapServlet {
 	}
 
 	private SearchResultStruct<Domain> getPartialSearch(String username, RdapSearchRequest request)
-			throws RequestHandleException, SQLException, IOException, RdapDatabaseException {
+			throws RequestHandleException, SQLException, IOException, RdapDataAccessException {
 		SearchResultStruct<Domain> result = new SearchResultStruct<Domain>();
 		boolean useNameserverAsAttribute = RdapConfiguration.useNameserverAsDomainAttribute();
 		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
@@ -89,15 +89,15 @@ public class DomainSearchServlet extends RdapServlet {
 				throw new RequestHandleException(501, "Not implemented yet.");
 			}
 
-			result = DomainService.searchByName(domain, resultLimit, useNameserverAsAttribute);
+			result = DataAccessService.getDomainDAO().searchByName(domain, resultLimit, useNameserverAsAttribute);
 			break;
 		case NAMESERVER_NAME:
 			// Gets´s domain by it´s Nameserver name
-			result = DomainService.searchByNsName(domain, resultLimit, useNameserverAsAttribute);
+			result = DataAccessService.getDomainDAO().searchByNsName(domain, resultLimit, useNameserverAsAttribute);
 			break;
 		case NAMESERVER_IP:
 			// Get´s domain by it´s Nameserver Ip
-			result = DomainService.searchByNsIp(domain, resultLimit, useNameserverAsAttribute);
+			result = DataAccessService.getDomainDAO().searchByNsIp(domain, resultLimit, useNameserverAsAttribute);
 			break;
 		default:
 			throw new RequestHandleException(501, "Not implemented.");
@@ -108,7 +108,7 @@ public class DomainSearchServlet extends RdapServlet {
 	}
 
 	private SearchResultStruct<Domain> getRegexSearch(String username, RdapSearchRequest request)
-			throws RequestHandleException, SQLException, IOException, RdapDatabaseException {
+			throws RequestHandleException, SQLException, IOException, RdapDataAccessException {
 		SearchResultStruct<Domain> result = new SearchResultStruct<Domain>();
 		boolean useNameserverAsAttribute = RdapConfiguration.useNameserverAsDomainAttribute();
 		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
@@ -122,14 +122,14 @@ public class DomainSearchServlet extends RdapServlet {
 				// (RIR).
 				throw new RequestHandleException(501, "Not implemented yet.");
 			}
-			result = DomainService.searchByRegexName(domain, resultLimit, useNameserverAsAttribute);
+			result = DataAccessService.getDomainDAO().searchByRegexName(domain, resultLimit, useNameserverAsAttribute);
 			break;
 		case NAMESERVER_NAME:
 			// Gets´s domain by it´s Nameserver name
-			result = DomainService.searchByNsName(domain, resultLimit, useNameserverAsAttribute);
+			result = DataAccessService.getDomainDAO().searchByNsName(domain, resultLimit, useNameserverAsAttribute);
 			break;
 		case NAMESERVER_IP:
-			result = DomainService.searchByRegexNsIp(domain, resultLimit, useNameserverAsAttribute);
+			result = DataAccessService.getDomainDAO().searchByRegexNsIp(domain, resultLimit, useNameserverAsAttribute);
 			break;
 		default:
 			throw new RequestHandleException(501, "Not implemented.");

@@ -1,7 +1,6 @@
 package mx.nic.rdap.server.servlet;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.sql.SQLException;
 
 import javax.servlet.annotation.WebServlet;
@@ -9,8 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.core.db.IpNetwork;
 import mx.nic.rdap.db.exception.InvalidValueException;
-import mx.nic.rdap.db.exception.RdapDatabaseException;
-import mx.nic.rdap.db.services.IpNetworkService;
+import mx.nic.rdap.db.exception.RdapDataAccessException;
+import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
@@ -37,7 +36,7 @@ public class IpNetworkServlet extends RdapServlet {
 	 */
 	@Override
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException, RdapDatabaseException {
+			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		IpRequest request = new IpRequest(Util.getRequestParams(httpRequest));
 		String username = httpRequest.getRemoteUser();
 		if (RdapConfiguration.isAnonymousUsername(username)) {
@@ -47,13 +46,11 @@ public class IpNetworkServlet extends RdapServlet {
 		IpNetwork ipNetwork = null;
 		try {
 			if (request.hasCidr()) {
-				ipNetwork = IpNetworkService.getByInetAddress(request.getIp(), request.getCidr());
+				ipNetwork = DataAccessService.getIpNetworkDAO().getByInetAddress(request.getIp(), request.getCidr());
 			} else {
-				ipNetwork = IpNetworkService.getByInetAddress(request.getIp());
+				ipNetwork = DataAccessService.getIpNetworkDAO().getByInetAddress(request.getIp());
 			}
 
-		} catch (UnknownHostException e) {
-			throw new MalformedRequestException("Invalid IP address", e);
 		} catch (InvalidValueException e) {
 			throw new MalformedRequestException(e.getMessage(), e);
 		}
@@ -69,17 +66,15 @@ public class IpNetworkServlet extends RdapServlet {
 	 */
 	@Override
 	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException, RdapDatabaseException {
+			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		IpRequest request = new IpRequest(Util.getRequestParams(httpRequest));
 		try {
 			if (request.hasCidr()) {
-				IpNetworkService.existByInetAddress(request.getIp(), request.getCidr());
+				DataAccessService.getIpNetworkDAO().existByInetAddress(request.getIp(), request.getCidr());
 			} else {
-				IpNetworkService.existByInetAddress(request.getIp());
+				DataAccessService.getIpNetworkDAO().existByInetAddress(request.getIp());
 			}
 
-		} catch (UnknownHostException e) {
-			throw new MalformedRequestException("Invalid IP address", e);
 		} catch (InvalidValueException e) {
 			throw new MalformedRequestException(e.getMessage(), e);
 		}

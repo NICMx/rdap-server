@@ -7,8 +7,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.core.db.Autnum;
-import mx.nic.rdap.db.exception.RdapDatabaseException;
-import mx.nic.rdap.db.services.AutnumService;
+import mx.nic.rdap.db.exception.RdapDataAccessException;
+import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
@@ -35,7 +35,7 @@ public class AutnumServlet extends RdapServlet {
 	 */
 	@Override
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException, RdapDatabaseException {
+			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		AutnumRequest request = new AutnumRequest(Util.getRequestParams(httpRequest)[0]);
 		Autnum autnum = null;
 		String username = httpRequest.getRemoteUser();
@@ -43,7 +43,7 @@ public class AutnumServlet extends RdapServlet {
 			username = null;
 		}
 
-		autnum = AutnumService.getByRange(request.getAutnum());
+		autnum = DataAccessService.getAutnumDAO().getByRange(request.getAutnum());
 		return new AutnumResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), autnum, username);
 	}
 
@@ -55,9 +55,9 @@ public class AutnumServlet extends RdapServlet {
 	 */
 	@Override
 	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException, RdapDatabaseException {
+			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		AutnumRequest request = new AutnumRequest(Util.getRequestParams(httpRequest)[0]);
-		AutnumService.existByRange(request.getAutnum());
+		DataAccessService.getAutnumDAO().existByRange(request.getAutnum());
 		return new OkResult();
 	}
 

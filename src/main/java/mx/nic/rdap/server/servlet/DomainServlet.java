@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.db.exception.InvalidValueException;
 import mx.nic.rdap.db.exception.ObjectNotFoundException;
-import mx.nic.rdap.db.exception.RdapDatabaseException;
-import mx.nic.rdap.db.services.DomainService;
+import mx.nic.rdap.db.exception.RdapDataAccessException;
+import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
@@ -37,7 +37,7 @@ public class DomainServlet extends RdapServlet {
 	 */
 	@Override
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException, RdapDatabaseException {
+			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		DomainRequest request = null;
 		try {
 			request = new DomainRequest(Util.getRequestParams(httpRequest)[0]);
@@ -50,7 +50,7 @@ public class DomainServlet extends RdapServlet {
 		}
 		Domain domain = null;
 		try {
-			domain = DomainService.getByName(request.getFullRequestValue(),
+			domain = DataAccessService.getDomainDAO().getByName(request.getFullRequestValue(),
 					RdapConfiguration.useNameserverAsDomainAttribute());
 		} catch (InvalidValueException e) {
 			throw new ObjectNotFoundException("The RDAP server doesn't have information about the requested zone");
@@ -67,14 +67,14 @@ public class DomainServlet extends RdapServlet {
 	 */
 	@Override
 	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException, RdapDatabaseException {
+			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		DomainRequest request = null;
 		try {
 			request = new DomainRequest(Util.getRequestParams(httpRequest)[0]);
 		} catch (InvalidValueException | ObjectNotFoundException e) {
 			throw new ObjectNotFoundException("The RDAP server doesn't have information about the requested zone");
 		}
-		DomainService.existByName(request.getFullRequestValue());
+		DataAccessService.getDomainDAO().existByName(request.getFullRequestValue());
 		return new OkResult();
 	}
 

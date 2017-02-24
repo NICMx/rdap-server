@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import mx.nic.rdap.db.exception.InvalidValueException;
 import mx.nic.rdap.db.exception.ObjectNotFoundException;
-import mx.nic.rdap.db.exception.RdapDatabaseException;
+import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.server.AcceptHeaderFieldParser.Accept;
 import mx.nic.rdap.server.catalog.OperationalProfile;
 import mx.nic.rdap.server.exception.RequestHandleException;
@@ -55,7 +55,7 @@ public abstract class RdapServlet extends HttpServlet {
 		} catch (InvalidValueException e) {
 			response.sendError(422, e.getMessage());
 			return;
-		} catch (SQLException | IOException | RdapDatabaseException e) {
+		} catch (SQLException | IOException | RdapDataAccessException e) {
 			response.sendError(500, e.getMessage());
 			return;
 		} catch (RequestHandleException e) {
@@ -87,7 +87,7 @@ public abstract class RdapServlet extends HttpServlet {
 	 *             Errors found handling `request`.
 	 */
 	protected abstract RdapResult doRdapGet(HttpServletRequest request)
-			throws RequestHandleException, IOException, SQLException, RdapDatabaseException;
+			throws RequestHandleException, IOException, SQLException, RdapDataAccessException;
 
 	/**
 	 * Handles the `request` HEAD request and builds a response. Think of it as
@@ -104,7 +104,7 @@ public abstract class RdapServlet extends HttpServlet {
 	 *             Errors found handling `request`.
 	 */
 	protected abstract RdapResult doRdapHead(HttpServletRequest request)
-			throws RequestHandleException, IOException, SQLException, RdapDatabaseException;
+			throws RequestHandleException, IOException, SQLException, RdapDataAccessException;
 
 	/**
 	 * Tries hard to find the best suitable renderer for
@@ -129,7 +129,7 @@ public abstract class RdapServlet extends HttpServlet {
 
 	private interface HandleAction {
 		RdapResult handle(HttpServletRequest request)
-				throws IOException, SQLException, RequestHandleException, RdapDatabaseException;
+				throws IOException, SQLException, RequestHandleException, RdapDataAccessException;
 	}
 
 }

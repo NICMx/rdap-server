@@ -7,8 +7,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.core.db.Entity;
-import mx.nic.rdap.db.exception.RdapDatabaseException;
-import mx.nic.rdap.db.services.EntityService;
+import mx.nic.rdap.db.exception.RdapDataAccessException;
+import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
@@ -34,13 +34,13 @@ public class EntityServlet extends RdapServlet {
 	 */
 	@Override
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException, RdapDatabaseException {
+			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		EntityRequest request = new EntityRequest(Util.getRequestParams(httpRequest)[0]);
 		String username = httpRequest.getRemoteUser();
 		if (RdapConfiguration.isAnonymousUsername(username)) {
 			username = null;
 		}
-		Entity entity = EntityService.getByHandle(request.getHandle());
+		Entity entity = DataAccessService.getEntityDAO().getByHandle(request.getHandle());
 		return new EntityResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), entity, username);
 	}
 
@@ -52,9 +52,9 @@ public class EntityServlet extends RdapServlet {
 	 */
 	@Override
 	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException, RdapDatabaseException {
+			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		EntityRequest request = new EntityRequest(Util.getRequestParams(httpRequest)[0]);
-		EntityService.existsByHandle(request.getHandle());
+		DataAccessService.getEntityDAO().getByHandle(request.getHandle());
 		return new OkResult();
 	}
 
