@@ -37,6 +37,7 @@ public class RdapInitializer implements ServletContextListener {
 
 	private static final String RENDERER_CONTEXT_PARAM_NAME = "renderersUserPath";
 	private static final String RDAP_CONFIGURATION_PARAM_NAME = "rdapConfigurationUserPath";
+	public static final String PRIVACY_SETTINGS_PARAM_NAME = "privacySettingsUserPath";
 	private static final String DATA_ACCESS_PARAM_NAME = "dataAccessUserPath";
 	private static final String NOTICES_FOLDER_PATH_PARAM_NAME = "noticesUserPath";
 
