@@ -58,7 +58,9 @@ public class Util {
 		fileName = "META-INF/" + fileName + ".properties";
 		Properties result = new Properties();
 		try (InputStream configStream = Util.class.getClassLoader().getResourceAsStream(fileName)) {
-			result.load(configStream);
+			if (configStream != null) {
+				result.load(configStream);
+			}
 		}
 		return result;
 	}

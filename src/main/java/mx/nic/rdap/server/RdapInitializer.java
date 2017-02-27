@@ -2,7 +2,6 @@ package mx.nic.rdap.server;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
@@ -15,7 +14,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
-import mx.nic.rdap.db.exception.ObjectNotFoundException;
 import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.server.util.PrivacyUtil;
 import mx.nic.rdap.server.util.Util;
@@ -27,24 +25,28 @@ public class RdapInitializer implements ServletContextListener {
 	private static final String RENDERERS_FILE = "renderers";
 	/** File from which we will load the rdap server configuration. */
 	private static final String CONFIGURATION_FILE = "configuration";
+	/**
+	 * File from which we will load the configuration of the data access
+	 * implementation.
+	 */
+	private static final String DATA_ACCESS_FILE = "data-access";
 
 	private static ServletContext servletContext;
 
-	private static final String DEFAULT_USER_RENDERER_FILE_PATH = "WEB-INF/" + RENDERERS_FILE + ".properties";
-	private static final String DEFAULT_USER_CONFIGURATION_FILE_PATH = "WEB-INF/" + CONFIGURATION_FILE + ".properties";
 	private static final String DEFAULT_NOTICES_FOLDER_PATH = "WEB-INF/notices";
 
 	private static final String RENDERER_CONTEXT_PARAM_NAME = "renderersUserPath";
 	private static final String RDAP_CONFIGURATION_PARAM_NAME = "rdapConfigurationUserPath";
-	public static final String PRIVACY_SETTINGS_PARAM_NAME = "privacySettingsUserPath";
+	private static final String DATA_ACCESS_PARAM_NAME = "dataAccessUserPath";
 	private static final String NOTICES_FOLDER_PATH_PARAM_NAME = "noticesUserPath";
 
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
 		servletContext = event.getServletContext();
 		try {
-			loadRenderers();
-			loadRdapConfiguration();
+			RendererPool.loadRenderers(loadConfig(RENDERERS_FILE, RENDERER_CONTEXT_PARAM_NAME));
+			RdapConfiguration.loadSystemProperties(loadConfig(CONFIGURATION_FILE, RDAP_CONFIGURATION_PARAM_NAME));
+
 			// Validate if the configurated zones are in the database
 			RdapConfiguration.validateRdapConfiguration();
 			RdapConfiguration.validateConfiguratedZones();
@@ -52,7 +54,7 @@ public class RdapInitializer implements ServletContextListener {
 			PrivacyUtil.loadAllPrivacySettings();
 			loadUserNotices();
 
-			DataAccessService.getImplementation().init(RdapConfiguration.getServerProperties());
+			DataAccessService.initialize(loadConfig(DATA_ACCESS_FILE, DATA_ACCESS_PARAM_NAME));
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -60,7 +62,6 @@ public class RdapInitializer implements ServletContextListener {
 
 	@Override
 	public void contextDestroyed(ServletContextEvent event) {
-		// Nothing needed.
 		servletContext = null;
 	}
 
@@ -68,14 +69,16 @@ public class RdapInitializer implements ServletContextListener {
 		return servletContext;
 	}
 
-	private void loadRenderers() throws IOException, ClassNotFoundException, NoSuchMethodException, SecurityException,
-			InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Properties p = Util.loadProperties(RENDERERS_FILE);
-		String userFilePath = servletContext.getInitParameter(RENDERER_CONTEXT_PARAM_NAME);
+	private Properties loadConfig(String baseFileName, String pathParamName) throws IOException {
+		// First, load the default values (from META-INF).
+		Properties p = Util.loadProperties(baseFileName);
+
+		// Then, override with whatever the user set up.
+		String userFilePath = servletContext.getInitParameter(pathParamName);
 		if (userFilePath == null) {
-			userFilePath = DEFAULT_USER_RENDERER_FILE_PATH;
+			userFilePath = "WEB-INF/" + baseFileName + ".properties";
 		} else {
-			Path path = Paths.get(userFilePath, RENDERERS_FILE + ".properties");
+			Path path = Paths.get(userFilePath, baseFileName + ".properties");
 			userFilePath = path.toString();
 		}
 
@@ -85,26 +88,7 @@ public class RdapInitializer implements ServletContextListener {
 			}
 		}
 
-		RendererPool.loadRenderers(p);
-	}
-
-	private void loadRdapConfiguration() throws IOException, ObjectNotFoundException {
-		Properties p = Util.loadProperties(CONFIGURATION_FILE);
-		String userFilePath = servletContext.getInitParameter(RDAP_CONFIGURATION_PARAM_NAME);
-		if (userFilePath == null) {
-			userFilePath = DEFAULT_USER_CONFIGURATION_FILE_PATH;
-		} else {
-			Path path = Paths.get(userFilePath, CONFIGURATION_FILE + ".properties");
-			userFilePath = path.toString();
-		}
-
-		try (InputStream inStream = servletContext.getResourceAsStream(userFilePath);) {
-			if (inStream != null) {
-				p.load(inStream);
-			}
-		}
-
-		RdapConfiguration.loadSystemProperties(p);
+		return p;
 	}
 
 	private void loadUserNotices() throws SAXException, IOException, ParserConfigurationException {
