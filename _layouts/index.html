@@ -34,8 +34,19 @@
 	</div>
 	<div id="news" class="content">
 		<h1>NEWS</h1>
-		{{ content }}
-	</div>
+
+		{% for post in site.posts %}
+			{% if post.content == content %}
+				{{post.content}}
+				{{post.previous.content}}
+				{{post.previous.previous.content}}
+				{{post.previous.previous.previous.content}}
+				{{post.previous.previous.previous.previous.content}}
+				{% break %}
+			{% endif %}
+		{% endfor %}
+
+		</div>
 	<div id="breadcrumb">
 		{% include news-breadcrumb %}
 	</div>

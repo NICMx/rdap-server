@@ -1,8 +1,11 @@
+{% assign noticesperpage = 5 %}
+{% assign postsforlast = noticesperpage | times: 4 %}
+{% assign postsforellipsis = noticesperpage | times: 5 %}
+<!-- For more or less than 5 notices per page "<", ">" and index.html will need modification on the number of .next or .previous</">  -- >
+
 <!-- < -->
-{% if page.next %}
-	<a href="{{ site.baseurl }}{{ page.next.url }}">&lt;</a>
-{% else %}
-	<span>&lt;</span>
+{% if page.next.next.next.next.next %}
+	<a href="{{ site.baseurl }}{{ page.next.next.next.next.next.url }}">&lt;</a>
 {% endif %}
 
 <img src="{{ site.baseurl }}/img/logo-dog.png" alt="Show More" />
@@ -17,30 +20,34 @@
 {% endfor %}
 
 <!-- Ellipsis if there are too many posts. -->
-{% if postindex > 4 %}
+{% if postindex > postsforlast %}
 	<a href="{{ site.baseurl }}{{ site.posts.first.url }}">1</a>
-	{% if postindex > 5 %}
+	{% if postindex > postsforellipsis %}
 		<span class="ellipsis">&hellip;</span>
 	{% endif %}
 {% endif %}
 
 <!-- Current page and four potential entries at each side. -->
-{% assign min = postindex | minus: 4 %}
-{% assign max = postindex | plus: 4 %}
+{% assign min = postindex | minus: postsforlast %}
+{% assign max = postindex | plus: postsforlast %}
+{% assign mod = 0 %}
 {% for post in (min..max) %}
-	{% if 0 <= post and post < site.posts.size %}
+	{% if post > 0 %}
+		{% assign mod = post | modulo: noticesperpage %}
+	{% endif %}
+	{% if 0 <= post and post < site.posts.size and mod == 0 %}
 		{% if post != postindex %}
-			<a href="{{ site.baseurl }}{{ site.posts[post].url }}">{{ post | plus: 1 }}</a>
+			<a href="{{ site.baseurl }}{{ site.posts[post].url }}">{{ post | divided_by: noticesperpage | plus: 1 }}</a>
 		{% else %}
-			<span class="selected">{{ post | plus: 1 }}</span>
+			<span class="selected">{{ post | divided_by: noticesperpage | plus: 1 }}</span>
 		{% endif %}
 	{% endif %}
 {% endfor %}
 
 <!-- Ellipsis again if there are too many posts. -->
-{% assign limit = site.posts.size | minus: 5 %}
+{% assign limit = site.posts.size | minus: postsforlast | minus: 1 %}
 {% if postindex < limit %}
-	{% assign limit = site.posts.size | minus: 6 %}
+	{% assign limit = site.posts.size | minus: postsforellipsis | minus: 1 %}
 	{% if postindex < limit %}
 		<span class="ellipsis">&hellip;</span>
 	{% endif %}
@@ -49,8 +56,6 @@
 {% endif %}
 
 <!-- > -->
-{% if page.previous %}
-	<a href="{{ site.baseurl }}{{ page.previous.url }}">&gt;</a>
-{% else %}
-	<span>&gt;</span>
+{% if page.previous.previous.previous.previous.previous %}
+	<a href="{{ site.baseurl }}{{ page.previous.previous.previous.previous.previous.url }}">&gt;</a>
 {% endif %}
