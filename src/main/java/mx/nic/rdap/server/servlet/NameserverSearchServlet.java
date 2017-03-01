@@ -11,21 +11,32 @@ import mx.nic.rdap.core.exception.UnprocessableEntityException;
 import mx.nic.rdap.db.exception.InvalidValueException;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.service.DataAccessService;
+import mx.nic.rdap.db.spi.NameserverDAO;
 import mx.nic.rdap.db.struct.SearchResultStruct;
+import mx.nic.rdap.server.DataAccessServlet;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapSearchRequest;
-import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.NameserverSearchResult;
 import mx.nic.rdap.server.util.IpUtil;
 
 @WebServlet(name = "nameservers", urlPatterns = { "/nameservers" })
-public class NameserverSearchServlet extends RdapServlet {
+public class NameserverSearchServlet extends DataAccessServlet<NameserverDAO> {
 	private static final long serialVersionUID = 1L;
 	private static final String IP_PARAMETER_KEY = "ip";
 	private static final String NAME_PARAMETER_KEY = "name";
+
+	@Override
+	protected NameserverDAO initAccessDAO() throws RdapDataAccessException {
+		return DataAccessService.getNameserverDAO();
+	}
+
+	@Override
+	protected String getServedObjectName() {
+		return "nameservers";
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -34,7 +45,7 @@ public class NameserverSearchServlet extends RdapServlet {
 	 * HttpServletRequest)
 	 */
 	@Override
-	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
+	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		if (RdapConfiguration.useNameserverAsDomainAttribute()) {
 			throw new RequestHandleException(501, "Not implemented.");
@@ -76,12 +87,11 @@ public class NameserverSearchServlet extends RdapServlet {
 
 		switch (request.getParameterName()) {
 		case NAME_PARAMETER_KEY:
-			result = DataAccessService.getNameserverDAO().searchByName(request.getParameterValue().trim(), resultLimit);
+			result = getDAO().searchByName(request.getParameterValue().trim(), resultLimit);
 			break;
 		case IP_PARAMETER_KEY:
 			try {
-				result = DataAccessService.getNameserverDAO().searchByIp(request.getParameterValue().trim(),
-						resultLimit);
+				result = getDAO().searchByIp(request.getParameterValue().trim(), resultLimit);
 			} catch (InvalidValueException e) {
 				throw new RequestHandleException(e.getMessage());
 			}
@@ -97,11 +107,10 @@ public class NameserverSearchServlet extends RdapServlet {
 
 		switch (request.getParameterName()) {
 		case NAME_PARAMETER_KEY:
-			result = DataAccessService.getNameserverDAO().searchByRegexName(request.getParameterValue().trim(),
-					resultLimit);
+			result = getDAO().searchByRegexName(request.getParameterValue().trim(), resultLimit);
 			break;
 		case IP_PARAMETER_KEY:
-			result = DataAccessService.getNameserverDAO().searchByRegexIp(request.getParameterValue(), resultLimit);
+			result = getDAO().searchByRegexIp(request.getParameterValue(), resultLimit);
 			break;
 		}
 		return result;
@@ -114,7 +123,7 @@ public class NameserverSearchServlet extends RdapServlet {
 	 * HttpServletRequest)
 	 */
 	@Override
-	protected RdapResult doRdapHead(HttpServletRequest httpRequest) throws RequestHandleException {
+	protected RdapResult doRdapDaHead(HttpServletRequest httpRequest) throws RequestHandleException {
 		throw new RequestHandleException(501, "Not implemented yet.");
 	}
 

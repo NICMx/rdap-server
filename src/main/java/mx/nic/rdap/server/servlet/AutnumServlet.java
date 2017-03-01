@@ -9,9 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 import mx.nic.rdap.core.db.Autnum;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.service.DataAccessService;
+import mx.nic.rdap.db.spi.AutnumDAO;
+import mx.nic.rdap.server.DataAccessServlet;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.AutnumResult;
@@ -19,22 +20,22 @@ import mx.nic.rdap.server.result.OkResult;
 import mx.nic.rdap.server.util.Util;
 
 @WebServlet(name = "autnum", urlPatterns = { "/autnum/*" })
-public class AutnumServlet extends RdapServlet {
+public class AutnumServlet extends DataAccessServlet<AutnumDAO> {
 
 	private static final long serialVersionUID = 1L;
 
-	public AutnumServlet() {
-		super();
+	@Override
+	protected AutnumDAO initAccessDAO() throws RdapDataAccessException {
+		return DataAccessService.getAutnumDAO();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see mx.nic.rdap.server.RdapServlet#doRdapGet(javax.servlet.http.
-	 * HttpServletRequest)
-	 */
 	@Override
-	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
+	protected String getServedObjectName() {
+		return "autnum";
+	}
+
+	@Override
+	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		AutnumRequest request = new AutnumRequest(Util.getRequestParams(httpRequest)[0]);
 		Autnum autnum = null;
@@ -43,21 +44,15 @@ public class AutnumServlet extends RdapServlet {
 			username = null;
 		}
 
-		autnum = DataAccessService.getAutnumDAO().getByRange(request.getAutnum());
+		autnum = getDAO().getByRange(request.getAutnum());
 		return new AutnumResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), autnum, username);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see mx.nic.rdap.server.RdapServlet#doRdapHead(javax.servlet.http.
-	 * HttpServletRequest)
-	 */
 	@Override
-	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
+	protected RdapResult doRdapDaHead(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		AutnumRequest request = new AutnumRequest(Util.getRequestParams(httpRequest)[0]);
-		DataAccessService.getAutnumDAO().existByRange(request.getAutnum());
+		getDAO().existByRange(request.getAutnum());
 		return new OkResult();
 	}
 

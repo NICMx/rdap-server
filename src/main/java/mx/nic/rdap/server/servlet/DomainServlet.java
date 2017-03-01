@@ -11,9 +11,10 @@ import mx.nic.rdap.db.exception.InvalidValueException;
 import mx.nic.rdap.db.exception.ObjectNotFoundException;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.service.DataAccessService;
+import mx.nic.rdap.db.spi.DomainDAO;
+import mx.nic.rdap.server.DataAccessServlet;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.DomainResult;
@@ -21,22 +22,22 @@ import mx.nic.rdap.server.result.OkResult;
 import mx.nic.rdap.server.util.Util;
 
 @WebServlet(name = "domain", urlPatterns = { "/domain/*" })
-public class DomainServlet extends RdapServlet {
+public class DomainServlet extends DataAccessServlet<DomainDAO> {
 
 	private static final long serialVersionUID = 1L;
 
-	public DomainServlet() throws IOException {
-		super();
+	@Override
+	protected DomainDAO initAccessDAO() throws RdapDataAccessException {
+		return DataAccessService.getDomainDAO();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see mx.nic.rdap.server.RdapServlet#doRdapGet(javax.servlet.http.
-	 * HttpServletRequest)
-	 */
 	@Override
-	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
+	protected String getServedObjectName() {
+		return "domain";
+	}
+
+	@Override
+	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		DomainRequest request = null;
 		try {
@@ -50,7 +51,7 @@ public class DomainServlet extends RdapServlet {
 		}
 		Domain domain = null;
 		try {
-			domain = DataAccessService.getDomainDAO().getByName(request.getFullRequestValue(),
+			domain = getDAO().getByName(request.getFullRequestValue(),
 					RdapConfiguration.useNameserverAsDomainAttribute());
 		} catch (InvalidValueException e) {
 			throw new ObjectNotFoundException("The RDAP server doesn't have information about the requested zone");
@@ -59,14 +60,8 @@ public class DomainServlet extends RdapServlet {
 		return new DomainResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), domain, username);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see mx.nic.rdap.server.RdapServlet#doRdapHead(javax.servlet.http.
-	 * HttpServletRequest)
-	 */
 	@Override
-	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
+	protected RdapResult doRdapDaHead(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		DomainRequest request = null;
 		try {
@@ -74,7 +69,7 @@ public class DomainServlet extends RdapServlet {
 		} catch (InvalidValueException | ObjectNotFoundException e) {
 			throw new ObjectNotFoundException("The RDAP server doesn't have information about the requested zone");
 		}
-		DataAccessService.getDomainDAO().existByName(request.getFullRequestValue());
+		getDAO().existByName(request.getFullRequestValue());
 		return new OkResult();
 	}
 

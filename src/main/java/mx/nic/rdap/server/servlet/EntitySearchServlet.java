@@ -10,26 +10,36 @@ import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.exception.UnprocessableEntityException;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.service.DataAccessService;
+import mx.nic.rdap.db.spi.EntityDAO;
 import mx.nic.rdap.db.struct.SearchResultStruct;
+import mx.nic.rdap.server.DataAccessServlet;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapSearchRequest;
-import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.EntitySearchResult;
 
-@WebServlet(name = "entities", urlPatterns = { "/entities" })
-public class EntitySearchServlet extends RdapServlet {
+@WebServlet(name = 	"entities", urlPatterns = { "/entities" })
+public class EntitySearchServlet extends DataAccessServlet<EntityDAO> {
 
 	private static final long serialVersionUID = -8023237096799052268L;
 
 	public static final String FULL_NAME = "fn";
 	public static final String HANDLE = "handle";
+	
+	@Override
+	protected EntityDAO initAccessDAO() throws RdapDataAccessException {
+		return DataAccessService.getEntityDAO();
+	}
+	
+	@Override
+	protected String getServedObjectName() {
+		return "entities";
+	}
 
 	@Override
-	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
+	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
-
 		RdapSearchRequest searchRequest = null;
 		try {
 			searchRequest = RdapSearchRequest.getSearchRequest(httpRequest, true, FULL_NAME, HANDLE);
@@ -64,10 +74,10 @@ public class EntitySearchServlet extends RdapServlet {
 		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
 		switch (searchRequest.getParameterName()) {
 		case FULL_NAME:
-			result = DataAccessService.getEntityDAO().searchByVCardName(searchRequest.getParameterValue(), resultLimit);
+			result = getDAO().searchByVCardName(searchRequest.getParameterValue(), resultLimit);
 			break;
 		case HANDLE:
-			result = DataAccessService.getEntityDAO().searchByHandle(searchRequest.getParameterValue(), resultLimit);
+			result = getDAO().searchByHandle(searchRequest.getParameterValue(), resultLimit);
 			break;
 		}
 
@@ -81,12 +91,10 @@ public class EntitySearchServlet extends RdapServlet {
 		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
 		switch (searchRequest.getParameterName()) {
 		case FULL_NAME:
-			result = DataAccessService.getEntityDAO().searchByRegexVCardName(searchRequest.getParameterValue(),
-					resultLimit);
+			result = getDAO().searchByRegexVCardName(searchRequest.getParameterValue(), resultLimit);
 			break;
 		case HANDLE:
-			result = DataAccessService.getEntityDAO().searchByRegexHandle(searchRequest.getParameterValue(),
-					resultLimit);
+			result = getDAO().searchByRegexHandle(searchRequest.getParameterValue(), resultLimit);
 			break;
 		}
 
@@ -94,7 +102,7 @@ public class EntitySearchServlet extends RdapServlet {
 	}
 
 	@Override
-	protected RdapResult doRdapHead(HttpServletRequest httpRequest) throws RequestHandleException {
+	protected RdapResult doRdapDaHead(HttpServletRequest httpRequest) throws RequestHandleException {
 		throw new RequestHandleException(501, "Not implemented yet.");
 	}
 

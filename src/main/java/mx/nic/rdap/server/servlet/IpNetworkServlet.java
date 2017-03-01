@@ -10,9 +10,10 @@ import mx.nic.rdap.core.db.IpNetwork;
 import mx.nic.rdap.db.exception.InvalidValueException;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.service.DataAccessService;
+import mx.nic.rdap.db.spi.IpNetworkDAO;
+import mx.nic.rdap.server.DataAccessServlet;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.IpResult;
@@ -20,12 +21,18 @@ import mx.nic.rdap.server.result.OkResult;
 import mx.nic.rdap.server.util.Util;
 
 @WebServlet(name = "ip", urlPatterns = { "/ip/*" })
-public class IpNetworkServlet extends RdapServlet {
+public class IpNetworkServlet extends DataAccessServlet<IpNetworkDAO> {
 
 	private static final long serialVersionUID = 1L;
 
-	public IpNetworkServlet() throws IOException {
-		super();
+	@Override
+	protected IpNetworkDAO initAccessDAO() throws RdapDataAccessException {
+		return DataAccessService.getIpNetworkDAO();
+	}
+
+	@Override
+	protected String getServedObjectName() {
+		return "IP network";
 	}
 
 	/*
@@ -35,7 +42,7 @@ public class IpNetworkServlet extends RdapServlet {
 	 * HttpServletRequest)
 	 */
 	@Override
-	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
+	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		IpRequest request = new IpRequest(Util.getRequestParams(httpRequest));
 		String username = httpRequest.getRemoteUser();
@@ -46,9 +53,9 @@ public class IpNetworkServlet extends RdapServlet {
 		IpNetwork ipNetwork = null;
 		try {
 			if (request.hasCidr()) {
-				ipNetwork = DataAccessService.getIpNetworkDAO().getByInetAddress(request.getIp(), request.getCidr());
+				ipNetwork = getDAO().getByInetAddress(request.getIp(), request.getCidr());
 			} else {
-				ipNetwork = DataAccessService.getIpNetworkDAO().getByInetAddress(request.getIp());
+				ipNetwork = getDAO().getByInetAddress(request.getIp());
 			}
 
 		} catch (InvalidValueException e) {
@@ -65,14 +72,14 @@ public class IpNetworkServlet extends RdapServlet {
 	 * HttpServletRequest)
 	 */
 	@Override
-	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
+	protected RdapResult doRdapDaHead(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		IpRequest request = new IpRequest(Util.getRequestParams(httpRequest));
 		try {
 			if (request.hasCidr()) {
-				DataAccessService.getIpNetworkDAO().existByInetAddress(request.getIp(), request.getCidr());
+				getDAO().existByInetAddress(request.getIp(), request.getCidr());
 			} else {
-				DataAccessService.getIpNetworkDAO().existByInetAddress(request.getIp());
+				getDAO().existByInetAddress(request.getIp());
 			}
 
 		} catch (InvalidValueException e) {

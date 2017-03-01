@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import mx.nic.rdap.db.exception.InvalidValueException;
+import mx.nic.rdap.db.exception.NotImplementedException;
 import mx.nic.rdap.db.exception.ObjectNotFoundException;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.server.AcceptHeaderFieldParser.Accept;
@@ -51,6 +52,9 @@ public abstract class RdapServlet extends HttpServlet {
 			return;
 		} catch (InvalidValueException e) {
 			response.sendError(422, e.getMessage());
+			return;
+		} catch (NotImplementedException e) {
+			response.sendError(501, e.getMessage());
 			return;
 		} catch (SQLException | IOException | RdapDataAccessException e) {
 			response.sendError(500, e.getMessage());
@@ -117,7 +121,6 @@ public abstract class RdapServlet extends HttpServlet {
 			}
 		}
 
-		// TODO return 406 if none of the content types yield a renderer?
 		return new DefaultRenderer();
 	}
 

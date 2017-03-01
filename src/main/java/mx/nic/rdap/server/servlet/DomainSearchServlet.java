@@ -11,18 +11,19 @@ import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.core.exception.UnprocessableEntityException;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.service.DataAccessService;
+import mx.nic.rdap.db.spi.DomainDAO;
 import mx.nic.rdap.db.struct.SearchResultStruct;
+import mx.nic.rdap.server.DataAccessServlet;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapSearchRequest;
-import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.DomainSearchResult;
 import mx.nic.rdap.server.util.IpUtil;
 
 @WebServlet(name = "domains", urlPatterns = { "/domains" })
-public class DomainSearchServlet extends RdapServlet {
+public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -32,6 +33,16 @@ public class DomainSearchServlet extends RdapServlet {
 
 	public final static String NAMESERVER_IP = "nsIp";
 
+	@Override
+	protected DomainDAO initAccessDAO() throws RdapDataAccessException {
+		return DataAccessService.getDomainDAO();
+	}
+
+	@Override
+	protected String getServedObjectName() {
+		return "domains";
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -39,7 +50,7 @@ public class DomainSearchServlet extends RdapServlet {
 	 * HttpServletRequest)
 	 */
 	@Override
-	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
+	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		RdapSearchRequest searchRequest;
 		try {
@@ -89,15 +100,15 @@ public class DomainSearchServlet extends RdapServlet {
 				throw new RequestHandleException(501, "Not implemented yet.");
 			}
 
-			result = DataAccessService.getDomainDAO().searchByName(domain, resultLimit, useNameserverAsAttribute);
+			result = getDAO().searchByName(domain, resultLimit, useNameserverAsAttribute);
 			break;
 		case NAMESERVER_NAME:
 			// Gets´s domain by it´s Nameserver name
-			result = DataAccessService.getDomainDAO().searchByNsName(domain, resultLimit, useNameserverAsAttribute);
+			result = getDAO().searchByNsName(domain, resultLimit, useNameserverAsAttribute);
 			break;
 		case NAMESERVER_IP:
 			// Get´s domain by it´s Nameserver Ip
-			result = DataAccessService.getDomainDAO().searchByNsIp(domain, resultLimit, useNameserverAsAttribute);
+			result = getDAO().searchByNsIp(domain, resultLimit, useNameserverAsAttribute);
 			break;
 		default:
 			throw new RequestHandleException(501, "Not implemented.");
@@ -122,14 +133,14 @@ public class DomainSearchServlet extends RdapServlet {
 				// (RIR).
 				throw new RequestHandleException(501, "Not implemented yet.");
 			}
-			result = DataAccessService.getDomainDAO().searchByRegexName(domain, resultLimit, useNameserverAsAttribute);
+			result = getDAO().searchByRegexName(domain, resultLimit, useNameserverAsAttribute);
 			break;
 		case NAMESERVER_NAME:
 			// Gets´s domain by it´s Nameserver name
-			result = DataAccessService.getDomainDAO().searchByNsName(domain, resultLimit, useNameserverAsAttribute);
+			result = getDAO().searchByNsName(domain, resultLimit, useNameserverAsAttribute);
 			break;
 		case NAMESERVER_IP:
-			result = DataAccessService.getDomainDAO().searchByRegexNsIp(domain, resultLimit, useNameserverAsAttribute);
+			result = getDAO().searchByRegexNsIp(domain, resultLimit, useNameserverAsAttribute);
 			break;
 		default:
 			throw new RequestHandleException(501, "Not implemented.");
@@ -145,7 +156,7 @@ public class DomainSearchServlet extends RdapServlet {
 	 * HttpServletRequest)
 	 */
 	@Override
-	protected RdapResult doRdapHead(HttpServletRequest httpRequest) throws RequestHandleException {
+	protected RdapResult doRdapDaHead(HttpServletRequest httpRequest) throws RequestHandleException {
 		throw new RequestHandleException(501, "Not implemented yet.");
 	}
 
