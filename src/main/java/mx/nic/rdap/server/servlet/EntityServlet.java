@@ -49,7 +49,7 @@ public class EntityServlet extends DataAccessServlet<EntityDAO> {
 	protected RdapResult doRdapDaHead(HttpServletRequest httpRequest)
 			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		EntityRequest request = new EntityRequest(Util.getRequestParams(httpRequest)[0]);
-		getDAO().getByHandle(request.getHandle());
+		getDAO().existByHandle(request.getHandle());
 		return new OkResult();
 	}
 

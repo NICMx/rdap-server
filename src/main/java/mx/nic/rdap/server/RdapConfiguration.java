@@ -10,6 +10,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import mx.nic.rdap.core.catalog.Rol;
+import mx.nic.rdap.db.RdapUser;
 import mx.nic.rdap.db.exception.InvalidValueException;
 import mx.nic.rdap.db.exception.ObjectNotFoundException;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
@@ -300,8 +301,16 @@ public class RdapConfiguration {
 	public static Integer getMaxNumberOfResultsForUser(String username) throws RdapDataAccessException {
 		if (username != null) {
 			// Find if the user has a custom limit.
+			Integer limit = null;
+
 			RdapUserDAO dao = DataAccessService.getRdapUserDAO();
-			Integer limit = (dao != null) ? dao.getMaxSearchResults(username) : null;
+			if (dao != null) {
+				RdapUser user = dao.getByUsername(username);
+				if (user != null) {
+					limit = user.getMaxSearchResults();
+				}
+			}
+
 			if (limit != null && limit != 0) {
 				return limit;
 			} else {
