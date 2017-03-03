@@ -101,9 +101,4 @@ public class EntitySearchServlet extends DataAccessServlet<EntityDAO> {
 		return result;
 	}
 
-	@Override
-	protected RdapResult doRdapDaHead(HttpServletRequest httpRequest) throws RequestHandleException {
-		throw new RequestHandleException(501, "Not implemented yet.");
-	}
-
 }

@@ -17,7 +17,6 @@ import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.IpResult;
-import mx.nic.rdap.server.result.OkResult;
 import mx.nic.rdap.server.util.Util;
 
 @WebServlet(name = "ip", urlPatterns = { "/ip/*" })
@@ -63,29 +62,6 @@ public class IpNetworkServlet extends DataAccessServlet<IpNetworkDAO> {
 		}
 
 		return new IpResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), ipNetwork, username);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see mx.nic.rdap.server.RdapServlet#doRdapHead(javax.servlet.http.
-	 * HttpServletRequest)
-	 */
-	@Override
-	protected RdapResult doRdapDaHead(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
-		IpRequest request = new IpRequest(Util.getRequestParams(httpRequest));
-		try {
-			if (request.hasCidr()) {
-				getDAO().existByInetAddress(request.getIp(), request.getCidr());
-			} else {
-				getDAO().existByInetAddress(request.getIp());
-			}
-
-		} catch (InvalidValueException e) {
-			throw new MalformedRequestException(e.getMessage(), e);
-		}
-		return new OkResult();
 	}
 
 	private class IpRequest {

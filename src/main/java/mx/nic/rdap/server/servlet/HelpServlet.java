@@ -10,7 +10,6 @@ import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.HelpResult;
-import mx.nic.rdap.server.result.OkResult;
 
 @WebServlet(name = "help", urlPatterns = { "/help" })
 public class HelpServlet extends RdapServlet {
@@ -32,18 +31,6 @@ public class HelpServlet extends RdapServlet {
 			throws RequestHandleException, IOException, SQLException {
 		RdapResult result = new HelpResult();
 		return result;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see mx.nic.rdap.server.RdapServlet#doRdapHead(javax.servlet.http.
-	 * HttpServletRequest)
-	 */
-	@Override
-	protected RdapResult doRdapHead(HttpServletRequest request)
-			throws RequestHandleException, IOException, SQLException {
-		return new OkResult();
 	}
 
 }

@@ -57,23 +57,12 @@ public abstract class DataAccessServlet<T extends DataAccessDAO> extends RdapSer
 	protected abstract String getServedObjectName();
 
 	@Override
-	protected RdapResult doRdapHead(HttpServletRequest request)
-			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
-		validateDaoExists();
-		return doRdapDaHead(request);
-	}
-
-	/**
-	 * Adds data-access-specific validations on top of
-	 * {@link #doRdapHead(HttpServletRequest)}.
-	 */
-	protected abstract RdapResult doRdapDaHead(HttpServletRequest request)
-			throws RequestHandleException, IOException, SQLException, RdapDataAccessException;
-
-	@Override
 	protected RdapResult doRdapGet(HttpServletRequest request)
 			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
-		validateDaoExists();
+		if (dao == null) {
+			throw new NotImplementedException("This server does not implement " + getServedObjectName() + " requests.");
+		}
+
 		return doRdapDaGet(request);
 	}
 
@@ -83,12 +72,6 @@ public abstract class DataAccessServlet<T extends DataAccessDAO> extends RdapSer
 	 */
 	protected abstract RdapResult doRdapDaGet(HttpServletRequest request)
 			throws RequestHandleException, IOException, SQLException, RdapDataAccessException;
-
-	private void validateDaoExists() throws NotImplementedException {
-		if (dao == null) {
-			throw new NotImplementedException("This server does not implement " + getServedObjectName() + " requests.");
-		}
-	}
 
 	/**
 	 * Returns the DAO the servlet initialized during {@link #initAccessDAO()}.

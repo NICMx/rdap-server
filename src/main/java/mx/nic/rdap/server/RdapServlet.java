@@ -18,35 +18,19 @@ import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.renderer.DefaultRenderer;
 
 /**
- * Main class of the RDAP Servlet.
+ * Base class of all RDAP servlets.
  */
 public abstract class RdapServlet extends HttpServlet {
 
 	/** This is just a warning shutupper. */
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @see HttpServlet#doHead(HttpServletRequest, HttpServletResponse)
-	 */
-	protected void doHead(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		handleRequest(request, response, (r) -> doRdapHead(r));
-	}
-
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		handleRequest(request, response, (r) -> doRdapGet(r));
-	}
-
-	private void handleRequest(HttpServletRequest request, HttpServletResponse response, HandleAction predicate)
 			throws ServletException, IOException {
 		RdapResult result;
 		try {
-			result = predicate.handle(request);
+			result = doRdapGet(request);
 		} catch (ObjectNotFoundException e) {
 			response.sendError(404, e.getMessage());
 			return;
@@ -88,23 +72,6 @@ public abstract class RdapServlet extends HttpServlet {
 			throws RequestHandleException, IOException, SQLException, RdapDataAccessException;
 
 	/**
-	 * Handles the `request` HEAD request and builds a response. Think of it as
-	 * a {@link HttpServlet#doGet(HttpServletRequest, HttpServletResponse)},
-	 * except you don't have to grab a database connection and the response will
-	 * be built for you.
-	 * 
-	 * @param request
-	 *            request to the servlet.
-	 * @param connection
-	 *            Already initialized connection to the database.
-	 * @return response to the user.
-	 * @throws RequestHandleException
-	 *             Errors found handling `request`.
-	 */
-	protected abstract RdapResult doRdapHead(HttpServletRequest request)
-			throws RequestHandleException, IOException, SQLException, RdapDataAccessException;
-
-	/**
 	 * Tries hard to find the best suitable renderer for
 	 * <code>httpRequest</code>.
 	 */
@@ -122,11 +89,6 @@ public abstract class RdapServlet extends HttpServlet {
 		}
 
 		return new DefaultRenderer();
-	}
-
-	private interface HandleAction {
-		RdapResult handle(HttpServletRequest request)
-				throws IOException, SQLException, RequestHandleException, RdapDataAccessException;
 	}
 
 }

@@ -16,7 +16,6 @@ import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.AutnumResult;
-import mx.nic.rdap.server.result.OkResult;
 import mx.nic.rdap.server.util.Util;
 
 @WebServlet(name = "autnum", urlPatterns = { "/autnum/*" })
@@ -46,14 +45,6 @@ public class AutnumServlet extends DataAccessServlet<AutnumDAO> {
 
 		autnum = getDAO().getByRange(request.getAutnum());
 		return new AutnumResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), autnum, username);
-	}
-
-	@Override
-	protected RdapResult doRdapDaHead(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
-		AutnumRequest request = new AutnumRequest(Util.getRequestParams(httpRequest)[0]);
-		getDAO().existByRange(request.getAutnum());
-		return new OkResult();
 	}
 
 	private class AutnumRequest {

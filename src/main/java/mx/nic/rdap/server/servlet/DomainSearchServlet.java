@@ -149,17 +149,6 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see mx.nic.rdap.server.RdapServlet#doRdapHead(javax.servlet.http.
-	 * HttpServletRequest)
-	 */
-	@Override
-	protected RdapResult doRdapDaHead(HttpServletRequest httpRequest) throws RequestHandleException {
-		throw new RequestHandleException(501, "Not implemented yet.");
-	}
-
 	private static void validateSearchRequest(RdapSearchRequest searchRequest) throws MalformedRequestException {
 		String parameter = searchRequest.getParameterName();
 		String value = searchRequest.getParameterValue();

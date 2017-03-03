@@ -18,7 +18,6 @@ import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.DomainResult;
-import mx.nic.rdap.server.result.OkResult;
 import mx.nic.rdap.server.util.Util;
 
 @WebServlet(name = "domain", urlPatterns = { "/domain/*" })
@@ -58,19 +57,6 @@ public class DomainServlet extends DataAccessServlet<DomainDAO> {
 		}
 
 		return new DomainResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), domain, username);
-	}
-
-	@Override
-	protected RdapResult doRdapDaHead(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
-		DomainRequest request = null;
-		try {
-			request = new DomainRequest(Util.getRequestParams(httpRequest)[0]);
-		} catch (InvalidValueException | ObjectNotFoundException e) {
-			throw new ObjectNotFoundException("The RDAP server doesn't have information about the requested zone");
-		}
-		getDAO().existByName(request.getFullRequestValue());
-		return new OkResult();
 	}
 
 	private class DomainRequest {

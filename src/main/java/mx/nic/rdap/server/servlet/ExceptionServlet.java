@@ -33,17 +33,4 @@ public class ExceptionServlet extends RdapServlet {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see mx.nic.rdap.server.RdapServlet#doRdapHead(javax.servlet.http.
-	 * HttpServletRequest)
-	 */
-	@Override
-	protected RdapResult doRdapHead(HttpServletRequest request)
-			throws RequestHandleException, IOException, SQLException {
-		RdapResult result = new ExceptionResult(request);
-		return result;
-	}
-
 }
