@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
@@ -46,7 +47,8 @@ public class RdapInitializer implements ServletContextListener {
 		servletContext = event.getServletContext();
 		try {
 			RendererPool.loadRenderers(loadConfig(RENDERERS_FILE, RENDERER_CONTEXT_PARAM_NAME));
-			RdapConfiguration.loadSystemProperties(loadConfig(CONFIGURATION_FILE, RDAP_CONFIGURATION_PARAM_NAME));
+			Properties serverConfig = loadConfig(CONFIGURATION_FILE, RDAP_CONFIGURATION_PARAM_NAME);
+			RdapConfiguration.loadSystemProperties(serverConfig);
 
 			// Validate if the configurated zones are in the database
 			RdapConfiguration.validateRdapConfiguration();
@@ -55,7 +57,11 @@ public class RdapInitializer implements ServletContextListener {
 			PrivacyUtil.loadAllPrivacySettings();
 			loadUserNotices();
 
-			DataAccessService.initialize(loadConfig(DATA_ACCESS_FILE, DATA_ACCESS_PARAM_NAME));
+			Properties dataAccessConfig = loadConfig(DATA_ACCESS_FILE, DATA_ACCESS_PARAM_NAME);
+			for (Entry<Object, Object> entry : dataAccessConfig.entrySet()) {
+				serverConfig.put(entry.getKey(), entry.getValue());
+			}
+			DataAccessService.initialize(serverConfig);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}

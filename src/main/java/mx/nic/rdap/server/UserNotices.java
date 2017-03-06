@@ -2,6 +2,7 @@ package mx.nic.rdap.server;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -42,7 +43,7 @@ public class UserNotices {
 		// be optional.
 		try {
 			tos = NoticesReader.parseTOSXML(Paths.get(userPath, TOS_FILE_NAME).toString());
-		} catch (FileNotFoundException e) {
+		} catch (FileNotFoundException | NoSuchFileException e) {
 			if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)) {
 				throw e;
 			}
