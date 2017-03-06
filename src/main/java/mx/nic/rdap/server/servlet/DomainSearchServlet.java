@@ -137,7 +137,7 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 			break;
 		case NAMESERVER_NAME:
 			// Gets´s domain by it´s Nameserver name
-			result = getDAO().searchByNsName(domain, resultLimit, useNameserverAsAttribute);
+			result = getDAO().searchByRegexNsName(domain, resultLimit, useNameserverAsAttribute);
 			break;
 		case NAMESERVER_IP:
 			result = getDAO().searchByRegexNsIp(domain, resultLimit, useNameserverAsAttribute);
