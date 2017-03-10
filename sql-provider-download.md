@@ -16,7 +16,7 @@ This is our default implementation for the connection with our database implemen
 
 First release of the SQL Provider lib.
 
-|Download |SHA512    |MD5    |SQL Database|Git commit|
+|Download |SHA512    |MD5    |SQL Database|Source code(GitHub)|
 |:--------|:---------|:------|:-----------|:---------|
-|[1.0.0](https://github.com/NICMx/releases/raw/master/RedDog/rdap-sql-provider-1.0.jar)|[SHA512](https://github.com/NICMx/releases/raw/master/RedDog/rdap-sql-provider-1.0.sha)|[MD5](https://github.com/NICMx/releases/raw/master/RedDog/rdap-sql-provider-1.0.md5)|[SQL Database](https://raw.githubusercontent.com/NICMx/rdap-sql-provider/master/src/main/resources/META-INF/sql/Database.sql)|[Link](https://github.com/NICMx/rdap-data-access-api)|
+|[1.0.0](https://github.com/NICMx/releases/raw/master/RedDog/rdap-sql-provider-1.0.jar)|[SHA512](https://github.com/NICMx/releases/raw/master/RedDog/rdap-sql-provider-1.0.sha)|[MD5](https://github.com/NICMx/releases/raw/master/RedDog/rdap-sql-provider-1.0.md5)|[SQL Database](https://raw.githubusercontent.com/NICMx/rdap-sql-provider/master/src/main/resources/META-INF/sql/Database.sql)|[Link](https://github.com/NICMx/rdap-sql-provider)|
 
