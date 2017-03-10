@@ -21,12 +21,16 @@ The purpose of this document is help you in the data migration process from your
 
 In the following sections we explain the attributes of each RDAP objects, as defined in the RFC7483, and how is mapped to the Red Dog RDAP database. Red Dog’s database uses a relational database design, so the main objects are generally distributed in more than one table.
 
+# Dynamic Schema mode
+
+We know that full migration can take a long time, and may affect the second time you want to migrate your data to update them. In order not to affect the operation of the active schema we have decided to add a "dynamic schema" mode to the migrator, in order to migrate the information in up to two different schemas in the database, for more information go to the next page [Dynamic schema](dynamic-schema.html).
+
 # Migration process
 
 The process of migration using the Red Dog migration tool is:
 1.	You build the “select” statements with exactly the same types that we define.
 2.	The application reads the SQL file for each main object.
-3.	The application executes that statements in your database.
+3.	The application executes that SELECT statements in your database.
 4.	The application maps the resultSet of the statements to RDAP objects and validate the data types.
 5.	The application stores the objects in the Red Dog RDAP database.
 
@@ -40,22 +44,22 @@ Some relevant points:
 
 This section tells you how to set up the batch configuration and the database connections.
 
-1.	Configure the batch behavior. Find the config/configuration.properties file in your installation directory, it contains the following lines:
+1.	Configure the batch behavior. Find the **config/configuration.properties** file in your installation directory, it contains the following lines:
 
-        #Optional. Date in dd/MM/yyyy HH:mm:ss  format. Default value=execution date
-        first.time.execution=
-        #Required value in Minutes.
-        time.between.execution=
         #Optional. Boolean value to activate the migration of users. Default value=false
-        migrate.users=
+        migrate_users =
         #Optional. Boolean value to indicate if the nameserver is used as a Domain Attribute. Default value = 	false (is used as object)
-        nameserver.as.domain.attribute=
+        nameserver_as_domain_attribute =
+		#Optional. Name of the default schema of the rdap database. Default value = rdap
+		default_schema =
+		#Required. Name of the schema that will contain the updated data if the previous schema is actually used.
+		migration_schema =
+		#Optional. Indicates if the application will use 2 schemas. Default value = false
+		dynamic_schema =
 
  
 
-2.	Write a valid value for the time.between.execution attribute and, if you want, to the other attributes.
-
-3.	Configure the origin database connection, which is the Database containing the information that will be migrated to the RDAP database. Find the config/ origin.database.properties file, it contains the following lines:
+2.	Configure the origin database connection, which is the Database containing the information that will be migrated to the RDAP database. Find the **config/origin_database.properties** file, it contains the following lines:
  
         #The java class name of the JDBC drive to be use in the connection
         driverClassName=<mydb_driver_class_name> 
@@ -65,41 +69,41 @@ This section tells you how to set up the batch configuration and the database co
         userName=<mydb_user> 
         password=<mydb_pass>
 
-4.	Replace _<mydb\_user>_ and _<mydb\_pass>_ with your actual database credentials.
+3.	Replace _<mydb\_user>_ and _<mydb\_pass>_ with your actual database credentials.
 
-5.	Replace _<mydb\_url>_ with the URL for your Database. For example:
+4.	Replace _<mydb\_url>_ with the URL for your Database. For example:
 
 	1.	**A localhost mysql database**: jdbc:mysql://localhost
 	2.	**A remote mysql database**: jdbc:mysql://exampledb.com/mydb
 	3.	**A remote Oracle database**: jdbc:oracle:thin:@example.mydb.com:1521:db
 
-6.	Replace `<mydb_driver_class_name>` with the Java class name of the JDBC drive to be use. For example:
+5.	Replace `<mydb_driver_class_name>` with the Java class name of the JDBC drive to be use. For example:
 
 	1.	**Oracle**: oracle.jdbc.OracleDriver
 	2.	**MySql**: com.mysql.jdbc.Driver
 
-7.	Configure the destination database connection, which is the Database that will contain the information that will be migrated from the origin database. Find the **config/destination.database.properties** file, it contains the same structure from the origin.database.properties file, so you have to repeat steps  3 to 6 using the data for the rdap database. 
-8.	Create the file that will contains the selects statements for the migration. Create the **config/migration.sql** with the following structure:
+6.	Configure the destination database connection, which is the Database that will contain the information that will be migrated from the origin database. Find the **config/destination_database.properties** file, it contains the same structure from the **origin_database.properties** file, so you have to repeat steps  3 to 6 using the data for the rdap database. 
+7.	Create the file that will contains the selects statements for the migration. Create the **config/migration.sql** with the following structure:
 
         #user
-        SELECT usersData FROM yourUserTable WHERE yourUpdateDateColumn=?;
+        SELECT usersData FROM yourUserTable;
         
         #entity
-        SELECT entitiesData FROM yourEntityTable WHERE yourUpdateDateColumn =?;
+        SELECT entitiesData FROM yourEntityTable;
         
         #nameserver
-        SELECT nameserversData FROM yourNameserverTable WHERE yourUpdateDateColumn =?;
+        SELECT nameserversData FROM yourNameserverTable;
         
         #domain
-        SELECT domainsData FROM yourDomainData WHERE yourUpdateDateColumn =?;
+        SELECT domainsData FROM yourDomainData;
         
         #autnum
         SELECT autnumsData FROM yourAutnumsData;
 
-        #ipnetwork
+        #ip_network
         SELECT ipNetworksData FROM yourIpNetworkData;
 
-9.	Replace the select statements with the correct statements, which must have the structure defined in the following sections.
+8.	Replace the select statements with the correct statements, which must have the structure defined in the following sections.
 
 You can test the configuration of the batch using the samples of select statements defined on the following sections or using the META-INF/sample.migration.sql file in your installation directory.
 
@@ -221,7 +225,7 @@ Example Select statement:
 
 ### Domain
 
->The zones will be created auntomatically within the domain migration process. When a new zone is found, it will be created. In example, if the domains “mydomain.com”, “mydomain2.lat”, “mydomain3.mx” and “mydomain4.com” will be migrated, the zones created are “com”, “lat” and “mx”. Check out the configuration file in the META-INF folder on the server for setup the managed zones.
+>The zones will be created auntomatically within the domain migration process. When a new zone is found, it will be created. E.g., if the domains “mydomain.com”, “mydomain2.lat”, “mydomain3.mx” and “mydomain4.com” will be migrated, the zones created are “com”, “lat” and “mx”. Check out the configuration file in the META-INF folder on the server for setup the managed zones.
 
 The domain object class represents a DNS name and point of delegation. For RIRs, these delegation points are in the reverse DNS tree, whereas for DNRs, these delegation points are in the forward DNS tree.
 
@@ -267,12 +271,13 @@ The following table describe each value of the select statement above:
 |nameservers|	No|	String containing the nameserver list of the domain. The structure must have the form: <br /> “nameserver1Handle, nameserver2Handle” |	XXX1,XXX2|
 |host|No|String containing the host list of the domain. The structure must have the form: "hostname\|(ip1\|ip2...), hostname2\|(ip1\|ip2...)" | My-ns-1.mx\|(127.0.0.1),My-ns-2.mx\|(127.0.0.2\|2001:db8::2:1)|
 |secure_dns|	No|	String containing the secureDNS data of the domain. [(See SecureDNSData section)] | true\|true\|12345 | 
-|dsData|	No|	String containing the dsData list of the secureDNS. The structure must have the form: <br /> “dsData1, dsData2” [(See DSData section)] | 12345\|3\|49FD46E6C4B45C55D4AC\|1 |
+|ds_data|	No|	String containing the dsData list of the secureDNS. The structure must have the form: <br /> “dsData1, dsData2” [(See DSData section)] | 12345\|3\|49FD46E6C4B45C55D4AC\|1 |
 |public_ids|	No|	String containing the public id list of the domain. The structure must have the form: <br /> “publicIdData1,publicIdData2” [(See PublicIdData section)] | 1\|IANA Registrar ID, 2\|NIC ID 
+|ip_network|	No| String containing the handle of the IP network object. Just one handle per domain | ipNetHandleX1
 
 Example Select statement:
 
-    SELECT "XXXX" AS handle,"0.2.192.in-addr.arpa" AS ldh_name, "whois.example.net" AS port43,"active,validate" AS rdap_status, "linked,ok" AS epp_status, "registration| 2011-12-31T23:59:59Z | XXX1, reregistration| 2012-12-01T23:59:59Z| XXX1" AS events, "XXX1|registrar, XXX2|reseller" AS entities, ".EXAMPLE Spanish |{xn--fo-cka.example, xn--fo-fka.example} |{unregistered, registration_restricted}" AS variants,  "XXX1,XXX2" AS namerservers, "true|true|12345" AS secureDNS, "12345|3|49FD46E6C4B45C55D4AC|1" AS dsData, "1|IANA Registrar ID, 2|NIC ID " AS publicIds FROM dual;
+    SELECT "XXXX" AS handle,"0.2.192.in-addr.arpa" AS ldh_name, "whois.example.net" AS port43,"active,validate" AS rdap_status, "linked,ok" AS epp_status, "registration| 2011-12-31T23:59:59Z | XXX1, reregistration| 2012-12-01T23:59:59Z| XXX1" AS events, "XXX1|registrar, XXX2|reseller" AS entities, ".EXAMPLE Spanish |{xn--fo-cka.example, xn--fo-fka.example} |{unregistered, registration_restricted}" AS variants,  "XXX1,XXX2" AS namerservers, "true|true|12345" AS secure_dns, "12345|3|49FD46E6C4B45C55D4AC|1" AS ds_data, "1|IANA Registrar ID, 2|NIC ID " AS public_ids, "ipNetHandleX1" as ip_network FROM dual;
     
 ### Autonomous System Number
 
@@ -353,12 +358,12 @@ The following table describe each value of the select statement above:
 |Column name|	Required|	Description|	Example|
 |-----------|:---------:|--------------|-----------|
 |handle|	Yes|	The domain’s id assigned in your database|	XXXX|
-|startAddress|	Yes	|The starting IP address of the network, either IPv4 or IPv6|	192.10.0.0
-|endAddress|	Yes|	The ending IP address of the network, either IPv4 or IPv6|	192.10.0.255
+|start_address|	Yes	|The starting IP address of the network, either IPv4 or IPv6|	192.10.0.0
+|end_address|	Yes|	The ending IP address of the network, either IPv4 or IPv6|	192.10.0.255
 |name|No	|	An identifier assigned to the network registration by the registration holder	| ipName|
 |type	|No|	A string containing an RIR-specific classification of the network	|
 |country|Yes	|	An integer containing the id of the country code of the autnum. [(See Country code section)]  | 484|
-|parentHandler| No |	A String containing an RIR-unique identifier of the parent network of this network registration| parentId |
+|parent_handle| No |	A String containing an RIR-unique identifier of the parent network of this network registration| parentId |
 |cidr|Yes	|	An integer containing the Classless Inter-Domain Routing| 24|
 |port43|	Yes|	The host or ip address of the WHOIS server where the domain instance may be found|	whois.example.net|
 |rdap_status|	No|	A String containing the status list of the domain. The structure must have the form: <br /> “rdap_status, rdap_status, …”  [(See Status section)] | active,validate |
@@ -367,7 +372,7 @@ The following table describe each value of the select statement above:
 
 Example Select statement:
 
-    SELECT "XXXX" AS handle, " "  AS startAddress, " "  AS endAddress," " AS name, " " AS type, AS country, AS parentHandler, AS cidr, "whois.example.net" AS port43,"active,validate" AS rdap_status, "registration| 2011-12-31T23:59:59Z | XXX1, reregistration| 2012-12-01T23:59:59Z| XXX1" AS events, "XXX1|registrar, XXX2|reseller" AS entities FROM dual;
+    SELECT "ipNetHandleX1" AS handle, "192.168.1.0"  AS start_Address, "192.168.1.255 "  AS end_address,"some name" AS name, "nir-LAT" AS type, "4" as ip_version, "MX" AS country, "24" AS cidr, "whois.example.net" AS port43,"active,validated" AS rdap_status, "registration| 2011-12-31T23:59:59Z | XXX1, reregistration| 2012-12-01T23:59:59Z| XXX1" AS events, "XXXssXw|registrar" AS entities FROM dual;
 
 ### Data structures
 Each of the RDAP main objects uses common data structures which are described in the following sections.
