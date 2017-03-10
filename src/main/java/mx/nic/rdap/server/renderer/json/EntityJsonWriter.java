@@ -46,6 +46,11 @@ public class EntityJsonWriter {
 			builder.add(key, IpNetworkJsonWriter.getJsonArray(entity.getIpNetworks(), isAuthenticated, isOwner));
 		}
 
+		key = "autnums";
+		if (PrivacyUtil.isObjectVisible(entity.getAutnums(), key, settings.get(key), isAuthenticated, isOwner)) {
+			builder.add(key, AutnumJsonWriter.getJsonArray(entity.getAutnums(), isAuthenticated, isOwner));
+		}
+
 		key = "vcardArray";
 		if (PrivacyUtil.isObjectVisible(entity.getVCardList(), key, settings.get(key), isAuthenticated, isOwner)) {
 			builder.add(key, VCardJsonWriter.getJson(entity.getVCardList().get(0), isAuthenticated, isOwner));
