@@ -41,7 +41,7 @@ public class IpNetworkServlet extends DataAccessServlet<IpNetworkDAO> {
 	 * HttpServletRequest)
 	 */
 	@Override
-	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest)
+	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, IpNetworkDAO dao)
 			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		IpRequest request = new IpRequest(Util.getRequestParams(httpRequest));
 		String username = httpRequest.getRemoteUser();
@@ -52,9 +52,9 @@ public class IpNetworkServlet extends DataAccessServlet<IpNetworkDAO> {
 		IpNetwork ipNetwork = null;
 		try {
 			if (request.hasCidr()) {
-				ipNetwork = getDAO().getByInetAddress(request.getIp(), request.getCidr());
+				ipNetwork = dao.getByInetAddress(request.getIp(), request.getCidr());
 			} else {
-				ipNetwork = getDAO().getByInetAddress(request.getIp());
+				ipNetwork = dao.getByInetAddress(request.getIp());
 			}
 
 		} catch (InvalidValueException e) {

@@ -36,7 +36,7 @@ public class DomainServlet extends DataAccessServlet<DomainDAO> {
 	}
 
 	@Override
-	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest)
+	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, DomainDAO dao)
 			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		DomainRequest request = null;
 		try {
@@ -50,8 +50,7 @@ public class DomainServlet extends DataAccessServlet<DomainDAO> {
 		}
 		Domain domain = null;
 		try {
-			domain = getDAO().getByName(request.getFullRequestValue(),
-					RdapConfiguration.useNameserverAsDomainAttribute());
+			domain = dao.getByName(request.getFullRequestValue(), RdapConfiguration.useNameserverAsDomainAttribute());
 		} catch (InvalidValueException e) {
 			throw new ObjectNotFoundException("The RDAP server doesn't have information about the requested zone");
 		}

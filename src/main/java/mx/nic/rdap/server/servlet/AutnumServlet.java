@@ -34,7 +34,7 @@ public class AutnumServlet extends DataAccessServlet<AutnumDAO> {
 	}
 
 	@Override
-	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest)
+	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, AutnumDAO dao)
 			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		AutnumRequest request = new AutnumRequest(Util.getRequestParams(httpRequest)[0]);
 		Autnum autnum = null;
@@ -43,7 +43,7 @@ public class AutnumServlet extends DataAccessServlet<AutnumDAO> {
 			username = null;
 		}
 
-		autnum = getDAO().getByRange(request.getAutnum());
+		autnum = dao.getByRange(request.getAutnum());
 		return new AutnumResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), autnum, username);
 	}
 
