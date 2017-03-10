@@ -39,7 +39,7 @@ public class NameserverServlet extends DataAccessServlet<NameserverDAO> {
 	 * HttpServletRequest)
 	 */
 	@Override
-	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest)
+	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, NameserverDAO dao)
 			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		if (RdapConfiguration.useNameserverAsDomainAttribute()) {
 			throw new RequestHandleException(501, "Not implemented.");
@@ -52,7 +52,7 @@ public class NameserverServlet extends DataAccessServlet<NameserverDAO> {
 			username = null;
 		}
 
-		nameserver = getDAO().getByName(request.getName());
+		nameserver = dao.getByName(request.getName());
 		return new NameserverResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), nameserver, username);
 	}
 

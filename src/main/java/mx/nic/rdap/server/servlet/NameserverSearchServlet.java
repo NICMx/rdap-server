@@ -45,7 +45,7 @@ public class NameserverSearchServlet extends DataAccessServlet<NameserverDAO> {
 	 * HttpServletRequest)
 	 */
 	@Override
-	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest)
+	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, NameserverDAO dao)
 			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		if (RdapConfiguration.useNameserverAsDomainAttribute()) {
 			throw new RequestHandleException(501, "Not implemented.");
@@ -68,10 +68,10 @@ public class NameserverSearchServlet extends DataAccessServlet<NameserverDAO> {
 		SearchResultStruct<Nameserver> result = null;
 		switch (searchRequest.getType()) {
 		case PARTIAL_SEARCH:
-			result = getPartialSearch(username, searchRequest);
+			result = getPartialSearch(username, searchRequest, dao);
 			break;
 		case REGEX_SEARCH:
-			result = getRegexSearch(username, searchRequest);
+			result = getRegexSearch(username, searchRequest, dao);
 			break;
 		default:
 			throw new RequestHandleException(501, "Not implemented.");
@@ -80,18 +80,19 @@ public class NameserverSearchServlet extends DataAccessServlet<NameserverDAO> {
 				username);
 	}
 
-	private SearchResultStruct<Nameserver> getPartialSearch(String username, RdapSearchRequest request)
+	private SearchResultStruct<Nameserver> getPartialSearch(String username, RdapSearchRequest request,
+			NameserverDAO dao)
 			throws SQLException, IOException, RequestHandleException, RdapDataAccessException {
 		SearchResultStruct<Nameserver> result = new SearchResultStruct<Nameserver>();
 		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
 
 		switch (request.getParameterName()) {
 		case NAME_PARAMETER_KEY:
-			result = getDAO().searchByName(request.getParameterValue().trim(), resultLimit);
+			result = dao.searchByName(request.getParameterValue().trim(), resultLimit);
 			break;
 		case IP_PARAMETER_KEY:
 			try {
-				result = getDAO().searchByIp(request.getParameterValue().trim(), resultLimit);
+				result = dao.searchByIp(request.getParameterValue().trim(), resultLimit);
 			} catch (InvalidValueException e) {
 				throw new RequestHandleException(e.getMessage());
 			}
@@ -100,17 +101,17 @@ public class NameserverSearchServlet extends DataAccessServlet<NameserverDAO> {
 		return result;
 	}
 
-	private SearchResultStruct<Nameserver> getRegexSearch(String username, RdapSearchRequest request)
+	private SearchResultStruct<Nameserver> getRegexSearch(String username, RdapSearchRequest request, NameserverDAO dao)
 			throws SQLException, IOException, RequestHandleException, RdapDataAccessException {
 		SearchResultStruct<Nameserver> result = new SearchResultStruct<Nameserver>();
 		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
 
 		switch (request.getParameterName()) {
 		case NAME_PARAMETER_KEY:
-			result = getDAO().searchByRegexName(request.getParameterValue().trim(), resultLimit);
+			result = dao.searchByRegexName(request.getParameterValue().trim(), resultLimit);
 			break;
 		case IP_PARAMETER_KEY:
-			result = getDAO().searchByRegexIp(request.getParameterValue(), resultLimit);
+			result = dao.searchByRegexIp(request.getParameterValue(), resultLimit);
 			break;
 		}
 		return result;

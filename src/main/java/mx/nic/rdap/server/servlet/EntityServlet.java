@@ -33,14 +33,14 @@ public class EntityServlet extends DataAccessServlet<EntityDAO> {
 	}
 
 	@Override
-	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest)
+	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, EntityDAO dao)
 			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		EntityRequest request = new EntityRequest(Util.getRequestParams(httpRequest)[0]);
 		String username = httpRequest.getRemoteUser();
 		if (RdapConfiguration.isAnonymousUsername(username)) {
 			username = null;
 		}
-		Entity entity = getDAO().getByHandle(request.getHandle());
+		Entity entity = dao.getByHandle(request.getHandle());
 		return new EntityResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), entity, username);
 	}
 

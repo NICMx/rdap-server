@@ -38,7 +38,7 @@ public class EntitySearchServlet extends DataAccessServlet<EntityDAO> {
 	}
 
 	@Override
-	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest)
+	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, EntityDAO dao)
 			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		RdapSearchRequest searchRequest = null;
 		try {
@@ -55,10 +55,10 @@ public class EntitySearchServlet extends DataAccessServlet<EntityDAO> {
 		SearchResultStruct<Entity> result = null;
 		switch (searchRequest.getType()) {
 		case PARTIAL_SEARCH:
-			result = getPartialSearch(username, searchRequest);
+			result = getPartialSearch(username, searchRequest, dao);
 			break;
 		case REGEX_SEARCH:
-			result = getRegexSearch(username, searchRequest);
+			result = getRegexSearch(username, searchRequest, dao);
 			break;
 		default:
 			throw new RequestHandleException(501, "Not implemented.");
@@ -67,34 +67,34 @@ public class EntitySearchServlet extends DataAccessServlet<EntityDAO> {
 		return new EntitySearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), result, username);
 	}
 
-	private SearchResultStruct<Entity> getPartialSearch(String username, RdapSearchRequest searchRequest)
+	private SearchResultStruct<Entity> getPartialSearch(String username, RdapSearchRequest searchRequest, EntityDAO dao)
 			throws SQLException, IOException, RdapDataAccessException {
 		SearchResultStruct<Entity> result = null;
 
 		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
 		switch (searchRequest.getParameterName()) {
 		case FULL_NAME:
-			result = getDAO().searchByVCardName(searchRequest.getParameterValue(), resultLimit);
+			result = dao.searchByVCardName(searchRequest.getParameterValue(), resultLimit);
 			break;
 		case HANDLE:
-			result = getDAO().searchByHandle(searchRequest.getParameterValue(), resultLimit);
+			result = dao.searchByHandle(searchRequest.getParameterValue(), resultLimit);
 			break;
 		}
 
 		return result;
 	}
 
-	private SearchResultStruct<Entity> getRegexSearch(String username, RdapSearchRequest searchRequest)
+	private SearchResultStruct<Entity> getRegexSearch(String username, RdapSearchRequest searchRequest, EntityDAO dao)
 			throws SQLException, IOException, RequestHandleException, RdapDataAccessException {
 		SearchResultStruct<Entity> result = null;
 
 		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
 		switch (searchRequest.getParameterName()) {
 		case FULL_NAME:
-			result = getDAO().searchByRegexVCardName(searchRequest.getParameterValue(), resultLimit);
+			result = dao.searchByRegexVCardName(searchRequest.getParameterValue(), resultLimit);
 			break;
 		case HANDLE:
-			result = getDAO().searchByRegexHandle(searchRequest.getParameterValue(), resultLimit);
+			result = dao.searchByRegexHandle(searchRequest.getParameterValue(), resultLimit);
 			break;
 		}
 
