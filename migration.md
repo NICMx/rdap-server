@@ -252,7 +252,7 @@ The attributes of the Domain object are:
 ### Migration
 To migrate your data from your database to RDAP database you have to provide us the information in a single SELECT statement, like the following one:
 
-    SELECT handle, ldh_name, port43, rdap_status, epp_status, events, entities, variants, namerservers, secureDNS, dsData, publicIds FROM myDB.domain;
+    SELECT handle, ldh_name, port43, rdap_status, epp_status, events, entities, variants, namerservers, secureDNS, dsData,keyData, publicIds FROM myDB.domain;
 
 >Some Registries, use the nameserver data as a domain attribute; if you want to operate this way, you must active the 'nameserver.as.domain.attribute' is 'true', the 'host' value is expected, otherwise the nameservers value.
 
@@ -272,12 +272,13 @@ The following table describe each value of the select statement above:
 |host|No|String containing the host list of the domain. The structure must have the form: "hostname\|(ip1\|ip2...), hostname2\|(ip1\|ip2...)" | My-ns-1.mx\|(127.0.0.1),My-ns-2.mx\|(127.0.0.2\|2001:db8::2:1)|
 |secure_dns|	No|	String containing the secureDNS data of the domain. [(See SecureDNSData section)] | true\|true\|12345 | 
 |ds_data|	No|	String containing the dsData list of the secureDNS. The structure must have the form: <br /> “dsData1, dsData2” [(See DSData section)] | 12345\|3\|49FD46E6C4B45C55D4AC\|1 |
+|key_data|	No|	String containing the keyData list of the secureDNS. The structure must have the form: <br /> “keyData1, keyData2”  [(See KeyData section)] | 257\|3\|1\|AQPJ///4Q== |
 |public_ids|	No|	String containing the public id list of the domain. The structure must have the form: <br /> “publicIdData1,publicIdData2” [(See PublicIdData section)] | 1\|IANA Registrar ID, 2\|NIC ID 
 |ip_network|	No| String containing the handle of the IP network object. Just one handle per domain | ipNetHandleX1
 
 Example Select statement:
 
-    SELECT "XXXX" AS handle,"0.2.192.in-addr.arpa" AS ldh_name, "whois.example.net" AS port43,"active,validate" AS rdap_status, "linked,ok" AS epp_status, "registration| 2011-12-31T23:59:59Z | XXX1, reregistration| 2012-12-01T23:59:59Z| XXX1" AS events, "XXX1|registrar, XXX2|reseller" AS entities, ".EXAMPLE Spanish |{xn--fo-cka.example, xn--fo-fka.example} |{unregistered, registration_restricted}" AS variants,  "XXX1,XXX2" AS namerservers, "true|true|12345" AS secure_dns, "12345|3|49FD46E6C4B45C55D4AC|1" AS ds_data, "1|IANA Registrar ID, 2|NIC ID " AS public_ids, "ipNetHandleX1" as ip_network FROM dual;
+    SELECT "XXXX" AS handle,"0.2.192.in-addr.arpa" AS ldh_name, "whois.example.net" AS port43,"active,validate" AS rdap_status, "linked,ok" AS epp_status, "registration| 2011-12-31T23:59:59Z | XXX1, reregistration| 2012-12-01T23:59:59Z| XXX1" AS events, "XXX1|registrar, XXX2|reseller" AS entities, ".EXAMPLE Spanish |{xn--fo-cka.example, xn--fo-fka.example} |{unregistered, registration_restricted}" AS variants,  "XXX1,XXX2" AS namerservers, "true|true|12345" AS secure_dns, "12345|3|49FD46E6C4B45C55D4AC|1" AS ds_data,"257|3|1|AQPJ///4Q== " as key_data, "1|IANA Registrar ID, 2|NIC ID " AS public_ids, "ipNetHandleX1" as ip_network FROM dual;
     
 ### Autonomous System Number
 
@@ -496,10 +497,24 @@ The DSData attributes are described in the following table:
 
 |Attribute	|Required|	Description	|Example|
 |-----------|:------:|--------------|-------|
-|keyTag	|No	|The key tag field of a DNS DS record|	12345|
-|algorithm|	No|	An integer as specified by the algorithm field of a DNS DS record|	3|
-|digest|	No|	A string specified by the digest field of a DNS DS record|	49FD46E6C4B45C55D4AC|
-|digestType|	No|	An integer as specified by the digest type field of a DNS DS record|	1|
+|keyTag	|Yes|The key tag field of a DNS DS record|	12345|
+|algorithm|Yes	|	An integer as specified by the algorithm field of a DNS DS record|	3|
+|digest|	Yes|	A string specified by the digest field of a DNS DS record|	49FD46E6C4B45C55D4AC|
+|digestType|	Yes|	An integer as specified by the digest type field of a DNS DS record|	1|
+
+### KeyData
+Each KeyData must have the following form:
+
+    flags|protocol|publicKey|algorithm
+
+The KeyData attributes are described in the following table:
+
+|Attribute	|Required|	Description	|Example|
+|-----------|:------:|--------------|-------|
+|flags	|Yes	|An integer representing the flags field value in the DNSKEY record|	257|
+|protocol|	Yes|	An integer representation of the protocol field value of the DNSKEY record|	3|
+|publicKey|	Yes|	A string representation of the public key in the DNSKEY record|	AQPJ////4Q==|
+|algorithm|	Yes|	An integer as specified by the algorithm field of a DNSKEY record as specified by|	1|
 
 # Catalogs
 
@@ -608,6 +623,7 @@ Red Dog uses the standard for area codes used by the [United Nations Statistics 
 [(See VariantData section)]:#variantdata "Variant Data"
 [(See SecureDNSData section)]:#securednsdata "Secure DNS Data"
 [(See DSData section)]:#dsdata "DS Data"
+[(See KeyData section)]:#keydata "Key Data"
 [(See Country code section)]:#country-codes "Country Codes"
 [(See Events section)]:#eventaction "Events Catalog"
 [(see Entity section)]:#entity "Entity"
