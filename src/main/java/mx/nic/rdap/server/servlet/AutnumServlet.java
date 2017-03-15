@@ -11,7 +11,6 @@ import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.db.spi.AutnumDAO;
 import mx.nic.rdap.server.DataAccessServlet;
-import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
@@ -37,14 +36,14 @@ public class AutnumServlet extends DataAccessServlet<AutnumDAO> {
 	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, AutnumDAO dao)
 			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		AutnumRequest request = new AutnumRequest(Util.getRequestParams(httpRequest)[0]);
-		Autnum autnum = null;
-		String username = httpRequest.getRemoteUser();
-		if (RdapConfiguration.isAnonymousUsername(username)) {
-			username = null;
-		}
 
-		autnum = dao.getByRange(request.getAutnum());
-		return new AutnumResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), autnum, username);
+		Autnum autnum = dao.getByRange(request.getAutnum());
+		if (autnum == null) {
+			return null;
+		}
+		
+		return new AutnumResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), autnum,
+				Util.getUsername(httpRequest));
 	}
 
 	private class AutnumRequest {

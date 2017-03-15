@@ -76,6 +76,11 @@ public class NameserverSearchServlet extends DataAccessServlet<NameserverDAO> {
 		default:
 			throw new RequestHandleException(501, "Not implemented.");
 		}
+
+		if (result == null) {
+			return null;
+		}
+
 		return new NameserverSearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), result,
 				username);
 	}
@@ -98,6 +103,11 @@ public class NameserverSearchServlet extends DataAccessServlet<NameserverDAO> {
 			}
 			break;
 		}
+
+		if (result != null) {
+			result.truncate(resultLimit);
+		}
+
 		return result;
 	}
 
@@ -114,6 +124,11 @@ public class NameserverSearchServlet extends DataAccessServlet<NameserverDAO> {
 			result = dao.searchByRegexIp(request.getParameterValue(), resultLimit);
 			break;
 		}
+
+		if (result != null) {
+			result.truncate(resultLimit);
+		}
+
 		return result;
 	}
 

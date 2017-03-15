@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.core.db.RemarkDescription;
+import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.exception.RequestHandleException;
 
 /**
@@ -41,6 +42,11 @@ public class Util {
 
 		// resourceType = labels[2];
 		return Arrays.copyOfRange(labels, 3, labels.length);
+	}
+
+	public static String getUsername(HttpServletRequest httpRequest) {
+		String username = httpRequest.getRemoteUser();
+		return RdapConfiguration.isAnonymousUsername(username) ? null : username;
 	}
 
 	/**

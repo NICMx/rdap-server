@@ -12,7 +12,6 @@ import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.db.spi.IpNetworkDAO;
 import mx.nic.rdap.server.DataAccessServlet;
-import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
@@ -44,10 +43,6 @@ public class IpNetworkServlet extends DataAccessServlet<IpNetworkDAO> {
 	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, IpNetworkDAO dao)
 			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		IpRequest request = new IpRequest(Util.getRequestParams(httpRequest));
-		String username = httpRequest.getRemoteUser();
-		if (RdapConfiguration.isAnonymousUsername(username)) {
-			username = null;
-		}
 
 		IpNetwork ipNetwork = null;
 		try {
@@ -61,7 +56,12 @@ public class IpNetworkServlet extends DataAccessServlet<IpNetworkDAO> {
 			throw new MalformedRequestException(e.getMessage(), e);
 		}
 
-		return new IpResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), ipNetwork, username);
+		if (ipNetwork == null) {
+			return null;
+		}
+
+		return new IpResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), ipNetwork,
+				Util.getUsername(httpRequest));
 	}
 
 	private class IpRequest {

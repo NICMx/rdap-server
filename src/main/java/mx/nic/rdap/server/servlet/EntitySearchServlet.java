@@ -64,6 +64,10 @@ public class EntitySearchServlet extends DataAccessServlet<EntityDAO> {
 			throw new RequestHandleException(501, "Not implemented.");
 		}
 
+		if (result == null) {
+			return null;
+		}
+
 		return new EntitySearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), result, username);
 	}
 
@@ -81,6 +85,10 @@ public class EntitySearchServlet extends DataAccessServlet<EntityDAO> {
 			break;
 		}
 
+		if (result != null) {
+			result.truncate(resultLimit);
+		}
+
 		return result;
 	}
 
@@ -96,6 +104,10 @@ public class EntitySearchServlet extends DataAccessServlet<EntityDAO> {
 		case HANDLE:
 			result = dao.searchByRegexHandle(searchRequest.getParameterValue(), resultLimit);
 			break;
+		}
+		
+		if (result != null) {
+			result.truncate(resultLimit);
 		}
 
 		return result;

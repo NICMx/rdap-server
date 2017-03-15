@@ -48,6 +48,11 @@ public abstract class RdapServlet extends HttpServlet {
 			return;
 		}
 
+		if (result == null) {
+			response.sendError(404);
+			return;
+		}
+
 		Renderer renderer = findRenderer(request);
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType(renderer.getResponseContentType());

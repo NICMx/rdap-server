@@ -78,6 +78,10 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 			throw new RequestHandleException(501, "Not implemented.");
 		}
 
+		if (result == null) {
+			return null;
+		}
+
 		return new DomainSearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), result, username);
 	}
 
@@ -114,8 +118,11 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 			throw new RequestHandleException(501, "Not implemented.");
 		}
 
-		return result;
+		if (result != null) {
+			result.truncate(resultLimit);
+		}
 
+		return result;
 	}
 
 	private SearchResultStruct<Domain> getRegexSearch(String username, RdapSearchRequest request, DomainDAO dao)
@@ -144,6 +151,10 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 			break;
 		default:
 			throw new RequestHandleException(501, "Not implemented.");
+		}
+
+		if (result != null) {
+			result.truncate(resultLimit);
 		}
 
 		return result;

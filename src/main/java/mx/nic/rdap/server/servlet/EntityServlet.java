@@ -11,7 +11,6 @@ import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.db.spi.EntityDAO;
 import mx.nic.rdap.server.DataAccessServlet;
-import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.EntityResult;
@@ -36,12 +35,14 @@ public class EntityServlet extends DataAccessServlet<EntityDAO> {
 	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, EntityDAO dao)
 			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		EntityRequest request = new EntityRequest(Util.getRequestParams(httpRequest)[0]);
-		String username = httpRequest.getRemoteUser();
-		if (RdapConfiguration.isAnonymousUsername(username)) {
-			username = null;
-		}
+
 		Entity entity = dao.getByHandle(request.getHandle());
-		return new EntityResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), entity, username);
+		if (entity == null) {
+			return null;
+		}
+
+		return new EntityResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), entity,
+				Util.getUsername(httpRequest));
 	}
 
 	private class EntityRequest {

@@ -45,15 +45,14 @@ public class NameserverServlet extends DataAccessServlet<NameserverDAO> {
 			throw new RequestHandleException(501, "Not implemented.");
 		}
 		NameserverRequest request = new NameserverRequest(Util.getRequestParams(httpRequest)[0]);
-		Nameserver nameserver = null;
 
-		String username = httpRequest.getRemoteUser();
-		if (RdapConfiguration.isAnonymousUsername(username)) {
-			username = null;
+		Nameserver nameserver = dao.getByName(request.getName());
+		if (nameserver == null) {
+			return null;
 		}
 
-		nameserver = dao.getByName(request.getName());
-		return new NameserverResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), nameserver, username);
+		return new NameserverResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), nameserver,
+				Util.getUsername(httpRequest));
 	}
 
 	private class NameserverRequest {

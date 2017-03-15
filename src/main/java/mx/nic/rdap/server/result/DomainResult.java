@@ -1,6 +1,5 @@
 package mx.nic.rdap.server.result;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import javax.json.JsonObject;
@@ -25,8 +24,7 @@ public class DomainResult extends RdapResult {
 
 	private Domain domain;
 
-	public DomainResult(String header, String contextPath, Domain domain, String userName)
-			throws FileNotFoundException {
+	public DomainResult(String header, String contextPath, Domain domain, String userName) {
 		notices = new ArrayList<Remark>();
 		this.domain = domain;
 		this.userInfo = new UserInfo(userName);
