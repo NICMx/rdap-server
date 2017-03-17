@@ -4,34 +4,28 @@ title: Data Access Layer
 
 # Data Access Layer
 
-Within RDAP server projects package that you have downloaded, there is a project called **"rdap-sql-provider"**, this is our default implementation for the connection with our database implemented in MySQl, which we use as a Database server provider. In Red Dog, we believe that some of you may want to use another database, with different table names and other rules, so we provide you a way to do it.
+As stated [here](intro.html#custom-form), you can replace the default SQL-based data access implementation for your own. Your implementation will wrap whatever data storage you have to the rdap-server.
 
-In general, the server must load a valid implementation of a data access layer, in other words, an appropiate project that extends from our **"rdap-data-access-api"** project and must add it to the classpath or, if you prefer to use Maven, to the project POM file.
+To create your own implementation, you need to append the following files to the classpath:
 
-Therefore, if you want to add your own data provider, you must implement each one of the following interfaces in your database project:
+1. At least one DAO ([Data-Access Object](https://en.wikipedia.org/wiki/Data_access_object)) class, whose methods will be queried by the rdap-server to retrieve RDAP objects from whatever data storage you are using.
+2. One implementation hub class, which will point the server to your DAOs. It must implement the [`mx.nic.rdap.db.spi.DataAccessImplementation`](https://github.com/NICMx/rdap-data-access-api/blob/c225a0822e6aaed841d98c370c7fbe3b54ee7e3a/src/main/java/mx/nic/rdap/db/spi/DataAccessImplementation.java) interface.
+3. (Optional; recommended) Your [service provider configuration file](https://docs.oracle.com/javase/tutorial/ext/basics/spi.html#register-service-providers). (A file named `META-INF/services/mx.nic.rdap.db.spi.DataAccessImplementation` which contains the full name of your implementation hub class.)
 
-+	mx.nic.rdap.db.spi.AutnumSpi
-+	mx.nic.rdap.db.spi.DomainSpi
-+	mx.nic.rdap.db.spi.EntitySpi
-+	mx.nic.rdap.db.spi.IpNetworkSpi
-+	mx.nic.rdap.db.spi.NameserverSpi
-+	mx.nic.rdap.db.spi.RdapUserSpi
-+	mx.nic.rdap.db.spi.InitializeSpi*
+Every DAO will provide information regarding one specific object type. The available object types are ASNs, domains, entities, IP networks, nameservers and users. You can provide data access to each of these objects by implementing (respectively) the following interfaces:
 
-In addition, inside the **"META-INF/services"** server folder you must add a file called the same as each one of our interfaces, so the server can recognize your implementation as a service, it should look like this:
+1. [`mx.nic.rdap.db.spi.AutnumDAO`](https://github.com/NICMx/rdap-data-access-api/blob/c225a0822e6aaed841d98c370c7fbe3b54ee7e3a/src/main/java/mx/nic/rdap/db/spi/AutnumDAO.java)
+2. [`mx.nic.rdap.db.spi.DomainDAO`](https://github.com/NICMx/rdap-data-access-api/blob/c225a0822e6aaed841d98c370c7fbe3b54ee7e3a/src/main/java/mx/nic/rdap/db/spi/DomainDAO.java)
+3. [`mx.nic.rdap.db.spi.EntityDAO`](https://github.com/NICMx/rdap-data-access-api/blob/c225a0822e6aaed841d98c370c7fbe3b54ee7e3a/src/main/java/mx/nic/rdap/db/spi/EntityDAO.java)
+4. [`mx.nic.rdap.db.spi.IpNetworkDAO`](https://github.com/NICMx/rdap-data-access-api/blob/c225a0822e6aaed841d98c370c7fbe3b54ee7e3a/src/main/java/mx/nic/rdap/db/spi/IpNetworkDAO.java)
+5. [`mx.nic.rdap.db.spi.NameserverDAO`](https://github.com/NICMx/rdap-data-access-api/blob/c225a0822e6aaed841d98c370c7fbe3b54ee7e3a/src/main/java/mx/nic/rdap/db/spi/NameserverDAO.java)
+6. [`mx.nic.rdap.db.spi.RdapUserDAO`](https://github.com/NICMx/rdap-data-access-api/blob/c225a0822e6aaed841d98c370c7fbe3b54ee7e3a/src/main/java/mx/nic/rdap/db/spi/RdapUserDAO.java)
 
-![DATA ACCESS PATH](img\data-access-path.png)
+Here you can find a simple sample implementation. See comments inline for details:
 
-These files must contain the full name of your interfaces implementation, for example, for an implementation for the **AutnumSpi** interface called **"MyCustomAutnumImp"** in the package **"com.example.rdap.provider"** there must  be a file in **"META-INF/services"** called **"mx.nic.rdap.db.spi.AutnumSpi"** with the text **"com.example.rdap.provider.MyCustomAutnumImp"** inside.
+1. IP Network DAO: [`mx.nic.rdap.sample.SampleIpNetworkDaoImpl.java`](sample-code/SampleIpNetworkDaoImpl.java)
+2. Hub class: [`mx.nic.rdap.sample.SampleHub.java`](sample-code/SampleHub.java)
+3. Service provider configuration file: [`mx.nic.rdap.db.spi.DataAccessImplementation`](sample-code/mx.nic.rdap.db.spi.DataAccessImplementation)
 
-Each one of these interfaces define a basic set of functions, like gets and insert to database functions, that we think should help in the majority of cases, but if you don't want to implement an specific function, you can throw a **"NotImplementedException"** always, It will cause the server to send an **"http code 501"** error message.
+You can download the full sample implementation (compiled into a jar file) [here](https://github.com/NICMx/releases/raw/master/RedDog/rdap-sample-daa-impl-0.0.1.jar). Instructions on how to append the custom implementation to the server can be found in the [next document](server-install-custom.html).
 
-Some restrictions about the implementations:
-
-+	The RDAP server must load only one data provider or it can throw a **"RuntimeException"**.
-
-+	The implementation has to be thread-safe because the server will be used as a **Singleton**.
-
-+	The **"InitializeSpi"** interface is optional to implement. The main purpose of this class is to send configuration info relevant for data access. If you prefer to avoid implementing this interface, you must omit the **META-INF/services/mx.nic.rdap.db.spi.InitializeSpi** file in your project.
-
-Remember, if you have a question, you can always check out our "rdap-sql-provider" project as a data provider example.

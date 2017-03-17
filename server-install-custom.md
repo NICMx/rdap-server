@@ -15,67 +15,35 @@ The server is your typical servlet Java WAR; simply toss it into your favorite s
 	# I'm not using the Ubuntu repositories because their Tomcat is rather old.
 	# You will probably need to adapt this link because it keeps changing.
 	# See www-us.apache.org/dist/tomcat/tomcat-8
-	wget www-us.apache.org/dist/tomcat/tomcat-8/v8.5.11/bin/apache-tomcat-8.5.11.zip
-	unzip apache-tomcat-8.5.11.zip
-	CATALINA_HOME=$(pwd)/apache-tomcat-8.5.11
-	chmod +x $CATALINA_HOME/bin/*.sh
+	wget www-us.apache.org/dist/tomcat/tomcat-8/v8.5.12/bin/apache-tomcat-8.5.12.tar.gz
+	tar -xzvf apache-tomcat-8.5.12.tar.gz
+	CATALINA_HOME=$(pwd)/apache-tomcat-8.5.12
 	JRE_HOME=/usr/lib/jvm/java-8-oracle/jre
-
-## Add a dummy (but valid) data source on Tomcat
-
-> ![Warning!](img/warning.svg) This step is only necessary due to an implementation oversight (a redundant dependency) that will be worked on in the near future. The database is actually never queried by Red Dog.
-> 
-> Once [issue 21](https://github.com/NICMx/rdap-server/issues/21) is fixed, this step will no longer be required.
-
-A relatively straightforward way to do this is to add an in-memory database so you don't actually need an SQL server.
-
-Download the H2 driver and add it to Tomcat's classpath:
-
-	# See http://www.h2database.com/html/download.html,
-	# "Jar File" section.
-	wget http://repo2.maven.org/maven2/com/h2database/h2/1.4.193/h2-1.4.193.jar
-	mv h2-1.4.193.jar $CATALINA_HOME/lib
-
-Add the following tag to `<GlobalNamingResources>` in `$CATALINA_HOME/conf/server.xml`:
-
-	<Resource name="jdbc/rdap"
-	    type="javax.sql.DataSource"
-	    auth="Container"
-	    driverClassName="org.h2.Driver"
-	    url="jdbc:h2:mem:rdap"
-	    username=""
-	    password="" />
 
 ## Install Red Dog on Tomcat
 
-	cd $CATALINA_HOME/webapps
+	mkdir $CATALINA_HOME/webapps/rdap
+	cd $CATALINA_HOME/webapps/rdap
 	# www.reddog.mx/download.html
-	wget www.reddog.mx/download/reddog-server.war
+	wget https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-1.1.war
+	jar -xvf rdap-server-1.1.war
+	rm rdap-server-1.1.war
 
 ## Replace the default Data Access API for your own
 
-> ![Warning!](img/warning.svg) You will notice that this step is rather convoluted. This is due to an implementation oversight that will be worked on in the near future.
-> 
-> `rdap-server` requires only one implementation to be present in the classpath. The fact that it ships with a default implementation makes this awkward.
-> 
-> In the future, `rdap-server` will allow multiple implementations in the classpath and will allow you to specify the active one via configuration.
-> 
-> See [issue 22](https://github.com/NICMx/rdap-server/issues/22).
+Add your implementation to the classpath:
 
-Make sure Red Dog's WAR is expanded.
+	mv <path-to-your-implementation> WEB-INF/lib
 
-	$CATALINA_HOME/bin/startup.sh
+For example:
 
-We're going to be moving jars around, so make sure Tomcat is down.
+	mv ~/Downloads/rdap-sample-daa-impl-0.0.1.jar WEB-INF/lib
 
-	$CATALINA_HOME/bin/shutdown.sh
+Tell Red Dog your implementation's hub class (the one that implements `mx.nic.rdap.db.spi.DataAccessImplementation`):
 
-Replace the default implementation for your own.
+	echo "data-access-implementation = mx.nic.rdap.sample.SampleHub" > WEB-INF/data-access.properties
 
-	rm $CATALINA_HOME/webapps/rdap-server/lib/rdap-sql-provider.jar
-	mv my-implementation.jar $CATALINA_HOME/webapps/rdap-server/lib
-
-If your implementation requires configuration, now would be a good time to tweak it.
+If your implementation requires configuration, now would be a good time to tweak it by adding more properties to `data-access.properties`. This file is rdap-server's [data access configuration file](https://github.com/NICMx/rdap-data-access-api/blob/b63dfb2b1da591dd5d225e6165d46babacee611b/src/main/java/mx/nic/rdap/db/spi/DataAccessImplementation.java#L27).
 
 # Start Tomcat
 
@@ -83,5 +51,5 @@ If your implementation requires configuration, now would be a good time to tweak
 
 Your Red Dog server is now running and serving data provided by your implementation.
 
-![Sample Firefox screenshot](img/index-html-firefox.jpg)
+![Sample Firefox screenshot](img/sample-query-custom-mode.png)
 
