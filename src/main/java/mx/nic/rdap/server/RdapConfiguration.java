@@ -34,7 +34,6 @@ public class RdapConfiguration {
 	private static final String IS_REVERSE_IPV4_ENABLED_KEY = "is_reverse_ipv4_enabled";
 	private static final String IS_REVERSE_IPV6_ENABLED_KEY = "is_reverse_ipv6_enabled";
 	private static final String OPERATIONAL_PROFILE_KEY = "operational_profile";
-	private static final String NAMESERVER_AS_DOMAIN_ATTRIBUTE_KEY = "nameserver_as_domain_attribute";
 	private static final String ANONYMOUS_USERNAME_KEY = "anonymous_username";
 
 	// Settings values
@@ -44,7 +43,6 @@ public class RdapConfiguration {
 	private static Integer maxNumberOfResultsForUnauthenticatedUser;
 	private static Set<Rol> objectOwnerRoles;
 	private static OperationalProfile operationalProfile;
-	private static Boolean nameserverAsDomainAttribute;
 	private static String anonymousUsername;
 	private static Set<String> validZones;
 
@@ -225,14 +223,6 @@ public class RdapConfiguration {
 
 		}
 
-		if (systemProperties.getProperty(NAMESERVER_AS_DOMAIN_ATTRIBUTE_KEY) == null) {
-			isValid = false;
-			invalidProperties.add(NAMESERVER_AS_DOMAIN_ATTRIBUTE_KEY);
-		} else {
-			nameserverAsDomainAttribute = Boolean
-					.parseBoolean(systemProperties.getProperty(NAMESERVER_AS_DOMAIN_ATTRIBUTE_KEY));
-		}
-
 		if (systemProperties.getProperty(ANONYMOUS_USERNAME_KEY) == null) {
 			isValid = false;
 			invalidProperties.add(ANONYMOUS_USERNAME_KEY);
@@ -287,10 +277,6 @@ public class RdapConfiguration {
 		return operationalProfile;
 	}
 
-	public static boolean useNameserverAsDomainAttribute() {
-		return nameserverAsDomainAttribute;
-	}
-
 	/**
 	 * Get the max search results number allowed for the user
 	 * 
@@ -298,7 +284,7 @@ public class RdapConfiguration {
 	 * @throws SQLException
 	 * @throws IOException
 	 */
-	public static Integer getMaxNumberOfResultsForUser(String username) throws RdapDataAccessException {
+	public static int getMaxNumberOfResultsForUser(String username) throws RdapDataAccessException {
 		if (username != null) {
 			// Find if the user has a custom limit.
 			Integer limit = null;

@@ -75,7 +75,7 @@ public class EntitySearchServlet extends DataAccessServlet<EntityDAO> {
 			throws SQLException, IOException, RdapDataAccessException {
 		SearchResultStruct<Entity> result = null;
 
-		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
+		int resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
 		switch (searchRequest.getParameterName()) {
 		case FULL_NAME:
 			result = dao.searchByVCardName(searchRequest.getParameterValue(), resultLimit);
@@ -96,7 +96,7 @@ public class EntitySearchServlet extends DataAccessServlet<EntityDAO> {
 			throws SQLException, IOException, RequestHandleException, RdapDataAccessException {
 		SearchResultStruct<Entity> result = null;
 
-		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
+		int resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
 		switch (searchRequest.getParameterName()) {
 		case FULL_NAME:
 			result = dao.searchByRegexVCardName(searchRequest.getParameterValue(), resultLimit);

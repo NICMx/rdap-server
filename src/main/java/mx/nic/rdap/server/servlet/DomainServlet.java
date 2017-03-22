@@ -38,8 +38,7 @@ public class DomainServlet extends DataAccessServlet<DomainDAO> {
 			throws UnsupportedEncodingException, RequestHandleException, RdapDataAccessException {
 		DomainRequest request = new DomainRequest(Util.getRequestParams(httpRequest)[0]);
 
-		Domain domain = dao.getByName(request.getFullRequestValue(),
-				RdapConfiguration.useNameserverAsDomainAttribute());
+		Domain domain = dao.getByName(request.getFullRequestValue());
 		if (domain == null) {
 			return null;
 		}

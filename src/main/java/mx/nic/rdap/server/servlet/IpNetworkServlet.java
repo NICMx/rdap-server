@@ -1,11 +1,13 @@
 package mx.nic.rdap.server.servlet;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.sql.SQLException;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import mx.nic.rdap.IpUtils;
 import mx.nic.rdap.core.db.IpNetwork;
 import mx.nic.rdap.db.exception.InvalidValueException;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
@@ -44,23 +46,24 @@ public class IpNetworkServlet extends DataAccessServlet<IpNetworkDAO> {
 			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
 		IpRequest request = new IpRequest(Util.getRequestParams(httpRequest));
 
-		IpNetwork ipNetwork = null;
+		InetAddress address = IpUtils.getInetAddress(request.getIp());
+		IpNetwork network;
 		try {
 			if (request.hasCidr()) {
-				ipNetwork = dao.getByInetAddress(request.getIp(), request.getCidr());
+				network = dao.getByInetAddress(address, request.getCidr());
 			} else {
-				ipNetwork = dao.getByInetAddress(request.getIp());
+				network = dao.getByInetAddress(address);
 			}
 
 		} catch (InvalidValueException e) {
 			throw new MalformedRequestException(e.getMessage(), e);
 		}
 
-		if (ipNetwork == null) {
+		if (network == null) {
 			return null;
 		}
 
-		return new IpResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), ipNetwork,
+		return new IpResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), network,
 				Util.getUsername(httpRequest));
 	}
 

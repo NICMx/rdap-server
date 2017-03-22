@@ -88,8 +88,7 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 	private SearchResultStruct<Domain> getPartialSearch(String username, RdapSearchRequest request, DomainDAO dao)
 			throws RequestHandleException, SQLException, IOException, RdapDataAccessException {
 		SearchResultStruct<Domain> result = new SearchResultStruct<Domain>();
-		boolean useNameserverAsAttribute = RdapConfiguration.useNameserverAsDomainAttribute();
-		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
+		int resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
 
 		String domain = request.getParameterValue();
 		if (IDN.toASCII(domain) != domain) {
@@ -104,15 +103,15 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 				throw new RequestHandleException(501, "Not implemented yet.");
 			}
 
-			result = dao.searchByName(domain, resultLimit, useNameserverAsAttribute);
+			result = dao.searchByName(domain, resultLimit);
 			break;
 		case NAMESERVER_NAME:
 			// Gets´s domain by it´s Nameserver name
-			result = dao.searchByNsName(domain, resultLimit, useNameserverAsAttribute);
+			result = dao.searchByNsName(domain, resultLimit);
 			break;
 		case NAMESERVER_IP:
 			// Get´s domain by it´s Nameserver Ip
-			result = dao.searchByNsIp(domain, resultLimit, useNameserverAsAttribute);
+			result = dao.searchByNsIp(domain, resultLimit);
 			break;
 		default:
 			throw new RequestHandleException(501, "Not implemented.");
@@ -128,8 +127,7 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 	private SearchResultStruct<Domain> getRegexSearch(String username, RdapSearchRequest request, DomainDAO dao)
 			throws RequestHandleException, SQLException, IOException, RdapDataAccessException {
 		SearchResultStruct<Domain> result = new SearchResultStruct<Domain>();
-		boolean useNameserverAsAttribute = RdapConfiguration.useNameserverAsDomainAttribute();
-		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
+		int resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
 
 		String domain = request.getParameterValue();
 		switch (request.getParameterName()) {
@@ -140,14 +138,14 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 				// (RIR).
 				throw new RequestHandleException(501, "Not implemented yet.");
 			}
-			result = dao.searchByRegexName(domain, resultLimit, useNameserverAsAttribute);
+			result = dao.searchByRegexName(domain, resultLimit);
 			break;
 		case NAMESERVER_NAME:
 			// Gets´s domain by it´s Nameserver name
-			result = dao.searchByRegexNsName(domain, resultLimit, useNameserverAsAttribute);
+			result = dao.searchByRegexNsName(domain, resultLimit);
 			break;
 		case NAMESERVER_IP:
-			result = dao.searchByRegexNsIp(domain, resultLimit, useNameserverAsAttribute);
+			result = dao.searchByRegexNsIp(domain, resultLimit);
 			break;
 		default:
 			throw new RequestHandleException(501, "Not implemented.");

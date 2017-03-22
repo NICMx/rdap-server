@@ -11,7 +11,6 @@ import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.db.spi.NameserverDAO;
 import mx.nic.rdap.server.DataAccessServlet;
-import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.NameserverResult;
@@ -41,9 +40,6 @@ public class NameserverServlet extends DataAccessServlet<NameserverDAO> {
 	@Override
 	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, NameserverDAO dao)
 			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
-		if (RdapConfiguration.useNameserverAsDomainAttribute()) {
-			throw new RequestHandleException(501, "Not implemented.");
-		}
 		NameserverRequest request = new NameserverRequest(Util.getRequestParams(httpRequest)[0]);
 
 		Nameserver nameserver = dao.getByName(request.getName());
