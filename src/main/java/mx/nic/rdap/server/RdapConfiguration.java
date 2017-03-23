@@ -58,7 +58,6 @@ public class RdapConfiguration {
 	 * 
 	 * @param systemProperties
 	 *            the systemProperties to set
-	 * @throws ObjectNotFoundException
 	 */
 	public static void loadSystemProperties(Properties systemProperties) throws ObjectNotFoundException {
 		RdapConfiguration.systemProperties = systemProperties;
@@ -91,10 +90,8 @@ public class RdapConfiguration {
 
 	/**
 	 * Validate if the configurated zones are in the database
-	 * 
-	 * @throws ObjectNotFoundException
 	 */
-	public static void validateConfiguratedZones() throws ObjectNotFoundException {
+	public static void validateConfiguratedZones() {
 		List<String> propertiesZone = RdapConfiguration.getServerZones();
 
 		validZones = new HashSet<>(propertiesZone);

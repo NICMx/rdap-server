@@ -54,11 +54,14 @@ public class AutnumServlet extends DataAccessServlet<AutnumDAO> {
 			super();
 			try {
 				this.autnum = Long.parseLong(autnum);
-				if (this.autnum > 4294967295L || this.autnum < 0) {
-					throw new MalformedRequestException("Autnum must be a positive 32 bit or less number.");
-				}
 			} catch (NumberFormatException e) {
-				throw new MalformedRequestException("Autnum must be a positive 32 bit or less number.");
+				throw new MalformedRequestException("Cannot parse the given autnum as a positive 32-bit integer.", e);
+			}
+			if (this.autnum < 0) {
+				throw new MalformedRequestException("Autnums are supposed to be positive.");
+			}
+			if (this.autnum > 0xFFFFFFFFL) {
+				throw new MalformedRequestException("The autnum is too large to fit in an unsigned 32-bit integer.");
 			}
 		}
 

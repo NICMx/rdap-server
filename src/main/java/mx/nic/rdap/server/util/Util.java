@@ -12,7 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.core.db.RemarkDescription;
+import mx.nic.rdap.db.exception.ObjectNotFoundException;
 import mx.nic.rdap.server.RdapConfiguration;
+import mx.nic.rdap.server.exception.MalformedRequestException;
 import mx.nic.rdap.server.exception.RequestHandleException;
 
 /**
@@ -29,15 +31,20 @@ public class Util {
 	 * @return request arguments.
 	 * @throws RequestHandleException
 	 *             <code>request</code> is not a valid RDAP URI.
-	 * @throws UnsupportedEncodingException
 	 */
 	public static String[] getRequestParams(HttpServletRequest request)
-			throws RequestHandleException, UnsupportedEncodingException {
-		String[] labels = URLDecoder.decode(request.getRequestURI(), "UTF-8").split("/");
+			throws RequestHandleException, ObjectNotFoundException {
+		String uri;
+		try {
+			uri = URLDecoder.decode(request.getRequestURI(), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new MalformedRequestException("The request does not appear to be UTF-8 encoded.", e);
+		}
 
+		String[] labels = uri.split("/");
 		if (labels.length < 4) {
-			// TODO improve error message.
-			throw new RequestHandleException(404, "I need more arguments than that. Try /rdap/sample/192.0.2.1");
+			throw new ObjectNotFoundException("The request does not appear to be a valid RDAP URI. " + //
+					"I might need more arguments than that.");
 		}
 
 		// resourceType = labels[2];

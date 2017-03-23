@@ -1,7 +1,13 @@
 package mx.nic.rdap.server.exception;
 
 /**
- * Generic problems found while handling a client´s request.
+ * An HTTP 400 error.
+ * 
+ * "The server cannot or will not process the request due to an apparent client
+ * error (e.g., malformed request syntax, too large size, invalid request
+ * message framing, or deceptive request routing)."
+ * 
+ * (Quoted from Wikipedia.)
  */
 public class MalformedRequestException extends RequestHandleException {
 
