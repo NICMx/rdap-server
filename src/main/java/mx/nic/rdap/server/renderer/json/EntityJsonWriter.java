@@ -9,7 +9,7 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-import mx.nic.rdap.core.catalog.Rol;
+import mx.nic.rdap.core.catalog.Role;
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
 import mx.nic.rdap.server.util.PrivacyUtil;
@@ -69,11 +69,11 @@ public class EntityJsonWriter {
 		return builder.build();
 	}
 
-	private static JsonArray getRolesJsonArray(List<Rol> roles) {
+	private static JsonArray getRolesJsonArray(List<Role> roles) {
 		JsonArrayBuilder builder = Json.createArrayBuilder();
 
-		for (Rol rol : roles) {
-			builder.add(rol.getValue());
+		for (Role role : roles) {
+			builder.add(role.getValue());
 		}
 
 		return builder.build();

@@ -1,6 +1,5 @@
 package mx.nic.rdap.server.result;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +32,7 @@ public class NameserverSearchResult extends RdapResult {
 	Boolean resultSetWasLimitedByUserConfiguration;
 
 	public NameserverSearchResult(String header, String contextPath, SearchResultStruct<Nameserver> result,
-			String userName) throws FileNotFoundException {
+			String userName) {
 		notices = new ArrayList<Remark>();
 		this.nameservers = new ArrayList<Nameserver>();
 		this.userInfo = new UserInfo(userName);

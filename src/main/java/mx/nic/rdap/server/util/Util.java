@@ -12,10 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.core.db.RemarkDescription;
-import mx.nic.rdap.db.exception.ObjectNotFoundException;
 import mx.nic.rdap.server.RdapConfiguration;
-import mx.nic.rdap.server.exception.MalformedRequestException;
-import mx.nic.rdap.server.exception.RequestHandleException;
+import mx.nic.rdap.server.exception.BadRequestException;
+import mx.nic.rdap.server.exception.HttpException;
+import mx.nic.rdap.server.exception.NotFoundException;
 
 /**
  * Random miscellaneous functions useful anywhere.
@@ -29,22 +29,21 @@ public class Util {
 	 * @param request
 	 *            request you want the arguments from.
 	 * @return request arguments.
-	 * @throws RequestHandleException
+	 * @throws HttpException
 	 *             <code>request</code> is not a valid RDAP URI.
 	 */
-	public static String[] getRequestParams(HttpServletRequest request)
-			throws RequestHandleException, ObjectNotFoundException {
+	public static String[] getRequestParams(HttpServletRequest request) throws HttpException {
 		String uri;
 		try {
 			uri = URLDecoder.decode(request.getRequestURI(), "UTF-8");
 		} catch (UnsupportedEncodingException e) {
-			throw new MalformedRequestException("The request does not appear to be UTF-8 encoded.", e);
+			throw new BadRequestException("The request does not appear to be UTF-8 encoded.", e);
 		}
 
 		String[] labels = uri.split("/");
 		if (labels.length < 4) {
-			throw new ObjectNotFoundException("The request does not appear to be a valid RDAP URI. " + //
-					"I might need more arguments than that.");
+			throw new NotFoundException("The request does not appear to be a valid RDAP URI. " //
+					+ "I might need more arguments than that.");
 		}
 
 		// resourceType = labels[2];

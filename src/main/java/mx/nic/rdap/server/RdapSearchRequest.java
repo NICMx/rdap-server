@@ -8,8 +8,8 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
-import mx.nic.rdap.core.exception.UnprocessableEntityException;
 import mx.nic.rdap.server.catalog.RequestSearchType;
+import mx.nic.rdap.server.exception.UnprocessableEntityException;
 
 public class RdapSearchRequest {
 

@@ -1,14 +1,10 @@
 package mx.nic.rdap.server.servlet;
 
-import java.io.IOException;
-import java.sql.SQLException;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.core.db.Nameserver;
-import mx.nic.rdap.core.exception.UnprocessableEntityException;
-import mx.nic.rdap.db.exception.InvalidValueException;
+import mx.nic.rdap.db.exception.NotImplementedException;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.db.spi.NameserverDAO;
@@ -17,8 +13,8 @@ import mx.nic.rdap.server.DataAccessServlet;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapSearchRequest;
-import mx.nic.rdap.server.exception.MalformedRequestException;
-import mx.nic.rdap.server.exception.RequestHandleException;
+import mx.nic.rdap.server.exception.BadRequestException;
+import mx.nic.rdap.server.exception.HttpException;
 import mx.nic.rdap.server.result.NameserverSearchResult;
 import mx.nic.rdap.server.util.IpUtil;
 
@@ -46,15 +42,10 @@ public class NameserverSearchServlet extends DataAccessServlet<NameserverDAO> {
 	 */
 	@Override
 	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, NameserverDAO dao)
-			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
-		RdapSearchRequest searchRequest;
-		try {
-			searchRequest = RdapSearchRequest.getSearchRequest(httpRequest, false, IP_PARAMETER_KEY,
+			throws HttpException, RdapDataAccessException {
+		RdapSearchRequest searchRequest = RdapSearchRequest.getSearchRequest(httpRequest, false, IP_PARAMETER_KEY,
 					NAME_PARAMETER_KEY);
-			validateSearchRequest(searchRequest);
-		} catch (UnprocessableEntityException e) {
-			throw new RequestHandleException(e.getHttpResponseStatusCode(), e.getMessage());
-		}
+		validateSearchRequest(searchRequest);
 
 		String username = httpRequest.getRemoteUser();
 		if (RdapConfiguration.isAnonymousUsername(username)) {
@@ -70,7 +61,7 @@ public class NameserverSearchServlet extends DataAccessServlet<NameserverDAO> {
 			result = getRegexSearch(username, searchRequest, dao);
 			break;
 		default:
-			throw new RequestHandleException(501, "Not implemented.");
+			throw new NotImplementedException();
 		}
 
 		if (result == null) {
@@ -82,8 +73,7 @@ public class NameserverSearchServlet extends DataAccessServlet<NameserverDAO> {
 	}
 
 	private SearchResultStruct<Nameserver> getPartialSearch(String username, RdapSearchRequest request,
-			NameserverDAO dao)
-			throws SQLException, IOException, RequestHandleException, RdapDataAccessException {
+			NameserverDAO dao) throws RdapDataAccessException {
 		SearchResultStruct<Nameserver> result = new SearchResultStruct<Nameserver>();
 		int resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
 
@@ -92,11 +82,7 @@ public class NameserverSearchServlet extends DataAccessServlet<NameserverDAO> {
 			result = dao.searchByName(request.getParameterValue().trim(), resultLimit);
 			break;
 		case IP_PARAMETER_KEY:
-			try {
-				result = dao.searchByIp(request.getParameterValue().trim(), resultLimit);
-			} catch (InvalidValueException e) {
-				throw new RequestHandleException(e.getMessage());
-			}
+			result = dao.searchByIp(request.getParameterValue().trim(), resultLimit);
 			break;
 		}
 
@@ -108,7 +94,7 @@ public class NameserverSearchServlet extends DataAccessServlet<NameserverDAO> {
 	}
 
 	private SearchResultStruct<Nameserver> getRegexSearch(String username, RdapSearchRequest request, NameserverDAO dao)
-			throws SQLException, IOException, RequestHandleException, RdapDataAccessException {
+			throws RdapDataAccessException {
 		SearchResultStruct<Nameserver> result = new SearchResultStruct<Nameserver>();
 		int resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
 
@@ -128,7 +114,7 @@ public class NameserverSearchServlet extends DataAccessServlet<NameserverDAO> {
 		return result;
 	}
 
-	private static void validateSearchRequest(RdapSearchRequest searchRequest) throws MalformedRequestException {
+	private static void validateSearchRequest(RdapSearchRequest searchRequest) throws BadRequestException {
 		String parameter = searchRequest.getParameterName();
 		String value = searchRequest.getParameterValue();
 

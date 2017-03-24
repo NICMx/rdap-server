@@ -1,7 +1,5 @@
 package mx.nic.rdap.server.servlet;
 
-import java.io.UnsupportedEncodingException;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
@@ -13,8 +11,8 @@ import mx.nic.rdap.db.spi.DomainDAO;
 import mx.nic.rdap.server.DataAccessServlet;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.exception.MalformedRequestException;
-import mx.nic.rdap.server.exception.RequestHandleException;
+import mx.nic.rdap.server.exception.BadRequestException;
+import mx.nic.rdap.server.exception.HttpException;
 import mx.nic.rdap.server.result.DomainResult;
 import mx.nic.rdap.server.util.Util;
 
@@ -35,7 +33,7 @@ public class DomainServlet extends DataAccessServlet<DomainDAO> {
 
 	@Override
 	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, DomainDAO dao)
-			throws UnsupportedEncodingException, RequestHandleException, RdapDataAccessException {
+			throws HttpException, RdapDataAccessException {
 		DomainRequest request = new DomainRequest(Util.getRequestParams(httpRequest)[0]);
 
 		Domain domain = dao.getByName(request.getFullRequestValue());
@@ -55,7 +53,7 @@ public class DomainServlet extends DataAccessServlet<DomainDAO> {
 
 		private String zoneName;
 
-		public DomainRequest(String requestValue) throws ObjectNotFoundException, MalformedRequestException {
+		public DomainRequest(String requestValue) throws ObjectNotFoundException, BadRequestException {
 			super();
 			if (requestValue.endsWith(".")) {
 				requestValue = requestValue.substring(0, requestValue.length() - 1);
@@ -63,7 +61,7 @@ public class DomainServlet extends DataAccessServlet<DomainDAO> {
 			this.fullRequestValue = requestValue;
 
 			if (!requestValue.contains("."))
-				throw new MalformedRequestException("The requested domain does not seem to include a zone.");
+				throw new BadRequestException("The requested domain does not seem to include a zone.");
 			if (!RdapConfiguration.isValidZone(requestValue))
 				throw new ObjectNotFoundException("The zone is unmanaged by this server.");
 		}

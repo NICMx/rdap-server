@@ -9,10 +9,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import mx.nic.rdap.core.catalog.Rol;
+import mx.nic.rdap.core.catalog.Role;
 import mx.nic.rdap.db.RdapUser;
 import mx.nic.rdap.db.exception.InvalidValueException;
-import mx.nic.rdap.db.exception.ObjectNotFoundException;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.db.spi.RdapUserDAO;
@@ -41,7 +40,7 @@ public class RdapConfiguration {
 	private static Integer minimumSearchPatternLength;
 	private static Integer maxNumberOfResultsForAuthenticatedUser;
 	private static Integer maxNumberOfResultsForUnauthenticatedUser;
-	private static Set<Rol> objectOwnerRoles;
+	private static Set<Role> objectOwnerRoles;
 	private static OperationalProfile operationalProfile;
 	private static String anonymousUsername;
 	private static Set<String> validZones;
@@ -59,7 +58,7 @@ public class RdapConfiguration {
 	 * @param systemProperties
 	 *            the systemProperties to set
 	 */
-	public static void loadSystemProperties(Properties systemProperties) throws ObjectNotFoundException {
+	public static void loadSystemProperties(Properties systemProperties) {
 		RdapConfiguration.systemProperties = systemProperties;
 	}
 
@@ -117,16 +116,16 @@ public class RdapConfiguration {
 		}
 
 		String[] split = ownerRoles.split(",");
-		objectOwnerRoles = new HashSet<Rol>();
+		objectOwnerRoles = new HashSet<Role>();
 
-		for (String rol : split) {
-			rol = rol.trim();
-			if (rol.isEmpty())
+		for (String role : split) {
+			role = role.trim();
+			if (role.isEmpty())
 				continue;
 
-			Rol rolEnum = Rol.getByName(rol);
+			Role rolEnum = Role.getByName(role);
 			if (rolEnum == null) {
-				throw new InvalidValueException("unknown rol in property '" + OWNER_ROLES_KEY + "': " + rol);
+				throw new InvalidValueException("unknown role in property '" + OWNER_ROLES_KEY + "': " + role);
 			}
 
 			objectOwnerRoles.add(rolEnum);
@@ -134,8 +133,8 @@ public class RdapConfiguration {
 
 	}
 
-	public static boolean isRolAnOwner(Rol rol) {
-		return objectOwnerRoles.contains(rol);
+	public static boolean isRolAnOwner(Role role) {
+		return objectOwnerRoles.contains(role);
 	}
 
 	public static void validateRdapConfiguration() throws InvalidValueException {

@@ -1,8 +1,5 @@
 package mx.nic.rdap.server.servlet;
 
-import java.io.IOException;
-import java.sql.SQLException;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
@@ -12,7 +9,7 @@ import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.db.spi.NameserverDAO;
 import mx.nic.rdap.server.DataAccessServlet;
 import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.exception.RequestHandleException;
+import mx.nic.rdap.server.exception.HttpException;
 import mx.nic.rdap.server.result.NameserverResult;
 import mx.nic.rdap.server.util.Util;
 
@@ -39,7 +36,7 @@ public class NameserverServlet extends DataAccessServlet<NameserverDAO> {
 	 */
 	@Override
 	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, NameserverDAO dao)
-			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
+			throws HttpException, RdapDataAccessException {
 		NameserverRequest request = new NameserverRequest(Util.getRequestParams(httpRequest)[0]);
 
 		Nameserver nameserver = dao.getByName(request.getName());

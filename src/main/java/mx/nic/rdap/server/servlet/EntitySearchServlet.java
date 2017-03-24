@@ -1,13 +1,10 @@
 package mx.nic.rdap.server.servlet;
 
-import java.io.IOException;
-import java.sql.SQLException;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.core.db.Entity;
-import mx.nic.rdap.core.exception.UnprocessableEntityException;
+import mx.nic.rdap.db.exception.NotImplementedException;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.db.spi.EntityDAO;
@@ -16,7 +13,7 @@ import mx.nic.rdap.server.DataAccessServlet;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapSearchRequest;
-import mx.nic.rdap.server.exception.RequestHandleException;
+import mx.nic.rdap.server.exception.HttpException;
 import mx.nic.rdap.server.result.EntitySearchResult;
 
 @WebServlet(name = 	"entities", urlPatterns = { "/entities" })
@@ -39,13 +36,8 @@ public class EntitySearchServlet extends DataAccessServlet<EntityDAO> {
 
 	@Override
 	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, EntityDAO dao)
-			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
-		RdapSearchRequest searchRequest = null;
-		try {
-			searchRequest = RdapSearchRequest.getSearchRequest(httpRequest, true, FULL_NAME, HANDLE);
-		} catch (UnprocessableEntityException e) {
-			throw new RequestHandleException(e.getHttpResponseStatusCode(), e.getMessage());
-		}
+			throws HttpException, RdapDataAccessException {
+		RdapSearchRequest searchRequest = RdapSearchRequest.getSearchRequest(httpRequest, true, FULL_NAME, HANDLE);
 
 		String username = httpRequest.getRemoteUser();
 		if (RdapConfiguration.isAnonymousUsername(username)) {
@@ -61,7 +53,7 @@ public class EntitySearchServlet extends DataAccessServlet<EntityDAO> {
 			result = getRegexSearch(username, searchRequest, dao);
 			break;
 		default:
-			throw new RequestHandleException(501, "Not implemented.");
+			throw new NotImplementedException();
 		}
 
 		if (result == null) {
@@ -72,7 +64,7 @@ public class EntitySearchServlet extends DataAccessServlet<EntityDAO> {
 	}
 
 	private SearchResultStruct<Entity> getPartialSearch(String username, RdapSearchRequest searchRequest, EntityDAO dao)
-			throws SQLException, IOException, RdapDataAccessException {
+			throws RdapDataAccessException {
 		SearchResultStruct<Entity> result = null;
 
 		int resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
@@ -93,7 +85,7 @@ public class EntitySearchServlet extends DataAccessServlet<EntityDAO> {
 	}
 
 	private SearchResultStruct<Entity> getRegexSearch(String username, RdapSearchRequest searchRequest, EntityDAO dao)
-			throws SQLException, IOException, RequestHandleException, RdapDataAccessException {
+			throws RdapDataAccessException {
 		SearchResultStruct<Entity> result = null;
 
 		int resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);

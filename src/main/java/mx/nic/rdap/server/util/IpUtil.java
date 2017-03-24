@@ -5,7 +5,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.regex.Pattern;
 
-import mx.nic.rdap.server.exception.MalformedRequestException;
+import mx.nic.rdap.server.exception.BadRequestException;
 
 public class IpUtil {
 
@@ -35,35 +35,35 @@ public class IpUtil {
 	 * 
 	 * @param ipAddress
 	 * @return
-	 * @throws MalformedRequestException
+	 * @throws BadRequestException
 	 */
-	public static InetAddress validateIpAddress(String ipAddress) throws MalformedRequestException {
+	public static InetAddress validateIpAddress(String ipAddress) throws BadRequestException {
 		// if the ipAddress contains ':' then InetAddress will try to parse it
 		// like IPv6 address without doing a lookup to DNS.
 		if (ipAddress.contains(":")) {
 			try {
 				return InetAddress.getByName(ipAddress);
 			} catch (UnknownHostException e) {
-				throw new MalformedRequestException("Requested ip is invalid.");
+				throw new BadRequestException("Requested ip is invalid.");
 			}
 		}
 
 		if (ipAddress.startsWith(".") || !IP4_GENERIC_PATTERN.matcher(ipAddress).matches()) {
-			throw new MalformedRequestException("Requested ip is invalid.");
+			throw new BadRequestException("Requested ip is invalid.");
 		}
 
 		String[] split = ipAddress.split("\\.");
 
 		int arraySize = split.length;
 		if (arraySize > IP_ADDRESS_ARRAY_SIZE) {
-			throw new MalformedRequestException("Requested ip is invalid.");
+			throw new BadRequestException("Requested ip is invalid.");
 		}
 
 		BigInteger finalOctectValue;
 		try {
 			finalOctectValue = new BigInteger(split[arraySize - 1]);
 		} catch (NumberFormatException e) {
-			throw new MalformedRequestException("Requested ip is invalid.");
+			throw new BadRequestException("Requested ip is invalid.");
 		}
 
 		BigInteger limitValue = null;
@@ -83,13 +83,13 @@ public class IpUtil {
 		}
 
 		if (limitValue.compareTo(finalOctectValue) < 0) {
-			throw new MalformedRequestException("Requested ip is invalid.");
+			throw new BadRequestException("Requested ip is invalid.");
 		}
 
 		try {
 			return InetAddress.getByName(ipAddress);
 		} catch (UnknownHostException e) {
-			throw new MalformedRequestException("Requested ip is invalid.");
+			throw new BadRequestException("Requested ip is invalid.");
 		}
 
 	}

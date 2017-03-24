@@ -1,6 +1,5 @@
 package mx.nic.rdap.server.result;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +23,7 @@ public class HelpResult extends RdapResult {
 
 	private List<Remark> notices;
 
-	public HelpResult() throws FileNotFoundException {
+	public HelpResult() {
 		notices = new ArrayList<>();
 		notices.addAll(UserNotices.getHelp());
 		if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)) {

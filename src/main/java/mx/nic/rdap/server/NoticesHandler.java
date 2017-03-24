@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import mx.nic.rdap.core.db.Link;
@@ -31,7 +30,7 @@ public class NoticesHandler extends DefaultHandler {
 	}
 
 	@Override
-	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+	public void startElement(String uri, String localName, String qName, Attributes attributes) {
 		actualElement = qName;
 		switch (qName) {
 		case "notice":
@@ -79,7 +78,7 @@ public class NoticesHandler extends DefaultHandler {
 	}
 
 	@Override
-	public void endElement(String uri, String localName, String qName) throws SAXException {
+	public void endElement(String uri, String localName, String qName) {
 		switch (qName) {
 		case "notice":
 			noticesList.add(actualRemark);
@@ -92,7 +91,7 @@ public class NoticesHandler extends DefaultHandler {
 	}
 
 	@Override
-	public void characters(char[] ch, int start, int length) throws SAXException {
+	public void characters(char[] ch, int start, int length) {
 		String value;
 		switch (actualElement) {
 		case "title":

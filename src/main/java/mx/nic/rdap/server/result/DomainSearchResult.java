@@ -3,7 +3,6 @@
  */
 package mx.nic.rdap.server.result;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,8 +34,7 @@ public class DomainSearchResult extends RdapResult {
 	// Indicate is the search has more results than the answered to the user
 	Boolean resultSetWasLimitedByUserConfiguration;
 
-	public DomainSearchResult(String header, String contextPath, SearchResultStruct<Domain> result, String userName)
-			throws FileNotFoundException {
+	public DomainSearchResult(String header, String contextPath, SearchResultStruct<Domain> result, String userName) {
 		notices = new ArrayList<Remark>();
 		this.domains = new ArrayList<Domain>();
 		this.userInfo = new UserInfo(userName);

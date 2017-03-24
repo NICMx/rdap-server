@@ -1,10 +1,8 @@
 package mx.nic.rdap.server;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.PriorityQueue;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,7 +12,7 @@ import mx.nic.rdap.db.exception.NotImplementedException;
 import mx.nic.rdap.db.exception.ObjectNotFoundException;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.server.AcceptHeaderFieldParser.Accept;
-import mx.nic.rdap.server.exception.RequestHandleException;
+import mx.nic.rdap.server.exception.HttpException;
 import mx.nic.rdap.server.renderer.DefaultRenderer;
 
 /**
@@ -26,8 +24,7 @@ public abstract class RdapServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		RdapResult result;
 		try {
 			result = doRdapGet(request);
@@ -40,10 +37,10 @@ public abstract class RdapServlet extends HttpServlet {
 		} catch (NotImplementedException e) {
 			response.sendError(501, e.getMessage());
 			return;
-		} catch (SQLException | IOException | RdapDataAccessException e) {
+		} catch (RdapDataAccessException e) {
 			response.sendError(500, e.getMessage());
 			return;
-		} catch (RequestHandleException e) {
+		} catch (HttpException e) {
 			response.sendError(e.getHttpResponseStatusCode(), e.getMessage());
 			return;
 		}
@@ -70,11 +67,10 @@ public abstract class RdapServlet extends HttpServlet {
 	 * @param connection
 	 *            Already initialized connection to the database.
 	 * @return response to the user.
-	 * @throws RequestHandleException
+	 * @throws HttpException
 	 *             Errors found handling `request`.
 	 */
-	protected abstract RdapResult doRdapGet(HttpServletRequest request)
-			throws RequestHandleException, IOException, SQLException, RdapDataAccessException;
+	protected abstract RdapResult doRdapGet(HttpServletRequest request) throws HttpException, RdapDataAccessException;
 
 	/**
 	 * Tries hard to find the best suitable renderer for

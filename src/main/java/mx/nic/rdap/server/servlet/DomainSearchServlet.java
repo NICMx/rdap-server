@@ -1,14 +1,11 @@
 package mx.nic.rdap.server.servlet;
 
-import java.io.IOException;
 import java.net.IDN;
-import java.sql.SQLException;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.core.db.Domain;
-import mx.nic.rdap.core.exception.UnprocessableEntityException;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.db.spi.DomainDAO;
@@ -17,8 +14,9 @@ import mx.nic.rdap.server.DataAccessServlet;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapSearchRequest;
-import mx.nic.rdap.server.exception.MalformedRequestException;
-import mx.nic.rdap.server.exception.RequestHandleException;
+import mx.nic.rdap.server.exception.BadRequestException;
+import mx.nic.rdap.server.exception.HttpException;
+import mx.nic.rdap.server.exception.NotImplementedException;
 import mx.nic.rdap.server.result.DomainSearchResult;
 import mx.nic.rdap.server.util.IpUtil;
 
@@ -51,15 +49,10 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 	 */
 	@Override
 	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, DomainDAO dao)
-			throws RequestHandleException, IOException, SQLException, RdapDataAccessException {
-		RdapSearchRequest searchRequest;
-		try {
-			searchRequest = RdapSearchRequest.getSearchRequest(httpRequest, false, DOMAIN_NAME, NAMESERVER_IP,
-					NAMESERVER_NAME);
-			validateSearchRequest(searchRequest);
-		} catch (UnprocessableEntityException e) {
-			throw new RequestHandleException(e.getHttpResponseStatusCode(), e.getMessage());
-		}
+			throws HttpException, RdapDataAccessException {
+		RdapSearchRequest searchRequest = RdapSearchRequest.getSearchRequest(httpRequest, false, DOMAIN_NAME,
+				NAMESERVER_IP, NAMESERVER_NAME);
+		validateSearchRequest(searchRequest);
 
 		String username = httpRequest.getRemoteUser();
 		if (RdapConfiguration.isAnonymousUsername(username)) {
@@ -75,7 +68,7 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 			result = getRegexSearch(username, searchRequest, dao);
 			break;
 		default:
-			throw new RequestHandleException(501, "Not implemented.");
+			throw new NotImplementedException();
 		}
 
 		if (result == null) {
@@ -86,7 +79,7 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 	}
 
 	private SearchResultStruct<Domain> getPartialSearch(String username, RdapSearchRequest request, DomainDAO dao)
-			throws RequestHandleException, SQLException, IOException, RdapDataAccessException {
+			throws HttpException, RdapDataAccessException {
 		SearchResultStruct<Domain> result = new SearchResultStruct<Domain>();
 		int resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
 
@@ -100,7 +93,7 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 				// Is valid if there are no available zones, because the
 				// rdap could only respond to autnum and ip networks
 				// (RIR).
-				throw new RequestHandleException(501, "Not implemented yet.");
+				throw new NotImplementedException();
 			}
 
 			result = dao.searchByName(domain, resultLimit);
@@ -114,7 +107,7 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 			result = dao.searchByNsIp(domain, resultLimit);
 			break;
 		default:
-			throw new RequestHandleException(501, "Not implemented.");
+			throw new NotImplementedException();
 		}
 
 		if (result != null) {
@@ -125,7 +118,7 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 	}
 
 	private SearchResultStruct<Domain> getRegexSearch(String username, RdapSearchRequest request, DomainDAO dao)
-			throws RequestHandleException, SQLException, IOException, RdapDataAccessException {
+			throws HttpException, RdapDataAccessException {
 		SearchResultStruct<Domain> result = new SearchResultStruct<Domain>();
 		int resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
 
@@ -136,7 +129,7 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 				// Is valid if there are no available zones, because the
 				// rdap could only respond to autnum and ip networks
 				// (RIR).
-				throw new RequestHandleException(501, "Not implemented yet.");
+				throw new NotImplementedException();
 			}
 			result = dao.searchByRegexName(domain, resultLimit);
 			break;
@@ -148,7 +141,7 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 			result = dao.searchByRegexNsIp(domain, resultLimit);
 			break;
 		default:
-			throw new RequestHandleException(501, "Not implemented.");
+			throw new NotImplementedException();
 		}
 
 		if (result != null) {
@@ -158,7 +151,7 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 		return result;
 	}
 
-	private static void validateSearchRequest(RdapSearchRequest searchRequest) throws MalformedRequestException {
+	private static void validateSearchRequest(RdapSearchRequest searchRequest) throws BadRequestException {
 		String parameter = searchRequest.getParameterName();
 		String value = searchRequest.getParameterValue();
 

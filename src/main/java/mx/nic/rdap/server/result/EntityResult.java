@@ -1,6 +1,5 @@
 package mx.nic.rdap.server.result;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import javax.json.JsonObject;
@@ -23,8 +22,7 @@ public class EntityResult extends RdapResult {
 
 	private Entity entity;
 
-	public EntityResult(String header, String contextPath, Entity entity, String userName)
-			throws FileNotFoundException {
+	public EntityResult(String header, String contextPath, Entity entity, String userName) {
 		notices = new ArrayList<Remark>();
 		this.entity = entity;
 		this.userInfo = new UserInfo(userName);

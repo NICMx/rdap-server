@@ -1,6 +1,5 @@
 package mx.nic.rdap.server.result;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,8 +30,7 @@ public class EntitySearchResult extends RdapResult {
 	// Indicate is the search has more results than the answered to the user
 	Boolean resultSetWasLimitedByUserConfiguration;
 
-	public EntitySearchResult(String header, String contextPath, SearchResultStruct<Entity> result, String userName)
-			throws FileNotFoundException {
+	public EntitySearchResult(String header, String contextPath, SearchResultStruct<Entity> result, String userName) {
 		notices = new ArrayList<Remark>();
 		this.entities = new ArrayList<Entity>();
 		this.userInfo = new UserInfo(userName);
