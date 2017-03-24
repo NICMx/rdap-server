@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import junit.framework.TestCase;
-import mx.nic.rdap.server.exception.MalformedRequestException;
+import mx.nic.rdap.server.exception.BadRequestException;
 import mx.nic.rdap.server.util.IpUtil;
 
 public class ValidateIpTest extends TestCase {
@@ -15,7 +15,7 @@ public class ValidateIpTest extends TestCase {
 	 * @throws MalformedRequestException
 	 */
 	@Test
-	public void testValidateIpAddress() throws MalformedRequestException {
+	public void testValidateIpAddress() {
 		testIpAddress("1.2", true);
 		testIpAddress("192.168.001.004", true);
 		testIpAddress("4000000000", true);
@@ -81,7 +81,7 @@ public class ValidateIpTest extends TestCase {
 		boolean exception = false;
 		try {
 			IpUtil.validateIpAddress(ipAddress);
-		} catch (MalformedRequestException e) {
+		} catch (BadRequestException e) {
 			exception = true;
 			System.out.println("invalid ip Address : " + ipAddress);
 			if (isValid) {
