@@ -4,8 +4,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.core.db.Entity;
-import mx.nic.rdap.db.exception.NotImplementedException;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
+import mx.nic.rdap.db.exception.http.HttpException;
+import mx.nic.rdap.db.exception.http.NotImplementedException;
 import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.db.spi.EntityDAO;
 import mx.nic.rdap.db.struct.SearchResultStruct;
@@ -13,7 +14,6 @@ import mx.nic.rdap.server.DataAccessServlet;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapSearchRequest;
-import mx.nic.rdap.server.exception.HttpException;
 import mx.nic.rdap.server.result.EntitySearchResult;
 
 @WebServlet(name = 	"entities", urlPatterns = { "/entities" })
@@ -75,6 +75,7 @@ public class EntitySearchServlet extends DataAccessServlet<EntityDAO> {
 		case HANDLE:
 			result = dao.searchByHandle(searchRequest.getParameterValue(), resultLimit);
 			break;
+		// TODO else throw notimplemented?
 		}
 
 		if (result != null) {
@@ -96,6 +97,7 @@ public class EntitySearchServlet extends DataAccessServlet<EntityDAO> {
 		case HANDLE:
 			result = dao.searchByRegexHandle(searchRequest.getParameterValue(), resultLimit);
 			break;
+		// TODO else throw notimplemented?
 		}
 		
 		if (result != null) {

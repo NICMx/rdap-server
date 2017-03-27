@@ -5,11 +5,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
+import mx.nic.rdap.db.exception.http.HttpException;
 import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.db.spi.EntityDAO;
 import mx.nic.rdap.server.DataAccessServlet;
 import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.exception.HttpException;
 import mx.nic.rdap.server.result.EntityResult;
 import mx.nic.rdap.server.util.Util;
 

@@ -7,12 +7,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import mx.nic.rdap.db.exception.InvalidValueException;
-import mx.nic.rdap.db.exception.NotImplementedException;
-import mx.nic.rdap.db.exception.ObjectNotFoundException;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
+import mx.nic.rdap.db.exception.http.HttpException;
 import mx.nic.rdap.server.AcceptHeaderFieldParser.Accept;
-import mx.nic.rdap.server.exception.HttpException;
 import mx.nic.rdap.server.renderer.DefaultRenderer;
 
 /**
@@ -28,20 +25,11 @@ public abstract class RdapServlet extends HttpServlet {
 		RdapResult result;
 		try {
 			result = doRdapGet(request);
-		} catch (ObjectNotFoundException e) {
-			response.sendError(404, e.getMessage());
-			return;
-		} catch (InvalidValueException e) {
-			response.sendError(422, e.getMessage());
-			return;
-		} catch (NotImplementedException e) {
-			response.sendError(501, e.getMessage());
+		} catch (HttpException e) {
+			response.sendError(e.getHttpResponseStatusCode(), e.getMessage());
 			return;
 		} catch (RdapDataAccessException e) {
 			response.sendError(500, e.getMessage());
-			return;
-		} catch (HttpException e) {
-			response.sendError(e.getHttpResponseStatusCode(), e.getMessage());
 			return;
 		}
 
@@ -59,8 +47,7 @@ public abstract class RdapServlet extends HttpServlet {
 	/**
 	 * Handles the `request` GET request and builds a response. Think of it as a
 	 * {@link HttpServlet#doGet(HttpServletRequest, HttpServletResponse)},
-	 * except you don't have to grab a database connection and the response will
-	 * be built for you.
+	 * except the response will be built for you.
 	 * 
 	 * @param request
 	 *            request to the servlet.

@@ -1,21 +1,18 @@
 package mx.nic.rdap.server.servlet;
 
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.IpUtils;
 import mx.nic.rdap.core.db.IpNetwork;
-import mx.nic.rdap.db.exception.InvalidValueException;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
+import mx.nic.rdap.db.exception.http.HttpException;
 import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.db.spi.IpNetworkDAO;
 import mx.nic.rdap.server.DataAccessServlet;
 import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.exception.BadRequestException;
-import mx.nic.rdap.server.exception.HttpException;
 import mx.nic.rdap.server.result.IpResult;
 import mx.nic.rdap.server.util.Util;
 
@@ -44,24 +41,12 @@ public class IpNetworkServlet extends DataAccessServlet<IpNetworkDAO> {
 	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, IpNetworkDAO dao)
 			throws HttpException, RdapDataAccessException {
 		IpRequest request = new IpRequest(Util.getRequestParams(httpRequest));
-
-		InetAddress address;
-		try {
-			address = IpUtils.getInetAddress(request.getIp());
-		} catch (UnknownHostException e) {
-			throw new BadRequestException("Cannot parse '" + request.getIp() + "' as an IP address.");
-		}
-
+		InetAddress address = IpUtils.validateIpAddress(request.getIp());
 		IpNetwork network;
-		try {
-			if (request.hasCidr()) {
-				network = dao.getByInetAddress(address, request.getCidr());
-			} else {
-				network = dao.getByInetAddress(address);
-			}
-
-		} catch (InvalidValueException e) {
-			throw new BadRequestException(e.getMessage(), e);
+		if (request.hasCidr()) {
+			network = dao.getByInetAddress(address, request.getCidr());
+		} else {
+			network = dao.getByInetAddress(address);
 		}
 
 		if (network == null) {

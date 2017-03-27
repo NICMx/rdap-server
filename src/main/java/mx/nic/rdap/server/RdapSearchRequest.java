@@ -8,8 +8,10 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import mx.nic.rdap.db.exception.RdapDataAccessException;
+import mx.nic.rdap.db.exception.http.BadRequestException;
+import mx.nic.rdap.db.exception.http.UnprocessableEntityException;
 import mx.nic.rdap.server.catalog.RequestSearchType;
-import mx.nic.rdap.server.exception.UnprocessableEntityException;
 
 public class RdapSearchRequest {
 
@@ -40,11 +42,12 @@ public class RdapSearchRequest {
 
 	private String parameterValue;
 
+	// TODO review 422 vs 400
 	public static RdapSearchRequest getSearchRequest(HttpServletRequest request, boolean isEntityObject,
-			String... parameters) throws UnprocessableEntityException {
+			String... parameters) throws RdapDataAccessException {
 		if (request.getParameterMap().isEmpty()) {
-			throw new UnprocessableEntityException(
-					"The request must contain one valid parameter : " + Arrays.asList(parameters));
+			throw new BadRequestException(
+					"The request must contain at least one of the following parameters: " + Arrays.asList(parameters));
 		}
 		RdapSearchRequest searchReq = new RdapSearchRequest();
 		String searchTypeValue = request.getParameter(SEARCH_TYPE_KEY_PARAM);
@@ -60,7 +63,7 @@ public class RdapSearchRequest {
 			}
 			if (hasValidParameter) {
 				throw new UnprocessableEntityException(
-						"The request must contain only one valid parameter : " + Arrays.asList(parameters));
+						"The request must contain only one of the following parameters: " + Arrays.asList(parameters));
 			}
 			hasValidParameter = true;
 			searchReq.parameterName = parameter;
