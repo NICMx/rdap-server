@@ -3,14 +3,15 @@ package mx.nic.rdap.server.servlet;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
-import mx.nic.rdap.IpUtils;
 import mx.nic.rdap.core.db.Nameserver;
+import mx.nic.rdap.db.exception.IpAddressFormatException;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.exception.http.BadRequestException;
 import mx.nic.rdap.db.exception.http.HttpException;
 import mx.nic.rdap.db.exception.http.NotImplementedException;
 import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.db.spi.NameserverDAO;
+import mx.nic.rdap.db.struct.AddressBlock;
 import mx.nic.rdap.db.struct.SearchResultStruct;
 import mx.nic.rdap.server.DataAccessServlet;
 import mx.nic.rdap.server.RdapConfiguration;
@@ -119,7 +120,11 @@ public class NameserverSearchServlet extends DataAccessServlet<NameserverDAO> {
 		String value = searchRequest.getParameterValue();
 
 		if (parameter.equals(IP_PARAMETER_KEY)) {
-			IpUtils.validateIpAddress(value);
+			try {
+				AddressBlock.parseAddress(value);
+			} catch (IpAddressFormatException e) {
+				throw new BadRequestException(e);
+			}
 		}
 
 		if (value.endsWith(".")) {

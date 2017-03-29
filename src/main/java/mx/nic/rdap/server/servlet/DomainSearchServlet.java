@@ -5,14 +5,15 @@ import java.net.IDN;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
-import mx.nic.rdap.IpUtils;
 import mx.nic.rdap.core.db.Domain;
+import mx.nic.rdap.db.exception.IpAddressFormatException;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.exception.http.BadRequestException;
 import mx.nic.rdap.db.exception.http.HttpException;
 import mx.nic.rdap.db.exception.http.NotImplementedException;
 import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.db.spi.DomainDAO;
+import mx.nic.rdap.db.struct.AddressBlock;
 import mx.nic.rdap.db.struct.SearchResultStruct;
 import mx.nic.rdap.server.DataAccessServlet;
 import mx.nic.rdap.server.RdapConfiguration;
@@ -156,7 +157,11 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 		String value = searchRequest.getParameterValue();
 
 		if (parameter.equals(NAMESERVER_IP)) {
-			IpUtils.validateIpAddress(value);
+			try {
+				AddressBlock.parseAddress(value);
+			} catch (IpAddressFormatException e) {
+				throw new BadRequestException(e);
+			}
 		}
 
 		if (value.endsWith("\\.")) {

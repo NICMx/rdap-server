@@ -1,16 +1,16 @@
 package mx.nic.rdap.server.servlet;
 
-import java.net.InetAddress;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
-import mx.nic.rdap.IpUtils;
 import mx.nic.rdap.core.db.IpNetwork;
+import mx.nic.rdap.db.exception.IpAddressFormatException;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
+import mx.nic.rdap.db.exception.http.BadRequestException;
 import mx.nic.rdap.db.exception.http.HttpException;
 import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.db.spi.IpNetworkDAO;
+import mx.nic.rdap.db.struct.AddressBlock;
 import mx.nic.rdap.server.DataAccessServlet;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.result.IpResult;
@@ -41,14 +41,16 @@ public class IpNetworkServlet extends DataAccessServlet<IpNetworkDAO> {
 	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, IpNetworkDAO dao)
 			throws HttpException, RdapDataAccessException {
 		IpRequest request = new IpRequest(Util.getRequestParams(httpRequest));
-		InetAddress address = IpUtils.validateIpAddress(request.getIp());
+		AddressBlock block;
 		IpNetwork network;
-		if (request.hasCidr()) {
-			network = dao.getByInetAddress(address, request.getCidr());
-		} else {
-			network = dao.getByInetAddress(address);
+
+		try {
+			block = new AddressBlock(request.getIp(), request.hasCidr() ? request.getCidr() : null);
+		} catch (IpAddressFormatException e) {
+			throw new BadRequestException(e.getMessage(), e);
 		}
 
+		network = dao.getByAddressBlock(block);
 		if (network == null) {
 			return null;
 		}
