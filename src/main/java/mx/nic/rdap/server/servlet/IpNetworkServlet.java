@@ -4,13 +4,13 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.core.db.IpNetwork;
-import mx.nic.rdap.db.exception.IpAddressFormatException;
+import mx.nic.rdap.core.ip.AddressBlock;
+import mx.nic.rdap.core.ip.IpAddressFormatException;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.exception.http.BadRequestException;
 import mx.nic.rdap.db.exception.http.HttpException;
 import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.db.spi.IpNetworkDAO;
-import mx.nic.rdap.db.struct.AddressBlock;
 import mx.nic.rdap.server.DataAccessServlet;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.result.IpResult;
@@ -47,7 +47,7 @@ public class IpNetworkServlet extends DataAccessServlet<IpNetworkDAO> {
 		try {
 			block = new AddressBlock(request.getIp(), request.hasCidr() ? request.getCidr() : null);
 		} catch (IpAddressFormatException e) {
-			throw new BadRequestException(e.getMessage(), e);
+			throw new BadRequestException(e);
 		}
 
 		network = dao.getByAddressBlock(block);

@@ -50,10 +50,10 @@ public class RdapInitializer implements ServletContextListener {
 			Properties serverConfig = loadConfig(CONFIGURATION_FILE, RDAP_CONFIGURATION_PARAM_NAME);
 			RdapConfiguration.loadSystemProperties(serverConfig);
 
-			// Validate if the configurated zones are in the database
+			// Check the configured zones exist in the database.
 			RdapConfiguration.validateRdapConfiguration();
-			RdapConfiguration.validateConfiguratedZones();
-			RdapConfiguration.validateConfiguratedRoles();
+			RdapConfiguration.validateConfiguredZones();
+			RdapConfiguration.validateConfiguredRoles();
 			PrivacyUtil.loadAllPrivacySettings();
 			loadUserNotices();
 

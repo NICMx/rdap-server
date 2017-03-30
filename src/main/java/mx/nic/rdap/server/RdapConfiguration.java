@@ -88,9 +88,9 @@ public class RdapConfiguration {
 	}
 
 	/**
-	 * Validate if the configurated zones are in the database
+	 * Validate if the configured zones are in the database
 	 */
-	public static void validateConfiguratedZones() {
+	public static void validateConfiguredZones() {
 		List<String> propertiesZone = RdapConfiguration.getServerZones();
 
 		validZones = new HashSet<>(propertiesZone);
@@ -109,7 +109,7 @@ public class RdapConfiguration {
 
 	}
 
-	public static void validateConfiguratedRoles() throws InitializationException {
+	public static void validateConfiguredRoles() throws InitializationException {
 		String ownerRoles = systemProperties.getProperty(OWNER_ROLES_KEY);
 		if (ownerRoles == null) {
 			throw new InitializationException("property '" + OWNER_ROLES_KEY + "' is not configured");
@@ -267,7 +267,7 @@ public class RdapConfiguration {
 	}
 
 	/**
-	 * Return the profile configurated for the server
+	 * Return the profile configured for the server
 	 */
 	public static OperationalProfile getServerProfile() {
 		return operationalProfile;

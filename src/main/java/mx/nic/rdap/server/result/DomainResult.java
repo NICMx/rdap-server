@@ -88,7 +88,8 @@ public class DomainResult extends RdapResult {
 		}
 
 		if (domain.getIpNetwork() != null) {
-			self = new Link(header, contextPath, "ip", domain.getIpNetwork().getStartAddress().getHostAddress());
+			self = new Link(header, contextPath, "ip",
+					domain.getIpNetwork().getAddressBlock().getAddress().getHostAddress());
 			domain.getIpNetwork().getLinks().add(self);
 		}
 	}

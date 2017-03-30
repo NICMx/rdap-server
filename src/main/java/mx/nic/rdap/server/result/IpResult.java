@@ -65,8 +65,7 @@ public class IpResult extends RdapResult {
 	 * @param ipNetwork
 	 */
 	private void addSelfLinks(String header, String contextPath, IpNetwork ipNetwork) {
-		Link self = new Link(header, contextPath, "ip",
-				ipNetwork.getStartAddress().getHostAddress() + "/" + ipNetwork.getCidr());
+		Link self = new Link(header, contextPath, "ip", ipNetwork.getAddressBlock().toString());
 		ipNetwork.getLinks().add(self);
 
 		for (Entity ent : ipNetwork.getEntities()) {
