@@ -37,11 +37,11 @@ public class AutnumJsonWriter {
 
 		String key = "startAutnum";
 		if (PrivacyUtil.isObjectVisible(autnum.getStartAutnum(), key, settings.get(key), isAuthenticated, isOwner))
-			builder.add(key, autnum.getStartAutnum().toString());
+			builder.add(key, autnum.getStartAutnum());
 
 		key = "endAutnum";
 		if (PrivacyUtil.isObjectVisible(autnum.getEndAutnum(), key, settings.get(key), isAuthenticated, isOwner))
-			builder.add(key, autnum.getEndAutnum().toString());
+			builder.add(key, autnum.getEndAutnum());
 
 		key = "name";
 		if (PrivacyUtil.isObjectVisible(autnum.getName(), key, settings.get(key), isAuthenticated, isOwner))
