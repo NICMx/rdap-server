@@ -36,12 +36,12 @@ public class IpNetworkJsonWriter {
 		builder.add("objectClassName", "ip network");
 
 		String key = "startAddress";
-		String value = ipNetwork.getAddressBlock().getAddress().getHostAddress();
+		String value = ipNetwork.getStartAddress().getHostAddress();
 		if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
 			builder.add(key, value);
 
 		key = "endAddress";
-		value = ipNetwork.getAddressBlock().getLastAddress().getHostAddress();
+		value = ipNetwork.getEndAddress().getHostAddress();
 		if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
 			builder.add(key, value);
 

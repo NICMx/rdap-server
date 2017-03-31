@@ -82,7 +82,7 @@ public class EntityResult extends RdapResult {
 		}
 
 		for (IpNetwork ip : entity.getIpNetworks()) {
-			self = new Link(header, contextPath, "ip", ip.getAddressBlock().toString());
+			self = new Link(header, contextPath, "ip", ip.getStartAddress().getHostAddress() + "/" + ip.getCidr());
 			ip.getLinks().add(self);
 		}
 	}
