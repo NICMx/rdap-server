@@ -70,7 +70,7 @@ public class EntityResult extends RdapResult {
 
 	/**
 	 * Generates a link with the self information and add it to the domain and
-	 * it's attributes
+	 * its attributes
 	 */
 	public static void addSelfLinks(String header, String contextPath, Entity entity) {
 		Link self = new Link(header, contextPath, "entity", entity.getHandle());
@@ -82,7 +82,7 @@ public class EntityResult extends RdapResult {
 		}
 
 		for (IpNetwork ip : entity.getIpNetworks()) {
-			self = new Link(header, contextPath, "ip", ip.getStartAddress().getHostAddress() + "/" + ip.getCidr());
+			self = new Link(header, contextPath, "ip", ip.getStartAddress().getHostAddress() + "/" + ip.getPrefix());
 			ip.getLinks().add(self);
 		}
 	}
