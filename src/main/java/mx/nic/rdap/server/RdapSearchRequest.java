@@ -124,7 +124,7 @@ public class RdapSearchRequest {
 	 * @param valuePattern
 	 * @throws UnprocessableEntityException
 	 */
-	public static void validatePartialSearchValue(String valuePattern, boolean isEntity)
+	private static void validatePartialSearchValue(String valuePattern, boolean isEntity)
 			throws UnprocessableEntityException {
 
 		// Validate if the length of the pattern is valid

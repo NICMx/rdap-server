@@ -26,7 +26,7 @@ public class PublicIdJsonWriter {
 		return builder.build();
 	}
 
-	public static JsonObject getJson(PublicId publicId, boolean isAuthenticated, boolean isOwner,
+	private static JsonObject getJson(PublicId publicId, boolean isAuthenticated, boolean isOwner,
 			Map<String, PrivacyStatus> privacySettings) {
 		JsonObjectBuilder builder = Json.createObjectBuilder();
 		String key = "type";

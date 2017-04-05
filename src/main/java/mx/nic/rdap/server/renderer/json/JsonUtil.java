@@ -99,7 +99,7 @@ public class JsonUtil {
 	 * Used later to verify if the result will be affected by any object the
 	 * privacy settings
 	 */
-	public static Map<String, PrivacyStatus> getAllObjectPrivacySettings(RdapObject object) {
+	private static Map<String, PrivacyStatus> getAllObjectPrivacySettings(RdapObject object) {
 		HashMap<String, PrivacyStatus> allObjectPrivacySettings = new HashMap<>();
 		HashMap<String, PrivacyStatus> remarkPrivacySettings = new HashMap<>();
 		HashMap<String, PrivacyStatus> linkPrivacySettings = new HashMap<>();
@@ -168,7 +168,7 @@ public class JsonUtil {
 		return allObjectPrivacySettings;
 	}
 
-	public static JsonArray getStatusJsonArray(List<Status> statusList) {
+	private static JsonArray getStatusJsonArray(List<Status> statusList) {
 		JsonArrayBuilder builder = Json.createArrayBuilder();
 
 		for (Status s : statusList) {

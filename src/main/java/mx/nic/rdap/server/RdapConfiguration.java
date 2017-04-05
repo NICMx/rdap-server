@@ -45,8 +45,8 @@ public class RdapConfiguration {
 	private static String anonymousUsername;
 	private static Set<String> validZones;
 
-	public static String REVERSE_IP_V4 = "in-addr.arpa";
-	public static String REVERSE_IP_V6 = "ip6.arpa";
+	private static String REVERSE_IP_V4 = "in-addr.arpa";
+	private static String REVERSE_IP_V6 = "ip6.arpa";
 
 	private RdapConfiguration() {
 		// no code.
@@ -254,7 +254,7 @@ public class RdapConfiguration {
 	/**
 	 * @return the max number of results for the authenticated user
 	 */
-	public static int getMaxNumberOfResultsForAuthenticatedUser() {
+	private static int getMaxNumberOfResultsForAuthenticatedUser() {
 		return maxNumberOfResultsForAuthenticatedUser;
 	}
 
@@ -262,7 +262,7 @@ public class RdapConfiguration {
 	 * Return the max number of results for the authenticated user
 	 * 
 	 */
-	public static int getMaxNumberOfResultsForUnauthenticatedUser() {
+	private static int getMaxNumberOfResultsForUnauthenticatedUser() {
 		return maxNumberOfResultsForUnauthenticatedUser;
 	}
 
@@ -350,7 +350,4 @@ public class RdapConfiguration {
 		return true;
 	}
 
-	public static Properties getServerProperties() {
-		return systemProperties;
-	}
 }

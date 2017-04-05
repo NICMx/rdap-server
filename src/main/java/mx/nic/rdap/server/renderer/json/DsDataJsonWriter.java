@@ -26,7 +26,7 @@ public class DsDataJsonWriter {
 		return builder.build();
 	}
 
-	public static JsonObject getJsonObject(DsData dsData, boolean isAuthenticated, boolean isOwner,
+	private static JsonObject getJsonObject(DsData dsData, boolean isAuthenticated, boolean isOwner,
 			Map<String, PrivacyStatus> privacySettings) {
 		JsonObjectBuilder builder = Json.createObjectBuilder();
 		String key = "keyTag";

@@ -49,10 +49,6 @@ public class DomainServlet extends DataAccessServlet<DomainDAO> {
 
 		private String fullRequestValue;
 
-		private String domainName;
-
-		private String zoneName;
-
 		public DomainRequest(String requestValue) throws NotFoundException, BadRequestException {
 			super();
 			if (requestValue.endsWith(".")) {
@@ -68,16 +64,6 @@ public class DomainServlet extends DataAccessServlet<DomainDAO> {
 
 		public String getFullRequestValue() {
 			return fullRequestValue;
-		}
-
-		@SuppressWarnings("unused")
-		public String getDomainName() {
-			return domainName;
-		}
-
-		@SuppressWarnings("unused")
-		public String getZoneName() {
-			return zoneName;
 		}
 
 	}

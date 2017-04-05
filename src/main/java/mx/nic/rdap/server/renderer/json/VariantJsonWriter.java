@@ -27,7 +27,7 @@ public class VariantJsonWriter {
 		return builder.build();
 	}
 
-	public static JsonObject getJsonObject(Variant variant, boolean isAuthenticated, boolean isOwner) {
+	private static JsonObject getJsonObject(Variant variant, boolean isAuthenticated, boolean isOwner) {
 		Map<String, PrivacyStatus> settings = PrivacyUtil.getDomainVariantsPrivacySettings();
 		JsonObjectBuilder builder = Json.createObjectBuilder();
 

@@ -29,7 +29,7 @@ public class NameserverSearchResult extends RdapResult {
 	// The max number of results allowed for the user
 	private Integer maxNumberOfResultsForUser;
 	// Indicate is the search has more results than the answered to the user
-	Boolean resultSetWasLimitedByUserConfiguration;
+	private Boolean resultSetWasLimitedByUserConfiguration;
 
 	public NameserverSearchResult(String header, String contextPath, SearchResultStruct<Nameserver> result,
 			String userName) {
