@@ -28,7 +28,7 @@ public class EntitySearchResult extends RdapResult {
 	// The max number of results allowed for the user
 	private Integer maxNumberOfResultsForUser;
 	// Indicate is the search has more results than the answered to the user
-	Boolean resultSetWasLimitedByUserConfiguration;
+	private Boolean resultSetWasLimitedByUserConfiguration;
 
 	public EntitySearchResult(String header, String contextPath, SearchResultStruct<Entity> result, String userName) {
 		notices = new ArrayList<Remark>();

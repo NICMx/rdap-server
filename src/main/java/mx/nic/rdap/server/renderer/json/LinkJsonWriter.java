@@ -27,7 +27,7 @@ public class LinkJsonWriter {
 		return builder.build();
 	}
 
-	public static JsonObject getJsonObject(Link link, boolean isAuthenticated, boolean isOwner,
+	private static JsonObject getJsonObject(Link link, boolean isAuthenticated, boolean isOwner,
 			Map<String, PrivacyStatus> privacySettings) {
 		JsonObjectBuilder builder = Json.createObjectBuilder();
 

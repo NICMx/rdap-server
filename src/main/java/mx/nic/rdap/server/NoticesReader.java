@@ -54,16 +54,6 @@ public class NoticesReader {
 	}
 
 	/**
-	 * Parse an XML file, validate the XML against the notices.xsd and obtains
-	 * the notices remarks from the XML file.
-	 */
-	public static List<Remark> parseNoticesXML(String filePath)
-			throws SAXException, IOException, ParserConfigurationException {
-		validateXMLWithSchema(filePath, NOTICES_XSD);
-		return getRemarksFromFilePath(filePath);
-	}
-
-	/**
 	 * Parse an XML file and obtains the remarks objects
 	 * 
 	 * @return A {@link List} of {@link Remark} objects
