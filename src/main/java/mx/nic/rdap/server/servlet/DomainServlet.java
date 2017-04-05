@@ -4,6 +4,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.core.db.Domain;
+import mx.nic.rdap.core.db.DomainLabel;
+import mx.nic.rdap.core.db.DomainLabelException;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.exception.http.BadRequestException;
 import mx.nic.rdap.db.exception.http.HttpException;
@@ -36,7 +38,13 @@ public class DomainServlet extends DataAccessServlet<DomainDAO> {
 			throws HttpException, RdapDataAccessException {
 		DomainRequest request = new DomainRequest(Util.getRequestParams(httpRequest)[0]);
 
-		Domain domain = dao.getByName(request.getFullRequestValue());
+		DomainLabel label;
+		try {
+			label = new DomainLabel(request.getFullRequestValue());
+		} catch (DomainLabelException e) {
+			throw new BadRequestException(e);
+		}
+		Domain domain = dao.getByName(label);
 		if (domain == null) {
 			return null;
 		}
@@ -48,10 +56,6 @@ public class DomainServlet extends DataAccessServlet<DomainDAO> {
 	private class DomainRequest {
 
 		private String fullRequestValue;
-
-		private String domainName;
-
-		private String zoneName;
 
 		public DomainRequest(String requestValue) throws NotFoundException, BadRequestException {
 			super();
@@ -68,16 +72,6 @@ public class DomainServlet extends DataAccessServlet<DomainDAO> {
 
 		public String getFullRequestValue() {
 			return fullRequestValue;
-		}
-
-		@SuppressWarnings("unused")
-		public String getDomainName() {
-			return domainName;
-		}
-
-		@SuppressWarnings("unused")
-		public String getZoneName() {
-			return zoneName;
 		}
 
 	}

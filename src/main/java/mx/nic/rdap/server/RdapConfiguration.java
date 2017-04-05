@@ -34,6 +34,7 @@ public class RdapConfiguration {
 	private static final String IS_REVERSE_IPV6_ENABLED_KEY = "is_reverse_ipv6_enabled";
 	private static final String OPERATIONAL_PROFILE_KEY = "operational_profile";
 	private static final String ANONYMOUS_USERNAME_KEY = "anonymous_username";
+	private static final String ALLOW_WILDCARDS_KEY = "allow_search_wildcards_anywhere";
 
 	// Settings values
 	private static String serverLanguage;
@@ -44,9 +45,10 @@ public class RdapConfiguration {
 	private static OperationalProfile operationalProfile;
 	private static String anonymousUsername;
 	private static Set<String> validZones;
+	private static boolean allowSearchWilcardsAnywhere;
 
-	public static String REVERSE_IP_V4 = "in-addr.arpa";
-	public static String REVERSE_IP_V6 = "ip6.arpa";
+	private static String REVERSE_IP_V4 = "in-addr.arpa";
+	private static String REVERSE_IP_V6 = "ip6.arpa";
 
 	private RdapConfiguration() {
 		// no code.
@@ -226,6 +228,22 @@ public class RdapConfiguration {
 			anonymousUsername = systemProperties.getProperty(ANONYMOUS_USERNAME_KEY).trim();
 		}
 
+		String allowWildcardProperty = systemProperties.getProperty(ALLOW_WILDCARDS_KEY);
+		if (allowWildcardProperty == null || allowWildcardProperty.trim().isEmpty()) {
+			isValid = false;
+			invalidProperties.add(ALLOW_WILDCARDS_KEY);
+		} else {
+			allowWildcardProperty = allowWildcardProperty.trim();
+			if (allowWildcardProperty.equalsIgnoreCase("true")) {
+				allowSearchWilcardsAnywhere = true;
+			} else if (allowWildcardProperty.equalsIgnoreCase("false")) {
+				allowSearchWilcardsAnywhere = false;
+			} else {
+				isValid = false;
+				invalidProperties.add(ALLOW_WILDCARDS_KEY);
+			}
+		}
+
 		if (!isValid) {
 			InitializationException invalidValueException = new InitializationException(
 					"The following required properties were not found or are invalid values in configuration file : "
@@ -254,7 +272,7 @@ public class RdapConfiguration {
 	/**
 	 * @return the max number of results for the authenticated user
 	 */
-	public static int getMaxNumberOfResultsForAuthenticatedUser() {
+	private static int getMaxNumberOfResultsForAuthenticatedUser() {
 		return maxNumberOfResultsForAuthenticatedUser;
 	}
 
@@ -262,7 +280,7 @@ public class RdapConfiguration {
 	 * Return the max number of results for the authenticated user
 	 * 
 	 */
-	public static int getMaxNumberOfResultsForUnauthenticatedUser() {
+	private static int getMaxNumberOfResultsForUnauthenticatedUser() {
 		return maxNumberOfResultsForUnauthenticatedUser;
 	}
 
@@ -271,6 +289,13 @@ public class RdapConfiguration {
 	 */
 	public static OperationalProfile getServerProfile() {
 		return operationalProfile;
+	}
+
+	/**
+	 * Return if the server supports wildcards in the end of the searches.
+	 */
+	public static boolean allowSearchWildcardsAnywhere() {
+		return allowSearchWilcardsAnywhere;
 	}
 
 	/**
@@ -350,7 +375,4 @@ public class RdapConfiguration {
 		return true;
 	}
 
-	public static Properties getServerProperties() {
-		return systemProperties;
-	}
 }

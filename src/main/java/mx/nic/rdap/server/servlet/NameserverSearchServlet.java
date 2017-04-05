@@ -3,6 +3,8 @@ package mx.nic.rdap.server.servlet;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import mx.nic.rdap.core.db.DomainLabel;
+import mx.nic.rdap.core.db.DomainLabelException;
 import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.ip.IpAddressFormatException;
 import mx.nic.rdap.core.ip.IpUtils;
@@ -45,7 +47,7 @@ public class NameserverSearchServlet extends DataAccessServlet<NameserverDAO> {
 	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, NameserverDAO dao)
 			throws HttpException, RdapDataAccessException {
 		RdapSearchRequest searchRequest = RdapSearchRequest.getSearchRequest(httpRequest, false, IP_PARAMETER_KEY,
-					NAME_PARAMETER_KEY);
+				NAME_PARAMETER_KEY);
 		validateSearchRequest(searchRequest);
 
 		String username = httpRequest.getRemoteUser();
@@ -80,7 +82,13 @@ public class NameserverSearchServlet extends DataAccessServlet<NameserverDAO> {
 
 		switch (request.getParameterName()) {
 		case NAME_PARAMETER_KEY:
-			result = dao.searchByName(request.getParameterValue().trim(), resultLimit);
+			DomainLabel label;
+			try {
+				label = new DomainLabel(request.getParameterValue());
+			} catch (DomainLabelException e) {
+				throw new BadRequestException(e);
+			}
+			result = dao.searchByName(label, resultLimit);
 			break;
 		case IP_PARAMETER_KEY:
 			result = dao.searchByIp(request.getParameterValue().trim(), resultLimit);

@@ -3,8 +3,11 @@ package mx.nic.rdap.server.servlet;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import mx.nic.rdap.core.db.DomainLabel;
+import mx.nic.rdap.core.db.DomainLabelException;
 import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
+import mx.nic.rdap.db.exception.http.BadRequestException;
 import mx.nic.rdap.db.exception.http.HttpException;
 import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.db.spi.NameserverDAO;
@@ -39,7 +42,14 @@ public class NameserverServlet extends DataAccessServlet<NameserverDAO> {
 			throws HttpException, RdapDataAccessException {
 		NameserverRequest request = new NameserverRequest(Util.getRequestParams(httpRequest)[0]);
 
-		Nameserver nameserver = dao.getByName(request.getName());
+		DomainLabel label;
+		try {
+			label = new DomainLabel(request.getName());
+		} catch (DomainLabelException e) {
+			throw new BadRequestException(e);
+		}
+
+		Nameserver nameserver = dao.getByName(label);
 		if (nameserver == null) {
 			return null;
 		}

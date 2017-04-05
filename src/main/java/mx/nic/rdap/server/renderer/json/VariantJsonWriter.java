@@ -1,6 +1,5 @@
 package mx.nic.rdap.server.renderer.json;
 
-import java.net.IDN;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +26,7 @@ public class VariantJsonWriter {
 		return builder.build();
 	}
 
-	public static JsonObject getJsonObject(Variant variant, boolean isAuthenticated, boolean isOwner) {
+	private static JsonObject getJsonObject(Variant variant, boolean isAuthenticated, boolean isOwner) {
 		Map<String, PrivacyStatus> settings = PrivacyUtil.getDomainVariantsPrivacySettings();
 		JsonObjectBuilder builder = Json.createObjectBuilder();
 
@@ -62,7 +61,7 @@ public class VariantJsonWriter {
 		for (VariantName variantName : variantNames) {
 			JsonObjectBuilder builder = Json.createObjectBuilder();
 			builder.add("ldhName", variantName.getLdhName());
-			builder.add("unicodeName", IDN.toUnicode(variantName.getLdhName()));
+			builder.add("unicodeName", variantName.getUnicodeName());
 			arrayBuilder.add(builder);
 		}
 

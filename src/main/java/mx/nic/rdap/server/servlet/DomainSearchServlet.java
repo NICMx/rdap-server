@@ -1,11 +1,11 @@
 package mx.nic.rdap.server.servlet;
 
-import java.net.IDN;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.core.db.Domain;
+import mx.nic.rdap.core.db.DomainLabel;
+import mx.nic.rdap.core.db.DomainLabelException;
 import mx.nic.rdap.core.ip.IpAddressFormatException;
 import mx.nic.rdap.core.ip.IpUtils;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
@@ -83,11 +83,7 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 			throws HttpException, RdapDataAccessException {
 		SearchResultStruct<Domain> result = new SearchResultStruct<Domain>();
 		int resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
-
 		String domain = request.getParameterValue();
-		if (IDN.toASCII(domain) != domain) {
-			domain = IDN.toASCII(domain);
-		}
 		switch (request.getParameterName()) {
 		case DOMAIN_NAME:
 			if (!RdapConfiguration.hasZoneConfigured()) {
@@ -97,11 +93,27 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 				throw new NotImplementedException();
 			}
 
-			result = dao.searchByName(domain, resultLimit);
+			DomainLabel label;
+			try {
+				label = new DomainLabel(domain);
+			} catch (DomainLabelException e) {
+				throw new BadRequestException(e);
+			}
+			result = dao.searchByName(label, resultLimit);
 			break;
 		case NAMESERVER_NAME:
+			DomainLabel nsNameLabel;
+			try {
+				nsNameLabel = new DomainLabel(domain);
+			} catch (DomainLabelException e) {
+				throw new BadRequestException(e);
+			}
+			// checks that the original label was LDH and not unicode
+			if (nsNameLabel.getLabel().equals(nsNameLabel.getULabel())) {
+				throw new BadRequestException("Only LDH domain labels are allowed.");
+			}
 			// Gets´s domain by it´s Nameserver name
-			result = dao.searchByNsName(domain, resultLimit);
+			result = dao.searchByNsLDHName(nsNameLabel, resultLimit);
 			break;
 		case NAMESERVER_IP:
 			// Get´s domain by it´s Nameserver Ip
@@ -136,7 +148,7 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 			break;
 		case NAMESERVER_NAME:
 			// Gets´s domain by it´s Nameserver name
-			result = dao.searchByRegexNsName(domain, resultLimit);
+			result = dao.searchByRegexNsLDHName(domain, resultLimit);
 			break;
 		case NAMESERVER_IP:
 			result = dao.searchByRegexNsIp(domain, resultLimit);

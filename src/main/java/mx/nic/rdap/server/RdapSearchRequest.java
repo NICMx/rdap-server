@@ -1,6 +1,5 @@
 package mx.nic.rdap.server;
 
-import java.net.IDN;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
@@ -57,7 +56,7 @@ public class RdapSearchRequest {
 
 		boolean hasValidParameter = false;
 		for (String parameter : parameters) {
-			String paramValue = request.getParameter(parameter);
+			String paramValue = request.getParameter(parameter).trim();
 			if (paramValue == null) {
 				continue;
 			}
@@ -124,7 +123,7 @@ public class RdapSearchRequest {
 	 * @param valuePattern
 	 * @throws UnprocessableEntityException
 	 */
-	public static void validatePartialSearchValue(String valuePattern, boolean isEntity)
+	private static void validatePartialSearchValue(String valuePattern, boolean isEntity)
 			throws UnprocessableEntityException {
 
 		// Validate if the length of the pattern is valid
@@ -140,11 +139,11 @@ public class RdapSearchRequest {
 			return;
 		}
 
-		// Validate if a partial search value has only ASCII values.
-		if (valuePattern.compareTo(IDN.toASCII(valuePattern)) != 0) {
-			throw new UnprocessableEntityException("Partial search must contain only ASCII values");
+		if (RdapConfiguration.allowSearchWildcardsAnywhere()) {
+			return;
 		}
 
+		// validates that asterisk are only in the end of the search pattern
 		if (isEntity) {
 			if (!valuePattern.endsWith("*")) {
 				throw new UnprocessableEntityException(
