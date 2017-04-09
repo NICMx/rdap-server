@@ -58,7 +58,8 @@ public class NoticesHandler extends DefaultHandler {
 
 		value = attributes.getValue("hreflang");
 		if (value != null && !value.isEmpty()) {
-			link.setHreflag(value);
+			// TODO modify XSD to read multiple values of hreflang
+			link.addHreflang(value);
 		}
 
 		value = attributes.getValue("title");

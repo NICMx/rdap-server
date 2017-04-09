@@ -56,7 +56,7 @@ public class RdapSearchRequest {
 
 		boolean hasValidParameter = false;
 		for (String parameter : parameters) {
-			String paramValue = request.getParameter(parameter).trim();
+			String paramValue = request.getParameter(parameter);
 			if (paramValue == null) {
 				continue;
 			}
@@ -66,7 +66,7 @@ public class RdapSearchRequest {
 			}
 			hasValidParameter = true;
 			searchReq.parameterName = parameter;
-			searchReq.parameterValue = paramValue;
+			searchReq.parameterValue = paramValue.trim();
 		}
 
 		if (searchReq.parameterName == null) {
