@@ -135,7 +135,7 @@ public class RdapConfiguration {
 
 	}
 
-	public static boolean isRolAnOwner(Role role) {
+	public static boolean isRoleAnOwner(Role role) {
 		return objectOwnerRoles.contains(role);
 	}
 

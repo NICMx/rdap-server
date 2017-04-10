@@ -53,7 +53,7 @@ public class UserInfo {
 		}
 
 		for (Role role : ent.getRoles()) {
-			if (RdapConfiguration.isRolAnOwner(role)) {
+			if (RdapConfiguration.isRoleAnOwner(role)) {
 				return true;
 			}
 		}

@@ -31,7 +31,6 @@ public class NoticesReader {
 	// Paths to xsd files
 	private final static String HELP_XSD = "META-INF/xsd/help.xsd";
 	private final static String TOS_XSD = "META-INF/xsd/tos.xsd";
-	private final static String NOTICES_XSD = "META-INF/xsd/notices.xsd";
 
 	/**
 	 * Parse an XML file, validate the XML against the help.xsd and obtains the

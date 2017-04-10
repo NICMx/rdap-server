@@ -41,7 +41,6 @@ public class RdapSearchRequest {
 
 	private String parameterValue;
 
-	// TODO review 422 vs 400
 	public static RdapSearchRequest getSearchRequest(HttpServletRequest request, boolean isEntityObject,
 			String... parameters) throws RdapDataAccessException {
 		if (request.getParameterMap().isEmpty()) {
@@ -70,8 +69,8 @@ public class RdapSearchRequest {
 		}
 
 		if (searchReq.parameterName == null) {
-			throw new UnprocessableEntityException(
-					"The request must contain one valid parameter : " + Arrays.asList(parameters));
+			throw new BadRequestException(
+					"The request must contain at least one of the following parameters: " + Arrays.asList(parameters));
 		}
 
 		switch (searchTypeValue) {
@@ -89,7 +88,7 @@ public class RdapSearchRequest {
 	}
 
 	private void validateSearchRequest(boolean isEntityObject, String... validParameters)
-			throws UnprocessableEntityException {
+			throws RdapDataAccessException {
 		switch (this.type) {
 		case PARTIAL_SEARCH:
 			validatePartialSearchRequest(isEntityObject, validParameters);
@@ -107,12 +106,12 @@ public class RdapSearchRequest {
 		validatePartialSearchValue(this.parameterValue, isEntityObject);
 	}
 
-	private void validateRegexSearchRequest(String... validParameters) throws UnprocessableEntityException {
+	private void validateRegexSearchRequest(String... validParameters) throws RdapDataAccessException {
 		try {
 			byte[] decode = Base64.getUrlDecoder().decode(this.parameterValue);
 			this.parameterValue = new String(decode, StandardCharsets.UTF_8);
 		} catch (IllegalArgumentException e) {
-			throw new UnprocessableEntityException(
+			throw new BadRequestException(
 					"The parameter value must be a base64url encoded POSIX extended regular expression");
 		}
 	}
