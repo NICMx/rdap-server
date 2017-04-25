@@ -34,7 +34,7 @@ public class RdapInitializer implements ServletContextListener {
 
 	private static ServletContext servletContext;
 
-	private static final String DEFAULT_NOTICES_FOLDER_PATH = "WEB-INF/notices";
+	private static final String DEFAULT_NOTICES_FOLDER_PATH = "/WEB-INF/notices";
 
 	private static final String RENDERER_CONTEXT_PARAM_NAME = "renderersUserPath";
 	private static final String RDAP_CONFIGURATION_PARAM_NAME = "rdapConfigurationUserPath";
