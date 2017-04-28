@@ -29,9 +29,7 @@ The server is your typical servlet Java WAR; simply toss it into your favorite s
 	jar -xvf rdap-server-{{ site.latest-server }}.war
 	rm rdap-server-{{ site.latest-server }}.war
 
-## Replace the default Data Access API for your own
-
-Add your implementation to the classpath:
+## Add your data access implementation to the classpath
 
 	mv <path-to-your-implementation> WEB-INF/lib
 
@@ -39,11 +37,11 @@ For example:
 
 	mv ~/Downloads/rdap-sample-daa-impl-{{ site.latest-sample-data-impl }}.jar WEB-INF/lib
 
-Tell Red Dog your implementation's hub class (the one that implements `mx.nic.rdap.db.spi.DataAccessImplementation`):
+If your classpath only contains one implementation, that's all you need. Otherwise state the hub class of your intended implementation in the `data-access.properties` file.
 
 	echo "data-access-implementation = mx.nic.rdap.sample.SampleHub" > WEB-INF/data-access.properties
 
-If your implementation requires configuration, now would be a good time to tweak it by adding more properties to `data-access.properties`. This file is rdap-server's [data access configuration file](https://github.com/NICMx/rdap-data-access-api/blob/b63dfb2b1da591dd5d225e6165d46babacee611b/src/main/java/mx/nic/rdap/db/spi/DataAccessImplementation.java#L27).
+If your implementation requires configuration, now would be a good time to tweak it by adding more key-values to `data-access.properties`. This file is rdap-server's [data access configuration file](https://github.com/NICMx/rdap-data-access-api/blob/b63dfb2b1da591dd5d225e6165d46babacee611b/src/main/java/mx/nic/rdap/db/spi/DataAccessImplementation.java#L27).
 
 # Start Tomcat
 

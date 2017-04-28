@@ -39,7 +39,7 @@ In Red Dog we care about the information privacy, so our RDAP server provides th
 		+ **rus_name** to be recognized by Tomcat (same value as is specified in the users table).
 		+ **rur_name** as role name column,  a valid role associated with this user.
 
-	* See the [Apache Tomcat 8 Realm configuration documentation](htttp://tomcat.apache.org/tomcat-7.0-doc/realm-howto.html#JDBCRealm) for more information.
+	* See the [Apache Tomcat 8 Realm configuration documentation](https://tomcat.apache.org/tomcat-8.0-doc/realm-howto.html) for more information.
 
 3.	Find the **WEB-INF/web.xml** file in your installation directory.
 4.	Add the following lines:
@@ -67,7 +67,7 @@ In Red Dog we care about the information privacy, so our RDAP server provides th
 	Some relevant notes for the lines above:
 	* The `url-pattern` element define the protected resource which requires an user login. In this case its specifies the search urls.
 	* The `auth-constraint` element specifies the role, AUTHENTICATED, that can access to the resources specified by the `url-pattern`.You must verify that roles assigned to user have the access that you want them to have. Checkout the rdap\_user\_role table in the rdap database.
-	* See the [Oracle Java EE 6 Declaring security roles tutorial](https://docs.oracle.com/cd/e19798-01/821-1841/bncav/index.html "Oracle Java Declaring Security Roles") for more information.
+	* See the [Oracle Java EE 6 Declaring security roles tutorial](https://docs.oracle.com/cd/E19798-01/821-1841/bncav/index.html "Oracle Java Declaring Security Roles") for more information.
 
 5. Run the server and make a search request to test the configuration.
 

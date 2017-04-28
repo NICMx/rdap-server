@@ -9,14 +9,7 @@ title: Documentation Index
 1. [What is RDAP/Red Dog?](intro.html)
 2. [Red Dog Demo Server](demo-server.html)
 
-## Installation/Configuration (Basic form)
-
-1. [Deploying `rdap-server` and the RDAP Database](server-install-basic.html)
-2. [Configuring `rdap-migrator`](migration.html)
-	- [Database Tables Definition](database-tables-definition.html)
-3. [Adding content to the Help Response](help-response.html)
-
-## Installation/Configuration (Custom form)
+## Installation/Configuration
 
 1. [Implementing your data access layer](data-access-layer.html)
 2. [Deploying `rdap-server`](server-install-custom.html)

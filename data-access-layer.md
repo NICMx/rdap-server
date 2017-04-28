@@ -4,9 +4,9 @@ title: Data Access Layer
 
 # Data Access Layer
 
-As stated [here](intro.html#custom-form), you can replace the default SQL-based data access implementation for your own. Your implementation will wrap whatever data storage you have to the rdap-server.
+As stated [here](intro.html#what-is-red-dog), your implementation of the data access API will wrap whatever data storage you have to the RDAP server.
 
-To create your own implementation, you need to append the following files to the classpath:
+To create your own implementation, you need to provide the following classes:
 
 1. At least one DAO ([Data-Access Object](https://en.wikipedia.org/wiki/Data_access_object)) class, whose methods will be queried by the rdap-server to retrieve RDAP objects from whatever data storage you are using.
 2. One implementation hub class, which will point the server to your DAOs. It must implement the [`mx.nic.rdap.db.spi.DataAccessImplementation`](https://github.com/NICMx/rdap-data-access-api/blob/c225a0822e6aaed841d98c370c7fbe3b54ee7e3a/src/main/java/mx/nic/rdap/db/spi/DataAccessImplementation.java) interface.
