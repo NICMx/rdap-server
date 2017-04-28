@@ -28,7 +28,7 @@ public class SampleHub implements DataAccessImplementation {
 	@Override
 	public AutnumDAO getAutnumDAO() throws RdapDataAccessException {
 		// Not implementing some data-access DAOs is perfectly acceptable; not
-		// all object types are needed in every RDAP server.
+		// all object types are needed by every RDAP server.
 		// Just return null in those cases.
 		// Red Dog will translate this into an HTTP 501.
 		return null;

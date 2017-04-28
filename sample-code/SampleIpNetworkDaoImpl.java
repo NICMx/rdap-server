@@ -1,11 +1,8 @@
 package mx.nic.rdap.sample;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
-import mx.nic.rdap.core.catalog.IpVersion;
 import mx.nic.rdap.core.db.IpNetwork;
-import mx.nic.rdap.db.exception.NotImplementedException;
+import mx.nic.rdap.core.ip.AddressBlock;
+import mx.nic.rdap.core.ip.IpAddressFormatException;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.spi.IpNetworkDAO;
 
@@ -16,10 +13,10 @@ import mx.nic.rdap.db.spi.IpNetworkDAO;
 public class SampleIpNetworkDaoImpl implements IpNetworkDAO {
 
 	@Override
-	public IpNetwork getByInetAddress(String ipAddress) throws RdapDataAccessException {
+	public IpNetwork getByAddressBlock(AddressBlock ipAddress) throws RdapDataAccessException {
 		// This method is the one that gets called whenever the user wants to
-		// get information regarding one IP network, using an address within it.
-		// (example: http://<RDAP-server>/ip/192.0.2.1)
+		// get information regarding one IP network.
+		// (example: http://<RDAP-server>/ip/192.0.2.0/24)
 
 		// You would access your data storage here.
 		// Since this is an example and I don't have a data store, I will simply
@@ -28,31 +25,28 @@ public class SampleIpNetworkDaoImpl implements IpNetworkDAO {
 
 		// Red Dog will create one SampleIpNetworkDaoImpl instance per network
 		// request, so you generally don't need to worry about thread safety.
+		// (You probably want to worry about the speed of your constructor,
+		// though.)
 
-		IpNetwork ipNetwork = new IpNetwork();
-		ipNetwork.setIpVersion(IpVersion.V6);
+		AddressBlock block;
 		try {
-			ipNetwork.setStartAddress(InetAddress.getByName("2001:db8::"));
-			ipNetwork.setEndAddress(InetAddress.getByName("2001:db8::ff"));
-		} catch (UnknownHostException e) {
-			throw new RuntimeException("Java attempted a lookup on a literal address. Weird.");
+			block = new AddressBlock("2001:db8::", 120);
+		} catch (IpAddressFormatException e) {
+			throw new RuntimeException("Programming error: Literal address could not be parsed.", e);
 		}
-		return ipNetwork;
+
+		IpNetwork network = new IpNetwork();
+		network.setAddressBlock(block);
+
+		return network;
 	}
 
-	@Override
-	public IpNetwork getByInetAddress(String ipAddress, Integer cidr) throws RdapDataAccessException {
-		// This method is the one that gets called whenever the user wants to
-		// get information regarding one IP network, using the "CIDR prefix/CIDR
-		// length" format.
-		// (example: http://<RDAP-server>/ip/192.0.2.0/24)
-
-		// I will not implement lookups including CIDR, just to show that I can.
-		// These will become HTTP 501s.
-
-		// You can also return null instead if you want, but this method allows
-		// you to specify a custom error message.
-		throw new NotImplementedException("Not implemented yet.");
-	}
+	// @Override
+	// public IpNetwork getByAddressBlock(AddressBlock ipAddress)
+	// throws RdapDataAccessException {
+	// // This is what you'd do if you didn't want to implement one of the
+	// // methods. These exceptions become HTTP 501s.
+	// throw new NotImplementedException("Not implemented yet.");
+	// }
 
 }

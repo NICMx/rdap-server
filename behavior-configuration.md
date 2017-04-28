@@ -30,8 +30,6 @@ This document explains how to tweak a Red Dog server's behavior.
         is_reverse_ipv6_enabled =
         #Allowed Values: registry, registrar, None. Default: none
         operational_profile=
-        #Optional. Boolean value to indicate if the nameserver is used as a Domain Attribute. Default value = false (Is used as object)
-        nameserver_as_domain_attribute=
         #Optional. anonymous, username. Default 'anonymous'.
         anonymous_username = 
 

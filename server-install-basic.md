@@ -23,10 +23,9 @@ Install Tomcat:
 	# I'm not using the Ubuntu repositories because their Tomcat is rather old.
 	# You will probably need to adapt this link because it keeps changing.
 	# See www-us.apache.org/dist/tomcat/tomcat-8
-	wget www-us.apache.org/dist/tomcat/tomcat-8/v8.5.11/bin/apache-tomcat-8.5.11.zip
-	unzip apache-tomcat-8.5.11.zip
-	CATALINA_HOME=$(pwd)/apache-tomcat-8.5.11
-	chmod +x $CATALINA_HOME/bin/*.sh
+	wget www-us.apache.org/dist/tomcat/tomcat-8/v8.5.12/bin/apache-tomcat-8.5.12.tar.gz
+	tar -xzvf apache-tomcat-8.5.12.tar.gz
+	CATALINA_HOME=$(pwd)/apache-tomcat-8.5.12
 	JRE_HOME=/usr/lib/jvm/java-8-oracle/jre
 
 Install the MySQL driver on Tomcat:
@@ -35,7 +34,6 @@ Install the MySQL driver on Tomcat:
 	# https://dev.mysql.com/downloads/connector/j/
 	wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.40.zip
 	unzip -j mysql-connector-java-5.1.40.zip mysql-connector-java-5.1.40/mysql-connector-java-5.1.40-bin.jar
-	mv mysql-connector-java-5.1.40-bin.jar $CATALINA_HOME/lib
 
 Create the data source that will link Red Dog and the database by adding the following tag to `<GlobalNamingResources>` in `$CATALINA_HOME/conf/server.xml`:
 

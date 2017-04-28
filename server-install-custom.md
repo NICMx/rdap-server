@@ -25,9 +25,9 @@ The server is your typical servlet Java WAR; simply toss it into your favorite s
 	mkdir $CATALINA_HOME/webapps/rdap
 	cd $CATALINA_HOME/webapps/rdap
 	# www.reddog.mx/download.html
-	wget https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-1.1.war
-	jar -xvf rdap-server-1.1.war
-	rm rdap-server-1.1.war
+	wget https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-{{ site.latest-server }}.war
+	jar -xvf rdap-server-{{ site.latest-server }}.war
+	rm rdap-server-{{ site.latest-server }}.war
 
 ## Replace the default Data Access API for your own
 
@@ -37,7 +37,7 @@ Add your implementation to the classpath:
 
 For example:
 
-	mv ~/Downloads/rdap-sample-daa-impl-0.0.1.jar WEB-INF/lib
+	mv ~/Downloads/rdap-sample-daa-impl-{{ site.latest-sample-data-impl }}.jar WEB-INF/lib
 
 Tell Red Dog your implementation's hub class (the one that implements `mx.nic.rdap.db.spi.DataAccessImplementation`):
 
