@@ -33,7 +33,7 @@ public class IpNetworkJsonWriter {
 		Map<String, PrivacyStatus> remarkPrivacySettings = PrivacyUtil.getIpNetworkRemarkPrivacySettings();
 
 		JsonObjectBuilder builder = Json.createObjectBuilder();
-		builder.add("objectClassName", "IpNetwork");
+		builder.add("objectClassName", "ip network");
 
 		String key = "startAddress";
 		String value = ipNetwork.getStartAddress().getHostAddress();

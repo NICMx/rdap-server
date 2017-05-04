@@ -29,7 +29,7 @@ public class RateLimitFilter implements Filter {
 	private int limit;
 
 	@Override
-	public void init(FilterConfig config) throws ServletException {
+	public void init(FilterConfig config) {
 		String limit = config.getInitParameter("limit");
 		this.limit = (limit == null) ? 20 : Integer.parseInt(limit);
 		logger.info("Going to allow  " + this.limit + " simultaneous requests per client.");

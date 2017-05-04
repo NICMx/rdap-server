@@ -1,6 +1,5 @@
 package mx.nic.rdap.server.result;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import javax.json.JsonObject;
@@ -23,8 +22,7 @@ public class EntityResult extends RdapResult {
 
 	private Entity entity;
 
-	public EntityResult(String header, String contextPath, Entity entity, String userName)
-			throws FileNotFoundException {
+	public EntityResult(String header, String contextPath, Entity entity, String userName) {
 		notices = new ArrayList<Remark>();
 		this.entity = entity;
 		this.userInfo = new UserInfo(userName);
@@ -72,7 +70,7 @@ public class EntityResult extends RdapResult {
 
 	/**
 	 * Generates a link with the self information and add it to the domain and
-	 * it's attributes
+	 * its attributes
 	 */
 	public static void addSelfLinks(String header, String contextPath, Entity entity) {
 		Link self = new Link(header, contextPath, "entity", entity.getHandle());
@@ -84,7 +82,7 @@ public class EntityResult extends RdapResult {
 		}
 
 		for (IpNetwork ip : entity.getIpNetworks()) {
-			self = new Link(header, contextPath, "ip", ip.getStartAddress().getHostAddress() + "/" + ip.getCidr());
+			self = new Link(header, contextPath, "ip", ip.getStartAddress().getHostAddress() + "/" + ip.getPrefix());
 			ip.getLinks().add(self);
 		}
 	}

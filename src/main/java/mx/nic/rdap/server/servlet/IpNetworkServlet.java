@@ -1,32 +1,34 @@
 package mx.nic.rdap.server.servlet;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
-import java.sql.SQLException;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.core.db.IpNetwork;
-import mx.nic.rdap.db.exception.InvalidValueException;
-import mx.nic.rdap.db.exception.RdapDatabaseException;
-import mx.nic.rdap.db.services.IpNetworkService;
-import mx.nic.rdap.server.RdapConfiguration;
+import mx.nic.rdap.core.ip.AddressBlock;
+import mx.nic.rdap.core.ip.IpAddressFormatException;
+import mx.nic.rdap.db.exception.RdapDataAccessException;
+import mx.nic.rdap.db.exception.http.BadRequestException;
+import mx.nic.rdap.db.exception.http.HttpException;
+import mx.nic.rdap.db.service.DataAccessService;
+import mx.nic.rdap.db.spi.IpNetworkDAO;
+import mx.nic.rdap.server.DataAccessServlet;
 import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.RdapServlet;
-import mx.nic.rdap.server.exception.MalformedRequestException;
-import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.IpResult;
-import mx.nic.rdap.server.result.OkResult;
 import mx.nic.rdap.server.util.Util;
 
 @WebServlet(name = "ip", urlPatterns = { "/ip/*" })
-public class IpNetworkServlet extends RdapServlet {
+public class IpNetworkServlet extends DataAccessServlet<IpNetworkDAO> {
 
 	private static final long serialVersionUID = 1L;
 
-	public IpNetworkServlet() throws IOException {
-		super();
+	@Override
+	protected IpNetworkDAO initAccessDAO() throws RdapDataAccessException {
+		return DataAccessService.getIpNetworkDAO();
+	}
+
+	@Override
+	protected String getServedObjectName() {
+		return "IP network";
 	}
 
 	/*
@@ -36,54 +38,25 @@ public class IpNetworkServlet extends RdapServlet {
 	 * HttpServletRequest)
 	 */
 	@Override
-	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException, RdapDatabaseException {
+	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, IpNetworkDAO dao)
+			throws HttpException, RdapDataAccessException {
 		IpRequest request = new IpRequest(Util.getRequestParams(httpRequest));
-		String username = httpRequest.getRemoteUser();
-		if (RdapConfiguration.isAnonymousUsername(username)) {
-			username = null;
-		}
+		AddressBlock block;
+		IpNetwork network;
 
-		IpNetwork ipNetwork = null;
 		try {
-			if (request.hasCidr()) {
-				ipNetwork = IpNetworkService.getByInetAddress(request.getIp(), request.getCidr());
-			} else {
-				ipNetwork = IpNetworkService.getByInetAddress(request.getIp());
-			}
-
-		} catch (UnknownHostException e) {
-			throw new MalformedRequestException("Invalid IP address", e);
-		} catch (InvalidValueException e) {
-			throw new MalformedRequestException(e.getMessage(), e);
+			block = new AddressBlock(request.getIp(), request.hasCidr() ? request.getCidr() : null);
+		} catch (IpAddressFormatException e) {
+			throw new BadRequestException(e);
 		}
 
-		return new IpResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), ipNetwork, username);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see mx.nic.rdap.server.RdapServlet#doRdapHead(javax.servlet.http.
-	 * HttpServletRequest)
-	 */
-	@Override
-	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException, RdapDatabaseException {
-		IpRequest request = new IpRequest(Util.getRequestParams(httpRequest));
-		try {
-			if (request.hasCidr()) {
-				IpNetworkService.existByInetAddress(request.getIp(), request.getCidr());
-			} else {
-				IpNetworkService.existByInetAddress(request.getIp());
-			}
-
-		} catch (UnknownHostException e) {
-			throw new MalformedRequestException("Invalid IP address", e);
-		} catch (InvalidValueException e) {
-			throw new MalformedRequestException(e.getMessage(), e);
+		network = dao.getByAddressBlock(block);
+		if (network == null) {
+			return null;
 		}
-		return new OkResult();
+
+		return new IpResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), network,
+				Util.getUsername(httpRequest));
 	}
 
 	private class IpRequest {

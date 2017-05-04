@@ -27,7 +27,7 @@ public class LinkJsonWriter {
 		return builder.build();
 	}
 
-	public static JsonObject getJsonObject(Link link, boolean isAuthenticated, boolean isOwner,
+	private static JsonObject getJsonObject(Link link, boolean isAuthenticated, boolean isOwner,
 			Map<String, PrivacyStatus> privacySettings) {
 		JsonObjectBuilder builder = Json.createObjectBuilder();
 
@@ -47,9 +47,14 @@ public class LinkJsonWriter {
 			builder.add(key, value);
 
 		key = "hreflang";
-		value = link.getHreflag();
-		if (PrivacyUtil.isObjectVisible(value, key, privacySettings.get(key), isAuthenticated, isOwner))
-			builder.add(key, value);
+		List<String> hreflangs = link.getHreflang();
+		if (PrivacyUtil.isObjectVisible(hreflangs, key, privacySettings.get(key), isAuthenticated, isOwner)) {
+			JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+			for (String lang : hreflangs) {
+				arrayBuilder.add(lang);
+			}
+			builder.add(key, arrayBuilder.build());
+		}
 
 		key = "title";
 		value = link.getTitle();
@@ -106,9 +111,14 @@ public class LinkJsonWriter {
 			builder.add(key, value);
 
 		key = "hreflang";
-		value = link.getHreflag();
-		if (value != null && !value.isEmpty())
-			builder.add(key, value);
+		List<String> hreflangs = link.getHreflang();
+		if (hreflangs != null && !hreflangs.isEmpty()) {
+			JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+			for (String lang : hreflangs) {
+				arrayBuilder.add(lang);
+			}
+			builder.add(key, arrayBuilder.build());
+		}
 
 		key = "title";
 		value = link.getTitle();

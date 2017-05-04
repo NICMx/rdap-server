@@ -1,27 +1,28 @@
 package mx.nic.rdap.server.servlet;
 
-import java.io.IOException;
-import java.net.IDN;
-import java.sql.SQLException;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
-import mx.nic.rdap.core.exception.UnprocessableEntityException;
-import mx.nic.rdap.db.exception.RdapDatabaseException;
-import mx.nic.rdap.db.services.DomainService;
+import mx.nic.rdap.core.db.Domain;
+import mx.nic.rdap.core.db.DomainLabel;
+import mx.nic.rdap.core.db.DomainLabelException;
+import mx.nic.rdap.core.ip.IpAddressFormatException;
+import mx.nic.rdap.core.ip.IpUtils;
+import mx.nic.rdap.db.exception.RdapDataAccessException;
+import mx.nic.rdap.db.exception.http.BadRequestException;
+import mx.nic.rdap.db.exception.http.HttpException;
+import mx.nic.rdap.db.exception.http.NotImplementedException;
+import mx.nic.rdap.db.service.DataAccessService;
+import mx.nic.rdap.db.spi.DomainDAO;
 import mx.nic.rdap.db.struct.SearchResultStruct;
+import mx.nic.rdap.server.DataAccessServlet;
 import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.RdapSearchRequest;
-import mx.nic.rdap.server.RdapServlet;
-import mx.nic.rdap.server.exception.MalformedRequestException;
-import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.DomainSearchResult;
-import mx.nic.rdap.server.util.IpUtil;
 
 @WebServlet(name = "domains", urlPatterns = { "/domains" })
-public class DomainSearchServlet extends RdapServlet {
+public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -31,6 +32,16 @@ public class DomainSearchServlet extends RdapServlet {
 
 	public final static String NAMESERVER_IP = "nsIp";
 
+	@Override
+	protected DomainDAO initAccessDAO() throws RdapDataAccessException {
+		return DataAccessService.getDomainDAO();
+	}
+
+	@Override
+	protected String getServedObjectName() {
+		return "domains";
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -38,79 +49,91 @@ public class DomainSearchServlet extends RdapServlet {
 	 * HttpServletRequest)
 	 */
 	@Override
-	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException, RdapDatabaseException {
-		RdapSearchRequest searchRequest;
-		try {
-			searchRequest = RdapSearchRequest.getSearchRequest(httpRequest, false, DOMAIN_NAME, NAMESERVER_IP,
-					NAMESERVER_NAME);
-			validateSearchRequest(searchRequest);
-		} catch (UnprocessableEntityException e) {
-			throw new RequestHandleException(e.getHttpResponseStatusCode(), e.getMessage());
-		}
+	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, DomainDAO dao)
+			throws HttpException, RdapDataAccessException {
+		RdapSearchRequest searchRequest = RdapSearchRequest.getSearchRequest(httpRequest, false, DOMAIN_NAME,
+				NAMESERVER_IP, NAMESERVER_NAME);
+		validateSearchRequest(searchRequest);
 
 		String username = httpRequest.getRemoteUser();
 		if (RdapConfiguration.isAnonymousUsername(username)) {
 			username = null;
 		}
 
-		SearchResultStruct result = null;
+		SearchResultStruct<Domain> result = null;
 		switch (searchRequest.getType()) {
 		case PARTIAL_SEARCH:
-			result = getPartialSearch(username, searchRequest);
+			result = getPartialSearch(username, searchRequest, dao);
 			break;
 		case REGEX_SEARCH:
-			result = getRegexSearch(username, searchRequest);
+			result = getRegexSearch(username, searchRequest, dao);
 			break;
 		default:
-			throw new RequestHandleException(501, "Not implemented.");
+			throw new NotImplementedException();
+		}
+
+		if (result == null) {
+			return null;
 		}
 
 		return new DomainSearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), result, username);
 	}
 
-	private SearchResultStruct getPartialSearch(String username, RdapSearchRequest request)
-			throws RequestHandleException, SQLException, IOException, RdapDatabaseException {
-		SearchResultStruct result = new SearchResultStruct();
-		boolean useNameserverAsAttribute = RdapConfiguration.useNameserverAsDomainAttribute();
-		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
-
+	private SearchResultStruct<Domain> getPartialSearch(String username, RdapSearchRequest request, DomainDAO dao)
+			throws HttpException, RdapDataAccessException {
+		SearchResultStruct<Domain> result = new SearchResultStruct<Domain>();
+		int resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
 		String domain = request.getParameterValue();
-		if (IDN.toASCII(domain) != domain) {
-			domain = IDN.toASCII(domain);
-		}
 		switch (request.getParameterName()) {
 		case DOMAIN_NAME:
 			if (!RdapConfiguration.hasZoneConfigured()) {
 				// Is valid if there are no available zones, because the
 				// rdap could only respond to autnum and ip networks
 				// (RIR).
-				throw new RequestHandleException(501, "Not implemented yet.");
+				throw new NotImplementedException();
 			}
 
-			result = DomainService.searchByName(domain, resultLimit, useNameserverAsAttribute);
+			DomainLabel label;
+			try {
+				label = new DomainLabel(domain);
+			} catch (DomainLabelException e) {
+				throw new BadRequestException(e);
+			}
+			result = dao.searchByName(label, resultLimit);
 			break;
 		case NAMESERVER_NAME:
+			DomainLabel nsNameLabel;
+			try {
+				nsNameLabel = new DomainLabel(domain);
+			} catch (DomainLabelException e) {
+				throw new BadRequestException(e);
+			}
+			// checks that the original label was LDH and not unicode
+			if (nsNameLabel.getLabel().equals(nsNameLabel.getULabel())) {
+				throw new BadRequestException("Only LDH domain labels are allowed.");
+			}
 			// Gets´s domain by it´s Nameserver name
-			result = DomainService.searchByNsName(domain, resultLimit, useNameserverAsAttribute);
+			result = dao.searchByNsLDHName(nsNameLabel, resultLimit);
 			break;
 		case NAMESERVER_IP:
 			// Get´s domain by it´s Nameserver Ip
-			result = DomainService.searchByNsIp(domain, resultLimit, useNameserverAsAttribute);
+			result = dao.searchByNsIp(domain, resultLimit);
 			break;
 		default:
-			throw new RequestHandleException(501, "Not implemented.");
+			throw new NotImplementedException();
+		}
+
+		if (result != null) {
+			result.truncate(resultLimit);
 		}
 
 		return result;
-
 	}
 
-	private SearchResultStruct getRegexSearch(String username, RdapSearchRequest request)
-			throws RequestHandleException, SQLException, IOException, RdapDatabaseException {
-		SearchResultStruct result = new SearchResultStruct();
-		boolean useNameserverAsAttribute = RdapConfiguration.useNameserverAsDomainAttribute();
-		Integer resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
+	private SearchResultStruct<Domain> getRegexSearch(String username, RdapSearchRequest request, DomainDAO dao)
+			throws HttpException, RdapDataAccessException {
+		SearchResultStruct<Domain> result = new SearchResultStruct<Domain>();
+		int resultLimit = RdapConfiguration.getMaxNumberOfResultsForUser(username);
 
 		String domain = request.getParameterValue();
 		switch (request.getParameterName()) {
@@ -119,41 +142,38 @@ public class DomainSearchServlet extends RdapServlet {
 				// Is valid if there are no available zones, because the
 				// rdap could only respond to autnum and ip networks
 				// (RIR).
-				throw new RequestHandleException(501, "Not implemented yet.");
+				throw new NotImplementedException();
 			}
-			result = DomainService.searchByRegexName(domain, resultLimit, useNameserverAsAttribute);
+			result = dao.searchByRegexName(domain, resultLimit);
 			break;
 		case NAMESERVER_NAME:
 			// Gets´s domain by it´s Nameserver name
-			result = DomainService.searchByNsName(domain, resultLimit, useNameserverAsAttribute);
+			result = dao.searchByRegexNsLDHName(domain, resultLimit);
 			break;
 		case NAMESERVER_IP:
-			result = DomainService.searchByRegexNsIp(domain, resultLimit, useNameserverAsAttribute);
+			result = dao.searchByRegexNsIp(domain, resultLimit);
 			break;
 		default:
-			throw new RequestHandleException(501, "Not implemented.");
+			throw new NotImplementedException();
+		}
+
+		if (result != null) {
+			result.truncate(resultLimit);
 		}
 
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see mx.nic.rdap.server.RdapServlet#doRdapHead(javax.servlet.http.
-	 * HttpServletRequest)
-	 */
-	@Override
-	protected RdapResult doRdapHead(HttpServletRequest httpRequest) throws RequestHandleException {
-		throw new RequestHandleException(501, "Not implemented yet.");
-	}
-
-	private static void validateSearchRequest(RdapSearchRequest searchRequest) throws MalformedRequestException {
+	private static void validateSearchRequest(RdapSearchRequest searchRequest) throws BadRequestException {
 		String parameter = searchRequest.getParameterName();
 		String value = searchRequest.getParameterValue();
 
 		if (parameter.equals(NAMESERVER_IP)) {
-			IpUtil.validateIpAddress(value);
+			try {
+				IpUtils.parseAddress(value);
+			} catch (IpAddressFormatException e) {
+				throw new BadRequestException(e);
+			}
 		}
 
 		if (value.endsWith("\\.")) {

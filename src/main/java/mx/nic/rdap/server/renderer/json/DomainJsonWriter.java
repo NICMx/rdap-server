@@ -1,11 +1,8 @@
 package mx.nic.rdap.server.renderer.json;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
@@ -16,16 +13,6 @@ import mx.nic.rdap.server.catalog.PrivacyStatus;
 import mx.nic.rdap.server.util.PrivacyUtil;
 
 public class DomainJsonWriter {
-
-	public static JsonArray getJsonArray(List<Domain> domains, boolean isAuthenticated, boolean isOwner) {
-		JsonArrayBuilder builder = Json.createArrayBuilder();
-
-		for (Domain domain : domains) {
-			builder.add(getJson(domain, isAuthenticated, isOwner));
-		}
-
-		return builder.build();
-	}
 
 	public static JsonObject getJson(Domain domain, boolean isAuthenticated, boolean isOwner) {
 		Map<String, PrivacyStatus> settings = PrivacyUtil.getDomainPrivacySettings();

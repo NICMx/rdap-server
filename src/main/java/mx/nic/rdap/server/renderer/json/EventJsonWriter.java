@@ -25,7 +25,7 @@ public class EventJsonWriter {
 		return builder.build();
 	}
 
-	public static JsonObject getJsonObject(Event event, boolean isAuthenticated, boolean isOwner,
+	private static JsonObject getJsonObject(Event event, boolean isAuthenticated, boolean isOwner,
 			Map<String, PrivacyStatus> eventPrivacySettings, Map<String, PrivacyStatus> linkPrivacySettings) {
 		JsonObjectBuilder builder = Json.createObjectBuilder();
 

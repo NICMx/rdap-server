@@ -32,6 +32,10 @@ public class SecureDNSJsonWriter {
 		if (PrivacyUtil.isObjectVisible(secureDNS.getDsData(), key, settings.get(key), isAuthenticated, isOwner))
 			builder.add(key, DsDataJsonWriter.getJsonArray(secureDNS.getDsData(), isAuthenticated, isOwner));
 
+		key = "keyData";
+		if (PrivacyUtil.isObjectVisible(secureDNS.getKeyData(), key, settings.get(key), isAuthenticated, isOwner))
+			builder.add(key, KeyDataJsonWriter.getJsonArray(secureDNS.getKeyData(), isAuthenticated, isOwner));
+
 		return builder.build();
 	}
 

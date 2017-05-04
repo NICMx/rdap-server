@@ -6,57 +6,56 @@ import java.util.Map;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.json.JsonValue;
 
-import mx.nic.rdap.core.db.DsData;
+import mx.nic.rdap.core.db.KeyData;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
 import mx.nic.rdap.server.util.PrivacyUtil;
 
-public class DsDataJsonWriter {
+public class KeyDataJsonWriter {
 
-	public static JsonArray getJsonArray(List<DsData> dsDataList, boolean isAuthenticated, boolean isOwner) {
+	public static JsonArray getJsonArray(List<KeyData> keyDataList, boolean isAuthenticated, boolean isOwner) {
 		JsonArrayBuilder builder = Json.createArrayBuilder();
-
-		Map<String, PrivacyStatus> privacySettings = PrivacyUtil.getDsDataPrivacySettings();
-		for (DsData dsData : dsDataList) {
-			builder.add(getJsonObject(dsData, isAuthenticated, isOwner, privacySettings));
+		Map<String, PrivacyStatus> privacySettings = PrivacyUtil.getKeyDataPrivacySettings();
+		for (KeyData keyData : keyDataList) {
+			builder.add(getJsonObject(keyData, isAuthenticated, isOwner, privacySettings));
 		}
-
 		return builder.build();
 	}
 
-	private static JsonObject getJsonObject(DsData dsData, boolean isAuthenticated, boolean isOwner,
+	private static JsonValue getJsonObject(KeyData keyData, boolean isAuthenticated, boolean isOwner,
 			Map<String, PrivacyStatus> privacySettings) {
 		JsonObjectBuilder builder = Json.createObjectBuilder();
-		String key = "keyTag";
-		Integer intValue = dsData.getKeytag();
+
+		String key = "flags";
+		Integer intValue = keyData.getFlags();
 		if (PrivacyUtil.isObjectVisible(intValue, key, privacySettings.get(key), isAuthenticated, isOwner))
 			builder.add(key, intValue);
 
-		key = "algorithm";
-		intValue = dsData.getAlgorithm();
+		key = "protocol";
+		intValue = keyData.getProtocol();
 		if (PrivacyUtil.isObjectVisible(intValue, key, privacySettings.get(key), isAuthenticated, isOwner))
 			builder.add(key, intValue);
 
-		key = "digest";
-		String stringValue = dsData.getDigest();
+		key = "publicKey";
+		String stringValue = keyData.getPublicKey();
 		if (PrivacyUtil.isObjectVisible(stringValue, key, privacySettings.get(key), isAuthenticated, isOwner))
 			builder.add(key, stringValue);
 
-		key = "digestType";
-		intValue = dsData.getDigestType();
+		key = "algorithm";
+		intValue = keyData.getAlgorithm();
 		if (PrivacyUtil.isObjectVisible(intValue, key, privacySettings.get(key), isAuthenticated, isOwner))
 			builder.add(key, intValue);
 
 		key = "events";
-		if (PrivacyUtil.isObjectVisible(dsData.getEvents(), key, privacySettings.get(key), isAuthenticated, isOwner))
-			builder.add(key, EventJsonWriter.getJsonArray(dsData.getEvents(), isAuthenticated, isOwner,
+		if (PrivacyUtil.isObjectVisible(keyData.getEvents(), key, privacySettings.get(key), isAuthenticated, isOwner))
+			builder.add(key, EventJsonWriter.getJsonArray(keyData.getEvents(), isAuthenticated, isOwner,
 					PrivacyUtil.getDomainEventPrivacySettings(), PrivacyUtil.getDomainLinkPrivacySettings()));
 
 		key = "links";
-		if (PrivacyUtil.isObjectVisible(dsData.getLinks(), key, privacySettings.get(key), isAuthenticated, isOwner))
-			builder.add(key, LinkJsonWriter.getJsonArray(dsData.getLinks(), isAuthenticated, isOwner,
+		if (PrivacyUtil.isObjectVisible(keyData.getLinks(), key, privacySettings.get(key), isAuthenticated, isOwner))
+			builder.add(key, LinkJsonWriter.getJsonArray(keyData.getLinks(), isAuthenticated, isOwner,
 					PrivacyUtil.getDomainLinkPrivacySettings()));
 
 		return builder.build();
