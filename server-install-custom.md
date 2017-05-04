@@ -24,7 +24,7 @@ The server is your typical servlet Java WAR; simply toss it into your favorite s
 
 	mkdir $CATALINA_HOME/webapps/rdap
 	cd $CATALINA_HOME/webapps/rdap
-	# www.reddog.mx/download.html
+	# www.reddog.mx/server-download.html
 	wget https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-{{ site.latest-server }}.war
 	jar -xvf rdap-server-{{ site.latest-server }}.war
 	rm rdap-server-{{ site.latest-server }}.war
