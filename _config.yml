@@ -1,7 +1,5 @@
 markdown: kramdown
 
-repository-url: https://github.com/NICMx/RedDog
-
 latest-server: 1.1.0
 latest-sample-data-impl: 0.0.2
 

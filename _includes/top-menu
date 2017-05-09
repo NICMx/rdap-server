@@ -12,7 +12,7 @@
 	{% if page.category == 'Download' %}<br /><img src="{{ site.baseurl }}/img/menu-select.png" />{% endif %}
 </span>
 <span>
-	<a {% if page.category == 'ReportBug'     %}class="selected"{% endif %} href="{{ site.repository-url }}/issues">Report a Bug/Github</a>
+	<a {% if page.category == 'ReportBug'     %}class="selected"{% endif %} href="https://github.com/NICMx/rdap-server/issues">Report a Bug/Github</a>
 	{% if page.category == 'ReportBug' %}<br /><img src="{{ site.baseurl }}/img/menu-select.png" />{% endif %}
 </span>
 <span>

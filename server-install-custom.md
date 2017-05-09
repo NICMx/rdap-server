@@ -4,7 +4,7 @@ title: Server Installation
 
 # Server Installation
 
-The server is your typical servlet Java WAR; simply toss it into your favorite servlet container. The following is an improvised example on how you might do this in Ubuntu/Tomcat; if you favor other means or environments, knock yourself out.
+The server is your typical servlet Java WAR; simply toss it into your favorite servlet container. The following is an improvised example on how you might do this in Ubuntu/Tomcat; if you favor other means or environments, knock yourself out. ([Payara](http://www.payara.fish/) and [Wildfly](http://wildfly.org/) have been tested as well as Tomcat.)
 
 ## Install Java
 
@@ -41,7 +41,7 @@ If your classpath only contains one implementation, that's all you need. Otherwi
 
 	echo "data-access-implementation = mx.nic.rdap.sample.SampleHub" > WEB-INF/data-access.properties
 
-If your implementation requires configuration, now would be a good time to tweak it by adding more key-values to `data-access.properties`. This file is rdap-server's [data access configuration file](https://github.com/NICMx/rdap-data-access-api/blob/b63dfb2b1da591dd5d225e6165d46babacee611b/src/main/java/mx/nic/rdap/db/spi/DataAccessImplementation.java#L27).
+If your implementation requires configuration, now would be a good time to tweak it by adding more key-values to `data-access.properties`. This file is rdap-server's [data access configuration file](https://github.com/NICMx/rdap-data-access-api/blob/v1.1.0/src/main/java/mx/nic/rdap/db/spi/DataAccessImplementation.java#L29).
 
 # Start Tomcat
 
