@@ -37,25 +37,6 @@ This document explains how to tweak a Red Dog server's behavior.
 
 3.	Run the server and make a request to test the configuration.
 
-Other relevant notes:
-
-* The **WEB-INF** folder is the default location of the **configuration.properties** file, but you can define a new location by following these steps:
-
-    1.	In **WEB-INF/web.xml**, find the following lines:
- 
-			```
-			<!-- <context-param> -->
-				<!-- <param-name> -->
-					 rdapConfigurationUserPath
-				<!-- </param-name> -->
-				<!-- <param-value> -->
-				<!-- </param-value> -->
-			<!-- </context-param> -->
-			```
-
-    2.	Uncomment them, and write a valid directory path in `param-value`.
-    3.	Save the changes and test the configuration.
-
 # Where to go next
 
 Now that we have finished the basic configuration to start the server, we can continue with the optional configuration, we recommend to continue with the option to grant access to the server resources to a select group of users, this information can be searched in this [document](response-privacy.html "Response Privacy Configuration").

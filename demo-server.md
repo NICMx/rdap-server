@@ -29,7 +29,7 @@ The only requirement is Java 8 or superior.
 
 ## Download
 
-You can download the demo server contained in a zip file from this [link](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-demo-1.0.zip).
+You can download the demo server from this [page](http://127.0.0.1:4000/demo-download.html).
 
 ## Running the demo
 
@@ -53,14 +53,16 @@ The demo server is now ready to answer requests. In your browser, query the addr
  
 ## Available features
 
-As a demo version, this server has limited features compared to the ones defined in RFC 7482 (excluding ASN and IPs queries), as well as the ones from the full server. This is what you can query:
+As a demo version, this server has limited features compared to the ones defined in RFC 7482 (excluding ASN and IPs queries), as well as the ones from the full server. Here are examples of queries that should be successful. See the [tables below](#dummy-data) for more options.
 
-+ Domain query: [http://localhost:8080/rdap-server/domain
-+ Entity query: http://localhost:8080/rdap-server/entity
-+ Nameserver query: http://localhost:8080/rdap-server/nameserver
-+ Domains search: http://localhost:8080/rdap-server/domains?...
-+ Entities search: http://localhost:8080/rdap-server/entities?...
-+ Nameservers search: http://localhost:8080/rdap-server/nameservers?...
++ Domain query`*`: [`domain/goldfish.com`](http://localhost:8080/rdap-server/domain/goldfish.com)
++ Entity query: [`entity/mr_fish`](http://localhost:8080/rdap-server/entity/mr_fish)
++ Nameserver query: [`nameserver/ns2.chopsuey.net`](http://localhost:8080/rdap-server/nameserver/ns2.chopsuey.net)
++ Domains search: [`domains?name=p*`](http://localhost:8080/rdap-server/domains?name=p*)
++ Entities search: [`entities?handle=mr*`](http://localhost:8080/rdap-server/entities?handle=mr*)
++ Nameservers search: [`nameservers?name=ns1*`](http://localhost:8080/rdap-server/nameservers?name=ns1*)
+
+`*` Because of the shipped configuration of `zones` (see below), only .com and .com.example domains will yield success.
 
 ## Available configuration
 

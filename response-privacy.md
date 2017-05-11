@@ -48,26 +48,8 @@ To set up the Red Dog server response privacy, perform the following steps:
 
 Other relevant notes:
 
-+	**WEB-INF** folder is the default location for the privacy configuration, but you can configure the folder where the server will read the privacy properties:
-
-	1.   In the **WEB-INF/web.xml**, find the following lines:
-
-				<!-- <context-param> -->
-					<!-- <param-name> -->
-						privacySettingsUserPath
-					<!-- </param-name> -->
-					<!-- <param-value> -->
-					<!-- </param-value> -->
-				<!-- </context-param> -->
-
-	2.	Uncomment them, and write a valid directory path in the `“param-value”`.
-
-	3.	Save the changes and test the configuration.
-
 +	 The default value of privacy is commented in each file. 
-
 +	 Each object has its file for privacy configuration.
-
 +	 Check [RFC 7483](https://tools.ietf.org/html/rfc7483 "JSON Responses for the Registration Data Access Protocol (RDAP)") for a list of each object and attribute that form a RDAP response.
 
 # Where to go next
