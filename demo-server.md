@@ -11,11 +11,6 @@ title: RDAP Demo Server
 3. [Running the demo](#running-the-demo)
 4. [Available features](#available-features)
 5. [Available configuration](#available-configuration)
-	1. [`zones`](#zones)
-	2. [`minimum_search_pattern_length`](#minimum_search_pattern_length)
-	3. [`max_number_result_unauthenticated_user`](#max_number_result_unauthenticated_user)
-	4. [`is_reverse_ipv4_enabled`](#is_reverse_ipv4_enabled)
-	5. [`is_reverse_ipv6_enabled`](#is_reverse_ipv6_enabled)
 6. [Dummy data](#dummy-data)
 	1. [Domain data](#domain-data)
 	2. [Entity data](#entity-data)
@@ -29,7 +24,7 @@ The only requirement is Java 8 or superior.
 
 ## Download
 
-You can download the demo server from this [page](http://127.0.0.1:4000/demo-download.html).
+You can download the demo server from this [page](demo-download.html).
 
 ## Running the demo
 
@@ -66,52 +61,7 @@ As a demo version, this server has limited features compared to the ones defined
 
 ## Available configuration
 
-In the configuration file (`WEB-INF/configuration.properties`) you can change the demo server's behavior by modifying the following properties:
-
-### `zones`
-
-- Type: String (labels separated by commas).
-- Default: com, com.example (Embedded explicitly in the demo's configuration; Red Dog does not normally ship with a default in this field.)
-
-Zones managed by the server. The server will only serve domains that match this zone.
-
-For example, if you manage the "com" zone, and a user requests domain "test.example", then the server will respond 404, since it doesn't manage the "example" zone. (Even if the requested domain record exists in the database.)
-
-### `minimum_search_pattern_length`
-
-- Type: Integer
-- Default: 1 (Embedded explicitly in the demo's configuration; Red Dog's actual default is 5.)
-
-Minimum length of the search pattern. Searches whose request strings have a lower length than this will be rejected.
-
-For example, if `minimum_search_pattern_length` is 5 and a user attempts to search for "test", the server will respond an error message.
-
-### `max_number_result_unauthenticated_user`
-
-- Type: Integer
-- Default: 10
-
-Maximum number of results for unauthenticated users.
-
-For example, if `max_number_result_unauthenticated_user` is 5 and the database contains 10 records that match an authenticated user's search pattern, the server will truncate the response to only 5 records.
-
-### `is_reverse_ipv4_enabled`
-
-- Type: Boolean
-- Default: false
-
-Indicates whether this RDAP server should respond to reverse IPv4s domain searches.
-
-If true, the server will search in its database domains that are stored in a reverse IPv4 form when a user send a request of a domain using reverse IPv4 lookup.
-
-### `is_reverse_ipv6_enabled`
-
-- Type: Boolean
-- Default: false
-
-Indicates whether this RDAP server should respond to reverse IPv6s domain searches.
-
-If true, the server will search in its database domains that are stored in a reverse IPv6 form when a user send a request of a domain using reverse IPv6 lookup.
+`WEB-INF/configuration.properties` is Red Dog's global configuration file. You can find documentation for every field [here](behavior-configuration.html).
 
 ## Dummy data 
 

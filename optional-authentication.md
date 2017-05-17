@@ -30,3 +30,4 @@ One way to append this forked header to requests is by means of reverse proxies.
 
 ("`YW5vbnltb3VzOg==`" is the Base64 representation of "`anonymous:`". See the [`headers`](http://httpd.apache.org/docs/current/mod/mod_headers.html) module and its [RequestHeader](http://httpd.apache.org/docs/current/mod/mod_headers.html#RequestHeader) statement.)
 
+Please note that, if you want to change the username representing anonymous requests, Red Dog should be made aware of this by way of its [configuration](behavior-configuration.html#anonymous_username).
