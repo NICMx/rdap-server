@@ -3,8 +3,6 @@
  */
 package mx.nic.rdap.server.result;
 
-import java.io.FileNotFoundException;
-
 import javax.json.JsonObject;
 
 import mx.nic.rdap.core.db.Autnum;
@@ -21,8 +19,7 @@ public class AutnumResult extends RdapResult {
 
 	private Autnum autnum;
 
-	public AutnumResult(String header, String contextPath, Autnum autnum, String username)
-			throws FileNotFoundException {
+	public AutnumResult(String header, String contextPath, Autnum autnum, String username) {
 		this.autnum = autnum;
 		this.userInfo = new UserInfo(username);
 		addSelfLinks(header, contextPath, autnum);

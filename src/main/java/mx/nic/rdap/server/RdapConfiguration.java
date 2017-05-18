@@ -9,11 +9,12 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import mx.nic.rdap.core.catalog.Rol;
-import mx.nic.rdap.db.exception.InvalidValueException;
-import mx.nic.rdap.db.exception.ObjectNotFoundException;
-import mx.nic.rdap.db.exception.RdapDatabaseException;
-import mx.nic.rdap.db.services.RdapUserService;
+import mx.nic.rdap.core.catalog.Role;
+import mx.nic.rdap.db.RdapUser;
+import mx.nic.rdap.db.exception.InitializationException;
+import mx.nic.rdap.db.exception.RdapDataAccessException;
+import mx.nic.rdap.db.service.DataAccessService;
+import mx.nic.rdap.db.spi.RdapUserDAO;
 import mx.nic.rdap.server.catalog.OperationalProfile;
 
 /**
@@ -32,22 +33,22 @@ public class RdapConfiguration {
 	private static final String IS_REVERSE_IPV4_ENABLED_KEY = "is_reverse_ipv4_enabled";
 	private static final String IS_REVERSE_IPV6_ENABLED_KEY = "is_reverse_ipv6_enabled";
 	private static final String OPERATIONAL_PROFILE_KEY = "operational_profile";
-	private static final String NAMESERVER_AS_DOMAIN_ATTRIBUTE_KEY = "nameserver_as_domain_attribute";
 	private static final String ANONYMOUS_USERNAME_KEY = "anonymous_username";
+	private static final String ALLOW_WILDCARDS_KEY = "allow_search_wildcards_anywhere";
 
 	// Settings values
 	private static String serverLanguage;
 	private static Integer minimumSearchPatternLength;
 	private static Integer maxNumberOfResultsForAuthenticatedUser;
 	private static Integer maxNumberOfResultsForUnauthenticatedUser;
-	private static Set<Rol> objectOwnerRoles;
+	private static Set<Role> objectOwnerRoles;
 	private static OperationalProfile operationalProfile;
-	private static Boolean nameserverAsDomainAttribute;
 	private static String anonymousUsername;
 	private static Set<String> validZones;
+	private static boolean allowSearchWilcardsAnywhere;
 
-	public static String REVERSE_IP_V4 = "in-addr.arpa";
-	public static String REVERSE_IP_V6 = "ip6.arpa";
+	private static String REVERSE_IP_V4 = "in-addr.arpa";
+	private static String REVERSE_IP_V6 = "ip6.arpa";
 
 	private RdapConfiguration() {
 		// no code.
@@ -58,9 +59,8 @@ public class RdapConfiguration {
 	 * 
 	 * @param systemProperties
 	 *            the systemProperties to set
-	 * @throws ObjectNotFoundException
 	 */
-	public static void loadSystemProperties(Properties systemProperties) throws ObjectNotFoundException {
+	public static void loadSystemProperties(Properties systemProperties) {
 		RdapConfiguration.systemProperties = systemProperties;
 	}
 
@@ -90,11 +90,9 @@ public class RdapConfiguration {
 	}
 
 	/**
-	 * Validate if the configurated zones are in the database
-	 * 
-	 * @throws ObjectNotFoundException
+	 * Validate if the configured zones are in the database
 	 */
-	public static void validateConfiguratedZones() throws ObjectNotFoundException {
+	public static void validateConfiguredZones() {
 		List<String> propertiesZone = RdapConfiguration.getServerZones();
 
 		validZones = new HashSet<>(propertiesZone);
@@ -113,23 +111,23 @@ public class RdapConfiguration {
 
 	}
 
-	public static void validateConfiguratedRoles() throws InvalidValueException {
+	public static void validateConfiguredRoles() throws InitializationException {
 		String ownerRoles = systemProperties.getProperty(OWNER_ROLES_KEY);
 		if (ownerRoles == null) {
-			throw new InvalidValueException("property '" + OWNER_ROLES_KEY + "' is not configured");
+			throw new InitializationException("property '" + OWNER_ROLES_KEY + "' is not configured");
 		}
 
 		String[] split = ownerRoles.split(",");
-		objectOwnerRoles = new HashSet<Rol>();
+		objectOwnerRoles = new HashSet<Role>();
 
-		for (String rol : split) {
-			rol = rol.trim();
-			if (rol.isEmpty())
+		for (String role : split) {
+			role = role.trim();
+			if (role.isEmpty())
 				continue;
 
-			Rol rolEnum = Rol.getByName(rol);
+			Role rolEnum = Role.getByName(role);
 			if (rolEnum == null) {
-				throw new InvalidValueException("unknown rol in property '" + OWNER_ROLES_KEY + "': " + rol);
+				throw new InitializationException("unknown role in property '" + OWNER_ROLES_KEY + "': " + role);
 			}
 
 			objectOwnerRoles.add(rolEnum);
@@ -137,11 +135,11 @@ public class RdapConfiguration {
 
 	}
 
-	public static boolean isRolAnOwner(Rol rol) {
-		return objectOwnerRoles.contains(rol);
+	public static boolean isRoleAnOwner(Role role) {
+		return objectOwnerRoles.contains(role);
 	}
 
-	public static void validateRdapConfiguration() throws InvalidValueException {
+	public static void validateRdapConfiguration() throws InitializationException {
 		boolean isValid = true;
 		List<String> invalidProperties = new ArrayList<>();
 		List<Exception> exceptions = new ArrayList<>();
@@ -223,14 +221,6 @@ public class RdapConfiguration {
 
 		}
 
-		if (systemProperties.getProperty(NAMESERVER_AS_DOMAIN_ATTRIBUTE_KEY) == null) {
-			isValid = false;
-			invalidProperties.add(NAMESERVER_AS_DOMAIN_ATTRIBUTE_KEY);
-		} else {
-			nameserverAsDomainAttribute = Boolean
-					.parseBoolean(systemProperties.getProperty(NAMESERVER_AS_DOMAIN_ATTRIBUTE_KEY));
-		}
-
 		if (systemProperties.getProperty(ANONYMOUS_USERNAME_KEY) == null) {
 			isValid = false;
 			invalidProperties.add(ANONYMOUS_USERNAME_KEY);
@@ -238,8 +228,24 @@ public class RdapConfiguration {
 			anonymousUsername = systemProperties.getProperty(ANONYMOUS_USERNAME_KEY).trim();
 		}
 
+		String allowWildcardProperty = systemProperties.getProperty(ALLOW_WILDCARDS_KEY);
+		if (allowWildcardProperty == null || allowWildcardProperty.trim().isEmpty()) {
+			isValid = false;
+			invalidProperties.add(ALLOW_WILDCARDS_KEY);
+		} else {
+			allowWildcardProperty = allowWildcardProperty.trim();
+			if (allowWildcardProperty.equalsIgnoreCase("true")) {
+				allowSearchWilcardsAnywhere = true;
+			} else if (allowWildcardProperty.equalsIgnoreCase("false")) {
+				allowSearchWilcardsAnywhere = false;
+			} else {
+				isValid = false;
+				invalidProperties.add(ALLOW_WILDCARDS_KEY);
+			}
+		}
+
 		if (!isValid) {
-			InvalidValueException invalidValueException = new InvalidValueException(
+			InitializationException invalidValueException = new InitializationException(
 					"The following required properties were not found or are invalid values in configuration file : "
 							+ invalidProperties.toString());
 			for (Exception exception : exceptions) {
@@ -266,7 +272,7 @@ public class RdapConfiguration {
 	/**
 	 * @return the max number of results for the authenticated user
 	 */
-	public static int getMaxNumberOfResultsForAuthenticatedUser() {
+	private static int getMaxNumberOfResultsForAuthenticatedUser() {
 		return maxNumberOfResultsForAuthenticatedUser;
 	}
 
@@ -274,19 +280,22 @@ public class RdapConfiguration {
 	 * Return the max number of results for the authenticated user
 	 * 
 	 */
-	public static int getMaxNumberOfResultsForUnauthenticatedUser() {
+	private static int getMaxNumberOfResultsForUnauthenticatedUser() {
 		return maxNumberOfResultsForUnauthenticatedUser;
 	}
 
 	/**
-	 * Return the profile configurated for the server
+	 * Return the profile configured for the server
 	 */
 	public static OperationalProfile getServerProfile() {
 		return operationalProfile;
 	}
 
-	public static boolean useNameserverAsDomainAttribute() {
-		return nameserverAsDomainAttribute;
+	/**
+	 * Return if the server supports wildcards in the end of the searches.
+	 */
+	public static boolean allowSearchWildcardsAnywhere() {
+		return allowSearchWilcardsAnywhere;
 	}
 
 	/**
@@ -296,10 +305,19 @@ public class RdapConfiguration {
 	 * @throws SQLException
 	 * @throws IOException
 	 */
-	public static Integer getMaxNumberOfResultsForUser(String username) throws RdapDatabaseException {
+	public static int getMaxNumberOfResultsForUser(String username) throws RdapDataAccessException {
 		if (username != null) {
 			// Find if the user has a custom limit.
-			Integer limit = RdapUserService.getMaxSearchResults(username);
+			Integer limit = null;
+
+			RdapUserDAO dao = DataAccessService.getRdapUserDAO();
+			if (dao != null) {
+				RdapUser user = dao.getByUsername(username);
+				if (user != null) {
+					limit = user.getMaxSearchResults();
+				}
+			}
+
 			if (limit != null && limit != 0) {
 				return limit;
 			} else {
@@ -357,7 +375,4 @@ public class RdapConfiguration {
 		return true;
 	}
 
-	public static Properties getServerProperties() {
-		return systemProperties;
-	}
 }

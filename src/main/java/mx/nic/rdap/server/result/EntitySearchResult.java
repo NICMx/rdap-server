@@ -1,6 +1,5 @@
 package mx.nic.rdap.server.result;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +10,6 @@ import javax.json.JsonObjectBuilder;
 
 import mx.nic.rdap.core.catalog.RemarkType;
 import mx.nic.rdap.core.db.Entity;
-import mx.nic.rdap.core.db.RdapObject;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.db.struct.SearchResultStruct;
 import mx.nic.rdap.server.RdapConfiguration;
@@ -30,18 +28,17 @@ public class EntitySearchResult extends RdapResult {
 	// The max number of results allowed for the user
 	private Integer maxNumberOfResultsForUser;
 	// Indicate is the search has more results than the answered to the user
-	Boolean resultSetWasLimitedByUserConfiguration;
+	private Boolean resultSetWasLimitedByUserConfiguration;
 
-	public EntitySearchResult(String header, String contextPath, SearchResultStruct result, String userName)
-			throws FileNotFoundException {
+	public EntitySearchResult(String header, String contextPath, SearchResultStruct<Entity> result, String userName) {
 		notices = new ArrayList<Remark>();
 		this.entities = new ArrayList<Entity>();
 		this.userInfo = new UserInfo(userName);
 		this.setMaxNumberOfResultsForUser(result.getSearchResultsLimitForUser());
 		this.resultSetWasLimitedByUserConfiguration = result.getResultSetWasLimitedByUserConfiguration();
-		for (RdapObject entity : result.getResults()) {
-			EntityResult.addSelfLinks(header, contextPath, (Entity) entity);
-			this.entities.add((Entity) entity);
+		for (Entity entity : result.getResults()) {
+			EntityResult.addSelfLinks(header, contextPath, entity);
+			this.entities.add(entity);
 		}
 		validateResponse();
 	}

@@ -34,10 +34,9 @@ public class NameserverJsonWriter {
 		JsonObjectBuilder builder = Json.createObjectBuilder();
 
 		builder.add("objectClassName", "nameserver");
-		if (!RdapConfiguration.useNameserverAsDomainAttribute())
-			JsonUtil.fillCommonRdapJsonObject(builder, nameserver, isAuthenticated, isOwner, settings,
-					PrivacyUtil.getNameserverRemarkPrivacySettings(), PrivacyUtil.getNameserverLinkPrivacySettings(),
-					PrivacyUtil.getNameserverEventPrivacySettings());
+		JsonUtil.fillCommonRdapJsonObject(builder, nameserver, isAuthenticated, isOwner, settings,
+				PrivacyUtil.getNameserverRemarkPrivacySettings(), PrivacyUtil.getNameserverLinkPrivacySettings(),
+				PrivacyUtil.getNameserverEventPrivacySettings());
 
 		String key = "ldhName";
 		String value = nameserver.getLdhName();

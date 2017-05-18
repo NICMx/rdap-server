@@ -4,7 +4,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import mx.nic.rdap.core.catalog.EventAction;
-import mx.nic.rdap.core.catalog.Rol;
+import mx.nic.rdap.core.catalog.Role;
 import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Event;
@@ -12,7 +12,7 @@ import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.VCard;
 import mx.nic.rdap.core.db.VCardPostalInfo;
 import mx.nic.rdap.server.RdapConfiguration;
-import mx.nic.rdap.server.renderer.json.JsonUtil;
+import mx.nic.rdap.server.UserNotices;
 
 public class OperationalProfileValidator {
 	private final static Logger logger = Logger.getLogger(OperationalProfileValidator.class.getName());
@@ -96,7 +96,7 @@ public class OperationalProfileValidator {
 		boolean existRegistrar = false;
 		for (Entity ent : domain.getEntities()) {
 			if (ent.getRoles() != null) {
-				if (ent.getRoles().contains(Rol.REGISTRAR)) {
+				if (ent.getRoles().contains(Role.REGISTRAR)) {
 					existRegistrar = true;
 					if (ent.getPublicIds() == null || ent.getPublicIds().isEmpty()) {
 						logger.warning("When using profile " + RdapConfiguration.getServerProfile()
@@ -171,23 +171,23 @@ public class OperationalProfileValidator {
 		for (Entity ent : domain.getEntities()) {
 			OperationalProfileValidator.validateEntityEvents(ent);
 			if (!ent.getRoles().isEmpty()) {
-				for (Rol rol : ent.getRoles()) {
-					if (rol == Rol.REGISTRANT) {
+				for (Role role : ent.getRoles()) {
+					if (role == Role.REGISTRANT) {
 						// validate if there is already a entity with the same
-						// rol
+						// role
 						if (existRegistrant || !isDomainEntityVcardValid(ent)) {
 							logger.warning(warningMessage);
 							return;
 						} else {
 							existRegistrant = true;
 						}
-					} else if (rol == Rol.ADMINISTRATIVE) {
+					} else if (role == Role.ADMINISTRATIVE) {
 						if (existAdministrative || !isDomainEntityVcardValid(ent)) {
 							logger.warning(warningMessage);
 							return;
 						}
 						existAdministrative = true;
-					} else if (rol == Rol.TECHNICAL) {
+					} else if (role == Role.TECHNICAL) {
 						if (existTechnical || !isDomainEntityVcardValid(ent)) {
 							logger.warning(warningMessage);
 							return;
@@ -262,7 +262,7 @@ public class OperationalProfileValidator {
 	public static boolean validateTermsOfService() {
 		String warningMessage = "When using profile " + RdapConfiguration.getServerProfile()
 				+ ", a terms Of Service notice must be added for al requests.";
-		if (JsonUtil.getTermsOfServiceNotice() == null) {
+		if (UserNotices.getTos() == null || UserNotices.getTos().isEmpty()) {
 			logger.log(Level.WARNING, warningMessage);
 			return false;
 		}

@@ -1,6 +1,5 @@
 package mx.nic.rdap.server.result;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import javax.json.JsonObject;
@@ -20,8 +19,7 @@ public class IpResult extends RdapResult {
 
 	private IpNetwork ipNetwork;
 
-	public IpResult(String header, String contextPath, IpNetwork ipNetwork, String userName)
-			throws FileNotFoundException {
+	public IpResult(String header, String contextPath, IpNetwork ipNetwork, String userName) {
 		notices = new ArrayList<Remark>();
 		this.ipNetwork = ipNetwork;
 		this.userInfo = new UserInfo(userName);
@@ -68,7 +66,7 @@ public class IpResult extends RdapResult {
 	 */
 	private void addSelfLinks(String header, String contextPath, IpNetwork ipNetwork) {
 		Link self = new Link(header, contextPath, "ip",
-				ipNetwork.getStartAddress().getHostAddress() + "/" + ipNetwork.getCidr());
+				ipNetwork.getStartAddress().getHostAddress() + "/" + ipNetwork.getPrefix());
 		ipNetwork.getLinks().add(self);
 
 		for (Entity ent : ipNetwork.getEntities()) {

@@ -46,6 +46,7 @@ public class PrivacyUtil {
 	private static final String DOMAIN_EVENTS = "domain_events";
 	private static final String SECURE_DNS = "secure_dns";
 	private static final String DS_DATA = "ds_data";
+	private static final String KEY_DATA = "key_data";
 
 	private static final String NAMESERVER = "nameserver";
 	private static final String NAMESERVER_LINKS = "nameserver_links";
@@ -81,6 +82,7 @@ public class PrivacyUtil {
 		loadObjectPrivacySettings(DOMAIN_REMARKS);
 		loadObjectPrivacySettings(SECURE_DNS);
 		loadObjectPrivacySettings(DS_DATA);
+		loadObjectPrivacySettings(KEY_DATA);
 
 		loadObjectPrivacySettings(NAMESERVER);
 		loadObjectPrivacySettings(NAMESERVER_LINKS);
@@ -266,6 +268,10 @@ public class PrivacyUtil {
 
 	public static Map<String, PrivacyStatus> getDsDataPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(DS_DATA);
+	}
+
+	public static Map<String, PrivacyStatus> getKeyDataPrivacySettings() {
+		return OBJECTS_PRIVACY_SETTING.get(KEY_DATA);
 	}
 
 	public static Map<String, PrivacyStatus> getEntityLinkPrivacySettings() {

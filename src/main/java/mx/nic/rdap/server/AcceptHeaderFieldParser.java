@@ -52,7 +52,7 @@ public class AcceptHeaderFieldParser {
 		 * Remember to catch {@link NumberFormatException} and
 		 * {@link IllegalArgumentException}.
 		 */
-		public Accept(String acceptString) {
+		private Accept(String acceptString) {
 			acceptString = acceptString.replaceAll("\\s+", "");
 			String[] accept = acceptString.split(";");
 
@@ -138,6 +138,15 @@ public class AcceptHeaderFieldParser {
 
 			Accept other = (Accept) obj;
 			return mediaRange.equals(other.mediaRange) && qvalue == other.qvalue;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + ((mediaRange == null) ? 0 : mediaRange.hashCode());
+			result = prime * result + (Float.valueOf(qvalue).hashCode());
+			return result;
 		}
 
 		@Override

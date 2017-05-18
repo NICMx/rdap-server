@@ -1,6 +1,6 @@
 package mx.nic.rdap.server;
 
-import mx.nic.rdap.core.catalog.Rol;
+import mx.nic.rdap.core.catalog.Role;
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.RdapObject;
 
@@ -52,8 +52,8 @@ public class UserInfo {
 			return false;
 		}
 
-		for (Rol rol : ent.getRoles()) {
-			if (RdapConfiguration.isRolAnOwner(rol)) {
+		for (Role role : ent.getRoles()) {
+			if (RdapConfiguration.isRoleAnOwner(role)) {
 				return true;
 			}
 		}

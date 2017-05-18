@@ -1,7 +1,5 @@
 package mx.nic.rdap.server.renderer.json;
 
-import java.io.FileNotFoundException;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,8 +27,6 @@ import mx.nic.rdap.server.util.Util;
  * Utilities for json renderer
  */
 public class JsonUtil {
-
-	private static Remark termsOfService;
 
 	public static JsonArray getRdapConformance(String... others) {
 		JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
@@ -103,7 +99,7 @@ public class JsonUtil {
 	 * Used later to verify if the result will be affected by any object the
 	 * privacy settings
 	 */
-	public static Map<String, PrivacyStatus> getAllObjectPrivacySettings(RdapObject object) {
+	private static Map<String, PrivacyStatus> getAllObjectPrivacySettings(RdapObject object) {
 		HashMap<String, PrivacyStatus> allObjectPrivacySettings = new HashMap<>();
 		HashMap<String, PrivacyStatus> remarkPrivacySettings = new HashMap<>();
 		HashMap<String, PrivacyStatus> linkPrivacySettings = new HashMap<>();
@@ -172,7 +168,7 @@ public class JsonUtil {
 		return allObjectPrivacySettings;
 	}
 
-	public static JsonArray getStatusJsonArray(List<Status> statusList) {
+	private static JsonArray getStatusJsonArray(List<Status> statusList) {
 		JsonArrayBuilder builder = Json.createArrayBuilder();
 
 		for (Status s : statusList) {
@@ -184,22 +180,6 @@ public class JsonUtil {
 
 	public static JsonValue getOperationalProfileRemark() {
 		return RemarkJsonWriter.getNoticeJsonObject(Util.getOperationalProfileRemark());
-	}
-
-	public static void createTermsOfService(String realPath) throws FileNotFoundException {
-		if (termsOfService == null) {
-			String path = Paths.get(realPath, "WEB-INF", "terms-of-service").toString();
-			List<Remark> remarks = Util.readNoticesFromFiles(path);
-			if (remarks == null || remarks.isEmpty())
-				return;
-			else
-				termsOfService = remarks.get(0);
-		}
-		return;
-	}
-
-	public static Remark getTermsOfServiceNotice() {
-		return termsOfService;
 	}
 
 }

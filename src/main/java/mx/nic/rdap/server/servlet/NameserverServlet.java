@@ -1,29 +1,34 @@
 package mx.nic.rdap.server.servlet;
 
-import java.io.IOException;
-import java.sql.SQLException;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import mx.nic.rdap.core.db.DomainLabel;
+import mx.nic.rdap.core.db.DomainLabelException;
 import mx.nic.rdap.core.db.Nameserver;
-import mx.nic.rdap.db.exception.RdapDatabaseException;
-import mx.nic.rdap.db.services.NameserverService;
-import mx.nic.rdap.server.RdapConfiguration;
+import mx.nic.rdap.db.exception.RdapDataAccessException;
+import mx.nic.rdap.db.exception.http.BadRequestException;
+import mx.nic.rdap.db.exception.http.HttpException;
+import mx.nic.rdap.db.service.DataAccessService;
+import mx.nic.rdap.db.spi.NameserverDAO;
+import mx.nic.rdap.server.DataAccessServlet;
 import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.RdapServlet;
-import mx.nic.rdap.server.exception.RequestHandleException;
 import mx.nic.rdap.server.result.NameserverResult;
-import mx.nic.rdap.server.result.OkResult;
 import mx.nic.rdap.server.util.Util;
 
 @WebServlet(name = "nameserver", urlPatterns = { "/nameserver/*" })
-public class NameserverServlet extends RdapServlet {
+public class NameserverServlet extends DataAccessServlet<NameserverDAO> {
 
 	private static final long serialVersionUID = 1L;
 
-	public NameserverServlet() throws IOException {
-		super();
+	@Override
+	protected NameserverDAO initAccessDAO() throws RdapDataAccessException {
+		return DataAccessService.getNameserverDAO();
+	}
+
+	@Override
+	protected String getServedObjectName() {
+		return "nameservers";
 	}
 
 	/*
@@ -33,38 +38,24 @@ public class NameserverServlet extends RdapServlet {
 	 * HttpServletRequest)
 	 */
 	@Override
-	protected RdapResult doRdapGet(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException, RdapDatabaseException {
-		if (RdapConfiguration.useNameserverAsDomainAttribute()) {
-			throw new RequestHandleException(501, "Not implemented.");
-		}
+	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, NameserverDAO dao)
+			throws HttpException, RdapDataAccessException {
 		NameserverRequest request = new NameserverRequest(Util.getRequestParams(httpRequest)[0]);
-		Nameserver nameserver = null;
 
-		String username = httpRequest.getRemoteUser();
-		if (RdapConfiguration.isAnonymousUsername(username)) {
-			username = null;
+		DomainLabel label;
+		try {
+			label = new DomainLabel(request.getName());
+		} catch (DomainLabelException e) {
+			throw new BadRequestException(e);
 		}
 
-		nameserver = NameserverService.getByName(request.getName());
-		return new NameserverResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), nameserver, username);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see mx.nic.rdap.server.RdapServlet#doRdapHead(javax.servlet.http.
-	 * HttpServletRequest)
-	 */
-	@Override
-	protected RdapResult doRdapHead(HttpServletRequest httpRequest)
-			throws RequestHandleException, IOException, SQLException, RdapDatabaseException {
-		if (RdapConfiguration.useNameserverAsDomainAttribute()) {
-			throw new RequestHandleException(501, "Not implemented.");
+		Nameserver nameserver = dao.getByName(label);
+		if (nameserver == null) {
+			return null;
 		}
-		NameserverRequest request = new NameserverRequest(Util.getRequestParams(httpRequest)[0]);
-		NameserverService.existByName(request.getName());
-		return new OkResult();
+
+		return new NameserverResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), nameserver,
+				Util.getUsername(httpRequest));
 	}
 
 	private class NameserverRequest {

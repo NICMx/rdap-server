@@ -1,6 +1,5 @@
 package mx.nic.rdap.server;
 
-import java.net.IDN;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
@@ -8,7 +7,9 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
-import mx.nic.rdap.core.exception.UnprocessableEntityException;
+import mx.nic.rdap.db.exception.RdapDataAccessException;
+import mx.nic.rdap.db.exception.http.BadRequestException;
+import mx.nic.rdap.db.exception.http.UnprocessableEntityException;
 import mx.nic.rdap.server.catalog.RequestSearchType;
 
 public class RdapSearchRequest {
@@ -41,10 +42,10 @@ public class RdapSearchRequest {
 	private String parameterValue;
 
 	public static RdapSearchRequest getSearchRequest(HttpServletRequest request, boolean isEntityObject,
-			String... parameters) throws UnprocessableEntityException {
+			String... parameters) throws RdapDataAccessException {
 		if (request.getParameterMap().isEmpty()) {
-			throw new UnprocessableEntityException(
-					"The request must contain one valid parameter : " + Arrays.asList(parameters));
+			throw new BadRequestException(
+					"The request must contain at least one of the following parameters: " + Arrays.asList(parameters));
 		}
 		RdapSearchRequest searchReq = new RdapSearchRequest();
 		String searchTypeValue = request.getParameter(SEARCH_TYPE_KEY_PARAM);
@@ -60,16 +61,16 @@ public class RdapSearchRequest {
 			}
 			if (hasValidParameter) {
 				throw new UnprocessableEntityException(
-						"The request must contain only one valid parameter : " + Arrays.asList(parameters));
+						"The request must contain only one of the following parameters: " + Arrays.asList(parameters));
 			}
 			hasValidParameter = true;
 			searchReq.parameterName = parameter;
-			searchReq.parameterValue = paramValue;
+			searchReq.parameterValue = paramValue.trim();
 		}
 
 		if (searchReq.parameterName == null) {
-			throw new UnprocessableEntityException(
-					"The request must contain one valid parameter : " + Arrays.asList(parameters));
+			throw new BadRequestException(
+					"The request must contain at least one of the following parameters: " + Arrays.asList(parameters));
 		}
 
 		switch (searchTypeValue) {
@@ -87,7 +88,7 @@ public class RdapSearchRequest {
 	}
 
 	private void validateSearchRequest(boolean isEntityObject, String... validParameters)
-			throws UnprocessableEntityException {
+			throws RdapDataAccessException {
 		switch (this.type) {
 		case PARTIAL_SEARCH:
 			validatePartialSearchRequest(isEntityObject, validParameters);
@@ -105,12 +106,12 @@ public class RdapSearchRequest {
 		validatePartialSearchValue(this.parameterValue, isEntityObject);
 	}
 
-	private void validateRegexSearchRequest(String... validParameters) throws UnprocessableEntityException {
+	private void validateRegexSearchRequest(String... validParameters) throws RdapDataAccessException {
 		try {
 			byte[] decode = Base64.getUrlDecoder().decode(this.parameterValue);
 			this.parameterValue = new String(decode, StandardCharsets.UTF_8);
 		} catch (IllegalArgumentException e) {
-			throw new UnprocessableEntityException(
+			throw new BadRequestException(
 					"The parameter value must be a base64url encoded POSIX extended regular expression");
 		}
 	}
@@ -121,7 +122,7 @@ public class RdapSearchRequest {
 	 * @param valuePattern
 	 * @throws UnprocessableEntityException
 	 */
-	public static void validatePartialSearchValue(String valuePattern, boolean isEntity)
+	private static void validatePartialSearchValue(String valuePattern, boolean isEntity)
 			throws UnprocessableEntityException {
 
 		// Validate if the length of the pattern is valid
@@ -137,11 +138,11 @@ public class RdapSearchRequest {
 			return;
 		}
 
-		// Validate if a partial search value has only ASCII values.
-		if (valuePattern.compareTo(IDN.toASCII(valuePattern)) != 0) {
-			throw new UnprocessableEntityException("Partial search must contain only ASCII values");
+		if (RdapConfiguration.allowSearchWildcardsAnywhere()) {
+			return;
 		}
 
+		// validates that asterisk are only in the end of the search pattern
 		if (isEntity) {
 			if (!valuePattern.endsWith("*")) {
 				throw new UnprocessableEntityException(

@@ -28,7 +28,7 @@ public class RemarkJsonWriter {
 		return builder.build();
 	}
 
-	public static JsonObject getJsonObject(Remark remark, boolean isAuthenticated, boolean isOwner,
+	private static JsonObject getJsonObject(Remark remark, boolean isAuthenticated, boolean isOwner,
 			Map<String, PrivacyStatus> remarkPrivacySettings, Map<String, PrivacyStatus> linkPrivacySettings) {
 		JsonObjectBuilder builder = Json.createObjectBuilder();
 

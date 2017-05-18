@@ -1,0 +1,28 @@
+<help>
+	<notice>
+		<title>value</title>
+		<type>optional value</type>
+		<description>
+			<line>value</line>
+			<line>value</line>
+		</description>
+		<links>
+			<link href="algo">[value3]</link>
+		</links>
+	</notice>
+	<notice>
+		<title>value</title>
+		<description>
+			<line>value</line>
+			<line>value</line>
+			<line>value</line>
+		</description>
+		<links>
+			<link rel="" href="" hreflang="" title="" media="" type="">[value3]
+			</link>
+			<link rel="" href="" hreflang="" title="" media="" type="">[value4]
+			</link>
+		</links>
+	</notice>
+
+</help>

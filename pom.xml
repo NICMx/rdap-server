@@ -5,7 +5,7 @@
 	<groupId>mx.nic.rdap</groupId>
 	<artifactId>rdap-server</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0</version>
+	<version>1.1.0</version>
 	<name>RDAP Server</name>
 
 	<properties>
@@ -18,8 +18,13 @@
 	<dependencies>
 		<dependency>
 			<groupId>mx.nic.rdap</groupId>
-			<artifactId>rdap-sql-provider</artifactId>
-			<version>1.0</version>
+			<artifactId>rdap-data-access-api</artifactId>
+			<version>1.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>mx.nic.rdap</groupId>
+			<artifactId>rdap-sql-provider-demo</artifactId>
+			<version>1.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -55,6 +60,16 @@
 			<artifactId>tomcat-embed-logging-juli</artifactId>
 			<version>${tomcat.version}</version>
 		</dependency>
+		<dependency>
+		    <groupId>org.apache.tomcat</groupId>
+		    <artifactId>tomcat-dbcp</artifactId>
+		    <version>${tomcat.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.4.193</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -89,8 +104,6 @@
 						</goals>
 					</execution>
 				</executions>
-
-
 			</plugin>
 		</plugins>
 	</build>
