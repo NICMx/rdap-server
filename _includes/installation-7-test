@@ -1,0 +1,8 @@
+## Start Tomcat
+
+	$CATALINA_HOME/bin/startup.sh
+
+Your Red Dog server is now running and serving data provided by your implementation.
+
+![Sample Firefox screenshot](img/sample-query-custom-mode.png)
+

@@ -23,11 +23,33 @@ Some advantages of RDAP over WHOIS are
 
 ## What is Red Dog?
 
-Red Dog is a free and open source Java implementation of an RDAP server carcass.
+Red Dog is a free and open source Java implementation of an RDAP server carcass. It is a handful of servlets and APIs that can help you serve your registration data in a standard manner.
 
-![Fig.1 - Architecture Overview](img/diagram/architecture-advanced.svg)
+![Fig. 1 - Overview](img/diagram/intro-overview.svg)
 
-Through your implementation of the data access API, Red Dog can serve Internet resources in a standard manner. The idea is to reduce your task as an RDAP implementor to the data-access half.
+As pictured, deploying Red Dog requires the development of an interface between your database and the servlets. This can be done in three different ways:
 
-By implementing the [data access API](https://github.com/NICMx/rdap-data-access-api), you can wrap `Your Main Database` to `rdap-server` in any way you want, which can range as anything from direct queries to `Your Main Database` to queries to non-relational databases.
+### Option 1: Full Data Access Implementation
+
+The [Data Access API](https://github.com/NICMx/rdap-data-access-api) (DAA) mainly consists of [a set of Java interfaces](https://github.com/NICMx/rdap-data-access-api/tree/master/src/main/java/mx/nic/rdap/db/spi). The server queries an implementation of these interfaces to access the data.
+
+![Fig.1 - Full implementation architecture](img/diagram/intro-option-1.svg)
+
+By providing your own implementation of the DAA (a "Data Access Implementation") you can wrap your database to the server in any way you want. This can range from anything from direct queries to `Your Main Database`, or to a mirror of it, to queries to non-relational databases.
+
+[Here](data-access-layer.html) are some directions that might get you started in creating a DAI.
+
+### Option 2: Overriding SQL Provider queries
+
+The [SQL Provider](https://github.com/NICMx/rdap-sql-provider) is a project that implements the DAA as queries to a relational database. Instead of developing Java code, you create queries that return data in a specific format.
+
+![Fig. 2 - SQL Provider](img/diagram/intro-option-2.svg)
+
+## Option 3: Using Red Dog's builtin schema
+
+The SQL Provider ships with default queries, intended to be used along a predefined schema.
+
+![Fig. 3 - SQL Provider default](img/diagram/intro-option-3.svg)
+
+What you need to provide under this architecture is a means to export your data from your core database to Red Dog's schema.
 

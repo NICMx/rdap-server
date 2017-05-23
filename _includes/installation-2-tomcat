@@ -1,0 +1,10 @@
+## Install Tomcat
+
+	# I'm not using the Ubuntu repositories because their Tomcat is rather old.
+	# You will probably need to adapt this link because it keeps changing.
+	# See www-us.apache.org/dist/tomcat/tomcat-8
+	wget www-us.apache.org/dist/tomcat/tomcat-8/v8.5.12/bin/apache-tomcat-8.5.12.tar.gz
+	tar -xzvf apache-tomcat-8.5.12.tar.gz
+	CATALINA_HOME=$(pwd)/apache-tomcat-8.5.12
+	JRE_HOME=/usr/lib/jvm/java-8-oracle/jre
+

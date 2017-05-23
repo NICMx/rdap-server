@@ -9,10 +9,22 @@ title: Documentation Index
 1. [What is RDAP/Red Dog?](intro.html)
 2. [Red Dog Demo Server](demo-server.html)
 
-## Installation/Configuration
+## Installation/Configuration (Option 1 - Full Data Access Implementation)
 
 1. [Implementing your data access layer](data-access-layer.html)
 2. [Deploying `rdap-server`](server-install-custom.html)
+3. [Adding content to the Help Response](help-response.html)
+
+## Installation/Configuration (Option 2 - Overriding SQL Provider queries)
+
+1. [Implementing the SQL queries]()
+2. [Deploying `rdap-server` with the SQL Provider](server-install-sql.html)
+3. [Adding content to the Help Response](help-response.html)
+
+## Installation/Configuration (Option 3 - Using Red Dog's builtin schema)
+
+1. [Implementing the Data Export Mechanism](migration.html)
+2. [Deploying `rdap-server` with the SQL Provider](server-install-sql.html)
 3. [Adding content to the Help Response](help-response.html)
 
 ## Further Configuration (Optional)

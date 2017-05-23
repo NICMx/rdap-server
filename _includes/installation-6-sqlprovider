@@ -1,0 +1,10 @@
+## Add the SQL Provider to the classpath
+
+The latest SQL Provider can be found [here](sql-provider-download.html).
+
+	mv ~/Downloads/rdap-sql-provider-{{ site.latest-sql-provider }}.jar WEB-INF/lib
+
+If your classpath only contains one implementation, that's all you need. Otherwise state the provider's hub class in the `data-access.properties` file:
+
+	echo "data-access-implementation = mx.nic.rdap.sql.impl.SqlProviderImplementation" > WEB-INF/data-access.properties
+

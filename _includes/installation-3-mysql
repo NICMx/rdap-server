@@ -1,0 +1,7 @@
+## Install the MySQL driver on Tomcat
+
+	cd $CATALINA_HOME/lib
+	# https://dev.mysql.com/downloads/connector/j/
+	wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.40.zip
+	unzip -j mysql-connector-java-5.1.40.zip mysql-connector-java-5.1.40/mysql-connector-java-5.1.40-bin.jar
+
