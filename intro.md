@@ -8,6 +8,9 @@ title: Introduction to RDAP/Red Dog
 
 1. [What is RDAP?](#what-is-rdap)
 2. [What is Red Dog?](#what-is-red-dog)	
+	1. [Option 1: Development of a DAI](#option-1-development-of-a-dai)
+	2. [Option 2: Overriding SQL Provider queries](#option-2-overriding-sql-provider-queries)
+	3. [Option 3: Using Red Dog's builtin schema](#option-3-using-red-dogs-builtin-schema)
 
 ## What is RDAP?
 
@@ -29,21 +32,25 @@ Red Dog is a free and open source Java implementation of an RDAP server carcass.
 
 As pictured, deploying Red Dog requires the development of an interface between your database and the servlets. This can be done in three different ways:
 
-### Option 1: Full Data Access Implementation
+### Option 1: Development of a DAI
 
-The [Data Access API](https://github.com/NICMx/rdap-data-access-api) (DAA) mainly consists of [a set of Java interfaces](https://github.com/NICMx/rdap-data-access-api/tree/master/src/main/java/mx/nic/rdap/db/spi). The server queries an implementation of these interfaces to access the data.
+The [Data Access API](https://github.com/NICMx/rdap-data-access-api) (DAA) project is a module of Red Dog which mainly consists of [a set of Java interfaces](https://github.com/NICMx/rdap-data-access-api/tree/master/src/main/java/mx/nic/rdap/db/spi). The server queries a "Data Access Implementation" (DAI) --an implementation of these interfaces-- to access the data.
 
 ![Fig.1 - Full implementation architecture](img/diagram/intro-option-1.svg)
 
-By providing your own implementation of the DAA (a "Data Access Implementation") you can wrap your database to the server in any way you want. This can range from anything from direct queries to `Your Main Database`, or to a mirror of it, to queries to non-relational databases.
+By rolling out your own DAI you can wrap your database to the server in any way you want. This can range from anything from direct queries to `Your Main Database`, or to a mirror of it, to queries to non-relational databases.
 
-[Here](data-access-layer.html) are some directions that might get you started in creating a DAI.
+[Here](data-access-layer.html) are some directions that might help you get started in creating a DAI.
 
 ### Option 2: Overriding SQL Provider queries
 
-The [SQL Provider](https://github.com/NICMx/rdap-sql-provider) is a project that implements the DAA as queries to a relational database. Instead of developing Java code, you create queries that return data in a specific format.
+The [SQL Provider](https://github.com/NICMx/rdap-sql-provider) project is a functional reference DAI that is intended to perform queries to a relational database. Instead of developing a full Java project, you provide queries that return data in a predefined format and structure.
 
 ![Fig. 2 - SQL Provider](img/diagram/intro-option-2.svg)
+
+You can find the specifications these queries need to fulfill [here](TODO).
+
+> ![Warning](img/warning.svg) Please identify and be aware of the maintenance overhead of using this option if future bugs or RFC updates require modifications to the query specification.
 
 ## Option 3: Using Red Dog's builtin schema
 
@@ -51,5 +58,8 @@ The SQL Provider ships with default queries, intended to be used along a predefi
 
 ![Fig. 3 - SQL Provider default](img/diagram/intro-option-3.svg)
 
-What you need to provide under this architecture is a means to export your data from your core database to Red Dog's schema.
+What you need to provide under this architecture is a means to export your data from your core database to Red Dog's database.
 
+Directions [here](migration.html).
+
+> ![Warning](img/warning.svg) Please identify and be aware of the maintenance overhead of using this option if future bugs or RFC updates require modifications to Red Dog's schema.

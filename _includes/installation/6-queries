@@ -1,0 +1,6 @@
+## Add your queries to the classpath
+
+There are more elegant ways to do this, but a relatively fuss-free and reliable one is by placing the `user_sql_files` in the `classes` directory.
+
+	mv ~/Documents/user_sql_files WEB-INF/classes
+

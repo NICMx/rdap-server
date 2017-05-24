@@ -1,11 +1,11 @@
 ## Create the data source that will link Red Dog and the database
 
-One way to do that is by adding the following tag to `<GlobalNamingResources>` in `$CATALINA_HOME/conf/server.xml`:
+One way to do that is by adding the following tag to `<GlobalNamingResources>` in `$CATALINA_HOME/conf/server.xml`, and replacing the dummy values:
 
 	<Resource name="jdbc/rdap"
 	    type="javax.sql.DataSource"
 	    auth="Container"
-	    driverClassName="[mydb_driver_class_name]"
+	    driverClassName="com.mysql.jdbc.Driver"
 	    url="[mydb_url]"
 	    username="[mydb_user]"
 	    password="[mydb_pass]"

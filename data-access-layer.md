@@ -28,5 +28,5 @@ Here you can find a simple sample implementation. See comments inline for detail
 2. Hub class: [`mx.nic.rdap.sample.SampleHub.java`](sample-code/SampleHub.java)
 3. Service provider configuration file: [`mx.nic.rdap.db.spi.DataAccessImplementation`](sample-code/mx.nic.rdap.db.spi.DataAccessImplementation)
 
-You can download the full sample implementation (compiled into a jar file) [here](https://github.com/NICMx/releases/raw/master/RedDog/rdap-sample-daa-impl-{{ site.latest-sample-data-impl }}.jar). Instructions on how to append the custom implementation to the server can be found in the [next document](server-install-custom.html).
+You can download the full sample implementation (compiled into a jar file) [here](https://github.com/NICMx/releases/raw/master/RedDog/rdap-sample-daa-impl-{{ site.latest-sample-data-impl }}.jar). Instructions on how to append the custom implementation to the server can be found in the [next document](server-install-option-1.html).
 
