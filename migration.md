@@ -10,11 +10,13 @@ Red Dog's builtin schema is an ordinary relational database conceived in MySQL. 
 
 Given that the means through which you will export your data depends on the specific format in which you have it stored, this documentation cannot go into detail as to how to do it. Instead, this will serve as reference material for Red Dog's schema.
 
-## Schema definition
+Red Dog's database contains 62 tables. Though the task of populating them might seem daunting, it is important to note that you likely only need a fraction of them. The main ones are [autonomous_system_number](#autonomous_system_number), [domain](#domain), [entity](#entity), [ip_network](#ip_network) and [nameserver](#nameserver). Pick only the ones you need and branch from there.
+
+## Full Schema definition
 
 You can find the script to generate the database [here](https://raw.githubusercontent.com/NICMx/rdap-sql-provider/master/src/main/resources/META-INF/sql/Database.sql "SQL file with tables").
 
-Red Dog's database contains 62 tables:
+These are the tables:
 
 1. [asn_entity_roles](#asn_entity_roles)
 2. [asn_events](#asn_events)

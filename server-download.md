@@ -5,7 +5,7 @@ title: Server WAR Download
 
 # Server WAR Download
 
-The server is your typical servlet Java WAR using a MySQL database; simply toss it into your favorite servlet container.
+A typical servlet WAR intended to serve registration data. To be plugged into a servlet container along with a data access implementation.
 
 - **Bold** marks the most recommended version(s).
 - Normal font signals recommended fallback versions in case the previous option fails you [bug reports welcomed](https://github.com/NICMx/rdap-server/issues).

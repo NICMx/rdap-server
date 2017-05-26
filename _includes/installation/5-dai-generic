@@ -6,7 +6,7 @@ For example:
 
 	mv ~/Downloads/rdap-sample-daa-impl-{{ site.latest-sample-data-impl }}.jar WEB-INF/lib
 
-If your classpath only contains one implementation, that's all you need. Otherwise state the hub class of your intended implementation in the `data-access.properties` file.
+If your classpath only contains one implementation and it includes a [service provider configuration file](data-access-layer.html), that's all you need. Otherwise state the hub class of your intended implementation in the `data-access.properties` file.
 
 	echo "data-access-implementation = mx.nic.rdap.sample.SampleHub" > WEB-INF/data-access.properties
 

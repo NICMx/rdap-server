@@ -5,8 +5,7 @@ title: RDAP Data Access Api Download
 
 # RDAP Data Access Api Download
 
-Base project containing the interfaces to implement the Database server provider for you server.
-Documentation [here](data-access-layer.html)
+Interfaces a Data Access Implementation should implement. Documentation [here](data-access-layer.html).
 
 - **Bold** marks the most recommended version(s).
 - Normal font signals recommended fallback versions in case the previous option fails you [bug reports welcomed](https://github.com/NICMx/rdap-data-access-api/issues).

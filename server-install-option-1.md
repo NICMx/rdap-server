@@ -20,3 +20,5 @@ title: Server Installation
 
 {% include installation/8-test-dai %}
 
+{% include installation/9-next %}
+

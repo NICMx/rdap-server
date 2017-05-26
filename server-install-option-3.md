@@ -20,3 +20,5 @@ title: Server Installation
 
 {% include installation/8-test-sql %}
 
+{% include installation/9-next %}
+

@@ -5,7 +5,7 @@ title: RDAP Core Download
 
 # RDAP Core Download
 
-This lib contains the main objects defined in RDAP RFCS, used as base for all the other Red Dog projects.
+Basic RDAP components defined by the RFCs. Used as foundation for all the other Red Dog projects.
 
 - **Bold** marks the most recommended version(s).
 - Normal font signals recommended fallback versions in case the previous option fails you [bug reports welcomed](https://github.com/NICMx/rdap-core/issues).
@@ -19,8 +19,6 @@ This lib contains the main objects defined in RDAP RFCS, used as base for all th
 
 
 ## 1.0
-
-First release of the Core lib.
 
 |Download |SHA512    |MD5    |Source code(GitHub)|
 |:--------|:---------|:------|:---------|
