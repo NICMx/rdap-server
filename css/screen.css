@@ -88,6 +88,12 @@ body > div {
 	text-align: right;
 }
 
+.content .three-columns {
+	-webkit-columns: auto 3; /* Chrome, Safari, Opera */
+	-moz-columns: auto 3; /* Firefox */
+	columns: auto 3;
+}
+
 #news {
 	background-color: #f3efef;
 }

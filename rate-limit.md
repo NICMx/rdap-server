@@ -12,7 +12,7 @@ Red Dog's rate limiter is simply a [servlet filter](http://www.oracle.com/techne
 
 Notice that all this does is reduce request floods from well-behaved clients. The client is free to continue sending simultaneous requests so this is by no means a DOS attack prevention system. It also prevents the server from wasting too many resources handling the whole request, but notice that servlet filters happen fairly late during a packet processing pipeline.
 
-If this fulfills your needs, add to your `web.xml` something in the lines of
+If this fulfills your needs, add to your `web.xml`'s `<web-app>` tag something in the lines of
 
 	<filter>
 		<filter-name>RateLimitFilter</filter-name>
@@ -27,5 +27,7 @@ If this fulfills your needs, add to your `web.xml` something in the lines of
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
-`mx.nic.rdap.server.filter.RateLimitFilter` is already included within Red Dog's WAR. The `limit` init-param is the number of simultaneous requests allowed per IP address. This is otherwise standard [filter](http://docs.oracle.com/cd/E13222_01/wls/docs81/webapp/web_xml.html#1015950) and [filter-mapping](http://docs.oracle.com/cd/E13222_01/wls/docs81/webapp/web_xml.html#1039330) syntax.
+`mx.nic.rdap.server.filter.RateLimitFilter` is already included within Red Dog's WAR. The `limit` init-param is the number of simultaneous requests allowed per IP address. This is all standard [filter](http://docs.oracle.com/cd/E13222_01/wls/docs81/webapp/web_xml.html#1015950) and [filter-mapping](http://docs.oracle.com/cd/E13222_01/wls/docs81/webapp/web_xml.html#1039330) syntax.
+
+[Back to the optional configuration index](documentation.html#further-configuration-optional).
 

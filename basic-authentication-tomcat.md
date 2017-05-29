@@ -77,6 +77,5 @@ Other relevant notes:
 
 # Where to go next
 
-At this moment, you can say that your server is ready to answer some user requests, don't you think? But, what about information that will be showed in these answers? Do you really want all your users to know all the data that you have? maybe not. Therefore, in [this document](response-privacy.html "Response Privacy Configuration") we will show you how to decide which data will be shown to which user.
-
+The next document in the _User Authentication_ section is [Response Privacy](response-privacy.html "Response Privacy Configuration").
 

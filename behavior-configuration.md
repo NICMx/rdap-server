@@ -147,3 +147,6 @@ But whether they support things like this is left at the implementor's discretio
 
 When `allow_search_wildcards_anywhere` is `false`, the server will validate only one wildcard is present per label, and only at the end of it. This is simply intended to prevent the data access implementation from having to validate this.
 
+## Where to go next
+
+[Back to the optional configuration index](documentation.html#further-configuration-optional).

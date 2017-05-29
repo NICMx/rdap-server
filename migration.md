@@ -6,7 +6,7 @@ title: Database Tables Definition
 
 ## Introduction
 
-Red Dog's builtin schema is an ordinary relational database conceived in MySQL. Users that aim to implement [Option 3](intro.html#TODO) need to build a mechanism to populate this database and keep it updated.
+Red Dog's builtin schema is an ordinary relational database conceived in MySQL. Users that aim to implement [Option 3](intro.html#option-3-using-red-dogs-builtin-schema) need to build a mechanism to populate this database and keep it updated.
 
 Given that the means through which you will export your data depends on the specific format in which you have it stored, this documentation cannot go into detail as to how to do it. Instead, this will serve as reference material for Red Dog's schema.
 
@@ -14,74 +14,77 @@ Red Dog's database contains 62 tables. Though the task of populating them might 
 
 ## Full Schema definition
 
-You can find the script to generate the database [here](https://raw.githubusercontent.com/NICMx/rdap-sql-provider/master/src/main/resources/META-INF/sql/Database.sql "SQL file with tables").
+You can find the script to generate the database [here](https://raw.githubusercontent.com/NICMx/rdap-sql-provider/master/src/main/resources/META-INF/sql/Database.sql "SQL file with tables") and the ER diagram [here](img/diagram/db-er.png).
 
 These are the tables:
 
-1. [asn_entity_roles](#asn_entity_roles)
-2. [asn_events](#asn_events)
-3. [asn_links](#asn_links)
-4. [asn_remarks](#asn_remarks)
-5. [asn_status](#asn_status)
-6. [autonomous_system_number](#autonomous_system_number)
-7. [country_code](#country_code)
-8. [domain](#domain)
-9. [domain_entity_roles](#domain_entity_roles)
-10. [domain_events](#domain_events)
-11. [domain_links](#domain_links)
-12. [domain_nameservers](#domain_nameservers)
-13. [domain_networks](#domain_networks)
-14. [domain_public_ids](#domain_public_ids)
-15. [domain_remarks](#domain_remarks)
-16. [domain_status](#domain_status)
-17. [ds_data](#ds_data)
-18. [ds_events](#ds_events)
-19. [ds_links](#ds_links)
-20. [entity](#entity)
-21. [entity_contact](#entity_contact)
-22. [entity_entity_roles](#entity_entity_roles)
-23. [entity_events](#entity_events)
-24. [entity_links](#entity_links)
-25. [entity_public_ids](#entity_public_ids)
-26. [entity_remarks](#entity_remarks)
-27. [entity_status](#entity_status)
-28. [event](#event)
-29. [event_action](#event_action)
-30. [event_links](#event_links)
-31. [ip_address](#ip_address)
-32. [ip_network](#ip_network)
-33. [ip_network_entity_roles](#ip_network_entity_roles)
-34. [ip_network_events](#ip_network_events)
-35. [ip_network_links](#ip_network_links)
-36. [ip_network_parent_relation](#ip_network_parent_relation)
-37. [ip_network_remarks](#ip_network_remarks)
-38. [ip_network_status](#ip_network_status)
-39. [ip_version](#ip_version)
-40. [link](#link)
-41. [nameserver](#nameserver)
-42. [nameserver_entity_roles](#nameserver_entity_roles)
-43. [nameserver_events](#nameserver_events)
-44. [nameserver_links](#nameserver_links)
-45. [nameserver_remarks](#nameserver_remarks)
-46. [nameserver_status](#nameserver_status)
-47. [public_id](#public_id)
-48. [rdap_user](#rdap_user)
-49. [rdap_user_role](#rdap_user_role)
-50. [relation](#relation)
-51. [remark](#remark)
-52. [remark_description](#remark_description)
-53. [remark_links](#remark_links)
-54. [roles](#roles)
-55. [secure_dns](#secure_dns)
-56. [status](#status)
-57. [variant](#variant)
-58. [variant_name](#variant_name)
-59. [variant_relation](#variant_relation)
-60. [vcard](#vcard)
-61. [vcard_postal_info](#vcard_postal_info)
-62. [zone](#zone)
+<ol class="three-columns">
+	<li><a href="#asn_entity_roles">asn_entity_roles</a></li>
+	<li><a href="#asn_events">asn_events</a></li>
+	<li><a href="#asn_links">asn_links</a></li>
+	<li><a href="#asn_remarks">asn_remarks</a></li>
+	<li><a href="#asn_status">asn_status</a></li>
+	<li><a href="#autonomous_system_number">autonomous_system_number</a></li>
+	<li><a href="#country_code">country_code</a></li>
+	<li><a href="#domain">domain</a></li>
+	<li><a href="#domain_entity_roles">domain_entity_roles</a></li>
+	<li><a href="#domain_events">domain_events</a></li>
+	<li><a href="#domain_links">domain_links</a></li>
+	<li><a href="#domain_nameservers">domain_nameservers</a></li>
+	<li><a href="#domain_networks">domain_networks</a></li>
+	<li><a href="#domain_public_ids">domain_public_ids</a></li>
+	<li><a href="#domain_remarks">domain_remarks</a></li>
+	<li><a href="#domain_status">domain_status</a></li>
+	<li><a href="#ds_data">ds_data</a></li>
+	<li><a href="#ds_events">ds_events</a></li>
+	<li><a href="#ds_links">ds_links</a></li>
+	<li><a href="#entity">entity</a></li>
+	<li><a href="#entity_contact">entity_contact</a></li>
+	<li><a href="#entity_entity_roles">entity_entity_roles</a></li>
+	<li><a href="#entity_events">entity_events</a></li>
+	<li><a href="#entity_links">entity_links</a></li>
+	<li><a href="#entity_public_ids">entity_public_ids</a></li>
+	<li><a href="#entity_remarks">entity_remarks</a></li>
+	<li><a href="#entity_status">entity_status</a></li>
+	<li><a href="#event">event</a></li>
+	<li><a href="#event_action">event_action</a></li>
+	<li><a href="#event_links">event_links</a></li>
+	<li><a href="#ip_address">ip_address</a></li>
+	<li><a href="#ip_network">ip_network</a></li>
+	<li><a href="#ip_network_entity_roles">ip_network_entity_roles</a></li>
+	<li><a href="#ip_network_events">ip_network_events</a></li>
+	<li><a href="#ip_network_links">ip_network_links</a></li>
+	<li><a href="#ip_network_parent_relation">ip_network_parent_relation</a></li>
+	<li><a href="#ip_network_remarks">ip_network_remarks</a></li>
+	<li><a href="#ip_network_status">ip_network_status</a></li>
+	<li><a href="#ip_version">ip_version</a></li>
+	<li><a href="#link">link</a></li>
+	<li><a href="#nameserver">nameserver</a></li>
+	<li><a href="#nameserver_entity_roles">nameserver_entity_roles</a></li>
+	<li><a href="#nameserver_events">nameserver_events</a></li>
+	<li><a href="#nameserver_links">nameserver_links</a></li>
+	<li><a href="#nameserver_remarks">nameserver_remarks</a></li>
+	<li><a href="#nameserver_status">nameserver_status</a></li>
+	<li><a href="#public_id">public_id</a></li>
+	<li><a href="#rdap_user">rdap_user</a></li>
+	<li><a href="#rdap_user_role">rdap_user_role</a></li>
+	<li><a href="#relation">relation</a></li>
+	<li><a href="#remark">remark</a></li>
+	<li><a href="#remark_description">remark_description</a></li>
+	<li><a href="#remark_links">remark_links</a></li>
+	<li><a href="#roles">roles</a></li>
+	<li><a href="#secure_dns">secure_dns</a></li>
+	<li><a href="#status">status</a></li>
+	<li><a href="#variant">variant</a></li>
+	<li><a href="#variant_name">variant_name</a></li>
+	<li><a href="#variant_relation">variant_relation</a></li>
+	<li><a href="#vcard">vcard</a></li>
+	<li><a href="#vcard_postal_info">vcard_postal_info</a></li>
+	<li><a href="#zone">zone</a></li>
+</ol>
 
-Each table fields and purposes are described in the following sections:
+
+Each table is described in the following sections:
 
 ### asn_entity_roles
 
@@ -232,7 +235,7 @@ This table contains the relation between a Domain and its ip networks. Its field
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
 |dom\_id|bigint(20)|Domain's id| No | domain | dom\_id| 
-|ine\_id|bigint(20)|Ip Network's id| No | ip_network | ine\_id| 
+|ine\_id|bigint(20)|IP Network's id| No | ip_network | ine\_id| 
 
 **Primary key**: dom\_id, ine\_id.
 
@@ -437,10 +440,10 @@ This table contains the information about the nameserver's ip addresses. Its fie
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
-|iad\_id|int(11)|Ip address' id. Auto increment.| No ||| 
+|iad\_id|int(11)|IP address's id. Auto increment.| No ||| 
 |nse\_id|bigint(20)|Nameserver's id| No | nameserver | nse\_id| 
-|iad\_type|tinyint(4)|Ip address type (4 or 6)| No ||| 
-|iad\_value|varbinary(16)|Ip address value| No ||| 
+|iad\_type|tinyint(4)|IP address type (4 or 6)| No ||| 
+|iad\_value|varbinary(16)|IP address value| No ||| 
 
 **Primary key**: iad\_id, nse\_id.
 
@@ -449,17 +452,17 @@ This table contains the information about the network registration and entities 
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
-|ine\_id|bigint(20). Auto Increment. Unsigned|Ip network's id|No|||
-|ine\_handle|varchar(255)|An RIR-unique identifier of the Ip network registration. Unique|No|||
+|ine\_id|bigint(20). Auto Increment. Unsigned|IP network's id|No|||
+|ine\_handle|varchar(255)|An RIR-unique identifier of the IP network registration. Unique|No|||
 |ine\_start\_address\_up|bigint(20) unsigned|The up part of the starting IP address of the network.|Yes|||
 |ine\_start\_address\_down|bigint(20) unsigned|The down part of the starting IP address of the network.|Yes|||
 |ine\_end\_address\_up|bigint(20) unsigned|The up part of the ending IP address of the network.|Yes|||
 |ine\_end\_address\_down|bigint(20) unsigned|The down part of the ending IP address of the network.|Yes|||
 |ine\_name|varchar(255)|An identifier assigned to the network registration by the registration holder.|Yes|||
 |ine\_type|varchar(255)|A string containing a RIR-specific classification of the Network.|Yes|||
-|ine\_port43|varchar(254)|A simple string containing the fully qualified host name or IP address of the WHOIS server where the Ip network instance may be found.|Yes|||
+|ine\_port43|varchar(254)|A simple string containing the fully qualified host name or IP address of the WHOIS server where the IP network instance may be found.|Yes|||
 |ccd\_id|smallint(5) unsigned|Country code's id.|No|country\_code|ccd\_id|
-|ip\_version\_id|tinyint(3) unsigned|Ip version's id.| No|ip\_version|ive\_id|
+|ip\_version\_id|tinyint(3) unsigned|IP version's id.| No|ip\_version|ive\_id|
 |ine\_parent\_handle|varchar(255)|A string containing a RIR-unique identifier of the parent network of this network registration.|Yes|||
 |ine\_cidr|smallint(6)|Network mask length of the IP address.|Yes|||
 
@@ -539,7 +542,7 @@ This table contains the catalog of ip version types. Its fields are the followin
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
 |ive\_id|tinyint(3) unsigned|IP version's id|No||| 
-|ive\_name|varchar(2)|Ip version's name ('v4' or 'v6')| No ||| 
+|ive\_name|varchar(2)|IP version's name ('v4' or 'v6')| No ||| 
 
 **Primary key**: ive\_id.
 
@@ -831,3 +834,6 @@ This table contains the zones managed by the RDAP server. Its fields are the fol
 
 **Primary_key**: zone\_id.
 
+## Where to go next
+
+[Deploying the RDAP Server with the SQL Provider](server-install-option-3.html).

@@ -4,7 +4,7 @@ title: Data Access Layer
 
 # Data Access Layer
 
-As stated [here](intro.html#what-is-red-dog), your implementation of the data access API will wrap whatever data storage you have to the RDAP server.
+As stated [here](intro.html#option-1-development-of-a-dai), your implementation of the data access API will wrap whatever data storage you have to the RDAP server.
 
 To create your own implementation, you need to provide the following classes:
 

@@ -54,5 +54,5 @@ Other relevant notes:
 
 # Where to go next
 
-Now that your RDAP server is ready, let's configure the [help command](help-response.html "Help Command Configuration").
+The next document in the _User Authentication_ section is [Optional Authentication](optional-authentication.html "Optional Authentication").
 

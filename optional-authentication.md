@@ -2,20 +2,16 @@
 title: Optional Authentication
 ---
 
-<div id="breadcrumbs">
-<a href="documentation.html">Documentation</a> > <a href="documentation.html#miscellaneous">Miscellaneous</a> > Optional Authentication
-</div>
-
 # Optional Authentication
 
 Typically, stock HTTP authentication operates in an all-or-nothing model:
 
 1. Client requests resource anonymously.
-2. Server answers "[`401 - Unauthorized`](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#4xx_Client_Error)".
+2. Server answers "[`401 - Unauthorized`](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#401)".
 3. Client repeats the request, including credentials in a header field named "[*Authorization*](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Request_fields)".
 4. Server validates credentials and returns the resource on success.
 
-(Technically, users can provide credentials prematurely if they foresee the 401 and want to skip the first and second steps, but the above is more practical.)
+> ![Note!](img/bulb.svg) Technically, users can provide credentials prematurely if they foresee the 401 and want to skip the first and second steps, but the above is more practical.
 
 As a result, protected objects are *completely* concealed until clients have identified themselves. Even if the servlet knows that some information should be made public, HTTP bans any access lacking _Authorization_. If you want to support "optional" authentication (allowing partial objects to be accesed by anonymous users), you often need to work around the model.
 
@@ -31,3 +27,6 @@ One way to append this forked header to requests is by means of reverse proxies.
 ("`YW5vbnltb3VzOg==`" is the Base64 representation of "`anonymous:`". See the [`headers`](http://httpd.apache.org/docs/current/mod/mod_headers.html) module and its [RequestHeader](http://httpd.apache.org/docs/current/mod/mod_headers.html#RequestHeader) statement.)
 
 Please note that, if you want to change the username representing anonymous requests, Red Dog should be made aware of this by way of its [configuration](behavior-configuration.html#anonymous_username).
+
+[Back to the optional configuration index](documentation.html#further-configuration-optional).
+

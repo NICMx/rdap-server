@@ -67,5 +67,6 @@ You can add many notices as you need by adding new **notice** elements to the XM
 </help>
 ```
 
+## Where to go next
 
-
+The minimum RDAP server is now running. You might want to go to the main documentation index's [optional documentation](documentation.html#further-configuration-optional) to tweak it further.

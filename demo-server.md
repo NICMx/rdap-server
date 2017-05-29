@@ -61,7 +61,9 @@ As a demo version, this server has limited features compared to the ones defined
 
 ## Available configuration
 
-`WEB-INF/configuration.properties` is Red Dog's global configuration file. You can find documentation for every field [here](behavior-configuration.html).
+`WEB-INF/configuration.properties` is Red Dog's global configuration file. Since the server is running, you might play around with some fields if you want. You can find documentation [here](behavior-configuration.html).
+
+Notice that tweaks to this file require a server restart to go live.
 
 ## Dummy data 
 
