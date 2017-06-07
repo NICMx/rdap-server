@@ -48,7 +48,7 @@ The [SQL Provider](https://github.com/NICMx/rdap-sql-provider) project is a func
 
 ![Fig. 2 - SQL Provider](img/diagram/intro-option-2.svg)
 
-You can find the specifications these queries need to fulfill [here](TODO).
+You can find the specifications these queries need to fulfill [here](overriding-queries.html "Overriding Red Dog Queries").
 
 > ![Warning](img/warning.svg) Please identify and be aware of the maintenance overhead of using this option if future bugs or RFC updates require modifications to the query specification.
 
