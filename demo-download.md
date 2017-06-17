@@ -21,8 +21,6 @@ Unzip it and run it with `java -jar demo.jar`. Documentation [here](demo-server.
 
 ## 1.0
 
-First release of the demo server.
-
 |Download |SHA512    |MD5    |
 |:--------|:---------|:------|
 |[~~1.0.0~~](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-demo-1.0.zip)|[SHA512](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-demo-1.0.sha)|[MD5](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-demo-1.0.md5)|

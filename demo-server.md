@@ -30,8 +30,8 @@ You can download the demo server from this [page](demo-download.html).
 
 Expand the compressed zip and run the jar normally:
 
-	unzip rdap-server-demo-1.0.zip
-	cd rdap-server-demo
+	unzip rdap-server-demo-{{ site.latest-demo-server }}.zip
+	cd rdap-demo-{{ site.latest-demo-server }}
 	java -jar demo.jar
 
 The server will run at [http://localhost:8080/rdap-server/](http://localhost:8080/rdap-server/) by default. You can change the binding IP and port, using the `java -jar demo.jar [your-IP-address [your-port]]` syntax. As an example:
