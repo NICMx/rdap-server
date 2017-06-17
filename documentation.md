@@ -17,7 +17,7 @@ title: Documentation Index
 
 ## Installation/Configuration (Option 2 - Overriding SQL Provider queries)
 
-1. [Implementing the SQL queries]()
+1. [Implementing the SQL queries](overriding-queries.html)
 2. [Deploying `rdap-server` with the SQL Provider](server-install-option-2.html)
 3. [Adding content to the Help Response](help-response.html)
 
