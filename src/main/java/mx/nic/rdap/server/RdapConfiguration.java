@@ -339,10 +339,11 @@ public class RdapConfiguration {
 	}
 
 	public static boolean isValidZone(String domain) {
+		// TODO test works as expected, comitting just to create branch
 		if (isReverseAddress(domain))
 			return isValidReverseAddress(domain);
 		String[] split = domain.split("\\.", 2);
-		String zone = split[1].trim();
+		String zone = split[1].trim().toLowerCase();
 		if (zone.endsWith(".")) {
 			zone = zone.substring(0, zone.length() - 1);
 		}
