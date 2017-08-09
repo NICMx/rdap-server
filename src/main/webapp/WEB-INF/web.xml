@@ -5,12 +5,12 @@
 	id="WebApp_ID" version="3.1">
 
 	<display-name>rdap-server</display-name>
-	
+
 	<error-page>
 		<location>/exception</location>
 	</error-page>
 	
 	<welcome-file-list>
-        <welcome-file>index.html</welcome-file>
-    </welcome-file-list> 
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
 </web-app>
