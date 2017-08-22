@@ -1,4 +1,4 @@
-package mx.nic.rdap.server;
+package mx.nic.rdap.server.configuration;
 
 import java.io.IOException;
 import java.sql.SQLException;

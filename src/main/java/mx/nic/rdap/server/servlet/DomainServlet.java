@@ -12,10 +12,9 @@ import mx.nic.rdap.db.exception.http.HttpException;
 import mx.nic.rdap.db.exception.http.NotFoundException;
 import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.db.spi.DomainDAO;
-import mx.nic.rdap.server.DataAccessServlet;
-import mx.nic.rdap.server.RdapConfiguration;
-import mx.nic.rdap.server.RdapResult;
+import mx.nic.rdap.server.configuration.RdapConfiguration;
 import mx.nic.rdap.server.result.DomainResult;
+import mx.nic.rdap.server.result.RdapResult;
 import mx.nic.rdap.server.util.Util;
 
 @WebServlet(name = "domain", urlPatterns = { "/domain/*" })

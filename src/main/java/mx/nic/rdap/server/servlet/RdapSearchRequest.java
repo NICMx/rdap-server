@@ -1,4 +1,4 @@
-package mx.nic.rdap.server;
+package mx.nic.rdap.server.servlet;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -11,6 +11,7 @@ import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.exception.http.BadRequestException;
 import mx.nic.rdap.db.exception.http.UnprocessableEntityException;
 import mx.nic.rdap.server.catalog.RequestSearchType;
+import mx.nic.rdap.server.configuration.RdapConfiguration;
 
 public class RdapSearchRequest {
 

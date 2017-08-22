@@ -1,8 +1,9 @@
-package mx.nic.rdap.server;
+package mx.nic.rdap.server.result;
 
 import mx.nic.rdap.core.catalog.Role;
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.RdapObject;
+import mx.nic.rdap.server.configuration.RdapConfiguration;
 
 /**
  * Information about the user that make a request.

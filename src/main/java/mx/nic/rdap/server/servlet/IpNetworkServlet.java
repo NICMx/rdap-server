@@ -11,9 +11,8 @@ import mx.nic.rdap.db.exception.http.BadRequestException;
 import mx.nic.rdap.db.exception.http.HttpException;
 import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.db.spi.IpNetworkDAO;
-import mx.nic.rdap.server.DataAccessServlet;
-import mx.nic.rdap.server.RdapResult;
 import mx.nic.rdap.server.result.IpResult;
+import mx.nic.rdap.server.result.RdapResult;
 import mx.nic.rdap.server.util.Util;
 
 @WebServlet(name = "ip", urlPatterns = { "/ip/*" })

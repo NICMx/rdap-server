@@ -1,4 +1,4 @@
-package mx.nic.rdap.server;
+package mx.nic.rdap.server.listener;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +16,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 import mx.nic.rdap.db.service.DataAccessService;
+import mx.nic.rdap.server.configuration.RdapConfiguration;
+import mx.nic.rdap.server.notices.UserNotices;
+import mx.nic.rdap.server.renderer.RendererPool;
 import mx.nic.rdap.server.util.PrivacyUtil;
 import mx.nic.rdap.server.util.Util;
 

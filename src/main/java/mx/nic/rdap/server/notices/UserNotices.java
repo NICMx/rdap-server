@@ -1,4 +1,4 @@
-package mx.nic.rdap.server;
+package mx.nic.rdap.server.notices;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,6 +12,7 @@ import org.xml.sax.SAXException;
 
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.server.catalog.OperationalProfile;
+import mx.nic.rdap.server.configuration.RdapConfiguration;
 
 /**
  * Holder for the Help, Terms of services and notices remarks.

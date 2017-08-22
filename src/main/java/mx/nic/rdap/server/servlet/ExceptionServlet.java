@@ -3,9 +3,8 @@ package mx.nic.rdap.server.servlet;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
-import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.RdapServlet;
 import mx.nic.rdap.server.result.ExceptionResult;
+import mx.nic.rdap.server.result.RdapResult;
 
 @WebServlet(name = "exception", urlPatterns = { "/exception" })
 public class ExceptionServlet extends RdapServlet {

@@ -16,8 +16,8 @@ import javax.servlet.ServletContext;
 import mx.nic.rdap.core.catalog.RemarkType;
 import mx.nic.rdap.core.catalog.Status;
 import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.server.RdapInitializer;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
+import mx.nic.rdap.server.listener.RdapInitializer;
 
 public class PrivacyUtil {
 

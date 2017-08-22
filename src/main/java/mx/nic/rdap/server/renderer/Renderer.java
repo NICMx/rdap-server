@@ -1,6 +1,8 @@
-package mx.nic.rdap.server;
+package mx.nic.rdap.server.renderer;
 
 import java.io.PrintWriter;
+
+import mx.nic.rdap.server.result.RdapResult;
 
 /**
  * A response formatter. Transforms a {@link RdapResult} to something the user

@@ -1,4 +1,4 @@
-package mx.nic.rdap.server;
+package mx.nic.rdap.server.servlet;
 
 import java.util.PriorityQueue;
 

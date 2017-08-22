@@ -1,4 +1,4 @@
-package mx.nic.rdap.server;
+package mx.nic.rdap.server.notices;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -21,6 +21,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import mx.nic.rdap.core.db.Remark;
+import mx.nic.rdap.server.listener.RdapInitializer;
 
 /**
  * Class that helps to read and validate HELP and TERMS OF SERVICE notices from

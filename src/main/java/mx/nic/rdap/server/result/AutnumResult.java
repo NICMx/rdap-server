@@ -8,10 +8,8 @@ import javax.json.JsonObject;
 import mx.nic.rdap.core.db.Autnum;
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Link;
-import mx.nic.rdap.server.RdapConfiguration;
-import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.UserInfo;
 import mx.nic.rdap.server.catalog.OperationalProfile;
+import mx.nic.rdap.server.configuration.RdapConfiguration;
 import mx.nic.rdap.server.operational.profile.OperationalProfileValidator;
 import mx.nic.rdap.server.renderer.json.AutnumJsonWriter;
 

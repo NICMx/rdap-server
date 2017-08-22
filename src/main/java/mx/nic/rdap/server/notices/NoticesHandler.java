@@ -1,4 +1,4 @@
-package mx.nic.rdap.server;
+package mx.nic.rdap.server.notices;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package mx.nic.rdap.server;
+package mx.nic.rdap.server.servlet;
 
 import java.io.IOException;
 import java.util.PriorityQueue;
@@ -9,8 +9,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.exception.http.HttpException;
-import mx.nic.rdap.server.AcceptHeaderFieldParser.Accept;
 import mx.nic.rdap.server.renderer.DefaultRenderer;
+import mx.nic.rdap.server.renderer.Renderer;
+import mx.nic.rdap.server.renderer.RendererPool;
+import mx.nic.rdap.server.result.RdapResult;
+import mx.nic.rdap.server.servlet.AcceptHeaderFieldParser.Accept;
 
 /**
  * Base class of all RDAP servlets.

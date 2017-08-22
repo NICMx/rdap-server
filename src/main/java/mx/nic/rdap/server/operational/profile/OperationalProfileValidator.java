@@ -11,8 +11,8 @@ import mx.nic.rdap.core.db.Event;
 import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.VCard;
 import mx.nic.rdap.core.db.VCardPostalInfo;
-import mx.nic.rdap.server.RdapConfiguration;
-import mx.nic.rdap.server.UserNotices;
+import mx.nic.rdap.server.configuration.RdapConfiguration;
+import mx.nic.rdap.server.notices.UserNotices;
 
 public class OperationalProfileValidator {
 	private final static Logger logger = Logger.getLogger(OperationalProfileValidator.class.getName());

@@ -15,7 +15,7 @@ import mx.nic.rdap.core.db.RemarkDescription;
 import mx.nic.rdap.db.exception.http.BadRequestException;
 import mx.nic.rdap.db.exception.http.HttpException;
 import mx.nic.rdap.db.exception.http.NotFoundException;
-import mx.nic.rdap.server.RdapConfiguration;
+import mx.nic.rdap.server.configuration.RdapConfiguration;
 
 /**
  * Random miscellaneous functions useful anywhere.

@@ -10,7 +10,6 @@ import javax.json.JsonObjectBuilder;
 import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.server.RdapResult;
 
 /**
  * A result from a exception generated in a request.

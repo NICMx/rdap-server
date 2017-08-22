@@ -9,10 +9,9 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.server.RdapConfiguration;
-import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.UserNotices;
 import mx.nic.rdap.server.catalog.OperationalProfile;
+import mx.nic.rdap.server.configuration.RdapConfiguration;
+import mx.nic.rdap.server.notices.UserNotices;
 import mx.nic.rdap.server.renderer.json.RemarkJsonWriter;
 import mx.nic.rdap.server.util.PrivacyUtil;
 

@@ -18,8 +18,8 @@ import mx.nic.rdap.core.db.IpNetwork;
 import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.RdapObject;
 import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.server.RdapConfiguration;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
+import mx.nic.rdap.server.configuration.RdapConfiguration;
 import mx.nic.rdap.server.util.PrivacyUtil;
 import mx.nic.rdap.server.util.Util;
 

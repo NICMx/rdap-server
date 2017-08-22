@@ -13,14 +13,13 @@ import javax.json.JsonValue;
 import javax.json.JsonWriter;
 
 import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.server.RdapConfiguration;
-import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.Renderer;
-import mx.nic.rdap.server.UserNotices;
 import mx.nic.rdap.server.catalog.OperationalProfile;
+import mx.nic.rdap.server.configuration.RdapConfiguration;
+import mx.nic.rdap.server.notices.UserNotices;
 import mx.nic.rdap.server.operational.profile.OperationalProfileValidator;
 import mx.nic.rdap.server.renderer.json.JsonUtil;
 import mx.nic.rdap.server.renderer.json.RemarkJsonWriter;
+import mx.nic.rdap.server.result.RdapResult;
 
 public class JsonRenderer implements Renderer {
 

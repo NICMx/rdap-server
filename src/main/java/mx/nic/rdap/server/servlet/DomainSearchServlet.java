@@ -15,11 +15,9 @@ import mx.nic.rdap.db.exception.http.NotImplementedException;
 import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.db.spi.DomainDAO;
 import mx.nic.rdap.db.struct.SearchResultStruct;
-import mx.nic.rdap.server.DataAccessServlet;
-import mx.nic.rdap.server.RdapConfiguration;
-import mx.nic.rdap.server.RdapResult;
-import mx.nic.rdap.server.RdapSearchRequest;
+import mx.nic.rdap.server.configuration.RdapConfiguration;
 import mx.nic.rdap.server.result.DomainSearchResult;
+import mx.nic.rdap.server.result.RdapResult;
 
 @WebServlet(name = "domains", urlPatterns = { "/domains" })
 public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {

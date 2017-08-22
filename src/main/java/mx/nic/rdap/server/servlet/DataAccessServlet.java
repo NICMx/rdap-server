@@ -1,4 +1,4 @@
-package mx.nic.rdap.server;
+package mx.nic.rdap.server.servlet;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -6,6 +6,7 @@ import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.exception.http.HttpException;
 import mx.nic.rdap.db.exception.http.NotImplementedException;
 import mx.nic.rdap.db.spi.DAO;
+import mx.nic.rdap.server.result.RdapResult;
 
 /**
  * An RDAP servlet that extrats information from a specific DAO.

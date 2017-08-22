@@ -5,8 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.exception.http.HttpException;
 import mx.nic.rdap.db.spi.DAO;
-import mx.nic.rdap.server.DataAccessServlet;
-import mx.nic.rdap.server.RdapResult;
+import mx.nic.rdap.server.result.RdapResult;
 
 public class NotImplementedServlet extends DataAccessServlet<DAO> {
 
