@@ -352,9 +352,9 @@ public class RdapConfiguration {
 
 	// Validates if a reverse address is a valid zone
 	private static boolean isValidReverseAddress(String domain) {
-		if (domain.endsWith(REVERSE_IP_V4))
+		if (domain.toLowerCase().endsWith(REVERSE_IP_V4))
 			return validZones.contains(REVERSE_IP_V4);
-		if (domain.endsWith(REVERSE_IP_V6))
+		if (domain.toLowerCase().endsWith(REVERSE_IP_V6))
 			return validZones.contains(REVERSE_IP_V6);
 
 		return false;
