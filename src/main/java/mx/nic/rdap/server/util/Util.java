@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.Arrays;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,21 +32,19 @@ public class Util {
 	 *             <code>request</code> is not a valid RDAP URI.
 	 */
 	public static String[] getRequestParams(HttpServletRequest request) throws HttpException {
-		String uri;
 		try {
-			uri = URLDecoder.decode(request.getRequestURI(), "UTF-8");
+			URLDecoder.decode(request.getRequestURI(), "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			throw new BadRequestException("The request does not appear to be UTF-8 encoded.", e);
 		}
 
-		String[] labels = uri.split("/");
-		if (labels.length < 4) {
+		String pathInfo = request.getPathInfo();
+		if (pathInfo == null || pathInfo.equals("/")) {
 			throw new NotFoundException("The request does not appear to be a valid RDAP URI. " //
 					+ "I might need more arguments than that.");
 		}
-
-		// resourceType = labels[2];
-		return Arrays.copyOfRange(labels, 3, labels.length);
+		// Ignores the first "/"
+		return pathInfo.substring(1).split("/");
 	}
 
 	public static String getUsername(HttpServletRequest httpRequest) {
