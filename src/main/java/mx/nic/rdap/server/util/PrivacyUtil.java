@@ -153,23 +153,14 @@ public class PrivacyUtil {
 			}
 
 			String property = properties.getProperty((String) key).trim();
-			PrivacyStatus privacyProperty = PrivacyStatus.valueOf(property.toUpperCase());
-
-			switch (privacyProperty) {
-			case OWNER:
-				break;
-			case AUTHENTICATED:
-				break;
-			case ANY:
-				break;
-			case NONE:
-				break;
-			default:
+			try {
+				PrivacyStatus privacyProperty = PrivacyStatus.valueOf(property.toUpperCase());
+				objectProperties.put((String) key, privacyProperty);
+			} catch (IllegalArgumentException e) {
 				isInvalidProperties = true;
 				builder.append(key + "=" + property + ", ");
 				continue;
 			}
-			objectProperties.put((String) key, privacyProperty);
 		}
 
 		if (isInvalidProperties) {
