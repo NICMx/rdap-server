@@ -8,9 +8,6 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
-import mx.nic.rdap.core.db.Link;
-import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.core.db.RemarkDescription;
 import mx.nic.rdap.db.exception.http.BadRequestException;
 import mx.nic.rdap.db.exception.http.HttpException;
 import mx.nic.rdap.db.exception.http.NotFoundException;
@@ -72,39 +69,6 @@ public class Util {
 			}
 		}
 		return result;
-	}
-
-	public static Remark getOperationalProfileRemark() {
-		Remark remark = new Remark();
-		RemarkDescription description = new RemarkDescription();
-		description.setDescription(
-				"This response conforms to the RDAP Operational Profile for gTLD Registries and Registrars version 1.0");
-		remark.getDescriptions().add(description);
-		return remark;
-	}
-
-	public static Remark getEppInformationRemark() {
-		Remark remark = new Remark();
-		remark.setTitle("EPP Status Codes");
-		RemarkDescription description = new RemarkDescription();
-		description.setDescription("For more information on domain status codes, please visit https://icann.org/epp");
-		remark.getDescriptions().add(description);
-		Link link = new Link();
-		link.setHref("https://icann.org/epp");
-		remark.getLinks().add(link);
-		return remark;
-	}
-
-	public static Remark getWhoisInaccuracyComplaintFormRemark() {
-		Remark remark = new Remark();
-		RemarkDescription description = new RemarkDescription();
-		remark.setTitle("Whois Inaccuracy Complaint Form");
-		description.setDescription("URL of the ICANN Whois Inaccuracy Complaint Form: https://www.icann.org/wicf");
-		remark.getDescriptions().add(description);
-		Link link = new Link();
-		link.setHref("https://www.icann.org/wicf");
-		remark.getLinks().add(link);
-		return remark;
 	}
 
 }

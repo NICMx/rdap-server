@@ -11,8 +11,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.server.catalog.OperationalProfile;
-import mx.nic.rdap.server.configuration.RdapConfiguration;
 
 /**
  * Holder for the Help, Terms of services and notices remarks.
@@ -40,14 +38,11 @@ public class UserNotices {
 	public static void init(String userPath) throws SAXException, IOException, ParserConfigurationException {
 		help = NoticesReader.parseHelpXML(Paths.get(userPath, HELP_FILE_NAME).toString());
 
-		// if the server has no operational profile, the terms of service will
-		// be optional.
+		// The terms of service are optional.
 		try {
 			tos = NoticesReader.parseTOSXML(Paths.get(userPath, TOS_FILE_NAME).toString());
 		} catch (FileNotFoundException | NoSuchFileException e) {
-			if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)) {
-				throw e;
-			}
+			// Nothing happens, continue
 		}
 	}
 

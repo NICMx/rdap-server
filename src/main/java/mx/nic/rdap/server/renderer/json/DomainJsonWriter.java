@@ -7,9 +7,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import mx.nic.rdap.core.db.Domain;
-import mx.nic.rdap.server.catalog.OperationalProfile;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
-import mx.nic.rdap.server.configuration.RdapConfiguration;
 import mx.nic.rdap.server.util.PrivacyUtil;
 
 public class DomainJsonWriter {
@@ -27,11 +25,9 @@ public class DomainJsonWriter {
 		String value = domain.getFQDN();
 		if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
 			builder.add(key, value);
-		// Point 1.5.2 of rdap operational profile by ICANN
+
 		if (domain.getUnicodeName() != null)
-			if (RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)
-					|| (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)
-							&& domain.getLdhName().compareTo(domain.getUnicodeName()) != 0)) {
+			if (domain.getLdhName().compareTo(domain.getUnicodeName()) != 0) {
 				key = "unicodeName";
 				value = domain.getUnicodeFQDN();
 				if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))

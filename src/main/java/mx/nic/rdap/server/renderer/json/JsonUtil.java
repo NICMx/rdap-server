@@ -8,7 +8,6 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
-import javax.json.JsonValue;
 
 import mx.nic.rdap.core.catalog.Status;
 import mx.nic.rdap.core.db.Autnum;
@@ -21,7 +20,6 @@ import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
 import mx.nic.rdap.server.configuration.RdapConfiguration;
 import mx.nic.rdap.server.util.PrivacyUtil;
-import mx.nic.rdap.server.util.Util;
 
 /**
  * Utilities for json renderer
@@ -176,10 +174,6 @@ public class JsonUtil {
 		}
 
 		return builder.build();
-	}
-
-	public static JsonValue getOperationalProfileRemark() {
-		return RemarkJsonWriter.getNoticeJsonObject(Util.getOperationalProfileRemark());
 	}
 
 }

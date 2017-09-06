@@ -15,7 +15,6 @@ import mx.nic.rdap.db.exception.InitializationException;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.db.spi.RdapUserDAO;
-import mx.nic.rdap.server.catalog.OperationalProfile;
 
 /**
  * Class containing the configuration of the rdap server
@@ -32,7 +31,6 @@ public class RdapConfiguration {
 	private static final String OWNER_ROLES_KEY = "owner_roles";
 	private static final String IS_REVERSE_IPV4_ENABLED_KEY = "is_reverse_ipv4_enabled";
 	private static final String IS_REVERSE_IPV6_ENABLED_KEY = "is_reverse_ipv6_enabled";
-	private static final String OPERATIONAL_PROFILE_KEY = "operational_profile";
 	private static final String ANONYMOUS_USERNAME_KEY = "anonymous_username";
 	private static final String ALLOW_WILDCARDS_KEY = "allow_search_wildcards_anywhere";
 
@@ -42,7 +40,6 @@ public class RdapConfiguration {
 	private static Integer maxNumberOfResultsForAuthenticatedUser;
 	private static Integer maxNumberOfResultsForUnauthenticatedUser;
 	private static Set<Role> objectOwnerRoles;
-	private static OperationalProfile operationalProfile;
 	private static String anonymousUsername;
 	private static Set<String> validZones;
 	private static boolean allowSearchWilcardsAnywhere;
@@ -198,29 +195,6 @@ public class RdapConfiguration {
 			invalidProperties.add(OWNER_ROLES_KEY);
 		}
 
-		if (systemProperties.getProperty(OPERATIONAL_PROFILE_KEY) != null) {
-			String property = systemProperties.getProperty(OPERATIONAL_PROFILE_KEY).trim();
-
-			try {
-				operationalProfile = OperationalProfile.valueOf(property.toUpperCase());
-				switch (operationalProfile) {
-				case REGISTRAR:
-					break;
-				case REGISTRY:
-					break;
-				case NONE:
-					break;
-				default:
-					isValid = false;
-					invalidProperties.add(OPERATIONAL_PROFILE_KEY);
-				}
-			} catch (IllegalArgumentException iae) {
-				isValid = false;
-				invalidProperties.add(OPERATIONAL_PROFILE_KEY);
-			}
-
-		}
-
 		if (systemProperties.getProperty(ANONYMOUS_USERNAME_KEY) == null) {
 			isValid = false;
 			invalidProperties.add(ANONYMOUS_USERNAME_KEY);
@@ -282,13 +256,6 @@ public class RdapConfiguration {
 	 */
 	private static int getMaxNumberOfResultsForUnauthenticatedUser() {
 		return maxNumberOfResultsForUnauthenticatedUser;
-	}
-
-	/**
-	 * Return the profile configured for the server
-	 */
-	public static OperationalProfile getServerProfile() {
-		return operationalProfile;
 	}
 
 	/**

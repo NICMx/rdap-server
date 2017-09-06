@@ -9,11 +9,7 @@ import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.server.catalog.OperationalProfile;
-import mx.nic.rdap.server.configuration.RdapConfiguration;
-import mx.nic.rdap.server.operational.profile.OperationalProfileValidator;
 import mx.nic.rdap.server.renderer.json.DomainJsonWriter;
-import mx.nic.rdap.server.util.Util;
 
 /**
  * A result from a Domain request
@@ -58,14 +54,7 @@ public class DomainResult extends RdapResult {
 	 */
 	@Override
 	public void validateResponse() {
-		if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)) {
-			OperationalProfileValidator.validateDomain(domain);
-			// Point 1.5.18 of rdap operational profile by ICANN
-			domain.getRemarks().add(Util.getEppInformationRemark());
-			// Point 1.5.20 of rdap operational profile by ICANN
-			domain.getRemarks().add(Util.getWhoisInaccuracyComplaintFormRemark());
-
-		}
+		// Nothing to validate
 	}
 
 	/**

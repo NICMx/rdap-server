@@ -12,9 +12,6 @@ import mx.nic.rdap.core.catalog.RemarkType;
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.db.struct.SearchResultStruct;
-import mx.nic.rdap.server.catalog.OperationalProfile;
-import mx.nic.rdap.server.configuration.RdapConfiguration;
-import mx.nic.rdap.server.operational.profile.OperationalProfileValidator;
 import mx.nic.rdap.server.renderer.json.EntityJsonWriter;
 
 /**
@@ -74,18 +71,7 @@ public class EntitySearchResult extends RdapResult {
 	 */
 	@Override
 	public void validateResponse() {
-		if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)) {
-			for (Entity entity : entities) {
-				OperationalProfileValidator.validateEntityTel(entity);
-				OperationalProfileValidator.validateEntityEvents(entity);
-				if (entity.getEntities() != null && !entity.getEntities().isEmpty()) {
-					for (Entity ent : entity.getEntities()) {
-						OperationalProfileValidator.validateEntityTel(ent);
-						OperationalProfileValidator.validateEntityEvents(ent);
-					}
-				}
-			}
-		}
+		// Nothing to validate
 	}
 
 	public List<Entity> getEntities() {

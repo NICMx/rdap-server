@@ -12,9 +12,7 @@ import javax.json.JsonObjectBuilder;
 import mx.nic.rdap.core.db.IpAddress;
 import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.struct.NameserverIpAddressesStruct;
-import mx.nic.rdap.server.catalog.OperationalProfile;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
-import mx.nic.rdap.server.configuration.RdapConfiguration;
 import mx.nic.rdap.server.util.PrivacyUtil;
 
 public class NameserverJsonWriter {
@@ -42,11 +40,9 @@ public class NameserverJsonWriter {
 		String value = nameserver.getLdhName();
 		if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))
 			builder.add(key, value);
-		// Point 2.9.4 of rdap operational profile by ICANN
+
 		if (nameserver.getUnicodeName() != null)
-			if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.REGISTRY)
-					|| (RdapConfiguration.getServerProfile().equals(OperationalProfile.REGISTRY)
-							&& nameserver.getLdhName().compareTo(nameserver.getUnicodeName()) != 0)) {
+			if (nameserver.getLdhName().compareTo(nameserver.getUnicodeName()) != 0) {
 				key = "unicodeName";
 				value = nameserver.getUnicodeName();
 				if (PrivacyUtil.isObjectVisible(value, key, settings.get(key), isAuthenticated, isOwner))

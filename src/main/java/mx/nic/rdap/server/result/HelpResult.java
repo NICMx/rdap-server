@@ -9,8 +9,6 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.server.catalog.OperationalProfile;
-import mx.nic.rdap.server.configuration.RdapConfiguration;
 import mx.nic.rdap.server.notices.UserNotices;
 import mx.nic.rdap.server.renderer.json.RemarkJsonWriter;
 import mx.nic.rdap.server.util.PrivacyUtil;
@@ -25,7 +23,7 @@ public class HelpResult extends RdapResult {
 	public HelpResult() {
 		notices = new ArrayList<>();
 		notices.addAll(UserNotices.getHelp());
-		if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)) {
+		if (UserNotices.getTos() != null && !UserNotices.getTos().isEmpty()) {
 			notices.addAll(UserNotices.getTos());
 		}
 	}

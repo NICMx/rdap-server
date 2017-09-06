@@ -8,9 +8,6 @@ import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.server.catalog.OperationalProfile;
-import mx.nic.rdap.server.configuration.RdapConfiguration;
-import mx.nic.rdap.server.operational.profile.OperationalProfileValidator;
 import mx.nic.rdap.server.renderer.json.NameserverJsonWriter;
 
 /**
@@ -55,17 +52,7 @@ public class NameserverResult extends RdapResult {
 	 */
 	@Override
 	public void validateResponse() {
-		if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)) {
-			if (nameserver.getEntities() != null && !nameserver.getEntities().isEmpty()) {
-				for (Entity ent : nameserver.getEntities()) {
-					OperationalProfileValidator.validateEntityEvents(ent);
-					OperationalProfileValidator.validateEntityTel(ent);
-				}
-			}
-		}
-		if (RdapConfiguration.getServerProfile().equals(OperationalProfile.REGISTRY)) {
-			OperationalProfileValidator.validateNameserverName(nameserver);
-		}
+		// Nothing to validate
 	}
 
 	/**

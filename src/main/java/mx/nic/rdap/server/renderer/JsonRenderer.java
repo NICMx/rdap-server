@@ -13,10 +13,7 @@ import javax.json.JsonValue;
 import javax.json.JsonWriter;
 
 import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.server.catalog.OperationalProfile;
-import mx.nic.rdap.server.configuration.RdapConfiguration;
 import mx.nic.rdap.server.notices.UserNotices;
-import mx.nic.rdap.server.operational.profile.OperationalProfileValidator;
 import mx.nic.rdap.server.renderer.json.JsonUtil;
 import mx.nic.rdap.server.renderer.json.RemarkJsonWriter;
 import mx.nic.rdap.server.result.RdapResult;
@@ -43,21 +40,13 @@ public class JsonRenderer implements Renderer {
 		object.add("rdapConformance", JsonUtil.getRdapConformance());
 		result.fillNotices();
 
-		// Point 1.4.4 of rdap operational profile by ICANN
-		if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)) {
-			if (OperationalProfileValidator.validateTermsOfService()) {
-				if (result.getNotices() == null)
-					result.setNotices(new ArrayList<Remark>());
-				result.getNotices().addAll(UserNotices.getTos());
-			}
+		if (UserNotices.getTos() != null && !UserNotices.getTos().isEmpty()) {
+			if (result.getNotices() == null)
+				result.setNotices(new ArrayList<Remark>());
+			result.getNotices().addAll(UserNotices.getTos());
 		}
 		if (result.getNotices() != null && !result.getNotices().isEmpty()) {
 			object.add("notices", this.getNotices(result.getNotices()));
-		}
-
-		// Point 1.4.10 of rdap operational profile by ICANN
-		if (!RdapConfiguration.getServerProfile().equals(OperationalProfile.NONE)) {
-			object.add("remarks", JsonUtil.getOperationalProfileRemark());
 		}
 		for (Entry<String, JsonValue> entry : result.toJson().entrySet()) {
 			object.add(entry.getKey(), entry.getValue());
