@@ -18,9 +18,9 @@
 			<line>value</line>
 		</description>
 		<links>
-			<link rel="" href="" hreflang="" title="" media="" type="">[value3]
+			<link rel="" href="myurl" hreflang="" title="" media="" type="">[value3]
 			</link>
-			<link rel="" href="" hreflang="" title="" media="" type="">[value4]
+			<link rel="" href="myurl" hreflang="" title="" media="" type="">[value4]
 			</link>
 		</links>
 	</notice>
