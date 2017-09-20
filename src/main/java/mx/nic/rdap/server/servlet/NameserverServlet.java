@@ -20,6 +20,11 @@ public class NameserverServlet extends DataAccessServlet<NameserverDAO> {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Constant value to set the maximum params expected in the URI, this servlet expects: nameserver
+	 */
+	private static final int MAX_PARAMS_EXPECTED = 1;
+
 	@Override
 	protected NameserverDAO initAccessDAO() throws RdapDataAccessException {
 		return DataAccessService.getNameserverDAO();
@@ -39,7 +44,7 @@ public class NameserverServlet extends DataAccessServlet<NameserverDAO> {
 	@Override
 	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, NameserverDAO dao)
 			throws HttpException, RdapDataAccessException {
-		NameserverRequest request = new NameserverRequest(Util.getRequestParams(httpRequest)[0]);
+		NameserverRequest request = new NameserverRequest(Util.getRequestParams(httpRequest, MAX_PARAMS_EXPECTED)[0]);
 
 		DomainLabel label;
 		try {

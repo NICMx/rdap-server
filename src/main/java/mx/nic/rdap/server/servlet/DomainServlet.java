@@ -22,6 +22,11 @@ public class DomainServlet extends DataAccessServlet<DomainDAO> {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Constant value to set the maximum params expected in the URI, this servlet expects: domain
+	 */
+	private static final int MAX_PARAMS_EXPECTED = 1;
+
 	@Override
 	protected DomainDAO initAccessDAO() throws RdapDataAccessException {
 		return DataAccessService.getDomainDAO();
@@ -35,7 +40,7 @@ public class DomainServlet extends DataAccessServlet<DomainDAO> {
 	@Override
 	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, DomainDAO dao)
 			throws HttpException, RdapDataAccessException {
-		DomainRequest request = new DomainRequest(Util.getRequestParams(httpRequest)[0]);
+		DomainRequest request = new DomainRequest(Util.getRequestParams(httpRequest, MAX_PARAMS_EXPECTED)[0]);
 
 		DomainLabel label;
 		try {

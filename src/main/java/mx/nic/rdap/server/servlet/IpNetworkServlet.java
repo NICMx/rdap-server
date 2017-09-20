@@ -20,6 +20,11 @@ public class IpNetworkServlet extends DataAccessServlet<IpNetworkDAO> {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Constant value to set the maximum params expected in the URI, this servlet expects: ip, cidr
+	 */
+	private static final int MAX_PARAMS_EXPECTED = 2;
+
 	@Override
 	protected IpNetworkDAO initAccessDAO() throws RdapDataAccessException {
 		return DataAccessService.getIpNetworkDAO();
@@ -39,7 +44,7 @@ public class IpNetworkServlet extends DataAccessServlet<IpNetworkDAO> {
 	@Override
 	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, IpNetworkDAO dao)
 			throws HttpException, RdapDataAccessException {
-		IpRequest request = new IpRequest(Util.getRequestParams(httpRequest));
+		IpRequest request = new IpRequest(Util.getRequestParams(httpRequest, MAX_PARAMS_EXPECTED));
 		AddressBlock block;
 		IpNetwork network;
 

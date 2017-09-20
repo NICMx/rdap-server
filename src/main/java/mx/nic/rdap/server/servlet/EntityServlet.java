@@ -17,6 +17,11 @@ public class EntityServlet extends DataAccessServlet<EntityDAO> {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Constant value to set the maximum params expected in the URI, this servlet expects: handle
+	 */
+	private static final int MAX_PARAMS_EXPECTED = 1;
+
 	@Override
 	protected EntityDAO initAccessDAO() throws RdapDataAccessException {
 		return DataAccessService.getEntityDAO();
@@ -30,7 +35,7 @@ public class EntityServlet extends DataAccessServlet<EntityDAO> {
 	@Override
 	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, EntityDAO dao)
 			throws HttpException, RdapDataAccessException {
-		EntityRequest request = new EntityRequest(Util.getRequestParams(httpRequest)[0]);
+		EntityRequest request = new EntityRequest(Util.getRequestParams(httpRequest, MAX_PARAMS_EXPECTED)[0]);
 
 		Entity entity = dao.getByHandle(request.getHandle());
 		if (entity == null) {
