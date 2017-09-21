@@ -3,7 +3,6 @@ package mx.nic.rdap.server.configuration;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
@@ -24,13 +23,10 @@ public class RdapConfiguration {
 
 	// property keys
 	private static final String LANGUAGE_KEY = "language";
-	private static final String ZONE_KEY = "zones";
 	private static final String MINIMUN_SEARCH_PATTERN_LENGTH_KEY = "minimum_search_pattern_length";
 	private static final String MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER = "max_number_result_authenticated_user";
 	private static final String MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER = "max_number_result_unauthenticated_user";
 	private static final String OWNER_ROLES_KEY = "owner_roles";
-	private static final String IS_REVERSE_IPV4_ENABLED_KEY = "is_reverse_ipv4_enabled";
-	private static final String IS_REVERSE_IPV6_ENABLED_KEY = "is_reverse_ipv6_enabled";
 	private static final String ANONYMOUS_USERNAME_KEY = "anonymous_username";
 	private static final String ALLOW_WILDCARDS_KEY = "allow_search_wildcards_anywhere";
 
@@ -41,11 +37,7 @@ public class RdapConfiguration {
 	private static Integer maxNumberOfResultsForUnauthenticatedUser;
 	private static Set<Role> objectOwnerRoles;
 	private static String anonymousUsername;
-	private static Set<String> validZones;
 	private static boolean allowSearchWilcardsAnywhere;
-
-	private static String REVERSE_IP_V4 = "in-addr.arpa";
-	private static String REVERSE_IP_V6 = "ip6.arpa";
 
 	private RdapConfiguration() {
 		// no code.
@@ -59,53 +51,6 @@ public class RdapConfiguration {
 	 */
 	public static void loadSystemProperties(Properties systemProperties) {
 		RdapConfiguration.systemProperties = systemProperties;
-	}
-
-	/**
-	 * Return the list of zones defined in the configuration file
-	 * 
-	 * @return
-	 */
-	private static List<String> getServerZones() {
-		if (systemProperties.containsKey(ZONE_KEY)) {
-			String zones[] = systemProperties.getProperty(ZONE_KEY).trim().split(",");
-			List<String> trimmedZones = new ArrayList<String>();
-			for (String zone : zones) {
-				zone = zone.trim();
-				if (zone.isEmpty())
-					continue;
-				if (zone.endsWith("."))
-					zone = zone.substring(0, zone.length() - 1);
-				if (zone.startsWith("."))
-					zone = zone.substring(1);
-				trimmedZones.add(zone);
-			}
-			return trimmedZones;
-		}
-
-		return Collections.emptyList();
-	}
-
-	/**
-	 * Validate if the configured zones are in the database
-	 */
-	public static void validateConfiguredZones() {
-		List<String> propertiesZone = RdapConfiguration.getServerZones();
-
-		validZones = new HashSet<>(propertiesZone);
-		// Configure reverse zones
-		if (Boolean.parseBoolean(systemProperties.getProperty(IS_REVERSE_IPV4_ENABLED_KEY))) {
-			validZones.add(REVERSE_IP_V4);
-		} else {
-			validZones.remove(REVERSE_IP_V4);
-		}
-
-		if (Boolean.parseBoolean(systemProperties.getProperty(IS_REVERSE_IPV6_ENABLED_KEY))) {
-			validZones.add(REVERSE_IP_V6);
-		} else {
-			validZones.remove(REVERSE_IP_V6);
-		}
-
 	}
 
 	public static void validateConfiguredRoles() throws InitializationException {
@@ -303,44 +248,6 @@ public class RdapConfiguration {
 	 */
 	public static boolean isAnonymousUsername(String username) {
 		return (username == null || anonymousUsername.equalsIgnoreCase(username));
-	}
-
-	public static boolean isValidZone(String domain) {
-		// TODO test works as expected, comitting just to create branch
-		if (isReverseAddress(domain))
-			return isValidReverseAddress(domain);
-		String[] split = domain.split("\\.", 2);
-		String zone = split[1].trim().toLowerCase();
-		if (zone.endsWith(".")) {
-			zone = zone.substring(0, zone.length() - 1);
-		}
-		return validZones.contains(zone);
-	}
-
-	// Validates if a reverse address is a valid zone
-	private static boolean isValidReverseAddress(String domain) {
-		if (domain.toLowerCase().endsWith(REVERSE_IP_V4))
-			return validZones.contains(REVERSE_IP_V4);
-		if (domain.toLowerCase().endsWith(REVERSE_IP_V6))
-			return validZones.contains(REVERSE_IP_V6);
-
-		return false;
-	}
-
-	/**
-	 * validate if a address is in reverse lookup
-	 * 
-	 */
-	private static boolean isReverseAddress(String address) {
-		return address.trim().endsWith(REVERSE_IP_V4) || address.trim().endsWith(REVERSE_IP_V6);
-	}
-
-	public static boolean hasZoneConfigured() {
-		if (validZones == null || validZones.isEmpty()) {
-			return false;
-		}
-
-		return true;
 	}
 
 }

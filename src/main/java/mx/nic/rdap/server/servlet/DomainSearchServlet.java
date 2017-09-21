@@ -11,7 +11,6 @@ import mx.nic.rdap.core.ip.IpUtils;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.exception.http.BadRequestException;
 import mx.nic.rdap.db.exception.http.HttpException;
-import mx.nic.rdap.db.exception.http.NotFoundException;
 import mx.nic.rdap.db.exception.http.NotImplementedException;
 import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.db.spi.DomainDAO;
@@ -85,13 +84,6 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 		String domain = request.getParameterValue();
 		switch (request.getParameterName()) {
 		case DOMAIN_NAME:
-			if (!RdapConfiguration.hasZoneConfigured()) {
-				// Is valid if there are no available zones, because the
-				// rdap could only respond to autnum and ip networks
-				// (RIR).
-				throw new NotFoundException();
-			}
-
 			DomainLabel label;
 			try {
 				label = new DomainLabel(domain);
@@ -138,12 +130,6 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 		String domain = request.getParameterValue();
 		switch (request.getParameterName()) {
 		case DOMAIN_NAME:
-			if (!RdapConfiguration.hasZoneConfigured()) {
-				// Is valid if there are no available zones, because the
-				// rdap could only respond to autnum and ip networks
-				// (RIR).
-				throw new NotFoundException(); 
-			}
 			result = dao.searchByRegexName(domain, resultLimit);
 			break;
 		case NAMESERVER_NAME:
