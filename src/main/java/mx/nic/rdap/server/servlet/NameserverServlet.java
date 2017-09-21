@@ -68,6 +68,9 @@ public class NameserverServlet extends DataAccessServlet<NameserverDAO> {
 
 		public NameserverRequest(String name) {
 			super();
+			if (name.endsWith(".")) {
+				name = name.substring(0, name.length() - 1);
+			}
 			this.name = name;
 		}
 
