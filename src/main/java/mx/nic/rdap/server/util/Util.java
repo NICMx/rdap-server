@@ -25,12 +25,12 @@ public class Util {
 	 * @param request
 	 *            request you want the arguments from.
 	 * @param maxParamsExpected
-	 *            maximum number of parameters expected, null means indefinite
+	 *            maximum number of parameters expected, negative value means indefinite
 	 * @return request arguments.
 	 * @throws HttpException
 	 *             <code>request</code> is not a valid RDAP URI.
 	 */
-	public static String[] getRequestParams(HttpServletRequest request, Integer maxParamsExpected) throws HttpException {
+	public static String[] getRequestParams(HttpServletRequest request, int maxParamsExpected) throws HttpException {
 		try {
 			URLDecoder.decode(request.getRequestURI(), "UTF-8");
 		} catch (UnsupportedEncodingException e) {
@@ -45,7 +45,7 @@ public class Util {
 		// Ignores the first "/"
 		String[] requestParams = pathInfo.substring(1).split("/");
 		// If maxParamsExpected is sent then validate against its value
-		if (maxParamsExpected != null && requestParams.length > maxParamsExpected) {
+		if (maxParamsExpected >= 0 && requestParams.length > maxParamsExpected) {
 			throw new NotFoundException(request.getRequestURI());
 		}
 		return requestParams;
