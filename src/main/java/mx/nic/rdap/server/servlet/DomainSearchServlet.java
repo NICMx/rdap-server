@@ -101,7 +101,7 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 			}
 
 			// checks that the original label was LDH and not unicode
-			if (!nsNameLabel.getLabel().equals(nsNameLabel.getALabel())) {
+			if (!nsNameLabel.getLabel().equalsIgnoreCase(nsNameLabel.getALabel())) {
 				throw new BadRequestException("Only LDH domain labels are allowed.");
 			}
 			// Gets´s domain by it´s Nameserver name
