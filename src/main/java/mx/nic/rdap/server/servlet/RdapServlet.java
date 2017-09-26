@@ -50,6 +50,8 @@ public abstract class RdapServlet extends HttpServlet {
 		Renderer renderer = findRenderer(request);
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType(renderer.getResponseContentType());
+		// Recommendation of RFC 7480 section 5.6
+		response.setHeader("Access-Control-Allow-Origin", "*");
 		renderer.render(result, response.getWriter());
 	}
 
