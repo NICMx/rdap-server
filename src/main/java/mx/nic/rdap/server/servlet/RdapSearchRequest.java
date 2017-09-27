@@ -42,8 +42,23 @@ public class RdapSearchRequest {
 
 	private String parameterValue;
 
+	/**
+	 * Return a {@link RdapSearchRequest} created from the {@link HttpServletRequest} sent, if its
+	 * values are valid.
+	 * 
+	 * @param request
+	 *            request received by the server
+	 * @param isEntityObject
+	 *            indicates if the searched object is an Entity (used for validations)
+	 * @param isIp
+	 *            indicates if the parameter of the request is an IP address (used for validations)
+	 * @param parameters
+	 *            list of query parameters allowed for the request
+	 * @return new instance of a {@link RdapSearchRequest}
+	 * @throws RdapDataAccessException if an error is detected
+	 */
 	public static RdapSearchRequest getSearchRequest(HttpServletRequest request, boolean isEntityObject,
-			String... parameters) throws RdapDataAccessException {
+			boolean isIp, String... parameters) throws RdapDataAccessException {
 		if (request.getParameterMap().isEmpty()) {
 			throw new BadRequestException(
 					"The request must contain at least one of the following parameters: " + Arrays.asList(parameters));
@@ -83,31 +98,31 @@ public class RdapSearchRequest {
 			break;
 		}
 
-		searchReq.validateSearchRequest(isEntityObject, parameters);
+		searchReq.validateSearchRequest(isEntityObject, isIp);
 
 		return searchReq;
 	}
 
-	private void validateSearchRequest(boolean isEntityObject, String... validParameters)
+	private void validateSearchRequest(boolean isEntityObject, boolean isIp)
 			throws RdapDataAccessException {
 		switch (this.type) {
 		case PARTIAL_SEARCH:
-			validatePartialSearchRequest(isEntityObject, validParameters);
+			validatePartialSearchRequest(isEntityObject, isIp);
 			break;
 		case REGEX_SEARCH:
-			validateRegexSearchRequest(validParameters);
+			validateRegexSearchRequest();
 			break;
 		default:
 			break;
 		}
 	}
 
-	private void validatePartialSearchRequest(boolean isEntityObject, String... validParameters)
+	private void validatePartialSearchRequest(boolean isEntityObject, boolean isIp)
 			throws UnprocessableEntityException {
-		validatePartialSearchValue(this.parameterValue, isEntityObject);
+		validatePartialSearchValue(this.parameterValue, isEntityObject, isIp);
 	}
 
-	private void validateRegexSearchRequest(String... validParameters) throws RdapDataAccessException {
+	private void validateRegexSearchRequest() throws RdapDataAccessException {
 		try {
 			byte[] decode = Base64.getUrlDecoder().decode(this.parameterValue);
 			this.parameterValue = new String(decode, StandardCharsets.UTF_8);
@@ -121,9 +136,14 @@ public class RdapSearchRequest {
 	 * Validate if the search patterns are valid
 	 * 
 	 * @param valuePattern
+	 *            search pattern to validate
+	 * @param isEntity
+	 *            indicates if the searched object is an Entity
+	 * @param isIp
+	 *            indicates if the parameter of the request is an IP address
 	 * @throws UnprocessableEntityException
 	 */
-	private static void validatePartialSearchValue(String valuePattern, boolean isEntity)
+	private static void validatePartialSearchValue(String valuePattern, boolean isEntity, boolean isIp)
 			throws UnprocessableEntityException {
 
 		// Validate if the length of the pattern is valid
@@ -143,15 +163,27 @@ public class RdapSearchRequest {
 			return;
 		}
 
-		// validates that asterisk are only in the end of the search pattern
 		if (isEntity) {
+			// Validate that the wildcard comes at the end of the search pattern
 			if (!valuePattern.endsWith("*")) {
 				throw new UnprocessableEntityException(
 						"Partial search can only have a wildcard at the end of the search");
 			}
+			// FIXME Fix please! This validation should be done for everyone IF WANTED
+			/*
 			int asteriskCount = valuePattern.length() - valuePattern.replaceAll("\\*", "").length();
 			if (asteriskCount > 1) {
 				throw new UnprocessableEntityException("Partial search can only have one wildcard");
+			}
+			*/
+		} else if (isIp) {
+			// Validate that the wildcard comes at the end of each octet/field
+			String[] ipFields = valuePattern.split("(\\.)|(:)");
+			for (String ipField : ipFields) {
+				if (ipField.contains("*") && !ipField.endsWith("*")) {
+					throw new UnprocessableEntityException(
+							"Partial search can only have a wildcard at the end of each octet/field");
+				}
 			}
 		} else {
 			if (!PARTIAL_DOMAIN_SEARCH_PATTERN.matcher(valuePattern).matches()) {
@@ -159,7 +191,6 @@ public class RdapSearchRequest {
 						"Partial search can only have wildcards at the end of each label");
 			}
 		}
-
 	}
 
 	private RdapSearchRequest() {

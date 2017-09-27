@@ -34,7 +34,7 @@ public class EntitySearchServlet extends DataAccessServlet<EntityDAO> {
 	@Override
 	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, EntityDAO dao)
 			throws HttpException, RdapDataAccessException {
-		RdapSearchRequest searchRequest = RdapSearchRequest.getSearchRequest(httpRequest, true, FULL_NAME, HANDLE);
+		RdapSearchRequest searchRequest = RdapSearchRequest.getSearchRequest(httpRequest, true, false, FULL_NAME, HANDLE);
 
 		String username = httpRequest.getRemoteUser();
 		if (RdapConfiguration.isAnonymousUsername(username)) {

@@ -49,7 +49,10 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 	@Override
 	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, DomainDAO dao)
 			throws HttpException, RdapDataAccessException {
-		RdapSearchRequest searchRequest = RdapSearchRequest.getSearchRequest(httpRequest, false, DOMAIN_NAME,
+		// Validate ip only if "nsIp" param is present
+		boolean isIp = httpRequest.getParameter(NAMESERVER_IP) != null && 
+				!httpRequest.getParameter(NAMESERVER_IP).isEmpty();
+		RdapSearchRequest searchRequest = RdapSearchRequest.getSearchRequest(httpRequest, false, isIp, DOMAIN_NAME,
 				NAMESERVER_IP, NAMESERVER_NAME);
 		validateSearchRequest(searchRequest);
 
@@ -155,10 +158,13 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 		String value = searchRequest.getParameterValue();
 
 		if (parameter.equals(NAMESERVER_IP)) {
-			try {
-				IpUtils.parseAddress(value);
-			} catch (IpAddressFormatException e) {
-				throw new BadRequestException(e);
+			// Only when is a "complete" address
+			if (!value.contains("*")) {
+				try {
+					IpUtils.parseAddress(value);
+				} catch (IpAddressFormatException e) {
+					throw new BadRequestException(e);
+				}
 			}
 		}
 
