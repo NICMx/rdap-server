@@ -45,6 +45,12 @@ public class IpNetworkServlet extends DataAccessServlet<IpNetworkDAO> {
 	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, IpNetworkDAO dao)
 			throws HttpException, RdapDataAccessException {
 		IpRequest request = new IpRequest(Util.getRequestParams(httpRequest, MAX_PARAMS_EXPECTED));
+		// Validate cidr parsed (if present), extra validations are made at constructor of AddressBlock
+		if (request.hasCidr()) {
+			if (request.getCidr() < 0) {
+				throw new BadRequestException("Invalid cidr value");
+			}
+		}
 		AddressBlock block;
 		IpNetwork network;
 
@@ -73,7 +79,11 @@ public class IpNetworkServlet extends DataAccessServlet<IpNetworkDAO> {
 			this.ip = params[0];
 
 			if (params.length > 1) {
-				cidr = Integer.parseInt(params[1]);
+				try {
+					cidr = Integer.parseInt(params[1]);
+				} catch (NumberFormatException e) {
+					cidr = -1;
+				}
 			}
 		}
 
