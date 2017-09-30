@@ -160,6 +160,10 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 		if (parameter.equals(NAMESERVER_IP)) {
 			// Only when is a "complete" address
 			if (!value.contains("*")) {
+				// Ackward, but useful to avoid parsing integers
+				if (!value.contains(".") && !value.contains(":")) {
+					throw new BadRequestException("Invalid IP address");
+				}
 				try {
 					IpUtils.parseAddress(value);
 				} catch (IpAddressFormatException e) {

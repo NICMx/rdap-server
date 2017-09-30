@@ -131,6 +131,10 @@ public class NameserverSearchServlet extends DataAccessServlet<NameserverDAO> {
 		if (parameter.equals(IP_PARAMETER_KEY)) {
 			// Only when is a "complete" address
 			if (!value.contains("*")) {
+				// Ackward, but useful to avoid parsing integers
+				if (!value.contains(".") && !value.contains(":")) {
+					throw new BadRequestException("Invalid IP address");
+				}
 				try {
 					IpUtils.parseAddress(value);
 				} catch (IpAddressFormatException e) {
