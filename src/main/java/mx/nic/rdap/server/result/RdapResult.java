@@ -2,25 +2,20 @@ package mx.nic.rdap.server.result;
 
 import java.util.List;
 
-import javax.json.JsonObject;
-
 import mx.nic.rdap.core.db.Remark;
+import mx.nic.rdap.renderer.object.RdapResponse;
 
 /**
  * A response to the user.
  */
 public abstract class RdapResult {
 
+	private ResultType resultType;
 	protected UserInfo userInfo;
 	protected List<Remark> notices;
-
-	/**
-	 * Builds a JSON object out of this {@link RdapResult}.
-	 * 
-	 * @return JSON version of this object.
-	 */
-	public abstract JsonObject toJson();
 	
+	private RdapResponse rdapResponse;
+
 	/**
 	 * Some validations for the responses
 	 */
@@ -48,4 +43,19 @@ public abstract class RdapResult {
 		this.notices = notices;
 	}
 
+	public ResultType getResultType() {
+		return resultType;
+	}
+	
+	public void setResultType(ResultType resultType) {
+		this.resultType = resultType;
+	}
+	
+	public void setRdapResponse(RdapResponse rdapResponse) {
+		this.rdapResponse = rdapResponse;
+	}
+	
+	public RdapResponse getRdapResponse() {
+		return rdapResponse;
+	}
 }

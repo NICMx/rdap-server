@@ -3,27 +3,23 @@ package mx.nic.rdap.server.result;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-
 import mx.nic.rdap.core.catalog.RemarkType;
 import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.db.struct.SearchResultStruct;
-import mx.nic.rdap.server.renderer.json.NameserverJsonWriter;
+import mx.nic.rdap.renderer.object.SearchResponse;
 
 /**
  * A result from a Nameserver search request
  */
-public class NameserverSearchResult extends RdapResult {
+public class NameserverSearchResult extends RdapSearchResult {
 
 	private List<Nameserver> nameservers;
 	// The max number of results allowed for the user
 	private Integer maxNumberOfResultsForUser;
 	// Indicate is the search has more results than the answered to the user
 	private Boolean resultSetWasLimitedByUserConfiguration;
+
 
 	public NameserverSearchResult(String header, String contextPath, SearchResultStruct<Nameserver> result,
 			String userName) {
@@ -36,23 +32,18 @@ public class NameserverSearchResult extends RdapResult {
 			NameserverResult.addSelfLinks(header, contextPath, nameserver);
 			this.nameservers.add(nameserver);
 		}
-	}
+		setRdapObjects(nameservers);
+		fillNotices();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see mx.nic.rdap.server.RdapResult#toJson()
-	 */
-	@Override
-	public JsonObject toJson() {
-		JsonObjectBuilder builder = Json.createObjectBuilder();
-		JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-		for (Nameserver nameserver : nameservers) {
-			arrayBuilder.add(NameserverJsonWriter.getJson(nameserver, userInfo.isUserAuthenticated(),
-					userInfo.isOwner(nameserver)));
-		}
-		builder.add("nameserverSearchResults", arrayBuilder.build());
-		return builder.build();
+		setResultType(ResultType.NAMESERVERS);
+		SearchResponse<Nameserver> searchResponse = new SearchResponse<>();
+		searchResponse.setNotices(getNotices());
+		searchResponse.setRdapObjects(nameservers);
+		searchResponse.setRdapConformance(new ArrayList<>());
+		searchResponse.getRdapConformance().add("rdap_level_0");
+		
+		setRdapResponse(searchResponse);
+		
 	}
 
 	/*

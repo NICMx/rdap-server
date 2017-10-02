@@ -21,7 +21,43 @@ import mx.nic.rdap.server.listener.RdapInitializer;
 
 public class PrivacyUtil {
 
-	private static final Map<String, Map<String, PrivacyStatus>> OBJECTS_PRIVACY_SETTING = new HashMap<>();
+	private static Map<String, Map<String, PrivacyStatus>> OBJECTS_PRIVACY_SETTING = new HashMap<>();
+
+	// ***** Names of the properties files *****
+	public static final String ENTITY = "entity";
+	public static final String ENTITY_PUBLIC_ID = "entity_public_id";
+	public static final String ENTITY_LINKS = "entity_links";
+	public static final String ENTITY_REMARKS = "entity_remarks";
+	public static final String ENTITY_EVENTS = "entity_events";
+
+	public static final String VCARD = "vcard";
+
+	public static final String DOMAIN = "domain";
+	public static final String DOMAIN_PUBLIC_ID = "domain_public_id";
+	public static final String DOMAIN_VARIANTS = "domain_variants";
+	public static final String DOMAIN_LINKS = "domain_links";
+	public static final String DOMAIN_REMARKS = "domain_remarks";
+	public static final String DOMAIN_EVENTS = "domain_events";
+	public static final String SECURE_DNS = "secure_dns";
+	public static final String DS_DATA = "ds_data";
+	public static final String KEY_DATA = "key_data";
+
+	public static final String NAMESERVER = "nameserver";
+	public static final String NAMESERVER_LINKS = "nameserver_links";
+	public static final String NAMESERVER_REMARKS = "nameserver_remarks";
+	public static final String NAMESERVER_EVENTS = "nameserver_events";
+
+	public static final String AUTNUM = "autnum";
+	public static final String AUTNUM_LINKS = "autnum_links";
+	public static final String AUTNUM_REMARKS = "autnum_remarks";
+	public static final String AUTNUM_EVENTS = "autnum_events";
+
+	public static final String IP_NETWORK = "ip_network";
+	public static final String IP_NETWORK_LINKS = "ip_network_links";
+	public static final String IP_NETWORK_REMARKS = "ip_network_remarks";
+	public static final String IP_NETWORK_EVENTS = "ip_network_events";
+
+	// ***** End of names of the properties files *****
 
 	/** Path where the default properties are read */
 	private static final String DEFAULT_PATH = "META-INF/privacy_default/";
@@ -29,41 +65,6 @@ public class PrivacyUtil {
 	/** Path where the user properties are read */
 	private static final String USER_PATH = "WEB-INF/privacy/";
 
-	// ***** Names of the properties files *****
-	private static final String ENTITY = "entity";
-	private static final String ENTITY_PUBLIC_ID = "entity_public_id";
-	private static final String ENTITY_LINKS = "entity_links";
-	private static final String ENTITY_REMARKS = "entity_remarks";
-	private static final String ENTITY_EVENTS = "entity_events";
-
-	private static final String VCARD = "vcard";
-
-	private static final String DOMAIN = "domain";
-	private static final String DOMAIN_PUBLIC_ID = "domain_public_id";
-	private static final String DOMAIN_VARIANTS = "domain_variants";
-	private static final String DOMAIN_LINKS = "domain_links";
-	private static final String DOMAIN_REMARKS = "domain_remarks";
-	private static final String DOMAIN_EVENTS = "domain_events";
-	private static final String SECURE_DNS = "secure_dns";
-	private static final String DS_DATA = "ds_data";
-	private static final String KEY_DATA = "key_data";
-
-	private static final String NAMESERVER = "nameserver";
-	private static final String NAMESERVER_LINKS = "nameserver_links";
-	private static final String NAMESERVER_REMARKS = "nameserver_remarks";
-	private static final String NAMESERVER_EVENTS = "nameserver_events";
-
-	private static final String AUTNUM = "autnum";
-	private static final String AUTNUM_LINKS = "autnum_links";
-	private static final String AUTNUM_REMARKS = "autnum_remarks";
-	private static final String AUTNUM_EVENTS = "autnum_events";
-
-	private static final String IP_NETWORK = "ip_network";
-	private static final String IP_NETWORK_LINKS = "ip_network_links";
-	private static final String IP_NETWORK_REMARKS = "ip_network_remarks";
-	private static final String IP_NETWORK_EVENTS = "ip_network_events";
-
-	// ***** End of names of the properties files *****
 
 	public static void loadAllPrivacySettings() throws IOException {
 		loadObjectPrivacySettings(ENTITY);
@@ -100,7 +101,7 @@ public class PrivacyUtil {
 		loadObjectPrivacySettings(IP_NETWORK_REMARKS);
 
 	}
-
+	
 	private static void loadUserPrivacySettings(String fileName, Properties properties) throws IOException {
 		ServletContext ctxt = RdapInitializer.getServletContext();
 		Path path = null;
@@ -172,8 +173,8 @@ public class PrivacyUtil {
 	}
 
 	/**
-	 * Indicate if the object or attribute should be show to the user according
-	 * to the privacy status of the object or attribute.
+	 * Indicate if the object or attribute should be show to the user according to
+	 * the privacy status of the object or attribute.
 	 * 
 	 * @param objectValue
 	 *            Actual value of the object to be evaluate.
@@ -184,8 +185,8 @@ public class PrivacyUtil {
 	 * @param isAuthenticated
 	 *            Indicate if the user is authenticated.
 	 * @param isOwner
-	 *            Indicate if the user is the owner of the object or attribute
-	 *            to evaluate.
+	 *            Indicate if the user is the owner of the object or attribute to
+	 *            evaluate.
 	 * @return <code>false</code> if the object or attribute shouldn't be shown
 	 *         according of its privacy's level, or if the <b>objectValue</b> is
 	 *         <code>null</code> or empty, otherwise <code>true</code>.

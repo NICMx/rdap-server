@@ -15,7 +15,7 @@ public class NotImplementedServlet extends DataAccessServlet<DAO> {
 	private static final long serialVersionUID = 9084287298582015457L;
 
 	public NotImplementedServlet() {
-		// TODO Auto-generated constructor stub
+		// no code
 	}
 
 	@Override

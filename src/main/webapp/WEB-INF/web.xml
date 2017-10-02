@@ -9,7 +9,7 @@
 	<error-page>
 		<location>/exception</location>
 	</error-page>
-	
+
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>

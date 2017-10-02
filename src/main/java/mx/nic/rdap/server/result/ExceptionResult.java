@@ -11,6 +11,7 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.core.db.Remark;
+import mx.nic.rdap.renderer.object.ExceptionResponse;
 
 /**
  * A result from a exception generated in a request.
@@ -69,14 +70,12 @@ public class ExceptionResult extends RdapResult {
 			break;
 		}
 		logger.log(Level.WARNING, errorCode + ":" + errorDescription);
+		
+		ExceptionResponse response = new ExceptionResponse(errorDescription, errorCode, errorTitle);
+		setRdapResponse(response);
+		setResultType(ResultType.EXCEPTION);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see mx.nic.rdap.server.RdapResult#toJson()
-	 */
-	@Override
 	public JsonObject toJson() {
 		JsonObjectBuilder object = Json.createObjectBuilder();
 		if (errorCode != null) {
@@ -110,4 +109,17 @@ public class ExceptionResult extends RdapResult {
 	@Override
 	public void validateResponse() {
 	}
+	
+	public String getErrorCode() {
+		return errorCode;
+	}
+	
+	public String getErrorDescription() {
+		return errorDescription;
+	}
+	
+	public String getErrorTitle() {
+		return errorTitle;
+	}
+	
 }

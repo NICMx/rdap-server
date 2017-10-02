@@ -1,39 +1,36 @@
 package mx.nic.rdap.server.result;
 
-import java.util.ArrayList;
 
-import javax.json.JsonObject;
+
+import java.util.ArrayList;
 
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.IpNetwork;
 import mx.nic.rdap.core.db.Link;
-import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.server.renderer.json.EntityJsonWriter;
+import mx.nic.rdap.renderer.object.RequestResponse;
 
 /**
  * A result from an Entity request
  */
-public class EntityResult extends RdapResult {
+public class EntityResult extends RdapSingleResult {
 
-	private Entity entity;
 
 	public EntityResult(String header, String contextPath, Entity entity, String userName) {
-		notices = new ArrayList<Remark>();
-		this.entity = entity;
+		setRdapObject(entity);
 		this.userInfo = new UserInfo(userName);
 		addSelfLinks(header, contextPath, entity);
 		validateResponse();
+		
+		setResultType(ResultType.ENTITY);
+		RequestResponse<Entity> entityResponse = new RequestResponse<>();
+		entityResponse.setNotices(notices);
+		entityResponse.setRdapConformance(new ArrayList<>());
+		entityResponse.getRdapConformance().add("rdap_level_0");
+		entityResponse.setRdapObject(entity);
+		
+		setRdapResponse(entityResponse);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see mx.nic.rdap.server.RdapResult#toJson()
-	 */
-	@Override
-	public JsonObject toJson() {
-		return EntityJsonWriter.getJson(entity, userInfo.isUserAuthenticated(), userInfo.isOwner(entity));
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -74,4 +71,5 @@ public class EntityResult extends RdapResult {
 		}
 	}
 
+	
 }

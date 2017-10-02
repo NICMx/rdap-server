@@ -1,41 +1,37 @@
 package mx.nic.rdap.server.result;
 
-import java.util.ArrayList;
 
-import javax.json.JsonObject;
+
+import java.util.ArrayList;
 
 import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.Nameserver;
-import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.server.renderer.json.DomainJsonWriter;
+import mx.nic.rdap.renderer.object.RequestResponse;
 
 /**
  * A result from a Domain request
  */
-public class DomainResult extends RdapResult {
-
-	private Domain domain;
+public class DomainResult extends RdapSingleResult {
 
 	public DomainResult(String header, String contextPath, Domain domain, String userName) {
-		notices = new ArrayList<Remark>();
-		this.domain = domain;
+		setRdapObject(domain);
 		this.userInfo = new UserInfo(userName);
 		addSelfLinks(header, contextPath, domain);
 		validateResponse();
+		
+		setResultType(ResultType.DOMAIN);
+		RequestResponse<Domain> domainResponse = new RequestResponse<>();
+		
+		domainResponse.setNotices(notices);
+		domainResponse.setRdapConformance(new ArrayList<>());
+		domainResponse.getRdapConformance().add("rdap_level_0");
+		domainResponse.setRdapObject(domain);
+		
+		setRdapResponse(domainResponse);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see mx.nic.rdap.server.RdapResult#toJson()
-	 */
-	@Override
-	public JsonObject toJson() {
-
-		return DomainJsonWriter.getJson(domain, userInfo.isUserAuthenticated(), userInfo.isOwner(domain));
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -79,5 +75,5 @@ public class DomainResult extends RdapResult {
 			domain.getIpNetwork().getLinks().add(self);
 		}
 	}
-
+	
 }

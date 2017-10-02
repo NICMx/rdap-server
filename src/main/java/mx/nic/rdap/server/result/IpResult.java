@@ -1,31 +1,31 @@
 package mx.nic.rdap.server.result;
 
-import java.util.ArrayList;
 
-import javax.json.JsonObject;
+
+import java.util.ArrayList;
 
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.IpNetwork;
 import mx.nic.rdap.core.db.Link;
-import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.server.renderer.json.IpNetworkJsonWriter;
+import mx.nic.rdap.renderer.object.RequestResponse;
 
-public class IpResult extends RdapResult {
-
-	private IpNetwork ipNetwork;
+public class IpResult extends RdapSingleResult {
 
 	public IpResult(String header, String contextPath, IpNetwork ipNetwork, String userName) {
-		notices = new ArrayList<Remark>();
-		this.ipNetwork = ipNetwork;
+		setRdapObject(ipNetwork);
 		this.userInfo = new UserInfo(userName);
 		addSelfLinks(header, contextPath, ipNetwork);
-
+		
+		setResultType(ResultType.IP);
+		RequestResponse<IpNetwork> ipNetworkResponse = new RequestResponse<>();
+		ipNetworkResponse.setNotices(notices);
+		ipNetworkResponse.setRdapConformance(new ArrayList<>());
+		ipNetworkResponse.getRdapConformance().add("rdap_level_0");
+		ipNetworkResponse.setRdapObject(ipNetwork);
+		
+		setRdapResponse(ipNetworkResponse);
 	}
 
-	@Override
-	public JsonObject toJson() {
-		return IpNetworkJsonWriter.getJson(ipNetwork, userInfo.isUserAuthenticated(), userInfo.isOwner(ipNetwork));
-	}
 
 	/*
 	 * (non-Javadoc)

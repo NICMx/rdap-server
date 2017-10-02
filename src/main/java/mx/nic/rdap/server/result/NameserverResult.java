@@ -1,39 +1,34 @@
 package mx.nic.rdap.server.result;
 
-import java.util.ArrayList;
 
-import javax.json.JsonObject;
+
+import java.util.ArrayList;
 
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.Nameserver;
-import mx.nic.rdap.core.db.Remark;
-import mx.nic.rdap.server.renderer.json.NameserverJsonWriter;
+import mx.nic.rdap.renderer.object.RequestResponse;
 
 /**
  * A result from a Nameserver request
  */
-public class NameserverResult extends RdapResult {
-
-	private Nameserver nameserver;
+public class NameserverResult extends RdapSingleResult {
 
 	public NameserverResult(String header, String contextPath, Nameserver nameserver, String userName) {
-		notices = new ArrayList<Remark>();
-		this.nameserver = nameserver;
+		setRdapObject(nameserver);
 		this.userInfo = new UserInfo(userName);
 		addSelfLinks(header, contextPath, nameserver);
-
+		
+		setResultType(ResultType.NAMESERVER);
+		RequestResponse<Nameserver> nameserverResponse = new RequestResponse<>();
+		nameserverResponse.setNotices(notices);
+		nameserverResponse.setRdapConformance(new ArrayList<>());
+		nameserverResponse.getRdapConformance().add("rdap_level_0");
+		nameserverResponse.setRdapObject(nameserver);
+		
+		setRdapResponse(nameserverResponse);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see mx.nic.rdap.server.RdapResult#toJson()
-	 */
-	@Override
-	public JsonObject toJson() {
-		return NameserverJsonWriter.getJson(nameserver, userInfo.isUserAuthenticated(), userInfo.isOwner(nameserver));
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -69,4 +64,5 @@ public class NameserverResult extends RdapResult {
 			ent.getLinks().add(self);
 		}
 	}
+	
 }

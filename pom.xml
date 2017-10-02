@@ -17,6 +17,16 @@
 	<dependencies>
 		<dependency>
 			<groupId>mx.nic.rdap</groupId>
+			<artifactId>rdap-renderer-api</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>mx.nic.rdap</groupId>
+			<artifactId>rdap-json-renderer</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>mx.nic.rdap</groupId>
 			<artifactId>rdap-data-access-api</artifactId>
 			<version>1.1.0</version>
 		</dependency>
@@ -28,16 +38,11 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.glassfish</groupId>
-			<artifactId>javax.json</artifactId>
-			<version>1.0.4</version>
-		</dependency>
-		
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
 </project>

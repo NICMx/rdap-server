@@ -3,32 +3,34 @@
  */
 package mx.nic.rdap.server.result;
 
-import javax.json.JsonObject;
+
+import java.util.ArrayList;
 
 import mx.nic.rdap.core.db.Autnum;
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Link;
-import mx.nic.rdap.server.renderer.json.AutnumJsonWriter;
+import mx.nic.rdap.renderer.object.RequestResponse;
 
-public class AutnumResult extends RdapResult {
+public class AutnumResult extends RdapSingleResult {
 
-	private Autnum autnum;
-
+	
 	public AutnumResult(String header, String contextPath, Autnum autnum, String username) {
-		this.autnum = autnum;
+		setRdapObject(autnum);
 		this.userInfo = new UserInfo(username);
 		addSelfLinks(header, contextPath, autnum);
+		
 		validateResponse();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see mx.nic.rdap.server.RdapResult#toJson()
-	 */
-	@Override
-	public JsonObject toJson() {
-		return AutnumJsonWriter.getJson(autnum, userInfo.isUserAuthenticated(), userInfo.isOwner(autnum));
+		
+		setResultType(ResultType.AUTNUM);
+		
+		RequestResponse<Autnum> autnumResponse = new RequestResponse<>();
+		autnumResponse.setNotices(notices);
+		autnumResponse.setRdapConformance(new ArrayList<>());
+		autnumResponse.getRdapConformance().add("rdap_level_0");
+		autnumResponse.setRdapObject(autnum);
+		
+		setRdapResponse(autnumResponse);
+		
 	}
 
 	/*
@@ -64,4 +66,5 @@ public class AutnumResult extends RdapResult {
 		}
 	}
 
+	
 }

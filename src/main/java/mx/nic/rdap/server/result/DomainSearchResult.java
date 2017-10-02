@@ -6,28 +6,23 @@ package mx.nic.rdap.server.result;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-
 import mx.nic.rdap.core.catalog.RemarkType;
 import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.db.struct.SearchResultStruct;
-import mx.nic.rdap.server.renderer.json.DomainJsonWriter;
+import mx.nic.rdap.renderer.object.SearchResponse;
 
 /**
  * A result from a Domain search request
  */
-public class DomainSearchResult extends RdapResult {
+public class DomainSearchResult extends RdapSearchResult {
 
 	private List<Domain> domains;
 	// The max number of results allowed for the user
 	private Integer maxNumberOfResultsForUser;
 	// Indicate is the search has more results than the answered to the user
 	private Boolean resultSetWasLimitedByUserConfiguration;
-
+	
 	public DomainSearchResult(String header, String contextPath, SearchResultStruct<Domain> result, String userName) {
 		notices = new ArrayList<Remark>();
 		this.domains = new ArrayList<Domain>();
@@ -38,25 +33,21 @@ public class DomainSearchResult extends RdapResult {
 			DomainResult.addSelfLinks(header, contextPath, domain);
 			this.domains.add(domain);
 		}
+		setRdapObjects(domains);
+		fillNotices();
+		
+		setResultType(ResultType.DOMAINS);
+		SearchResponse<Domain> searchResponse = new SearchResponse<>();
+		searchResponse.setNotices(getNotices());
+		searchResponse.setRdapObjects(domains);
+		searchResponse.setRdapConformance(new ArrayList<>());
+		searchResponse.getRdapConformance().add("rdap_level_0");
+		
+		setRdapResponse(searchResponse);
+		
+		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see mx.nic.rdap.server.RdapResult#toJson()
-	 */
-	@Override
-	public JsonObject toJson() {
-		JsonObjectBuilder builder = Json.createObjectBuilder();
-
-		JsonArrayBuilder arrB = Json.createArrayBuilder();
-		for (Domain domain : domains) {
-			arrB.add(DomainJsonWriter.getJson(domain, userInfo.isUserAuthenticated(), userInfo.isOwner(domain)));
-		}
-
-		builder.add("domainSearchResults", arrB);
-		return builder.build();
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -98,5 +89,5 @@ public class DomainSearchResult extends RdapResult {
 	public void setMaxNumberOfResultsForUser(Integer maxNumberOfResultsForUser) {
 		this.maxNumberOfResultsForUser = maxNumberOfResultsForUser;
 	}
-
+	
 }

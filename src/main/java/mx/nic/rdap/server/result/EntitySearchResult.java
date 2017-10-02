@@ -3,28 +3,23 @@ package mx.nic.rdap.server.result;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-
 import mx.nic.rdap.core.catalog.RemarkType;
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.db.struct.SearchResultStruct;
-import mx.nic.rdap.server.renderer.json.EntityJsonWriter;
+import mx.nic.rdap.renderer.object.SearchResponse;
 
 /**
  * A result from an Entity search request.
  */
-public class EntitySearchResult extends RdapResult {
+public class EntitySearchResult extends RdapSearchResult {
 
 	private List<Entity> entities;
 	// The max number of results allowed for the user
 	private Integer maxNumberOfResultsForUser;
 	// Indicate is the search has more results than the answered to the user
 	private Boolean resultSetWasLimitedByUserConfiguration;
-
+	
 	public EntitySearchResult(String header, String contextPath, SearchResultStruct<Entity> result, String userName) {
 		notices = new ArrayList<Remark>();
 		this.entities = new ArrayList<Entity>();
@@ -35,19 +30,20 @@ public class EntitySearchResult extends RdapResult {
 			EntityResult.addSelfLinks(header, contextPath, entity);
 			this.entities.add(entity);
 		}
+		setRdapObjects(entities);
 		validateResponse();
+		fillNotices();
+		
+		setResultType(ResultType.ENTITIES);
+		SearchResponse<Entity> searchResponse = new SearchResponse<>();
+		searchResponse.setNotices(getNotices());
+		searchResponse.setRdapObjects(getEntities());
+		searchResponse.setRdapConformance(new ArrayList<>());
+		searchResponse.getRdapConformance().add("rdap_level_0");
+		
+		setEntities(entities);
 	}
 
-	@Override
-	public JsonObject toJson() {
-		JsonObjectBuilder builder = Json.createObjectBuilder();
-		JsonArrayBuilder arrB = Json.createArrayBuilder();
-		for (Entity entity : entities) {
-			arrB.add(EntityJsonWriter.getJson(entity, userInfo.isUserAuthenticated(), userInfo.isOwner(entity)));
-		}
-		builder.add("entitySearchResults", arrB);
-		return builder.build();
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -97,5 +93,5 @@ public class EntitySearchResult extends RdapResult {
 	public void setResultSetWasLimitedByUserConfiguration(Boolean resultSetWasLimitedByUserConfiguration) {
 		this.resultSetWasLimitedByUserConfiguration = resultSetWasLimitedByUserConfiguration;
 	}
-
+	
 }
