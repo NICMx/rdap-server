@@ -37,7 +37,8 @@ public class RdapConfiguration {
 	private static final String OWNER_ROLES_DOMAIN_KEY = "owner_roles_domain";
 	private static final String OWNER_ROLES_NAMESERVER_KEY = "owner_roles_nameserver";
 	private static final String ANONYMOUS_USERNAME_KEY = "anonymous_username";
-	private static final String ALLOW_WILDCARDS_KEY = "allow_search_wildcards_anywhere";
+	private static final String ALLOW_MULTIPLE_WILDCARDS_KEY = "allow_multiple_search_wildcards";
+	private static final String ALLOW_WILDCARD_ANYWHERE_KEY = "allow_search_wildcard_anywhere";
 
 	// Settings values
 	private static String serverLanguage;
@@ -46,7 +47,8 @@ public class RdapConfiguration {
 	private static Integer maxNumberOfResultsForUnauthenticatedUser;
 	private static Map<String, Set<Role>> objectOwnerRoles;
 	private static String anonymousUsername;
-	private static boolean allowSearchWilcardsAnywhere;
+	private static boolean allowMultipleWildcards;
+	private static boolean allowSearchWildcardAnywhere;
 
 	private RdapConfiguration() {
 		// no code.
@@ -106,102 +108,100 @@ public class RdapConfiguration {
 	}
 
 	public static void validateRdapConfiguration() throws InitializationException {
-		boolean isValid = true;
 		List<String> invalidProperties = new ArrayList<>();
 		List<Exception> exceptions = new ArrayList<>();
 
 		if (isPropertyNullOrEmpty(LANGUAGE_KEY)) {
-			isValid = false;
 			invalidProperties.add(LANGUAGE_KEY);
 		} else {
 			serverLanguage = systemProperties.getProperty(LANGUAGE_KEY).trim();
 		}
 
 		if (isPropertyNullOrEmpty(MINIMUN_SEARCH_PATTERN_LENGTH_KEY)) {
-			isValid = false;
 			invalidProperties.add(MINIMUN_SEARCH_PATTERN_LENGTH_KEY);
 		} else {
 			try {
 				minimumSearchPatternLength = Integer
 						.parseInt(systemProperties.getProperty(MINIMUN_SEARCH_PATTERN_LENGTH_KEY).trim());
 			} catch (NumberFormatException e) {
-				isValid = false;
 				invalidProperties.add(MINIMUN_SEARCH_PATTERN_LENGTH_KEY);
 				exceptions.add(e);
 			}
 		}
 
 		if (isPropertyNullOrEmpty(MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER)) {
-			isValid = false;
 			invalidProperties.add(MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER);
 		} else {
 			try {
 				maxNumberOfResultsForAuthenticatedUser = Integer
 						.parseInt(systemProperties.getProperty(MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER).trim());
 			} catch (NumberFormatException e) {
-				isValid = false;
 				invalidProperties.add(MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER);
 				exceptions.add(e);
 			}
 		}
 
 		if (isPropertyNullOrEmpty(MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER)) {
-			isValid = false;
 			invalidProperties.add(MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER);
 		} else {
 			try {
 				maxNumberOfResultsForUnauthenticatedUser = Integer
 						.parseInt(systemProperties.getProperty(MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER).trim());
 			} catch (NumberFormatException e) {
-				isValid = false;
 				invalidProperties.add(MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER);
 				exceptions.add(e);
 			}
 		}
 
 		if (isPropertyNullOrEmpty(OWNER_ROLES_IP_KEY)) {
-			isValid = false;
 			invalidProperties.add(OWNER_ROLES_IP_KEY);
 		}
 
 		if (isPropertyNullOrEmpty(OWNER_ROLES_AUTNUM_KEY)) {
-			isValid = false;
 			invalidProperties.add(OWNER_ROLES_AUTNUM_KEY);
 		}
 
 		if (isPropertyNullOrEmpty(OWNER_ROLES_DOMAIN_KEY)) {
-			isValid = false;
 			invalidProperties.add(OWNER_ROLES_DOMAIN_KEY);
 		}
 
 		if (isPropertyNullOrEmpty(OWNER_ROLES_NAMESERVER_KEY)) {
-			isValid = false;
 			invalidProperties.add(OWNER_ROLES_NAMESERVER_KEY);
 		}
 
 		if (isPropertyNullOrEmpty(ANONYMOUS_USERNAME_KEY)) {
-			isValid = false;
 			invalidProperties.add(ANONYMOUS_USERNAME_KEY);
 		} else {
 			anonymousUsername = systemProperties.getProperty(ANONYMOUS_USERNAME_KEY).trim();
 		}
 
-		if (isPropertyNullOrEmpty(ALLOW_WILDCARDS_KEY)) {
-			isValid = false;
-			invalidProperties.add(ALLOW_WILDCARDS_KEY);
+		if (isPropertyNullOrEmpty(ALLOW_MULTIPLE_WILDCARDS_KEY)) {
+			invalidProperties.add(ALLOW_MULTIPLE_WILDCARDS_KEY);
 		} else {
-			String allowWildcardProperty = systemProperties.getProperty(ALLOW_WILDCARDS_KEY).trim();
-			if (allowWildcardProperty.equalsIgnoreCase("true")) {
-				allowSearchWilcardsAnywhere = true;
-			} else if (allowWildcardProperty.equalsIgnoreCase("false")) {
-				allowSearchWilcardsAnywhere = false;
+			String allowMultipleWildcardProperty = systemProperties.getProperty(ALLOW_MULTIPLE_WILDCARDS_KEY).trim();
+			if (allowMultipleWildcardProperty.equalsIgnoreCase("true")) {
+				allowMultipleWildcards = true;
+			} else if (allowMultipleWildcardProperty.equalsIgnoreCase("false")) {
+				allowMultipleWildcards = false;
 			} else {
-				isValid = false;
-				invalidProperties.add(ALLOW_WILDCARDS_KEY);
+				invalidProperties.add(ALLOW_MULTIPLE_WILDCARDS_KEY);
 			}
 		}
 
-		if (!isValid) {
+		if (isPropertyNullOrEmpty(ALLOW_WILDCARD_ANYWHERE_KEY)) {
+			invalidProperties.add(ALLOW_WILDCARD_ANYWHERE_KEY);
+		} else {
+			String allowWildcardProperty = systemProperties.getProperty(ALLOW_WILDCARD_ANYWHERE_KEY).trim();
+			if (allowWildcardProperty.equalsIgnoreCase("true")) {
+				allowSearchWildcardAnywhere = true;
+			} else if (allowWildcardProperty.equalsIgnoreCase("false")) {
+				allowSearchWildcardAnywhere = false;
+			} else {
+				invalidProperties.add(ALLOW_WILDCARD_ANYWHERE_KEY);
+			}
+		}
+
+		if (!invalidProperties.isEmpty()) {
 			InitializationException invalidValueException = new InitializationException(
 					"The following required properties were not found or are invalid values in configuration file : "
 							+ invalidProperties.toString());
@@ -254,10 +254,16 @@ public class RdapConfiguration {
 	}
 
 	/**
-	 * Return if the server supports wildcards in the end of the searches.
+	 * @return if the server supports multiple wildcards in each label at the search pattern
 	 */
-	public static boolean allowSearchWildcardsAnywhere() {
-		return allowSearchWilcardsAnywhere;
+	public static boolean allowMultipleWildcards() {
+		return allowMultipleWildcards;
+	}
+	/**
+	 * @return if the server supports a wildcard at the end of the searches.
+	 */
+	public static boolean allowSearchWildcardAnywhere() {
+		return allowSearchWildcardAnywhere;
 	}
 
 	/**

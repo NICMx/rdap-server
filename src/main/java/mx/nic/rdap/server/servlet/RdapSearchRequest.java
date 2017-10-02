@@ -3,7 +3,6 @@ package mx.nic.rdap.server.servlet;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -14,16 +13,6 @@ import mx.nic.rdap.server.catalog.RequestSearchType;
 import mx.nic.rdap.server.configuration.RdapConfiguration;
 
 public class RdapSearchRequest {
-
-	/**
-	 * Regular expression to validate an incoming partial search request.
-	 */
-	private static final String PARTIAL_DOMAIN_SEARCH_REGEX = "([\\w-]*\\*?\\.)*([\\w-]*\\*?\\.?)";
-
-	/**
-	 * Compiled pattern of <code>PARTIAL_SEARCH_REGEX</code>.
-	 */
-	private static final Pattern PARTIAL_DOMAIN_SEARCH_PATTERN = Pattern.compile(PARTIAL_DOMAIN_SEARCH_REGEX);
 
 	/**
 	 * Parameter name for a search type.
@@ -147,48 +136,91 @@ public class RdapSearchRequest {
 			throws UnprocessableEntityException {
 
 		// Validate if the length of the pattern is valid
-		if (valuePattern.length() < RdapConfiguration.getMinimumSearchPatternLength()) {
-			throw new UnprocessableEntityException("Search pattern must be at least "
-					+ RdapConfiguration.getMinimumSearchPatternLength() + " characters");
-		}
-		boolean partialSearch = false;
-		partialSearch = valuePattern.contains("*");
+		validateMinimumPatternLength(valuePattern, "Search pattern must be at least "
+				+ RdapConfiguration.getMinimumSearchPatternLength() + " characters");
 
-		// Validate if is a valid partial search
-		if (!partialSearch) {
+		// Validate if it's a partial search
+		if (!valuePattern.contains("*")) {
 			return;
 		}
+		
+		// Consecutive wildcards are handled as one; validate again, if the exception is raised send a different message
+		valuePattern = valuePattern.replaceAll("(\\*)+", "\\*");
+		validateMinimumPatternLength(valuePattern, "Search pattern must be at least "
+				+ RdapConfiguration.getMinimumSearchPatternLength() + " characters, "
+				+ "consecutive wildcards '*' are treated as only one character. Pattern received: " + valuePattern);
 
-		if (RdapConfiguration.allowSearchWildcardsAnywhere()) {
-			return;
-		}
-
+		// Validate number of wildcards and that wildcard comes at the end of the search pattern/labels (depending on configuration)
 		if (isEntity) {
-			// Validate that the wildcard comes at the end of the search pattern
-			if (!valuePattern.endsWith("*")) {
-				throw new UnprocessableEntityException(
-						"Partial search can only have a wildcard at the end of the search");
-			}
-			// FIXME Fix please! This validation should be done for everyone IF WANTED
-			/*
-			int asteriskCount = valuePattern.length() - valuePattern.replaceAll("\\*", "").length();
-			if (asteriskCount > 1) {
-				throw new UnprocessableEntityException("Partial search can only have one wildcard");
-			}
-			*/
+			validateWildcardUse(valuePattern, null, "Partial search can only have a wildcard at the end of the search");
 		} else if (isIp) {
 			// Validate that the wildcard comes at the end of each octet/field
-			String[] ipFields = valuePattern.split("(\\.)|(:)");
-			for (String ipField : ipFields) {
-				if (ipField.contains("*") && !ipField.endsWith("*")) {
-					throw new UnprocessableEntityException(
-							"Partial search can only have a wildcard at the end of each octet/field");
-				}
-			}
+			validateWildcardUse(valuePattern, "(\\.)|(:)", "Partial search can only have a wildcard at the end of each octet/field");
 		} else {
-			if (!PARTIAL_DOMAIN_SEARCH_PATTERN.matcher(valuePattern).matches()) {
-				throw new UnprocessableEntityException(
-						"Partial search can only have wildcards at the end of each label");
+			validateWildcardUse(valuePattern, "\\.", "Partial search can only have wildcards at the end of each label");
+		}
+	}
+	
+	/**
+	 * Validates the minimum pattern length allowed based on {@link RdapConfiguration#getMinimumSearchPatternLength()}
+	 * 
+	 * @param value
+	 *            Value to validate
+	 * @param errorMessage
+	 *            Error message to send in case of exception
+	 * @throws UnprocessableEntityException if the value length is larger than expected
+	 */
+	private static void validateMinimumPatternLength(String value, String errorMessage) throws UnprocessableEntityException {
+		if (value.length() < RdapConfiguration.getMinimumSearchPatternLength()) {
+			throw new UnprocessableEntityException(errorMessage);
+		}
+	}
+	
+	/**
+	 * Validate use of wildcard: number of wildcards allowed per label
+	 * (based on {@link RdapConfiguration#allowMultipleWildcards()}
+	 * and if wilcard comes at the end of each label or value sent 
+	 * (based on {@link RdapConfiguration#allowSearchWildcardAnywhere()}).
+	 * If <code>splitRegex</code> is sent, the <code>value</code> will be splitted using this regex
+	 * and each element/label will be validated; if not sent (null or empty) the validation will be done directly to
+	 * <code>value<code>.
+	 * 
+	 * @param value
+	 *            Value to validate
+	 * @param splitRegex
+	 *            Regex used to split the <code>value</code> sent
+	 * @param badEndUsageErrorMessage
+	 *            Error message returned when an exception related to bad usage of the wildcard at the end of label is raised 
+	 * @throws UnprocessableEntityException if the value or labels don't have the wildcard at the end
+	 */
+	private static void validateWildcardUse(String value, String splitRegex, String badEndUsageErrorMessage)
+		throws UnprocessableEntityException {
+		if (!RdapConfiguration.allowMultipleWildcards()) {
+			if (splitRegex != null && !splitRegex.isEmpty()) {
+				// Regex sent, validate each label
+				String[] labels = value.split(splitRegex);
+				for (String label : labels) {
+					if (label.contains("*")) {
+						int asteriskCount = label.length() - label.replaceAll("\\*", "").length();
+						if (asteriskCount > 1) {
+							throw new UnprocessableEntityException("Partial search can only have one wildcard at each label");
+						}
+						if (!RdapConfiguration.allowSearchWildcardAnywhere() && !label.endsWith("*")) {
+							throw new UnprocessableEntityException(badEndUsageErrorMessage);
+						}
+					}
+				}
+			} else {
+				// Regex not sent, validate the value
+				if (value.contains("*")) {
+					int asteriskCount = value.length() - value.replaceAll("\\*", "").length();
+					if (asteriskCount > 1) {
+						throw new UnprocessableEntityException("Partial search can only have one wildcard");
+					}
+					if (!RdapConfiguration.allowSearchWildcardAnywhere() && !value.endsWith("*")) {
+						throw new UnprocessableEntityException(badEndUsageErrorMessage);
+					}
+				}
 			}
 		}
 	}
