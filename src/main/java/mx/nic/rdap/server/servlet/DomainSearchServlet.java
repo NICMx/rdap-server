@@ -49,7 +49,10 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 	@Override
 	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, DomainDAO dao)
 			throws HttpException, RdapDataAccessException {
-		RdapSearchRequest searchRequest = RdapSearchRequest.getSearchRequest(httpRequest, false, DOMAIN_NAME,
+		// Validate ip only if "nsIp" param is present
+		boolean isIp = httpRequest.getParameter(NAMESERVER_IP) != null && 
+				!httpRequest.getParameter(NAMESERVER_IP).isEmpty();
+		RdapSearchRequest searchRequest = RdapSearchRequest.getSearchRequest(httpRequest, false, isIp, DOMAIN_NAME,
 				NAMESERVER_IP, NAMESERVER_NAME);
 		validateSearchRequest(searchRequest);
 
@@ -84,13 +87,6 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 		String domain = request.getParameterValue();
 		switch (request.getParameterName()) {
 		case DOMAIN_NAME:
-			if (!RdapConfiguration.hasZoneConfigured()) {
-				// Is valid if there are no available zones, because the
-				// rdap could only respond to autnum and ip networks
-				// (RIR).
-				throw new NotImplementedException();
-			}
-
 			DomainLabel label;
 			try {
 				label = new DomainLabel(domain);
@@ -108,7 +104,7 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 			}
 
 			// checks that the original label was LDH and not unicode
-			if (!nsNameLabel.getLabel().equals(nsNameLabel.getALabel())) {
+			if (!nsNameLabel.getLabel().equalsIgnoreCase(nsNameLabel.getALabel())) {
 				throw new BadRequestException("Only LDH domain labels are allowed.");
 			}
 			// Gets´s domain by it´s Nameserver name
@@ -137,12 +133,6 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 		String domain = request.getParameterValue();
 		switch (request.getParameterName()) {
 		case DOMAIN_NAME:
-			if (!RdapConfiguration.hasZoneConfigured()) {
-				// Is valid if there are no available zones, because the
-				// rdap could only respond to autnum and ip networks
-				// (RIR).
-				throw new NotImplementedException();
-			}
 			result = dao.searchByRegexName(domain, resultLimit);
 			break;
 		case NAMESERVER_NAME:
@@ -168,10 +158,17 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 		String value = searchRequest.getParameterValue();
 
 		if (parameter.equals(NAMESERVER_IP)) {
-			try {
-				IpUtils.parseAddress(value);
-			} catch (IpAddressFormatException e) {
-				throw new BadRequestException(e);
+			// Only when is a "complete" address
+			if (!value.contains("*")) {
+				// Ackward, but useful to avoid parsing integers
+				if (!value.contains(".") && !value.contains(":")) {
+					throw new BadRequestException("Invalid IP address");
+				}
+				try {
+					IpUtils.parseAddress(value);
+				} catch (IpAddressFormatException e) {
+					throw new BadRequestException(e);
+				}
 			}
 		}
 

@@ -9,10 +9,8 @@ import mx.nic.rdap.core.db.DomainLabelException;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.exception.http.BadRequestException;
 import mx.nic.rdap.db.exception.http.HttpException;
-import mx.nic.rdap.db.exception.http.NotFoundException;
 import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.db.spi.DomainDAO;
-import mx.nic.rdap.server.configuration.RdapConfiguration;
 import mx.nic.rdap.server.result.DomainResult;
 import mx.nic.rdap.server.result.RdapResult;
 import mx.nic.rdap.server.util.Util;
@@ -21,6 +19,11 @@ import mx.nic.rdap.server.util.Util;
 public class DomainServlet extends DataAccessServlet<DomainDAO> {
 
 	private static final long serialVersionUID = 1L;
+
+	/**
+	 * Constant value to set the maximum params expected in the URI, this servlet expects: domain
+	 */
+	private static final int MAX_PARAMS_EXPECTED = 1;
 
 	@Override
 	protected DomainDAO initAccessDAO() throws RdapDataAccessException {
@@ -35,7 +38,7 @@ public class DomainServlet extends DataAccessServlet<DomainDAO> {
 	@Override
 	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, DomainDAO dao)
 			throws HttpException, RdapDataAccessException {
-		DomainRequest request = new DomainRequest(Util.getRequestParams(httpRequest)[0]);
+		DomainRequest request = new DomainRequest(Util.getRequestParams(httpRequest, MAX_PARAMS_EXPECTED)[0]);
 
 		DomainLabel label;
 		try {
@@ -56,7 +59,7 @@ public class DomainServlet extends DataAccessServlet<DomainDAO> {
 
 		private String fullRequestValue;
 
-		public DomainRequest(String requestValue) throws NotFoundException, BadRequestException {
+		public DomainRequest(String requestValue) throws BadRequestException {
 			super();
 			if (requestValue.endsWith(".")) {
 				requestValue = requestValue.substring(0, requestValue.length() - 1);
@@ -65,8 +68,6 @@ public class DomainServlet extends DataAccessServlet<DomainDAO> {
 
 			if (!requestValue.contains("."))
 				throw new BadRequestException("The requested domain does not seem to include a zone.");
-			if (!RdapConfiguration.isValidZone(requestValue))
-				throw new NotFoundException("The zone is unmanaged by this server.");
 		}
 
 		public String getFullRequestValue() {

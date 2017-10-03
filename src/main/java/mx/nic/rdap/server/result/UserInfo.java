@@ -33,7 +33,7 @@ public class UserInfo {
 		}
 
 		for (Entity ent : object.getEntities()) {
-			if (isEntityOwner(ent)) {
+			if (isEntityOwner(object, ent)) {
 				return true;
 			}
 		}
@@ -44,7 +44,7 @@ public class UserInfo {
 	/**
 	 * @return <code>true</code> if this user is the owner of the Entity Object
 	 */
-	private boolean isEntityOwner(Entity ent) {
+	private boolean isEntityOwner(RdapObject father, Entity ent) {
 		if (!ent.getHandle().equals(userName)) {
 			return false;
 		}
@@ -54,7 +54,7 @@ public class UserInfo {
 		}
 
 		for (Role role : ent.getRoles()) {
-			if (RdapConfiguration.isRoleAnOwner(role)) {
+			if (RdapConfiguration.isRoleAnOwner(father, role)) {
 				return true;
 			}
 		}

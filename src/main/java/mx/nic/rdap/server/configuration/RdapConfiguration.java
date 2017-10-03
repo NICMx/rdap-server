@@ -3,13 +3,18 @@ package mx.nic.rdap.server.configuration;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
 import mx.nic.rdap.core.catalog.Role;
+import mx.nic.rdap.core.db.Autnum;
+import mx.nic.rdap.core.db.Domain;
+import mx.nic.rdap.core.db.IpNetwork;
+import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.db.RdapUser;
 import mx.nic.rdap.db.exception.InitializationException;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
@@ -24,28 +29,26 @@ public class RdapConfiguration {
 
 	// property keys
 	private static final String LANGUAGE_KEY = "language";
-	private static final String ZONE_KEY = "zones";
 	private static final String MINIMUN_SEARCH_PATTERN_LENGTH_KEY = "minimum_search_pattern_length";
 	private static final String MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER = "max_number_result_authenticated_user";
 	private static final String MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER = "max_number_result_unauthenticated_user";
-	private static final String OWNER_ROLES_KEY = "owner_roles";
-	private static final String IS_REVERSE_IPV4_ENABLED_KEY = "is_reverse_ipv4_enabled";
-	private static final String IS_REVERSE_IPV6_ENABLED_KEY = "is_reverse_ipv6_enabled";
+	private static final String OWNER_ROLES_IP_KEY = "owner_roles_ip";
+	private static final String OWNER_ROLES_AUTNUM_KEY = "owner_roles_autnum";
+	private static final String OWNER_ROLES_DOMAIN_KEY = "owner_roles_domain";
+	private static final String OWNER_ROLES_NAMESERVER_KEY = "owner_roles_nameserver";
 	private static final String ANONYMOUS_USERNAME_KEY = "anonymous_username";
-	private static final String ALLOW_WILDCARDS_KEY = "allow_search_wildcards_anywhere";
+	private static final String ALLOW_MULTIPLE_WILDCARDS_KEY = "allow_multiple_search_wildcards";
+	private static final String ALLOW_WILDCARD_ANYWHERE_KEY = "allow_search_wildcard_anywhere";
 
 	// Settings values
 	private static String serverLanguage;
 	private static Integer minimumSearchPatternLength;
 	private static Integer maxNumberOfResultsForAuthenticatedUser;
 	private static Integer maxNumberOfResultsForUnauthenticatedUser;
-	private static Set<Role> objectOwnerRoles;
+	private static Map<String, Set<Role>> objectOwnerRoles;
 	private static String anonymousUsername;
-	private static Set<String> validZones;
-	private static boolean allowSearchWilcardsAnywhere;
-
-	private static String REVERSE_IP_V4 = "in-addr.arpa";
-	private static String REVERSE_IP_V6 = "ip6.arpa";
+	private static boolean allowMultipleWildcards;
+	private static boolean allowSearchWildcardAnywhere;
 
 	private RdapConfiguration() {
 		// no code.
@@ -62,163 +65,143 @@ public class RdapConfiguration {
 	}
 
 	/**
-	 * Return the list of zones defined in the configuration file
+	 * Loads all the roles that are owners of the <code>RdapObject</code>s, the configured owners
+	 * are loaded from properties loaded at {@link RdapConfiguration}
 	 * 
-	 * @return
+	 * @throws InitializationException if there's an error loading the values
 	 */
-	private static List<String> getServerZones() {
-		if (systemProperties.containsKey(ZONE_KEY)) {
-			String zones[] = systemProperties.getProperty(ZONE_KEY).trim().split(",");
-			List<String> trimmedZones = new ArrayList<String>();
-			for (String zone : zones) {
-				zone = zone.trim();
-				if (zone.isEmpty())
-					continue;
-				if (zone.endsWith("."))
-					zone = zone.substring(0, zone.length() - 1);
-				if (zone.startsWith("."))
-					zone = zone.substring(1);
-				trimmedZones.add(zone);
-			}
-			return trimmedZones;
-		}
-
-		return Collections.emptyList();
+	public static void loadConfiguredRoles() throws InitializationException {
+		objectOwnerRoles = new HashMap<String, Set<Role>>();
+		loadObjectOwnerRoles(OWNER_ROLES_IP_KEY, IpNetwork.class.getName(), objectOwnerRoles);
+		loadObjectOwnerRoles(OWNER_ROLES_AUTNUM_KEY, Autnum.class.getName(), objectOwnerRoles);
+		loadObjectOwnerRoles(OWNER_ROLES_DOMAIN_KEY, Domain.class.getName(), objectOwnerRoles);
+		loadObjectOwnerRoles(OWNER_ROLES_NAMESERVER_KEY, Nameserver.class.getName(), objectOwnerRoles);
 	}
 
 	/**
-	 * Validate if the configured zones are in the database
+	 * Check if the role sent is a configured owner of the object.
+	 * 
+	 * @param object
+	 *            The object to verify its owner, should be any of: {@link IpNetwork}, {@link Autnum},
+	 *            {@link Domain} or {@link Nameserver} 
+	 * @param role
+	 *            {@link Role} to verify if is owner of the object.
+	 * @return <code>boolean</code> indicating if the role is an owner of the object
 	 */
-	public static void validateConfiguredZones() {
-		List<String> propertiesZone = RdapConfiguration.getServerZones();
-
-		validZones = new HashSet<>(propertiesZone);
-		// Configure reverse zones
-		if (Boolean.parseBoolean(systemProperties.getProperty(IS_REVERSE_IPV4_ENABLED_KEY))) {
-			validZones.add(REVERSE_IP_V4);
+	public static boolean isRoleAnOwner(Object object, Role role) {
+		if (object == null) {
+			return false;
+		}
+		String className = null;
+		if (object instanceof IpNetwork) {
+			className = IpNetwork.class.getName();
+		} else if (object instanceof Autnum) {
+			className = Autnum.class.getName();
+		} else if (object instanceof Domain) {
+			className = Domain.class.getName();
+		} else if (object instanceof Nameserver) {
+			className = Nameserver.class.getName();
 		} else {
-			validZones.remove(REVERSE_IP_V4);
+			return false;
 		}
-
-		if (Boolean.parseBoolean(systemProperties.getProperty(IS_REVERSE_IPV6_ENABLED_KEY))) {
-			validZones.add(REVERSE_IP_V6);
-		} else {
-			validZones.remove(REVERSE_IP_V6);
-		}
-
-	}
-
-	public static void validateConfiguredRoles() throws InitializationException {
-		String ownerRoles = systemProperties.getProperty(OWNER_ROLES_KEY);
-		if (ownerRoles == null) {
-			throw new InitializationException("property '" + OWNER_ROLES_KEY + "' is not configured");
-		}
-
-		String[] split = ownerRoles.split(",");
-		objectOwnerRoles = new HashSet<Role>();
-
-		for (String role : split) {
-			role = role.trim();
-			if (role.isEmpty())
-				continue;
-
-			Role rolEnum = Role.getByName(role);
-			if (rolEnum == null) {
-				throw new InitializationException("unknown role in property '" + OWNER_ROLES_KEY + "': " + role);
-			}
-
-			objectOwnerRoles.add(rolEnum);
-		}
-
-	}
-
-	public static boolean isRoleAnOwner(Role role) {
-		return objectOwnerRoles.contains(role);
+		return objectOwnerRoles.get(className).contains(role);
 	}
 
 	public static void validateRdapConfiguration() throws InitializationException {
-		boolean isValid = true;
 		List<String> invalidProperties = new ArrayList<>();
 		List<Exception> exceptions = new ArrayList<>();
 
-		if (systemProperties.getProperty(LANGUAGE_KEY) == null
-				|| systemProperties.getProperty(LANGUAGE_KEY).trim().isEmpty()) {
-			isValid = false;
+		if (isPropertyNullOrEmpty(LANGUAGE_KEY)) {
 			invalidProperties.add(LANGUAGE_KEY);
+		} else {
+			serverLanguage = systemProperties.getProperty(LANGUAGE_KEY).trim();
 		}
-		serverLanguage = systemProperties.getProperty(LANGUAGE_KEY).trim();
 
-		if (systemProperties.getProperty(MINIMUN_SEARCH_PATTERN_LENGTH_KEY) == null) {
-			isValid = false;
+		if (isPropertyNullOrEmpty(MINIMUN_SEARCH_PATTERN_LENGTH_KEY)) {
 			invalidProperties.add(MINIMUN_SEARCH_PATTERN_LENGTH_KEY);
 		} else {
 			try {
 				minimumSearchPatternLength = Integer
 						.parseInt(systemProperties.getProperty(MINIMUN_SEARCH_PATTERN_LENGTH_KEY).trim());
 			} catch (NumberFormatException e) {
-				isValid = false;
 				invalidProperties.add(MINIMUN_SEARCH_PATTERN_LENGTH_KEY);
 				exceptions.add(e);
 			}
 		}
 
-		if (systemProperties.getProperty(MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER) == null) {
-			isValid = false;
+		if (isPropertyNullOrEmpty(MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER)) {
 			invalidProperties.add(MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER);
 		} else {
 			try {
 				maxNumberOfResultsForAuthenticatedUser = Integer
 						.parseInt(systemProperties.getProperty(MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER).trim());
 			} catch (NumberFormatException e) {
-				isValid = false;
 				invalidProperties.add(MAX_NUMBER_OF_RESULTS_FOR_AUTHENTICATED_USER);
 				exceptions.add(e);
 			}
 		}
 
-		if (systemProperties.getProperty(MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER) == null) {
-			isValid = false;
+		if (isPropertyNullOrEmpty(MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER)) {
 			invalidProperties.add(MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER);
 		} else {
 			try {
 				maxNumberOfResultsForUnauthenticatedUser = Integer
 						.parseInt(systemProperties.getProperty(MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER).trim());
 			} catch (NumberFormatException e) {
-				isValid = false;
 				invalidProperties.add(MAX_NUMBER_OF_RESULTS_FOR_UNAUTHENTICATED_USER);
 				exceptions.add(e);
 			}
 		}
 
-		if (systemProperties.getProperty(OWNER_ROLES_KEY) == null) {
-			isValid = false;
-			invalidProperties.add(OWNER_ROLES_KEY);
+		if (isPropertyNullOrEmpty(OWNER_ROLES_IP_KEY)) {
+			invalidProperties.add(OWNER_ROLES_IP_KEY);
 		}
 
-		if (systemProperties.getProperty(ANONYMOUS_USERNAME_KEY) == null) {
-			isValid = false;
+		if (isPropertyNullOrEmpty(OWNER_ROLES_AUTNUM_KEY)) {
+			invalidProperties.add(OWNER_ROLES_AUTNUM_KEY);
+		}
+
+		if (isPropertyNullOrEmpty(OWNER_ROLES_DOMAIN_KEY)) {
+			invalidProperties.add(OWNER_ROLES_DOMAIN_KEY);
+		}
+
+		if (isPropertyNullOrEmpty(OWNER_ROLES_NAMESERVER_KEY)) {
+			invalidProperties.add(OWNER_ROLES_NAMESERVER_KEY);
+		}
+
+		if (isPropertyNullOrEmpty(ANONYMOUS_USERNAME_KEY)) {
 			invalidProperties.add(ANONYMOUS_USERNAME_KEY);
 		} else {
 			anonymousUsername = systemProperties.getProperty(ANONYMOUS_USERNAME_KEY).trim();
 		}
 
-		String allowWildcardProperty = systemProperties.getProperty(ALLOW_WILDCARDS_KEY);
-		if (allowWildcardProperty == null || allowWildcardProperty.trim().isEmpty()) {
-			isValid = false;
-			invalidProperties.add(ALLOW_WILDCARDS_KEY);
+		if (isPropertyNullOrEmpty(ALLOW_MULTIPLE_WILDCARDS_KEY)) {
+			invalidProperties.add(ALLOW_MULTIPLE_WILDCARDS_KEY);
 		} else {
-			allowWildcardProperty = allowWildcardProperty.trim();
-			if (allowWildcardProperty.equalsIgnoreCase("true")) {
-				allowSearchWilcardsAnywhere = true;
-			} else if (allowWildcardProperty.equalsIgnoreCase("false")) {
-				allowSearchWilcardsAnywhere = false;
+			String allowMultipleWildcardProperty = systemProperties.getProperty(ALLOW_MULTIPLE_WILDCARDS_KEY).trim();
+			if (allowMultipleWildcardProperty.equalsIgnoreCase("true")) {
+				allowMultipleWildcards = true;
+			} else if (allowMultipleWildcardProperty.equalsIgnoreCase("false")) {
+				allowMultipleWildcards = false;
 			} else {
-				isValid = false;
-				invalidProperties.add(ALLOW_WILDCARDS_KEY);
+				invalidProperties.add(ALLOW_MULTIPLE_WILDCARDS_KEY);
 			}
 		}
 
-		if (!isValid) {
+		if (isPropertyNullOrEmpty(ALLOW_WILDCARD_ANYWHERE_KEY)) {
+			invalidProperties.add(ALLOW_WILDCARD_ANYWHERE_KEY);
+		} else {
+			String allowWildcardProperty = systemProperties.getProperty(ALLOW_WILDCARD_ANYWHERE_KEY).trim();
+			if (allowWildcardProperty.equalsIgnoreCase("true")) {
+				allowSearchWildcardAnywhere = true;
+			} else if (allowWildcardProperty.equalsIgnoreCase("false")) {
+				allowSearchWildcardAnywhere = false;
+			} else {
+				invalidProperties.add(ALLOW_WILDCARD_ANYWHERE_KEY);
+			}
+		}
+
+		if (!invalidProperties.isEmpty()) {
 			InitializationException invalidValueException = new InitializationException(
 					"The following required properties were not found or are invalid values in configuration file : "
 							+ invalidProperties.toString());
@@ -227,6 +210,18 @@ public class RdapConfiguration {
 			}
 			throw invalidValueException;
 		}
+	}
+
+	/**
+	 * Check if the property is null or empty
+	 * 
+	 * @param propertyKey
+	 *            Key of the property validated
+	 * @return <code>boolean</code> indicating if the property is null or empty
+	 */
+	private static boolean isPropertyNullOrEmpty(String propertyKey) {
+		String systemProperty = systemProperties.getProperty(propertyKey);
+		return systemProperty == null || systemProperty.trim().isEmpty();
 	}
 
 	/**
@@ -259,10 +254,16 @@ public class RdapConfiguration {
 	}
 
 	/**
-	 * Return if the server supports wildcards in the end of the searches.
+	 * @return if the server supports multiple wildcards in each label at the search pattern
 	 */
-	public static boolean allowSearchWildcardsAnywhere() {
-		return allowSearchWilcardsAnywhere;
+	public static boolean allowMultipleWildcards() {
+		return allowMultipleWildcards;
+	}
+	/**
+	 * @return if the server supports a wildcard at the end of the searches.
+	 */
+	public static boolean allowSearchWildcardAnywhere() {
+		return allowSearchWildcardAnywhere;
 	}
 
 	/**
@@ -305,42 +306,41 @@ public class RdapConfiguration {
 		return (username == null || anonymousUsername.equalsIgnoreCase(username));
 	}
 
-	public static boolean isValidZone(String domain) {
-		// TODO test works as expected, comitting just to create branch
-		if (isReverseAddress(domain))
-			return isValidReverseAddress(domain);
-		String[] split = domain.split("\\.", 2);
-		String zone = split[1].trim().toLowerCase();
-		if (zone.endsWith(".")) {
-			zone = zone.substring(0, zone.length() - 1);
-		}
-		return validZones.contains(zone);
-	}
-
-	// Validates if a reverse address is a valid zone
-	private static boolean isValidReverseAddress(String domain) {
-		if (domain.toLowerCase().endsWith(REVERSE_IP_V4))
-			return validZones.contains(REVERSE_IP_V4);
-		if (domain.toLowerCase().endsWith(REVERSE_IP_V6))
-			return validZones.contains(REVERSE_IP_V6);
-
-		return false;
-	}
-
 	/**
-	 * validate if a address is in reverse lookup
+	 * Load the roles for a specific object.
 	 * 
+	 * @param rolesKey
+	 *            Key of the property where the roles are going to be loaded
+	 * @param className
+	 *            Class name of the object, used as key in the <code>Map</code>
+	 * @param objectRolesMap
+	 *            <code>Map</code> where the configured object and roles will be loaded
+	 * @throws InitializationException if there's an error loading the values
 	 */
-	private static boolean isReverseAddress(String address) {
-		return address.trim().endsWith(REVERSE_IP_V4) || address.trim().endsWith(REVERSE_IP_V6);
-	}
-
-	public static boolean hasZoneConfigured() {
-		if (validZones == null || validZones.isEmpty()) {
-			return false;
+	private static void loadObjectOwnerRoles(String rolesKey, String className, Map<String, Set<Role>> objectRolesMap) 
+			throws InitializationException {
+		String ownerRoles = systemProperties.getProperty(rolesKey);
+		if (ownerRoles == null || ownerRoles.trim().isEmpty()) {
+			throw new InitializationException("property '" + rolesKey + "' is not configured");
 		}
 
-		return true;
+		String[] split = ownerRoles.split(",");
+		Set<Role> loadedRoles = new HashSet<Role>();
+		for (String role : split) {
+			role = role.trim();
+			if (role.isEmpty()) {
+				continue;
+			}
+			Role roleEnum = Role.getByName(role);
+			if (roleEnum == null) {
+				throw new InitializationException("unknown role in property '" + rolesKey + "': " + role);
+			}
+			loadedRoles.add(roleEnum);
+		}
+		if (loadedRoles.isEmpty()) {
+			throw new InitializationException("property '" + rolesKey + "' is misconfigured");
+		}
+		objectRolesMap.put(className, loadedRoles);
 	}
 
 }

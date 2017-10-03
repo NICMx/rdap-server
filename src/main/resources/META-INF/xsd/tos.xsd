@@ -43,7 +43,14 @@
 		<xs:simpleContent>
 			<xs:extension base="xs:string">
 				<xs:attribute type="xs:string" name="rel" use="optional" />
-				<xs:attribute type="xs:string" name="href" use="required" />
+				<xs:attribute name="href" use="required">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1" />
+							<xs:whiteSpace value="collapse" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
 				<xs:attribute type="xs:string" name="hreflang" use="optional" />
 				<xs:attribute type="xs:string" name="title" use="optional" />
 				<xs:attribute type="xs:string" name="media" use="optional" />

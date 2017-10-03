@@ -18,6 +18,11 @@ public class AutnumServlet extends DataAccessServlet<AutnumDAO> {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Constant value to set the maximum params expected in the URI, this servlet expects: autnum
+	 */
+	private static final int MAX_PARAMS_EXPECTED = 1;
+
 	@Override
 	protected AutnumDAO initAccessDAO() throws RdapDataAccessException {
 		return DataAccessService.getAutnumDAO();
@@ -31,7 +36,7 @@ public class AutnumServlet extends DataAccessServlet<AutnumDAO> {
 	@Override
 	protected RdapResult doRdapDaGet(HttpServletRequest httpRequest, AutnumDAO dao)
 			throws HttpException, RdapDataAccessException {
-		AutnumRequest request = new AutnumRequest(Util.getRequestParams(httpRequest)[0]);
+		AutnumRequest request = new AutnumRequest(Util.getRequestParams(httpRequest, MAX_PARAMS_EXPECTED)[0]);
 
 		Autnum autnum = dao.getByRange(request.getAutnum());
 		if (autnum == null) {

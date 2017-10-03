@@ -38,6 +38,7 @@ public class ExceptionResult extends RdapResult {
 			return;
 		}
 		
+		boolean logWarning = true;
 		Object objectMessage = httpRequest.getAttribute(RequestDispatcher.ERROR_MESSAGE);
 		String localMessage = objectMessage != null ? objectMessage.toString() : null;
 		switch (errorCode) {
@@ -63,13 +64,22 @@ public class ExceptionResult extends RdapResult {
 		case "500":
 			errorTitle = "Internal server error";
 			errorDescription = localMessage;
+			// The error wasn't "manually" sent, a.k.a is unexpected
+			Object errorException = httpRequest.getAttribute(RequestDispatcher.ERROR_EXCEPTION);
+			if (errorException != null) {
+				Throwable throwable = (Throwable) errorException;
+				logger.log(Level.SEVERE, throwable.getMessage(), throwable);
+				logWarning = false;
+			}
 			break;
 		default:
 			// At least get the description, if there's one
 			errorDescription = localMessage;
 			break;
 		}
-		logger.log(Level.WARNING, errorCode + ":" + errorDescription);
+		if (logWarning) {
+			logger.log(Level.WARNING, "Returned code " + errorCode + ": " + errorDescription);
+		}
 		
 		ExceptionResponse response = new ExceptionResponse(errorDescription, errorCode, errorTitle);
 		setRdapResponse(response);
