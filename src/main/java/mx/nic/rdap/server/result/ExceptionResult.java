@@ -57,7 +57,7 @@ public class ExceptionResult extends RdapResult {
 			errorDescription = localMessage;
 			break;
 		case "422":
-			errorTitle = "Unprocessable Entity";
+			errorTitle = "Unprocessable HTTP Entity";
 			errorDescription = localMessage;
 			break;
 		case "500":
