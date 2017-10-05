@@ -52,7 +52,7 @@ public class RendererPool {
 			throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException,
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		if (defaultRendererClassName == null || defaultRendererClassName.isEmpty()) {
-			throw new IllegalArgumentException("No 'default' renderer value was provided in 'renderer.properties'.");
+			throw new IllegalArgumentException("No 'default' renderer value was provided in 'renderers.properties'.");
 		}
 
 		defaultRendererClassName = defaultRendererClassName.trim();
