@@ -20,6 +20,7 @@ import mx.nic.rdap.db.exception.InitializationException;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.db.spi.RdapUserDAO;
+import mx.nic.rdap.server.catalog.PrivacyStatus;
 
 /**
  * Class containing the configuration of the rdap server
@@ -39,6 +40,7 @@ public class RdapConfiguration {
 	private static final String ANONYMOUS_USERNAME_KEY = "anonymous_username";
 	private static final String ALLOW_MULTIPLE_WILDCARDS_KEY = "allow_multiple_search_wildcards";
 	private static final String ALLOW_WILDCARD_ANYWHERE_KEY = "allow_search_wildcard_anywhere";
+	private static final String USER_ROLES_KEY = "user_roles";
 
 	// Settings values
 	private static String serverLanguage;
@@ -49,6 +51,7 @@ public class RdapConfiguration {
 	private static String anonymousUsername;
 	private static boolean allowMultipleWildcards;
 	private static boolean allowSearchWildcardAnywhere;
+	private static Set<String> userRoles;
 
 	private RdapConfiguration() {
 		// no code.
@@ -70,7 +73,7 @@ public class RdapConfiguration {
 	 * 
 	 * @throws InitializationException if there's an error loading the values
 	 */
-	public static void loadConfiguredRoles() throws InitializationException {
+	public static void loadConfiguredOwnerRoles() throws InitializationException {
 		objectOwnerRoles = new HashMap<String, Set<Role>>();
 		loadObjectOwnerRoles(OWNER_ROLES_IP_KEY, IpNetwork.class.getName(), objectOwnerRoles);
 		loadObjectOwnerRoles(OWNER_ROLES_AUTNUM_KEY, Autnum.class.getName(), objectOwnerRoles);
@@ -107,7 +110,12 @@ public class RdapConfiguration {
 		return objectOwnerRoles.get(className).contains(role);
 	}
 
-	public static void validateRdapConfiguration() throws InitializationException {
+	/**
+	 * Load configuration from previously loaded system properties
+	 * 
+	 * @throws InitializationException if any property is misconfigured
+	 */
+	public static void loadRdapConfiguration() throws InitializationException {
 		List<String> invalidProperties = new ArrayList<>();
 		List<Exception> exceptions = new ArrayList<>();
 
@@ -201,6 +209,15 @@ public class RdapConfiguration {
 			}
 		}
 
+		// Optional property, no problem if it's null
+		userRoles = new HashSet<String>();
+		try {
+			loadUserRoles(USER_ROLES_KEY, userRoles);
+		} catch (InitializationException e) {
+			invalidProperties.add(USER_ROLES_KEY);
+			exceptions.add(e);
+		}
+
 		if (!invalidProperties.isEmpty()) {
 			InitializationException invalidValueException = new InitializationException(
 					"The following required properties were not found or are invalid values in configuration file : "
@@ -259,11 +276,23 @@ public class RdapConfiguration {
 	public static boolean allowMultipleWildcards() {
 		return allowMultipleWildcards;
 	}
+
 	/**
 	 * @return if the server supports a wildcard at the end of the searches.
 	 */
 	public static boolean allowSearchWildcardAnywhere() {
 		return allowSearchWildcardAnywhere;
+	}
+
+	/**
+	 * Check if a user role is configured
+	 * 
+	 * @param userRole
+	 *            role to check
+	 * @return <code>true</code> if role is configured, <code>false</code> if not
+	 */
+	public static boolean isUserRoleConfigured(String userRole) {
+		return userRoles.contains(userRole.toLowerCase());
 	}
 
 	/**
@@ -341,6 +370,37 @@ public class RdapConfiguration {
 			throw new InitializationException("property '" + rolesKey + "' is misconfigured");
 		}
 		objectRolesMap.put(className, loadedRoles);
+	}
+
+	/**
+	 * Load the user roles that can be used.
+	 * 
+	 * @param userRolesKey
+	 *            Key of the property where the roles are going to be loaded
+	 * @param userRolesSet
+	 *            <code>Set</code> where the configured user roles will be loaded 
+	 * @throws InitializationException
+	 */
+	private static void loadUserRoles(String userRolesKey, Set<String> userRolesSet) throws InitializationException {
+		if (!isPropertyNullOrEmpty(userRolesKey)) {
+			String userRoles = systemProperties.getProperty(userRolesKey);
+			String[] split = userRoles.split(",");
+			for (String role : split) {
+				role = role.trim().toLowerCase();
+				if (role.isEmpty()) {
+					continue;
+				}
+				// Reserved roles
+				try {
+					PrivacyStatus.valueOf(role.toUpperCase());
+					throw new InitializationException("property '" + userRolesKey + "' can't use the reserved role '"
+													+ role.toUpperCase() + "', try another value");
+				} catch (IllegalArgumentException e) {
+					// Ok, add role
+					userRolesSet.add(role);
+				}
+			}
+		}
 	}
 
 }

@@ -53,8 +53,8 @@ public class RdapInitializer implements ServletContextListener {
 			Properties serverConfig = loadConfig(CONFIGURATION_FILE, RDAP_CONFIGURATION_PARAM_NAME);
 			RdapConfiguration.loadSystemProperties(serverConfig);
 
-			RdapConfiguration.validateRdapConfiguration();
-			RdapConfiguration.loadConfiguredRoles();
+			RdapConfiguration.loadRdapConfiguration();
+			RdapConfiguration.loadConfiguredOwnerRoles();
 			PrivacyUtil.loadAllPrivacySettings();
 			loadUserNotices();
 
