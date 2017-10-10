@@ -51,11 +51,23 @@ public class PrivacySettingsFactory {
 			throw new NullPointerException("Roles are null or empty.");
 		}
 
-		PrivacySetting privacySetting;
+		PrivacySetting privacySetting = null;
 		if (roles.length == 1) {
-			privacySetting = getSetForSingleValue(roles[0].trim().toLowerCase());
+			return getSetForSingleValue(roles[0].trim().toLowerCase());
+		}
+
+		Set<String> set = new HashSet<>();
+		for (String role : roles) {
+			set.add(role.trim().toLowerCase());
+		}
+
+		if (set.size() == 1) {
+			for (String role : set) {
+				privacySetting = getSetForSingleValue(role);
+				break;
+			}
 		} else {
-			privacySetting = getSetForCombination(roles);
+			privacySetting = getSetForCombination(set);
 		}
 
 		return privacySetting;
@@ -65,11 +77,7 @@ public class PrivacySettingsFactory {
 		return singlePoolMap.get(s);
 	}
 
-	private static PrivacySetting getSetForCombination(String... roles) {
-		Set<String> set = new HashSet<>();
-		for (String role : roles) {
-			set.add(role.trim().toLowerCase());
-		}
+	private static PrivacySetting getSetForCombination(Set<String> set) {
 
 		Set<String> originalSet = setCombinationPoolMap.get(set);
 		if (originalSet != null) {
