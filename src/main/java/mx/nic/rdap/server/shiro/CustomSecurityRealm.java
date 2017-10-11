@@ -35,7 +35,7 @@ public class CustomSecurityRealm extends JdbcRealm {
 	/**
 	 * The default query used to retrieve the roles that apply to a user.
 	 */
-	protected static final String DEFAULT_USER_ROLES_QUERY = "SELECT rur_name FROM rdap_user_role WHERE rus_name = ?";
+	protected static final String DEFAULT_USER_ROLES_QUERY = "SELECT rar_name FROM rdap_user_role WHERE rus_name = ?";
 
 	protected String authenticationQuery = DEFAULT_AUTHENTICATION_QUERY;
 
@@ -137,6 +137,7 @@ public class CustomSecurityRealm extends JdbcRealm {
 		return password;
 	}
 
+	@Override
 	protected Set<String> getRoleNamesForUser(Connection conn, String username) throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -151,8 +152,8 @@ public class CustomSecurityRealm extends JdbcRealm {
 			while (rs.next()) {
 				// Add the role to the list of names if it isn't null
 				String roleName = rs.getString(1);
-				if (roleName != null) {
-					roleNames.add(roleName);
+				if (roleName != null && !roleName.trim().isEmpty()) {
+					roleNames.add(roleName.trim().toLowerCase());
 				}
 			}
 		} finally {
