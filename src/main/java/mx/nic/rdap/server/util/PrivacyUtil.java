@@ -14,15 +14,20 @@ import java.util.Set;
 import javax.servlet.ServletContext;
 
 import mx.nic.rdap.core.catalog.RemarkType;
+import mx.nic.rdap.core.catalog.Role;
 import mx.nic.rdap.core.catalog.Status;
+import mx.nic.rdap.core.db.Entity;
+import mx.nic.rdap.core.db.RdapObject;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
 import mx.nic.rdap.server.configuration.RdapConfiguration;
 import mx.nic.rdap.server.listener.RdapInitializer;
+import mx.nic.rdap.server.privacy.PrivacySetting;
+import mx.nic.rdap.server.privacy.PrivacySettingsFactory;
 
 public class PrivacyUtil {
 
-	private static Map<String, Map<String, String>> OBJECTS_PRIVACY_SETTING = new HashMap<>();
+	private static Map<String, Map<String, PrivacySetting>> OBJECTS_PRIVACY_SETTING = new HashMap<>();
 
 	// ***** Names of the properties files *****
 	public static final String ENTITY = "entity";
@@ -135,7 +140,7 @@ public class PrivacyUtil {
 	private static void loadObjectPrivacySettings(String objectName) throws IOException {
 		Properties properties = new Properties();
 		ClassLoader classLoader = PrivacyUtil.class.getClassLoader();
-		HashMap<String, String> objectProperties = new HashMap<>();
+		HashMap<String, PrivacySetting> objectProperties = new HashMap<>();
 		try (InputStream in = classLoader.getResourceAsStream(DEFAULT_PATH + objectName + ".properties");) {
 			properties.load(in);
 		} catch (NullPointerException e) {
@@ -145,7 +150,7 @@ public class PrivacyUtil {
 		loadUserPrivacySettings(objectName, properties);
 
 		StringBuilder builder = new StringBuilder();
-		boolean isInvalidProperties = false;
+		boolean hasInvalidProperties = false;
 		Set<Object> keySet = properties.keySet();
 		for (Object keyObj : keySet) {
 			String key = (String) keyObj;
@@ -155,52 +160,65 @@ public class PrivacyUtil {
 			}
 
 			String property = properties.getProperty(key).trim();
+			if (property.isEmpty()) {
+				hasInvalidProperties = true;
+				builder.append(key).append(" (must have a value); ");
+				continue;
+			}
 			if (!property.contains(",")) {
 				try {
-					PrivacyStatus privacyProperty = PrivacyStatus.valueOf(property.toUpperCase());
-					objectProperties.put(key, privacyProperty.toString().toLowerCase());
+					PrivacyStatus privacyStatus = PrivacyStatus.valueOf(property.toUpperCase());
+					objectProperties.put(key, PrivacySettingsFactory.getSetForRoles(privacyStatus.toString().toLowerCase()));
 				} catch (IllegalArgumentException e) {
 					// Can be a custom role, must be configured
 					if (RdapConfiguration.isUserRoleConfigured(property)) {
-						objectProperties.put(key, property.toLowerCase());
+						objectProperties.put(key, PrivacySettingsFactory.getSetForRoles(property.toLowerCase()));
 					} else {
-						isInvalidProperties = true;
+						hasInvalidProperties = true;
 						builder.append(key).append("=").append(property).append(" (unknown value); ");
 					}
 				}
 			} else {
 				// List of roles, only "OWNER" can be mixed with custom roles
-				String[] privacyRoles = property.split(",");
-				StringBuilder errorsList = new StringBuilder(key + "=");
 				boolean localError = false;
+				int emptyRoles = 0;
+				StringBuilder errorsList = new StringBuilder(key + "=");
+				String[] privacyRoles = property.split(",");
+
 				for (String privacyRole : privacyRoles) {
 					privacyRole = privacyRole.trim();
-					try {
-						PrivacyStatus privacyStatus = PrivacyStatus.valueOf(privacyRole.toUpperCase());
-						if (!privacyStatus.equals(PrivacyStatus.OWNER)) {
-							localError = true;
-							errorsList.append(privacyRole).append(" (can't be mixed with custom roles), ");
-						} else {
-							objectProperties.put(key, privacyStatus.toString().toLowerCase());
+					if (!privacyRole.isEmpty()) {
+						try {
+							PrivacyStatus privacyStatus = PrivacyStatus.valueOf(privacyRole.toUpperCase());
+							if (!privacyStatus.equals(PrivacyStatus.OWNER)) {
+								localError = true;
+								errorsList.append(privacyRole).append(" (can't be mixed with custom roles), ");
+							}
+						} catch (IllegalArgumentException e) {
+							// Can be a custom role, must be configured
+							if (!RdapConfiguration.isUserRoleConfigured(privacyRole)) {
+								localError = true;
+								errorsList.append(privacyRole).append(" (unknown value), ");
+							}
 						}
-					} catch (IllegalArgumentException e) {
-						// Can be a custom role, must be configured
-						if (RdapConfiguration.isUserRoleConfigured(privacyRole)) {
-							objectProperties.put(key, privacyRole.toLowerCase());
-						} else {
-							localError = true;
-							errorsList.append(privacyRole).append(" (unknown value), ");
-						}
+					} else {
+						emptyRoles++;
 					}
 				}
+				if (emptyRoles == privacyRoles.length) {
+					localError = true;
+					errorsList.append("(can't be an empty list); ");
+				}
 				if (localError) {
-					isInvalidProperties = true;
+					hasInvalidProperties = true;
 					builder.append(errorsList.substring(0, errorsList.toString().length() - 2)).append("; ");
+				} else {
+					objectProperties.put(key, PrivacySettingsFactory.getSetForRoles(privacyRoles));
 				}
 			}
 		}
 
-		if (isInvalidProperties) {
+		if (hasInvalidProperties) {
 			throw new RuntimeException(
 					"Invalid privacy file '" + objectName + ".properties'.\n Invalid values: " + builder.substring(0, builder.toString().length() - 2));
 		}
@@ -266,111 +284,111 @@ public class PrivacyUtil {
 		return result;
 	}
 
-	public static Map<String, String> getEntityPrivacySettings() {
+	public static Map<String, PrivacySetting> getEntityPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(ENTITY);
 	}
 
-	public static Map<String, String> getEntityPublicIdsPrivacySettings() {
+	public static Map<String, PrivacySetting> getEntityPublicIdsPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(ENTITY_PUBLIC_ID);
 	}
 
-	public static Map<String, String> getNameserverPrivacySettings() {
+	public static Map<String, PrivacySetting> getNameserverPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(NAMESERVER);
 	}
 
-	public static Map<String, String> getDomainPrivacySettings() {
+	public static Map<String, PrivacySetting> getDomainPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(DOMAIN);
 	}
 
-	public static Map<String, String> getDomainPublicIdsPrivacySettings() {
+	public static Map<String, PrivacySetting> getDomainPublicIdsPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(DOMAIN_PUBLIC_ID);
 	}
 
-	public static Map<String, String> getDomainVariantsPrivacySettings() {
+	public static Map<String, PrivacySetting> getDomainVariantsPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(DOMAIN_VARIANTS);
 	}
 
-	public static Map<String, String> getSecureDnsPrivacySettings() {
+	public static Map<String, PrivacySetting> getSecureDnsPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(SECURE_DNS);
 	}
 
-	public static Map<String, String> getDsDataPrivacySettings() {
+	public static Map<String, PrivacySetting> getDsDataPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(DS_DATA);
 	}
 
-	public static Map<String, String> getKeyDataPrivacySettings() {
+	public static Map<String, PrivacySetting> getKeyDataPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(KEY_DATA);
 	}
 
-	public static Map<String, String> getEntityLinkPrivacySettings() {
+	public static Map<String, PrivacySetting> getEntityLinkPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(ENTITY_LINKS);
 	}
 
-	public static Map<String, String> getEntityRemarkPrivacySettings() {
+	public static Map<String, PrivacySetting> getEntityRemarkPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(ENTITY_REMARKS);
 	}
 
-	public static Map<String, String> getEntityEventPrivacySettings() {
+	public static Map<String, PrivacySetting> getEntityEventPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(ENTITY_EVENTS);
 	}
 
-	public static Map<String, String> getDomainLinkPrivacySettings() {
+	public static Map<String, PrivacySetting> getDomainLinkPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(DOMAIN_LINKS);
 	}
 
-	public static Map<String, String> getDomainRemarkPrivacySettings() {
+	public static Map<String, PrivacySetting> getDomainRemarkPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(DOMAIN_REMARKS);
 	}
 
-	public static Map<String, String> getDomainEventPrivacySettings() {
+	public static Map<String, PrivacySetting> getDomainEventPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(DOMAIN_EVENTS);
 	}
 
-	public static Map<String, String> getNameserverLinkPrivacySettings() {
+	public static Map<String, PrivacySetting> getNameserverLinkPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(NAMESERVER_LINKS);
 	}
 
-	public static Map<String, String> getNameserverRemarkPrivacySettings() {
+	public static Map<String, PrivacySetting> getNameserverRemarkPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(NAMESERVER_REMARKS);
 	}
 
-	public static Map<String, String> getNameserverEventPrivacySettings() {
+	public static Map<String, PrivacySetting> getNameserverEventPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(NAMESERVER_EVENTS);
 	}
 
-	public static Map<String, String> getAutnumPrivacySettings() {
+	public static Map<String, PrivacySetting> getAutnumPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(AUTNUM);
 	}
 
-	public static Map<String, String> getAutnumLinkPrivacySettings() {
+	public static Map<String, PrivacySetting> getAutnumLinkPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(AUTNUM_LINKS);
 	}
 
-	public static Map<String, String> getAutnumRemarkPrivacySettings() {
+	public static Map<String, PrivacySetting> getAutnumRemarkPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(AUTNUM_REMARKS);
 	}
 
-	public static Map<String, String> getAutnumEventPrivacySettings() {
+	public static Map<String, PrivacySetting> getAutnumEventPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(AUTNUM_EVENTS);
 	}
 
-	public static Map<String, String> getIpNetworkPrivacySettings() {
+	public static Map<String, PrivacySetting> getIpNetworkPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(IP_NETWORK);
 	}
 
-	public static Map<String, String> getIpNetworkLinkPrivacySettings() {
+	public static Map<String, PrivacySetting> getIpNetworkLinkPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(IP_NETWORK_LINKS);
 	}
 
-	public static Map<String, String> getIpNetworkRemarkPrivacySettings() {
+	public static Map<String, PrivacySetting> getIpNetworkRemarkPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(IP_NETWORK_REMARKS);
 	}
 
-	public static Map<String, String> getIpNetworkEventPrivacySettings() {
+	public static Map<String, PrivacySetting> getIpNetworkEventPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(IP_NETWORK_EVENTS);
 	}
 
-	public static Map<String, String> getVCardPrivacySettings() {
+	public static Map<String, PrivacySetting> getVCardPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(VCARD);
 	}
 
@@ -422,5 +440,46 @@ public class PrivacyUtil {
 			return new Remark(RemarkType.OBJECT_AUTHORIZATION);
 		} else
 			return new Remark(RemarkType.OBJECT_UNEXPLAINABLE);
+	}
+
+	/**
+	 * @return <code>true</code> if the user is owner of the RdapObject
+	 */
+	public static boolean isSubjectOwner(String userName, RdapObject object) {
+		if (userName != null && !userName.isEmpty() && object != null) {
+			if (object instanceof Entity) {
+				Entity ent = (Entity) object;
+				return ent.getHandle().equals(userName);
+			}
+
+			for (Entity ent : object.getEntities()) {
+				if (isEntityOwner(userName, object, ent)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * @return <code>true</code> if the user is owner of the Entity Object
+	 */
+	private static boolean isEntityOwner(String userName, RdapObject father, Entity ent) {
+		if (!ent.getHandle().equals(userName)) {
+			return false;
+		}
+
+		if (ent.getRoles() == null || ent.getRoles().isEmpty()) {
+			return false;
+		}
+
+		for (Role role : ent.getRoles()) {
+			if (RdapConfiguration.isRoleAnOwner(father, role)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
