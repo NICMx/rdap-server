@@ -82,6 +82,8 @@ public class ExceptionResult extends RdapResult {
 		}
 		
 		ExceptionResponse response = new ExceptionResponse(errorDescription, errorCode, errorTitle);
+		response.setRdapConformance(new ArrayList<>());
+		response.getRdapConformance().add("rdap_level_0");
 		setRdapResponse(response);
 		setResultType(ResultType.EXCEPTION);
 	}
