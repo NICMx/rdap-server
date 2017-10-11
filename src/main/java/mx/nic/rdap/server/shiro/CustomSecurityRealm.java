@@ -20,26 +20,14 @@ import org.apache.shiro.realm.jdbc.JdbcRealm;
 import org.apache.shiro.util.JdbcUtils;
 
 /**
- * Based on https://mehmetceliksoy.wordpress.com/2015/06/28/shiro-jdbc-realm/
- * 
- * @author pcarana
- *
+ * Custom realm, extends from {@link JdbcRealm}, used to authenticate users. This realm can be overwritten, deleted,
+ * altered to satisfy any other needs (eg. another kind of authentication, load user/password from other place, etc.).
+ * <br/><br/>
+ * For something even more customized, you can see <a href="https://shiro.apache.org/realm.html">Apache Shiro Realms</a>
+ * <br/><br/>
+ * Based on <a href="https://mehmetceliksoy.wordpress.com/2015/06/28/shiro-jdbc-realm/">Shiro JDBC Realm</a>
  */
 public class CustomSecurityRealm extends JdbcRealm {
-
-	/**
-	 * The default query used to retrieve account data for the user.
-	 */
-	protected static final String DEFAULT_AUTHENTICATION_QUERY = "SELECT rus_pass FROM rdap_user WHERE rus_name = ?";
-
-	/**
-	 * The default query used to retrieve the roles that apply to a user.
-	 */
-	protected static final String DEFAULT_USER_ROLES_QUERY = "SELECT rar_name FROM rdap_user_role WHERE rus_name = ?";
-
-	protected String authenticationQuery = DEFAULT_AUTHENTICATION_QUERY;
-
-	protected String userRolesQuery = DEFAULT_USER_ROLES_QUERY;
 
 	protected boolean permissionsLookupEnabled = false;	
 
@@ -50,26 +38,6 @@ public class CustomSecurityRealm extends JdbcRealm {
 	public CustomSecurityRealm() {
 		super();
 	}
-
-//	FIXME Commented, is loaded from shiro.ini
-//	public String getDataSourceName() {
-//		return dataSourceName;
-//	}
-//
-//	public void setDataSourceName(String dataSourceName) {
-//		this.dataSourceName = dataSourceName;
-//		this.dataSource = getDataSourceFromJDBC(dataSourceName);
-//	}
-//
-//	private DataSource getDataSourceFromJDBC(String dataSourceName) {
-//		try {
-//			InitialContext ic = new InitialContext();
-//			return (DataSource) ic.lookup(dataSourceName);
-//		} catch (NamingException e) {
-//			log.error("JDBCr while retrieving " + dataSourceName, e);
-//			throw new AuthorizationException(e);
-//		}
-//	}
 
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
