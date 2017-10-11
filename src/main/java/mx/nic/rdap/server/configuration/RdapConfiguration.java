@@ -21,6 +21,7 @@ import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.db.spi.RdapUserDAO;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
+import mx.nic.rdap.server.privacy.PrivacySettingsFactory;
 
 /**
  * Class containing the configuration of the rdap server
@@ -399,6 +400,9 @@ public class RdapConfiguration {
 					// Ok, add role
 					userRolesSet.add(role);
 				}
+			}
+			if (!userRolesSet.isEmpty()) {
+				PrivacySettingsFactory.initializePool(userRolesSet.toArray(new String[userRolesSet.size()]));
 			}
 		}
 	}
