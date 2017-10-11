@@ -1,7 +1,5 @@
 package mx.nic.rdap.server.result;
 
-
-
 import java.util.ArrayList;
 
 import mx.nic.rdap.core.db.Entity;
@@ -13,7 +11,7 @@ public class IpResult extends RdapSingleResult {
 
 	public IpResult(String header, String contextPath, IpNetwork ipNetwork, String userName) {
 		setRdapObject(ipNetwork);
-		this.userInfo = new UserInfo(userName);
+		
 		addSelfLinks(header, contextPath, ipNetwork);
 		
 		setResultType(ResultType.IP);

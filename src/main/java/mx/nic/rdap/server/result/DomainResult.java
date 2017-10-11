@@ -1,7 +1,5 @@
 package mx.nic.rdap.server.result;
 
-
-
 import java.util.ArrayList;
 
 import mx.nic.rdap.core.db.Domain;
@@ -17,7 +15,7 @@ public class DomainResult extends RdapSingleResult {
 
 	public DomainResult(String header, String contextPath, Domain domain, String userName) {
 		setRdapObject(domain);
-		this.userInfo = new UserInfo(userName);
+		
 		addSelfLinks(header, contextPath, domain);
 		validateResponse();
 		

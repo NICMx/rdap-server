@@ -1,6 +1,3 @@
-/**
- * 
- */
 package mx.nic.rdap.server.result;
 
 import java.util.ArrayList;
@@ -26,7 +23,6 @@ public class DomainSearchResult extends RdapSearchResult {
 	public DomainSearchResult(String header, String contextPath, SearchResultStruct<Domain> result, String userName) {
 		notices = new ArrayList<Remark>();
 		this.domains = new ArrayList<Domain>();
-		this.userInfo = new UserInfo(userName);
 		this.setMaxNumberOfResultsForUser(result.getSearchResultsLimitForUser());
 		this.resultSetWasLimitedByUserConfiguration = result.getResultSetWasLimitedByUserConfiguration();
 		for (Domain domain : result.getResults()) {

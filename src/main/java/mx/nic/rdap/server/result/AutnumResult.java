@@ -1,8 +1,4 @@
-/**
- * 
- */
 package mx.nic.rdap.server.result;
-
 
 import java.util.ArrayList;
 
@@ -13,10 +9,9 @@ import mx.nic.rdap.renderer.object.RequestResponse;
 
 public class AutnumResult extends RdapSingleResult {
 
-	
 	public AutnumResult(String header, String contextPath, Autnum autnum, String username) {
 		setRdapObject(autnum);
-		this.userInfo = new UserInfo(username);
+		
 		addSelfLinks(header, contextPath, autnum);
 		
 		validateResponse();
@@ -30,7 +25,6 @@ public class AutnumResult extends RdapSingleResult {
 		autnumResponse.setRdapObject(autnum);
 		
 		setRdapResponse(autnumResponse);
-		
 	}
 
 	/*

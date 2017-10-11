@@ -23,7 +23,6 @@ public class EntitySearchResult extends RdapSearchResult {
 	public EntitySearchResult(String header, String contextPath, SearchResultStruct<Entity> result, String userName) {
 		notices = new ArrayList<Remark>();
 		this.entities = new ArrayList<Entity>();
-		this.userInfo = new UserInfo(userName);
 		this.setMaxNumberOfResultsForUser(result.getSearchResultsLimitForUser());
 		this.resultSetWasLimitedByUserConfiguration = result.getResultSetWasLimitedByUserConfiguration();
 		for (Entity entity : result.getResults()) {

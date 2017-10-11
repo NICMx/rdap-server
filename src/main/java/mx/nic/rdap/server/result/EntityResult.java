@@ -1,7 +1,5 @@
 package mx.nic.rdap.server.result;
 
-
-
 import java.util.ArrayList;
 
 import mx.nic.rdap.core.db.Entity;
@@ -14,10 +12,9 @@ import mx.nic.rdap.renderer.object.RequestResponse;
  */
 public class EntityResult extends RdapSingleResult {
 
-
 	public EntityResult(String header, String contextPath, Entity entity, String userName) {
 		setRdapObject(entity);
-		this.userInfo = new UserInfo(userName);
+		
 		addSelfLinks(header, contextPath, entity);
 		validateResponse();
 		

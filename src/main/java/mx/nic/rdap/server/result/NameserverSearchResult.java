@@ -25,7 +25,6 @@ public class NameserverSearchResult extends RdapSearchResult {
 			String userName) {
 		notices = new ArrayList<Remark>();
 		this.nameservers = new ArrayList<Nameserver>();
-		this.userInfo = new UserInfo(userName);
 		this.setMaxNumberOfResultsForUser(result.getSearchResultsLimitForUser());
 		this.resultSetWasLimitedByUserConfiguration = result.getResultSetWasLimitedByUserConfiguration();
 		for (Nameserver nameserver : result.getResults()) {
@@ -43,7 +42,6 @@ public class NameserverSearchResult extends RdapSearchResult {
 		searchResponse.getRdapConformance().add("rdap_level_0");
 		
 		setRdapResponse(searchResponse);
-		
 	}
 
 	/*

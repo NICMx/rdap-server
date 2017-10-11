@@ -11,7 +11,6 @@ import mx.nic.rdap.renderer.object.RdapResponse;
 public abstract class RdapResult {
 
 	private ResultType resultType;
-	protected UserInfo userInfo;
 	protected List<Remark> notices;
 	
 	private RdapResponse rdapResponse;
@@ -26,14 +25,6 @@ public abstract class RdapResult {
 	 * 
 	 */
 	public abstract void fillNotices();
-
-	public UserInfo getUserInfo() {
-		return userInfo;
-	}
-
-	public void setUserInfo(UserInfo userInfo) {
-		this.userInfo = userInfo;
-	}
 
 	public List<Remark> getNotices() {
 		return notices;

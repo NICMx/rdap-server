@@ -1,7 +1,5 @@
 package mx.nic.rdap.server.result;
 
-
-
 import java.util.ArrayList;
 
 import mx.nic.rdap.core.db.Entity;
@@ -16,7 +14,7 @@ public class NameserverResult extends RdapSingleResult {
 
 	public NameserverResult(String header, String contextPath, Nameserver nameserver, String userName) {
 		setRdapObject(nameserver);
-		this.userInfo = new UserInfo(userName);
+		
 		addSelfLinks(header, contextPath, nameserver);
 		
 		setResultType(ResultType.NAMESERVER);
