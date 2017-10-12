@@ -13,6 +13,7 @@ import mx.nic.rdap.core.db.DsData;
 import mx.nic.rdap.core.db.KeyData;
 import mx.nic.rdap.core.db.SecureDNS;
 import mx.nic.rdap.core.db.Variant;
+import mx.nic.rdap.core.db.VariantName;
 import mx.nic.rdap.server.util.PrivacyUtil;
 
 public class DomainPrivacyFilter {
@@ -371,23 +372,41 @@ public class DomainPrivacyFilter {
 					if (isHidden && !ObjectPrivacyFilter.isValueEmpty(v.getVariantNames())) {
 						v.setVariantNames(null);
 						isPrivate = true;
+					} else {
+						isPrivate |= filterVariantNames(v.getVariantNames(), userInfo);
 					}
 					break;
-				// TODO
-				// case "ldhName":
-				// if (isHidden && !ObjectPrivacyFilter.isValueEmpty(v)) {
-				// isPrivate = true;
-				// }
-				// break;
-				// case "unicodeName":
-				// if (isHidden && !ObjectPrivacyFilter.isValueEmpty(v)) {
-				// isPrivate = true;
-				// }
-				// break;
-
 				}
 			}
 
+		}
+		return isPrivate;
+
+	}
+
+	private static boolean filterVariantNames(List<VariantName> names, UserInfo userInfo) {
+		boolean isPrivate = false;
+
+		if (ObjectPrivacyFilter.isValueEmpty(names)) {
+			return false;
+		}
+
+		Map<String, PrivacySetting> privacySettings = PrivacyUtil.getDomainVariantsPrivacySettings();
+
+		for (VariantName vn : names) {
+			String key = "ldhName";
+			boolean isHidden = privacySettings.get(key).isHidden(userInfo);
+			if (isHidden && !ObjectPrivacyFilter.isValueEmpty(vn.getLdhName())) {
+				vn.setLdhName(null);
+				isPrivate = true;
+			}
+
+			key = "unicodeName";
+			isHidden = privacySettings.get(key).isHidden(userInfo);
+			if (isHidden && !ObjectPrivacyFilter.isValueEmpty(vn.getUnicodeName())) {
+				vn.setUnicodeName(null);
+				isPrivate = true;
+			}
 		}
 
 		return isPrivate;
