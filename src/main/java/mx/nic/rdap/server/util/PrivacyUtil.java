@@ -393,55 +393,19 @@ public class PrivacyUtil {
 	}
 
 	/**
-	 * Return the privacy status with most priority.something like:
-	 * none>owner>authenticate>any
+	 * Adds a {@link Remark} of type {@link RemarkType} <code>OBJECT_AUTHORIZATION</code>,
+	 * and if the <code>rdapObject</code> is an instance of {@link Entity} also adds the
+	 * {@link Status} <code>Private</code>.
+	 * 
+	 * @param rdapObject
+	 *             The object to modify
 	 */
-	public static PrivacyStatus getPriorityPrivacyStatus(boolean isAuthenticated, boolean isOwner,
-			Map<String, PrivacyStatus> privacySettings) {
-		// First check if all the privacys settings are in "Any"
-		if (!privacySettings.containsValue(PrivacyStatus.AUTHENTICATED)
-				&& !privacySettings.containsValue(PrivacyStatus.OWNER)
-				&& !privacySettings.containsValue(PrivacyStatus.NONE)) {
-			return PrivacyStatus.ANY;
-		} // Then, validate if all the privacy is
-		else if (privacySettings.containsValue(PrivacyStatus.NONE)) {
-			return PrivacyStatus.NONE;
-		} else if (privacySettings.containsValue(PrivacyStatus.OWNER) && !isOwner) {
-			return PrivacyStatus.OWNER;
-		} else if (privacySettings.containsValue(PrivacyStatus.AUTHENTICATED) && !isAuthenticated) {
-			return PrivacyStatus.AUTHENTICATED;
-		} else
-			return PrivacyStatus.ANY;
+	public static void addPrivacyRemarkAndStatus(RdapObject rdapObject) {
+		rdapObject.getRemarks().add(new Remark(RemarkType.OBJECT_AUTHORIZATION));
+		if (rdapObject instanceof Entity) {
+			rdapObject.getStatus().add(Status.PRIVATE);
+		}
 	}
-
-	public static Status getObjectStatusFromPrivacy(boolean isAuthenticated, boolean isOwner,
-			PrivacyStatus priorityStatus) {
-		if (priorityStatus.equals(PrivacyStatus.ANY)) {
-			return null;
-		} else if (priorityStatus.equals(PrivacyStatus.NONE)) {
-			return Status.REMOVED;
-		} else if (priorityStatus.equals(PrivacyStatus.OWNER)) {
-			return Status.PRIVATE;
-		} else if (priorityStatus.equals(PrivacyStatus.AUTHENTICATED)) {
-			return Status.PRIVATE;
-		} else
-			return null;
-	}
-
-	public static Remark getObjectRemarkFromPrivacy(boolean isAuthenticated, boolean isOwner,
-			PrivacyStatus priorityStatus) {
-		if (priorityStatus.equals(PrivacyStatus.ANY)) {
-			return null;
-		} else if (priorityStatus.equals(PrivacyStatus.NONE)) {
-			return new Remark(RemarkType.OBJECT_AUTHORIZATION);
-		} else if (priorityStatus.equals(PrivacyStatus.OWNER)) {
-			return new Remark(RemarkType.OBJECT_AUTHORIZATION);
-		} else if (priorityStatus.equals(PrivacyStatus.AUTHENTICATED)) {
-			return new Remark(RemarkType.OBJECT_AUTHORIZATION);
-		} else
-			return new Remark(RemarkType.OBJECT_UNEXPLAINABLE);
-	}
-
 	/**
 	 * @return <code>true</code> if the user is owner of the RdapObject
 	 */

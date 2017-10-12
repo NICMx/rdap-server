@@ -30,6 +30,7 @@ import mx.nic.rdap.server.privacy.NameserverPrivacyFilter;
 import mx.nic.rdap.server.renderer.RendererPool;
 import mx.nic.rdap.server.result.RdapResult;
 import mx.nic.rdap.server.servlet.AcceptHeaderFieldParser.Accept;
+import mx.nic.rdap.server.util.PrivacyUtil;
 
 /**
  * Base class of all RDAP servlets.
@@ -72,34 +73,50 @@ public abstract class RdapServlet extends HttpServlet {
 
 	@SuppressWarnings("unchecked")
 	private void renderResult(Renderer renderer, RdapResult result, PrintWriter printWriter) {
+		boolean wasFiltered = false;
 		switch (result.getResultType()) {
 		case AUTNUM:
 			RequestResponse<Autnum> autnumRequestResponse = (RequestResponse<Autnum>) result.getRdapResponse();
-			AutnumPrivacyFilter.filterAutnum(autnumRequestResponse.getRdapObject());
+			wasFiltered = AutnumPrivacyFilter.filterAutnum(autnumRequestResponse.getRdapObject());
+			if (wasFiltered) {
+				PrivacyUtil.addPrivacyRemarkAndStatus(autnumRequestResponse.getRdapObject());
+			}
 			renderer.renderAutnum(autnumRequestResponse, printWriter);
 			break;
 		case DOMAIN:
 			RequestResponse<Domain> domainRequestResponse = (RequestResponse<Domain>) result.getRdapResponse();
-			DomainPrivacyFilter.filterDomain(domainRequestResponse.getRdapObject());
+			wasFiltered = DomainPrivacyFilter.filterDomain(domainRequestResponse.getRdapObject());
+			if (wasFiltered) {
+				PrivacyUtil.addPrivacyRemarkAndStatus(domainRequestResponse.getRdapObject());
+			}
 			renderer.renderDomain(domainRequestResponse, printWriter);
 			break;
 		case DOMAINS:
 			SearchResponse<Domain> domainSearchResponse = (SearchResponse<Domain>) result.getRdapResponse();
 			for (Domain domain : domainSearchResponse.getRdapObjects()) {
-				DomainPrivacyFilter.filterDomain(domain);
+				wasFiltered = DomainPrivacyFilter.filterDomain(domain);
+				if (wasFiltered) {
+					PrivacyUtil.addPrivacyRemarkAndStatus(domain);
+				}
 			}
 			renderer.renderDomains(domainSearchResponse, printWriter);
 			break;
 		case ENTITIES:
 			SearchResponse<Entity> entitySearchResponse = (SearchResponse<Entity>) result.getRdapResponse();
 			for (Entity entity : entitySearchResponse.getRdapObjects()) {
-				EntityPrivacyFilter.filterEntity(entity);
+				wasFiltered = EntityPrivacyFilter.filterEntity(entity);
+				if (wasFiltered) {
+					PrivacyUtil.addPrivacyRemarkAndStatus(entity);
+				}
 			}
 			renderer.renderEntities(entitySearchResponse, printWriter);
 			break;
 		case ENTITY:
 			RequestResponse<Entity> entityRequestResponse = (RequestResponse<Entity>) result.getRdapResponse();
-			EntityPrivacyFilter.filterEntity(entityRequestResponse.getRdapObject());
+			wasFiltered = EntityPrivacyFilter.filterEntity(entityRequestResponse.getRdapObject());
+			if (wasFiltered) {
+				PrivacyUtil.addPrivacyRemarkAndStatus(entityRequestResponse.getRdapObject());
+			}
 			renderer.renderEntity(entityRequestResponse, printWriter);
 			break;
 		case EXCEPTION:
@@ -110,18 +127,27 @@ public abstract class RdapServlet extends HttpServlet {
 			break;
 		case IP:
 			RequestResponse<IpNetwork> ipRequestResponse = (RequestResponse<IpNetwork>) result.getRdapResponse();
-			IpNetworkPrivacyFilter.filterIpNetwork(ipRequestResponse.getRdapObject());
+			wasFiltered = IpNetworkPrivacyFilter.filterIpNetwork(ipRequestResponse.getRdapObject());
+			if (wasFiltered) {
+				PrivacyUtil.addPrivacyRemarkAndStatus(ipRequestResponse.getRdapObject());
+			}
 			renderer.renderIpNetwork(ipRequestResponse, printWriter);
 			break;
 		case NAMESERVER:
 			RequestResponse<Nameserver> nameserverRequestResponse = (RequestResponse<Nameserver>) result.getRdapResponse();
-			NameserverPrivacyFilter.filterNameserver(nameserverRequestResponse.getRdapObject());
+			wasFiltered = NameserverPrivacyFilter.filterNameserver(nameserverRequestResponse.getRdapObject());
+			if (wasFiltered) {
+				PrivacyUtil.addPrivacyRemarkAndStatus(nameserverRequestResponse.getRdapObject());
+			}
 			renderer.renderNameserver(nameserverRequestResponse, printWriter);
 			break;
 		case NAMESERVERS:
 			SearchResponse<Nameserver> nameserverSearchResponse = (SearchResponse<Nameserver>) result.getRdapResponse();
 			for (Nameserver nameserver : nameserverSearchResponse.getRdapObjects()) {
-				NameserverPrivacyFilter.filterNameserver(nameserver);
+				wasFiltered = NameserverPrivacyFilter.filterNameserver(nameserver);
+				if (wasFiltered) {
+					PrivacyUtil.addPrivacyRemarkAndStatus(nameserver);
+				}
 			}
 			renderer.renderNameservers(nameserverSearchResponse, printWriter);
 			break;
