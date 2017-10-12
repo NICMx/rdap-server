@@ -15,6 +15,7 @@ import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.IpNetwork;
 import mx.nic.rdap.core.db.Nameserver;
+import mx.nic.rdap.core.db.RdapObject;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.exception.http.HttpException;
 import mx.nic.rdap.renderer.Renderer;
@@ -22,6 +23,7 @@ import mx.nic.rdap.renderer.object.ExceptionResponse;
 import mx.nic.rdap.renderer.object.HelpResponse;
 import mx.nic.rdap.renderer.object.RequestResponse;
 import mx.nic.rdap.renderer.object.SearchResponse;
+import mx.nic.rdap.server.configuration.RdapConfiguration;
 import mx.nic.rdap.server.privacy.AutnumPrivacyFilter;
 import mx.nic.rdap.server.privacy.DomainPrivacyFilter;
 import mx.nic.rdap.server.privacy.EntityPrivacyFilter;
@@ -73,6 +75,15 @@ public abstract class RdapServlet extends HttpServlet {
 
 	@SuppressWarnings("unchecked")
 	private void renderResult(Renderer renderer, RdapResult result, PrintWriter printWriter) {
+		// Set the language
+		if (result.getRdapResponse() instanceof RequestResponse) {
+			RequestResponse<RdapObject> requestResponse = (RequestResponse<RdapObject>) result.getRdapResponse();
+			requestResponse.getRdapObject().setLang(RdapConfiguration.getServerLanguage());
+		} else if (result.getRdapResponse() instanceof SearchResponse) {
+			SearchResponse<RdapObject> searchResponse = (SearchResponse<RdapObject>) result.getRdapResponse();
+			searchResponse.getRdapObjects().forEach(rdapObject -> rdapObject.setLang(RdapConfiguration.getServerLanguage()));
+		}
+		// Filter objects according to privacy settings
 		boolean wasFiltered = false;
 		switch (result.getResultType()) {
 		case AUTNUM:
