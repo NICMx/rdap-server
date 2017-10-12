@@ -43,7 +43,7 @@ public class EntityServlet extends DataAccessServlet<EntityDAO> {
 		}
 
 		return new EntityResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), entity,
-				Util.getUsername(httpRequest));
+				Util.getAuthenticatedUsername());
 	}
 
 	private class EntityRequest {

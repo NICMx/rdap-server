@@ -52,7 +52,7 @@ public class DomainServlet extends DataAccessServlet<DomainDAO> {
 		}
 
 		return new DomainResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), domain,
-				Util.getUsername(httpRequest));
+				Util.getAuthenticatedUsername());
 	}
 
 	private class DomainRequest {

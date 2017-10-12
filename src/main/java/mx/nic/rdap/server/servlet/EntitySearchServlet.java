@@ -12,6 +12,7 @@ import mx.nic.rdap.db.struct.SearchResultStruct;
 import mx.nic.rdap.server.configuration.RdapConfiguration;
 import mx.nic.rdap.server.result.EntitySearchResult;
 import mx.nic.rdap.server.result.RdapResult;
+import mx.nic.rdap.server.util.Util;
 
 @WebServlet(name = 	"entities", urlPatterns = { "/entities" })
 public class EntitySearchServlet extends DataAccessServlet<EntityDAO> {
@@ -36,11 +37,7 @@ public class EntitySearchServlet extends DataAccessServlet<EntityDAO> {
 			throws HttpException, RdapDataAccessException {
 		RdapSearchRequest searchRequest = RdapSearchRequest.getSearchRequest(httpRequest, true, false, FULL_NAME, HANDLE);
 
-		String username = httpRequest.getRemoteUser();
-		if (RdapConfiguration.isAnonymousUsername(username)) {
-			username = null;
-		}
-
+		String username = Util.getAuthenticatedUsername();
 		SearchResultStruct<Entity> result = null;
 		switch (searchRequest.getType()) {
 		case PARTIAL_SEARCH:

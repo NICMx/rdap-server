@@ -18,6 +18,7 @@ import mx.nic.rdap.db.struct.SearchResultStruct;
 import mx.nic.rdap.server.configuration.RdapConfiguration;
 import mx.nic.rdap.server.result.NameserverSearchResult;
 import mx.nic.rdap.server.result.RdapResult;
+import mx.nic.rdap.server.util.Util;
 
 @WebServlet(name = "nameservers", urlPatterns = { "/nameservers" })
 public class NameserverSearchServlet extends DataAccessServlet<NameserverDAO> {
@@ -51,11 +52,7 @@ public class NameserverSearchServlet extends DataAccessServlet<NameserverDAO> {
 				NAME_PARAMETER_KEY);
 		validateSearchRequest(searchRequest);
 
-		String username = httpRequest.getRemoteUser();
-		if (RdapConfiguration.isAnonymousUsername(username)) {
-			username = null;
-		}
-
+		String username = Util.getAuthenticatedUsername();
 		SearchResultStruct<Nameserver> result = null;
 		switch (searchRequest.getType()) {
 		case PARTIAL_SEARCH:

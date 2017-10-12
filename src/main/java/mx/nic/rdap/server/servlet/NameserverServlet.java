@@ -59,7 +59,7 @@ public class NameserverServlet extends DataAccessServlet<NameserverDAO> {
 		}
 
 		return new NameserverResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), nameserver,
-				Util.getUsername(httpRequest));
+				Util.getAuthenticatedUsername());
 	}
 
 	private class NameserverRequest {

@@ -8,10 +8,12 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
+
 import mx.nic.rdap.db.exception.http.BadRequestException;
 import mx.nic.rdap.db.exception.http.HttpException;
 import mx.nic.rdap.db.exception.http.NotFoundException;
-import mx.nic.rdap.server.configuration.RdapConfiguration;
 
 /**
  * Random miscellaneous functions useful anywhere.
@@ -51,9 +53,12 @@ public class Util {
 		return requestParams;
 	}
 
-	public static String getUsername(HttpServletRequest httpRequest) {
-		String username = httpRequest.getRemoteUser();
-		return RdapConfiguration.isAnonymousUsername(username) ? null : username;
+	/**
+	 * @return the authenticated username, null if there's no user authenticated
+	 */
+	public static String getAuthenticatedUsername() {
+		Subject sub = SecurityUtils.getSubject();
+		return sub.isAuthenticated() ? sub.getPrincipal().toString() : null;
 	}
 
 	/**

@@ -38,7 +38,6 @@ public class RdapConfiguration {
 	private static final String OWNER_ROLES_AUTNUM_KEY = "owner_roles_autnum";
 	private static final String OWNER_ROLES_DOMAIN_KEY = "owner_roles_domain";
 	private static final String OWNER_ROLES_NAMESERVER_KEY = "owner_roles_nameserver";
-	private static final String ANONYMOUS_USERNAME_KEY = "anonymous_username";
 	private static final String ALLOW_MULTIPLE_WILDCARDS_KEY = "allow_multiple_search_wildcards";
 	private static final String ALLOW_WILDCARD_ANYWHERE_KEY = "allow_search_wildcard_anywhere";
 	private static final String USER_ROLES_KEY = "user_roles";
@@ -49,7 +48,6 @@ public class RdapConfiguration {
 	private static Integer maxNumberOfResultsForAuthenticatedUser;
 	private static Integer maxNumberOfResultsForUnauthenticatedUser;
 	private static Map<String, Set<Role>> objectOwnerRoles;
-	private static String anonymousUsername;
 	private static boolean allowMultipleWildcards;
 	private static boolean allowSearchWildcardAnywhere;
 	private static Set<String> userRoles;
@@ -176,12 +174,6 @@ public class RdapConfiguration {
 
 		if (isPropertyNullOrEmpty(OWNER_ROLES_NAMESERVER_KEY)) {
 			invalidProperties.add(OWNER_ROLES_NAMESERVER_KEY);
-		}
-
-		if (isPropertyNullOrEmpty(ANONYMOUS_USERNAME_KEY)) {
-			invalidProperties.add(ANONYMOUS_USERNAME_KEY);
-		} else {
-			anonymousUsername = systemProperties.getProperty(ANONYMOUS_USERNAME_KEY).trim();
 		}
 
 		if (isPropertyNullOrEmpty(ALLOW_MULTIPLE_WILDCARDS_KEY)) {
@@ -324,16 +316,6 @@ public class RdapConfiguration {
 			}
 		}
 		return getMaxNumberOfResultsForUnauthenticatedUser();
-	}
-
-	/**
-	 * @param username
-	 *            username to evaluate if it is an anonymous username
-	 * @return <code>true</code> if username is anonymous or null, otherwise
-	 *         <code>false</code>
-	 */
-	public static boolean isAnonymousUsername(String username) {
-		return (username == null || anonymousUsername.equalsIgnoreCase(username));
 	}
 
 	/**

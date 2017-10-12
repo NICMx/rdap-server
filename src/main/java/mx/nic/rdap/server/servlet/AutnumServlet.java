@@ -44,7 +44,7 @@ public class AutnumServlet extends DataAccessServlet<AutnumDAO> {
 		}
 		
 		return new AutnumResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), autnum,
-				Util.getUsername(httpRequest));
+				Util.getAuthenticatedUsername());
 	}
 
 	private class AutnumRequest {
