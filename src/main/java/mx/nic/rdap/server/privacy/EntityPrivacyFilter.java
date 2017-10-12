@@ -138,9 +138,9 @@ public class EntityPrivacyFilter {
 					isPrivate |= AutnumPrivacyFilter.filterAnidatedAutnums(entity.getAutnums(), userInfo);
 				}
 			case "lang":
-				if (isHidden) {
-					// FIXME where do I get this?
-					// domain.setLang(null);
+				if (isHidden && !ObjectPrivacyFilter.isValueEmpty(entity.getLang())) {
+					entity.setLang(null);
+					isPrivate = true;
 				}
 				break;
 			}

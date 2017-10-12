@@ -125,9 +125,9 @@ public class AutnumPrivacyFilter {
 				break;
 
 			case "lang":
-				if (isHidden) {
-					// FIXME where do I get this?
-					// domain.setLang(null);
+				if (isHidden && !ObjectPrivacyFilter.isValueEmpty(autnum.getLang())) {
+					autnum.setLang(null);
+					isPrivate = true;
 				}
 				break;
 			}

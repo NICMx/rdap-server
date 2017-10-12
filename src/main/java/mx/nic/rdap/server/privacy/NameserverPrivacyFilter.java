@@ -132,9 +132,9 @@ public class NameserverPrivacyFilter {
 				break;
 
 			case "lang":
-				if (isHidden) {
-					// FIXME where do I get this?
-					// domain.setLang(null);
+				if (isHidden && !ObjectPrivacyFilter.isValueEmpty(ns.getLang())) {
+					ns.setLang(null);
+					isPrivate = true;
 				}
 				break;
 			}
