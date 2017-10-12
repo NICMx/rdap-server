@@ -71,7 +71,7 @@ public class DomainPrivacyFilter {
 					domain.setNameServers(null);
 					isPrivate = true;
 				} else {
-					// TODO
+					isPrivate |= NameserverPrivacyFilter.filterAnidatedNameserver(domain.getNameServers(), userInfo);
 				}
 				break;
 			case "secureDNS":
@@ -87,7 +87,7 @@ public class DomainPrivacyFilter {
 					domain.setEntities(null);
 					isPrivate = true;
 				} else {
-					// TODO
+					isPrivate |= EntityPrivacyFilter.filterAnidatedEntities(domain.getEntities(), userInfo);
 				}
 				break;
 			case "status":
@@ -143,7 +143,7 @@ public class DomainPrivacyFilter {
 					domain.setIpNetwork(null);
 					isPrivate = true;
 				} else {
-					// TODO
+					isPrivate |= IpNetworkPrivacyFilter.filterIpNetwork(domain.getIpNetwork(), userInfo);
 				}
 				break;
 			case "lang":

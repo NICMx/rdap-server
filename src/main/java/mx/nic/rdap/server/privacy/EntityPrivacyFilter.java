@@ -1,11 +1,14 @@
 package mx.nic.rdap.server.privacy;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 
 import mx.nic.rdap.core.db.Entity;
+import mx.nic.rdap.core.db.VCard;
+import mx.nic.rdap.core.db.VCardPostalInfo;
 import mx.nic.rdap.server.util.PrivacyUtil;
 
 public class EntityPrivacyFilter {
@@ -22,12 +25,17 @@ public class EntityPrivacyFilter {
 	 * @return true if the result was filter, otherwise false
 	 */
 	public static boolean filterEntity(Entity entity) {
-		boolean isPrivate = false;
-
-		Map<String, PrivacySetting> privacySettings = PrivacyUtil.getEntityPrivacySettings();
 		Subject subject = SecurityUtils.getSubject();
 		UserInfo userInfo = new UserInfo(subject,
 				PrivacyUtil.isSubjectOwner(subject.getPrincipal().toString(), entity));
+
+		return filterEntity(entity, userInfo);
+	}
+
+	public static boolean filterEntity(Entity entity, UserInfo userInfo) {
+		boolean isPrivate = false;
+
+		Map<String, PrivacySetting> privacySettings = PrivacyUtil.getEntityPrivacySettings();
 
 		for (String key : privacySettings.keySet()) {
 			PrivacySetting setting = privacySettings.get(key);
@@ -44,7 +52,9 @@ public class EntityPrivacyFilter {
 					entity.setvCardList(null);
 					isPrivate = true;
 				} else {
-					// TODO
+					if (!entity.getVCardList().isEmpty()) {
+						isPrivate |= filterVcard(entity.getVCardList().get(0), userInfo);
+					}
 				}
 				break;
 			case "roles":
@@ -66,7 +76,7 @@ public class EntityPrivacyFilter {
 					entity.setEntities(null);
 					isPrivate = true;
 				} else {
-					// TODO
+					isPrivate |= filterAnidatedEntities(entity.getEntities(), userInfo);
 				}
 				break;
 			case "remarks":
@@ -117,7 +127,7 @@ public class EntityPrivacyFilter {
 					entity.setIpNetworks(null);
 					isPrivate = true;
 				} else {
-					// TODO
+					isPrivate |= IpNetworkPrivacyFilter.filterIpNetworks(entity.getIpNetworks(), userInfo);
 				}
 				break;
 			case "autnums":
@@ -125,7 +135,7 @@ public class EntityPrivacyFilter {
 					entity.setAutnums(null);
 					isPrivate = true;
 				} else {
-					// TODO isPrivate |= ;
+					isPrivate |= AutnumPrivacyFilter.filterAnidatedAutnums(entity.getAutnums(), userInfo);
 				}
 			case "lang":
 				if (isHidden) {
@@ -135,6 +145,171 @@ public class EntityPrivacyFilter {
 				break;
 			}
 		}
+		return isPrivate;
+	}
+
+	public static boolean filterAnidatedEntities(List<Entity> entities, UserInfo userInfo) {
+		boolean isPrivate = false;
+
+		if (ObjectPrivacyFilter.isValueEmpty(entities)) {
+			return false;
+		}
+
+		for (Entity e : entities) {
+			isPrivate |= filterEntity(e, userInfo);
+		}
+
+		return isPrivate;
+	}
+
+	private static boolean filterVcard(VCard vcard, UserInfo userInfo) {
+		boolean isPrivate = false;
+
+		if (ObjectPrivacyFilter.isValueEmpty(vcard)) {
+			return false;
+		}
+
+		Map<String, PrivacySetting> privacySettings = PrivacyUtil.getVCardPrivacySettings();
+
+		String key = "name";
+		boolean isHidden = privacySettings.get(key).isHidden(userInfo);
+		if (isHidden && !ObjectPrivacyFilter.isValueEmpty(vcard.getName())) {
+			isPrivate = true;
+			vcard.setName(null);
+		}
+
+		key = "companyName";
+		isHidden = privacySettings.get(key).isHidden(userInfo);
+		if (isHidden && !ObjectPrivacyFilter.isValueEmpty(vcard.getCompanyName())) {
+			isPrivate = true;
+			vcard.setCompanyName(null);
+		}
+
+		key = "companyUrl";
+		isHidden = privacySettings.get(key).isHidden(userInfo);
+		if (isHidden && !ObjectPrivacyFilter.isValueEmpty(vcard.getCompanyURL())) {
+			isPrivate = true;
+			vcard.setCompanyURL(null);
+		}
+
+		key = "mail";
+		isHidden = privacySettings.get(key).isHidden(userInfo);
+		if (isHidden && !ObjectPrivacyFilter.isValueEmpty(vcard.getEmail())) {
+			isPrivate = true;
+			vcard.setEmail(null);
+		}
+
+		key = "voice";
+		isHidden = privacySettings.get(key).isHidden(userInfo);
+		if (isHidden && !ObjectPrivacyFilter.isValueEmpty(vcard.getVoice())) {
+			isPrivate = true;
+			vcard.setVoice(null);
+		}
+
+		key = "cellphone";
+		isHidden = privacySettings.get(key).isHidden(userInfo);
+		if (isHidden && !ObjectPrivacyFilter.isValueEmpty(vcard.getCellphone())) {
+			isPrivate = true;
+			vcard.setCellphone(null);
+		}
+
+		key = "fax";
+		isHidden = privacySettings.get(key).isHidden(userInfo);
+		if (isHidden && !ObjectPrivacyFilter.isValueEmpty(vcard.getFax())) {
+			isPrivate = true;
+			vcard.setFax(null);
+		}
+
+		key = "jobTitle";
+		isHidden = privacySettings.get(key).isHidden(userInfo);
+		if (isHidden && !ObjectPrivacyFilter.isValueEmpty(vcard.getJobTitle())) {
+			isPrivate = true;
+			vcard.setJobTitle(null);
+		}
+
+		key = "postalInfo";
+		isHidden = privacySettings.get(key).isHidden(userInfo);
+		if (isHidden && !ObjectPrivacyFilter.isValueEmpty(vcard.getPostalInfo())) {
+			isPrivate = true;
+			List<VCardPostalInfo> postalInfoNull = null;
+			vcard.setPostalInfo(postalInfoNull);
+		} else {
+			isPrivate |= filterPostalInfo(vcard.getPostalInfo(), userInfo);
+		}
+
+		return isPrivate;
+	}
+
+	private static boolean filterPostalInfo(List<VCardPostalInfo> postalInfos, UserInfo userInfo) {
+		boolean isPrivate = false;
+
+		if (ObjectPrivacyFilter.isValueEmpty(postalInfos)) {
+			return false;
+		}
+
+		Map<String, PrivacySetting> privacySettings = PrivacyUtil.getVCardPrivacySettings();
+		String key;
+		boolean isHidden;
+		for (VCardPostalInfo postalInfo : postalInfos) {
+
+			key = "type";
+			isHidden = privacySettings.get(key).isHidden(userInfo);
+			if (isHidden && !ObjectPrivacyFilter.isValueEmpty(postalInfo.getType())) {
+				isPrivate = true;
+				postalInfo.setType(null);
+			}
+
+			key = "street1";
+			isHidden = privacySettings.get(key).isHidden(userInfo);
+			if (isHidden && !ObjectPrivacyFilter.isValueEmpty(postalInfo.getStreet1())) {
+				isPrivate = true;
+				postalInfo.setStreet1(null);
+			}
+
+			key = "street2";
+			isHidden = privacySettings.get(key).isHidden(userInfo);
+			if (isHidden && !ObjectPrivacyFilter.isValueEmpty(postalInfo.getStreet2())) {
+				isPrivate = true;
+				postalInfo.setStreet2(null);
+			}
+
+			key = "street3";
+			isHidden = privacySettings.get(key).isHidden(userInfo);
+			if (isHidden && !ObjectPrivacyFilter.isValueEmpty(postalInfo.getStreet3())) {
+				isPrivate = true;
+				postalInfo.setStreet3(null);
+			}
+
+			key = "postalCode";
+			isHidden = privacySettings.get(key).isHidden(userInfo);
+			if (isHidden && !ObjectPrivacyFilter.isValueEmpty(postalInfo.getPostalCode())) {
+				isPrivate = true;
+				postalInfo.setPostalCode(null);
+			}
+
+			key = "city";
+			isHidden = privacySettings.get(key).isHidden(userInfo);
+			if (isHidden && !ObjectPrivacyFilter.isValueEmpty(postalInfo.getCity())) {
+				isPrivate = true;
+				postalInfo.setCity(null);
+			}
+
+			key = "state";
+			isHidden = privacySettings.get(key).isHidden(userInfo);
+			if (isHidden && !ObjectPrivacyFilter.isValueEmpty(postalInfo.getState())) {
+				isPrivate = true;
+				postalInfo.setState(null);
+			}
+
+			key = "country";
+			isHidden = privacySettings.get(key).isHidden(userInfo);
+			if (isHidden && !ObjectPrivacyFilter.isValueEmpty(postalInfo.getCountry())) {
+				isPrivate = true;
+				postalInfo.setCountry(null);
+			}
+
+		}
+
 		return isPrivate;
 	}
 

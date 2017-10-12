@@ -1,5 +1,6 @@
 package mx.nic.rdap.server.privacy;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.shiro.SecurityUtils;
@@ -22,13 +23,33 @@ public class NameserverPrivacyFilter {
 	 *            {@link Nameserver} to be filtered
 	 * @return true if the result was filter, otherwise false
 	 */
-	public static boolean filterAutnum(Nameserver ns) {
-		boolean isPrivate = false;
+	public static boolean filterNameserver(Nameserver ns) {
 
-		Map<String, PrivacySetting> privacySettings = PrivacyUtil.getNameserverPrivacySettings();
 		Subject subject = SecurityUtils.getSubject();
 		UserInfo userInfo = new UserInfo(subject,
 				PrivacyUtil.isSubjectOwner(subject.getPrincipal().toString(), ns));
+
+		return filterNameserver(ns, userInfo);
+	}
+	
+	public static boolean filterAnidatedNameserver(List<Nameserver> nameservers, UserInfo userInfo) {
+		boolean isPrivate = false;
+		
+		if (ObjectPrivacyFilter.isValueEmpty(nameservers)) {
+			return false;
+		}
+
+		for(Nameserver ns : nameservers) {
+			isPrivate |= filterNameserver(ns, userInfo);
+		}
+		
+		return isPrivate;
+	}
+
+	private static boolean filterNameserver(Nameserver ns, UserInfo userInfo) {
+		boolean isPrivate = false;
+
+		Map<String, PrivacySetting> privacySettings = PrivacyUtil.getNameserverPrivacySettings();
 
 		for (String key : privacySettings.keySet()) {
 			PrivacySetting setting = privacySettings.get(key);
@@ -65,7 +86,7 @@ public class NameserverPrivacyFilter {
 					ns.setEntities(null);
 					isPrivate = true;
 				} else {
-					// TODO
+					isPrivate |= EntityPrivacyFilter.filterAnidatedEntities(ns.getEntities(), userInfo);
 				}
 				break;
 			case "status":

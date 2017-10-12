@@ -1,5 +1,6 @@
 package mx.nic.rdap.server.privacy;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.shiro.SecurityUtils;
@@ -22,12 +23,18 @@ public class AutnumPrivacyFilter {
 	 * @return true if the result was filter, otherwise false
 	 */
 	public static boolean filterAutnum(Autnum autnum) {
-		boolean isPrivate = false;
 
-		Map<String, PrivacySetting> privacySettings = PrivacyUtil.getAutnumPrivacySettings();
 		Subject subject = SecurityUtils.getSubject();
 		UserInfo userInfo = new UserInfo(subject,
 				PrivacyUtil.isSubjectOwner(subject.getPrincipal().toString(), autnum));
+
+		return filterAutnum(autnum, userInfo);
+	}
+
+	private static boolean filterAutnum(Autnum autnum, UserInfo userInfo) {
+		boolean isPrivate = false;
+
+		Map<String, PrivacySetting> privacySettings = PrivacyUtil.getAutnumPrivacySettings();
 
 		for (String key : privacySettings.keySet()) {
 			PrivacySetting setting = privacySettings.get(key);
@@ -44,7 +51,7 @@ public class AutnumPrivacyFilter {
 					autnum.setEntities(null);
 					isPrivate = true;
 				} else {
-					// TODO
+					isPrivate |= EntityPrivacyFilter.filterAnidatedEntities(autnum.getEntities(), userInfo);
 				}
 				break;
 			case "status":
@@ -125,6 +132,21 @@ public class AutnumPrivacyFilter {
 				break;
 			}
 		}
+
+		return isPrivate;
+	}
+
+	public static boolean filterAnidatedAutnums(List<Autnum> autnums, UserInfo userInfo) {
+		boolean isPrivate = false;
+
+		if (ObjectPrivacyFilter.isValueEmpty(autnums)) {
+			return false;
+		}
+		
+		for(Autnum a : autnums) {
+			isPrivate |= filterAutnum(a, userInfo);
+		}
+
 		return isPrivate;
 	}
 

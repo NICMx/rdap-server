@@ -1,5 +1,6 @@
 package mx.nic.rdap.server.privacy;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.shiro.SecurityUtils;
@@ -21,13 +22,23 @@ public class IpNetworkPrivacyFilter {
 	 *            {@link IpNetwork} to be filtered
 	 * @return true if the result was filter, otherwise false
 	 */
-	public static boolean filterAutnum(IpNetwork ip) {
-		boolean isPrivate = false;
+	public static boolean filterIpNetwork(IpNetwork ip) {
 
-		Map<String, PrivacySetting> privacySettings = PrivacyUtil.getIpNetworkPrivacySettings();
 		Subject subject = SecurityUtils.getSubject();
 		UserInfo userInfo = new UserInfo(subject,
 				PrivacyUtil.isSubjectOwner(subject.getPrincipal().toString(), ip));
+
+		return filterIpNetwork(ip, userInfo);
+	}
+
+	public static boolean filterIpNetwork(IpNetwork ip, UserInfo userInfo) {
+		boolean isPrivate = false;
+
+		if (ObjectPrivacyFilter.isValueEmpty(ip)) {
+			return false;
+		}
+
+		Map<String, PrivacySetting> privacySettings = PrivacyUtil.getIpNetworkPrivacySettings();
 
 		for (String key : privacySettings.keySet()) {
 			PrivacySetting setting = privacySettings.get(key);
@@ -62,7 +73,7 @@ public class IpNetworkPrivacyFilter {
 					ip.setEntities(null);
 					isPrivate = true;
 				} else {
-					// TODO
+					isPrivate |= EntityPrivacyFilter.filterAnidatedEntities(ip.getEntities(), userInfo);
 				}
 				break;
 			case "status":
@@ -137,7 +148,24 @@ public class IpNetworkPrivacyFilter {
 				break;
 			}
 		}
+
 		return isPrivate;
 	}
+
+	public static boolean filterIpNetworks(List<IpNetwork> ips, UserInfo userInfo) {
+		boolean isPrivate = false;
+
+		if (ObjectPrivacyFilter.isValueEmpty(ips)) {
+			return false;
+		}
+		
+		for(IpNetwork ip : ips) {
+			isPrivate |= filterIpNetwork(ip, userInfo);
+		}
+		
+
+		return isPrivate;
+	}
+
 
 }
