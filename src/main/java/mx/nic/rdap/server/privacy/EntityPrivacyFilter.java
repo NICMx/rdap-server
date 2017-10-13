@@ -108,8 +108,8 @@ public class EntityPrivacyFilter {
 				}
 				break;
 			// case "asEventActor":
-			// TODO entity doesn't have getAsEventActor;
-			// if (isHidden && !ObjectPrivacyFilter.isValueEmpty(domain.ge))
+			// XXX entity doesn't have getAsEventActor;
+			// if (isHidden && !ObjectPrivacyFilter.isValueEmpty(entity.getAsEventActor())) {}
 			// break;
 			case "status":
 				if (isHidden && !ObjectPrivacyFilter.isValueEmpty(entity.getStatus())) {
