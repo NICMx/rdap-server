@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -226,64 +225,6 @@ public class PrivacyUtil {
 		OBJECTS_PRIVACY_SETTING.put(objectName, Collections.unmodifiableMap(objectProperties));
 	}
 
-	/**
-	 * Indicate if the object or attribute should be show to the user according to
-	 * the privacy status of the object or attribute.
-	 * 
-	 * @param objectValue
-	 *            Actual value of the object to be evaluate.
-	 * @param objectName
-	 *            Name of the object or attribute.
-	 * @param objectPrivacyStatus
-	 *            Privacy status of the object.
-	 * @param isAuthenticated
-	 *            Indicate if the user is authenticated.
-	 * @param isOwner
-	 *            Indicate if the user is the owner of the object or attribute to
-	 *            evaluate.
-	 * @return <code>false</code> if the object or attribute shouldn't be shown
-	 *         according of its privacy's level, or if the <b>objectValue</b> is
-	 *         <code>null</code> or empty, otherwise <code>true</code>.
-	 */
-	@SuppressWarnings("rawtypes")
-	public static boolean isObjectVisible(Object objectValue, String objectName, PrivacyStatus objectPrivacyStatus,
-			boolean isAuthenticated, boolean isOwner) {
-		if (objectValue == null)
-			return false;
-
-		if (objectValue instanceof String) {
-			if (((String) objectValue).isEmpty()) {
-				return false;
-			}
-		} else if (objectValue instanceof List && ((List) objectValue).isEmpty()) {
-			return false;
-		}
-
-		if (objectPrivacyStatus == null) {
-			throw new NullPointerException("Attribute '" + objectName + "' does not have privacy status configured.");
-		}
-
-		boolean result = false;
-		switch (objectPrivacyStatus) {
-		case OWNER:
-			if (isOwner) {
-				result = true;
-			}
-			break;
-		case AUTHENTICATED:
-			if (isAuthenticated) {
-				result = true;
-			}
-			break;
-		case ANY:
-			result = true;
-			break;
-		case NONE:
-			break;
-		}
-		return result;
-	}
-
 	public static Map<String, PrivacySetting> getEntityPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(ENTITY);
 	}
@@ -410,16 +351,21 @@ public class PrivacyUtil {
 	 * @return <code>true</code> if the user is owner of the RdapObject
 	 */
 	public static boolean isSubjectOwner(String userName, RdapObject object) {
-		if (userName != null && !userName.isEmpty() && object != null) {
-			if (object instanceof Entity) {
-				Entity ent = (Entity) object;
-				return ent.getHandle().equals(userName);
-			}
+		if (userName == null || userName.isEmpty() || object == null) {
+			return false;
+		}
 
-			for (Entity ent : object.getEntities()) {
-				if (isEntityOwner(userName, object, ent)) {
-					return true;
-				}
+		if (object instanceof Entity) {
+			Entity ent = (Entity) object;
+			if (ent.getHandle() == null || ent.getHandle().isEmpty()) {
+				return false;
+			}
+			return ent.getHandle().equalsIgnoreCase(userName);
+		}
+
+		for (Entity ent : object.getEntities()) {
+			if (isEntityOwner(userName, object, ent)) {
+				return true;
 			}
 		}
 
@@ -430,7 +376,7 @@ public class PrivacyUtil {
 	 * @return <code>true</code> if the user is owner of the Entity Object
 	 */
 	private static boolean isEntityOwner(String userName, RdapObject father, Entity ent) {
-		if (!ent.getHandle().equals(userName)) {
+		if (ent.getHandle() == null || !ent.getHandle().equalsIgnoreCase(userName)) {
 			return false;
 		}
 
