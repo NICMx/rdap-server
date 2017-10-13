@@ -10,6 +10,7 @@ import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.VCard;
 import mx.nic.rdap.core.db.VCardPostalInfo;
 import mx.nic.rdap.server.util.PrivacyUtil;
+import mx.nic.rdap.server.util.Util;
 
 public class EntityPrivacyFilter {
 
@@ -27,7 +28,7 @@ public class EntityPrivacyFilter {
 	public static boolean filterEntity(Entity entity) {
 		Subject subject = SecurityUtils.getSubject();
 		UserInfo userInfo = new UserInfo(subject,
-				PrivacyUtil.isSubjectOwner(subject.getPrincipal().toString(), entity));
+				PrivacyUtil.isSubjectOwner(Util.getUsername(subject), entity));
 
 		return filterEntity(entity, userInfo);
 	}

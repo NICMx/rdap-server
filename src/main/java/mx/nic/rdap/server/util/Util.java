@@ -8,7 +8,6 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 
 import mx.nic.rdap.db.exception.http.BadRequestException;
@@ -54,11 +53,14 @@ public class Util {
 	}
 
 	/**
+	 * Get the username if it's authenticated
+	 * 
+	 * @param subject
+	 *            subject from the session
 	 * @return the authenticated username, null if there's no user authenticated
 	 */
-	public static String getAuthenticatedUsername() {
-		Subject sub = SecurityUtils.getSubject();
-		return sub.isAuthenticated() ? sub.getPrincipal().toString() : null;
+	public static String getUsername(Subject subject) {
+		return subject.isAuthenticated() ? subject.getPrincipal().toString() : null;
 	}
 
 	/**

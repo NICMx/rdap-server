@@ -3,6 +3,8 @@ package mx.nic.rdap.server.servlet;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.SecurityUtils;
+
 import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.core.db.DomainLabel;
 import mx.nic.rdap.core.db.DomainLabelException;
@@ -52,7 +54,7 @@ public class DomainServlet extends DataAccessServlet<DomainDAO> {
 		}
 
 		return new DomainResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), domain,
-				Util.getAuthenticatedUsername());
+				Util.getUsername(SecurityUtils.getSubject()));
 	}
 
 	private class DomainRequest {

@@ -15,6 +15,7 @@ import mx.nic.rdap.core.db.SecureDNS;
 import mx.nic.rdap.core.db.Variant;
 import mx.nic.rdap.core.db.VariantName;
 import mx.nic.rdap.server.util.PrivacyUtil;
+import mx.nic.rdap.server.util.Util;
 
 public class DomainPrivacyFilter {
 
@@ -35,7 +36,7 @@ public class DomainPrivacyFilter {
 		Map<String, PrivacySetting> privacySettings = PrivacyUtil.getDomainPrivacySettings();
 		Subject subject = SecurityUtils.getSubject();
 		UserInfo userInfo = new UserInfo(subject,
-				PrivacyUtil.isSubjectOwner(subject.getPrincipal().toString(), domain));
+				PrivacyUtil.isSubjectOwner(Util.getUsername(subject), domain));
 
 		for (String key : privacySettings.keySet()) {
 			PrivacySetting setting = privacySettings.get(key);

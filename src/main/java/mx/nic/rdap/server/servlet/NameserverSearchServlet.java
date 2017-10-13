@@ -3,6 +3,8 @@ package mx.nic.rdap.server.servlet;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.SecurityUtils;
+
 import mx.nic.rdap.core.db.DomainLabel;
 import mx.nic.rdap.core.db.DomainLabelException;
 import mx.nic.rdap.core.db.Nameserver;
@@ -52,7 +54,7 @@ public class NameserverSearchServlet extends DataAccessServlet<NameserverDAO> {
 				NAME_PARAMETER_KEY);
 		validateSearchRequest(searchRequest);
 
-		String username = Util.getAuthenticatedUsername();
+		String username = Util.getUsername(SecurityUtils.getSubject());
 		SearchResultStruct<Nameserver> result = null;
 		switch (searchRequest.getType()) {
 		case PARTIAL_SEARCH:

@@ -3,6 +3,8 @@ package mx.nic.rdap.server.servlet;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.SecurityUtils;
+
 import mx.nic.rdap.core.db.IpNetwork;
 import mx.nic.rdap.core.ip.AddressBlock;
 import mx.nic.rdap.core.ip.IpAddressFormatException;
@@ -66,7 +68,7 @@ public class IpNetworkServlet extends DataAccessServlet<IpNetworkDAO> {
 		}
 
 		return new IpResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), network,
-				Util.getAuthenticatedUsername());
+				Util.getUsername(SecurityUtils.getSubject()));
 	}
 
 	private class IpRequest {

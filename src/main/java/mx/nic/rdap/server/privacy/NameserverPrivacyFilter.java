@@ -9,6 +9,7 @@ import org.apache.shiro.subject.Subject;
 import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.struct.NameserverIpAddressesStruct;
 import mx.nic.rdap.server.util.PrivacyUtil;
+import mx.nic.rdap.server.util.Util;
 
 public class NameserverPrivacyFilter {
 
@@ -27,7 +28,7 @@ public class NameserverPrivacyFilter {
 
 		Subject subject = SecurityUtils.getSubject();
 		UserInfo userInfo = new UserInfo(subject,
-				PrivacyUtil.isSubjectOwner(subject.getPrincipal().toString(), ns));
+				PrivacyUtil.isSubjectOwner(Util.getUsername(subject), ns));
 
 		return filterNameserver(ns, userInfo);
 	}

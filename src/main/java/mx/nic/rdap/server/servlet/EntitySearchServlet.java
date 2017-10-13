@@ -3,6 +3,8 @@ package mx.nic.rdap.server.servlet;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.SecurityUtils;
+
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.exception.http.HttpException;
@@ -37,7 +39,7 @@ public class EntitySearchServlet extends DataAccessServlet<EntityDAO> {
 			throws HttpException, RdapDataAccessException {
 		RdapSearchRequest searchRequest = RdapSearchRequest.getSearchRequest(httpRequest, true, false, FULL_NAME, HANDLE);
 
-		String username = Util.getAuthenticatedUsername();
+		String username = Util.getUsername(SecurityUtils.getSubject());
 		SearchResultStruct<Entity> result = null;
 		switch (searchRequest.getType()) {
 		case PARTIAL_SEARCH:

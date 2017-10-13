@@ -3,6 +3,8 @@ package mx.nic.rdap.server.servlet;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.SecurityUtils;
+
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.exception.http.HttpException;
@@ -43,7 +45,7 @@ public class EntityServlet extends DataAccessServlet<EntityDAO> {
 		}
 
 		return new EntityResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), entity,
-				Util.getAuthenticatedUsername());
+				Util.getUsername(SecurityUtils.getSubject()));
 	}
 
 	private class EntityRequest {

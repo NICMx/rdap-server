@@ -8,6 +8,7 @@ import org.apache.shiro.subject.Subject;
 
 import mx.nic.rdap.core.db.Autnum;
 import mx.nic.rdap.server.util.PrivacyUtil;
+import mx.nic.rdap.server.util.Util;
 
 public class AutnumPrivacyFilter {
 
@@ -26,7 +27,7 @@ public class AutnumPrivacyFilter {
 
 		Subject subject = SecurityUtils.getSubject();
 		UserInfo userInfo = new UserInfo(subject,
-				PrivacyUtil.isSubjectOwner(subject.getPrincipal().toString(), autnum));
+				PrivacyUtil.isSubjectOwner(Util.getUsername(subject), autnum));
 
 		return filterAutnum(autnum, userInfo);
 	}

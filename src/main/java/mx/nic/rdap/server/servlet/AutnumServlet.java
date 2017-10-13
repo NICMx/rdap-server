@@ -3,6 +3,8 @@ package mx.nic.rdap.server.servlet;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.SecurityUtils;
+
 import mx.nic.rdap.core.db.Autnum;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.exception.http.BadRequestException;
@@ -44,7 +46,7 @@ public class AutnumServlet extends DataAccessServlet<AutnumDAO> {
 		}
 		
 		return new AutnumResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), autnum,
-				Util.getAuthenticatedUsername());
+				Util.getUsername(SecurityUtils.getSubject()));
 	}
 
 	private class AutnumRequest {

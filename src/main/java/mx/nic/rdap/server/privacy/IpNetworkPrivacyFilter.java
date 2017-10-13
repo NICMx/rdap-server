@@ -8,6 +8,7 @@ import org.apache.shiro.subject.Subject;
 
 import mx.nic.rdap.core.db.IpNetwork;
 import mx.nic.rdap.server.util.PrivacyUtil;
+import mx.nic.rdap.server.util.Util;
 
 public class IpNetworkPrivacyFilter {
 
@@ -26,7 +27,7 @@ public class IpNetworkPrivacyFilter {
 
 		Subject subject = SecurityUtils.getSubject();
 		UserInfo userInfo = new UserInfo(subject,
-				PrivacyUtil.isSubjectOwner(subject.getPrincipal().toString(), ip));
+				PrivacyUtil.isSubjectOwner(Util.getUsername(subject), ip));
 
 		return filterIpNetwork(ip, userInfo);
 	}
