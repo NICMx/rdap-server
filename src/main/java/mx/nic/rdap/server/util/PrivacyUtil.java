@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -342,8 +343,14 @@ public class PrivacyUtil {
 	 *             The object to modify
 	 */
 	public static void addPrivacyRemarkAndStatus(RdapObject rdapObject) {
+		if (rdapObject.getRemarks() == null) {
+			rdapObject.setRemarks(new ArrayList<Remark>());
+		}
 		rdapObject.getRemarks().add(new Remark(RemarkType.OBJECT_AUTHORIZATION));
 		if (rdapObject instanceof Entity) {
+			if (rdapObject.getStatus() == null) {
+				rdapObject.setStatus(new ArrayList<Status>());
+			}
 			rdapObject.getStatus().add(Status.PRIVATE);
 		}
 	}
