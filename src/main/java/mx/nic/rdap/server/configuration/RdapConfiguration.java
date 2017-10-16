@@ -365,6 +365,7 @@ public class RdapConfiguration {
 	 * @throws InitializationException
 	 */
 	private static void loadUserRoles(String userRolesKey, Set<String> userRolesSet) throws InitializationException {
+		String[] customRoles = null;
 		if (!isPropertyNullOrEmpty(userRolesKey)) {
 			String userRoles = systemProperties.getProperty(userRolesKey);
 			String[] split = userRoles.split(",");
@@ -384,9 +385,10 @@ public class RdapConfiguration {
 				}
 			}
 			if (!userRolesSet.isEmpty()) {
-				PrivacySettingsFactory.initializePool(userRolesSet.toArray(new String[userRolesSet.size()]));
+				customRoles = userRolesSet.toArray(new String[userRolesSet.size()]);
 			}
 		}
+		PrivacySettingsFactory.initializePool(customRoles);
 	}
 
 }
