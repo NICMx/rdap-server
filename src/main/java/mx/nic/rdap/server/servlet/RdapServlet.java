@@ -30,6 +30,7 @@ import mx.nic.rdap.server.privacy.EntityPrivacyFilter;
 import mx.nic.rdap.server.privacy.IpNetworkPrivacyFilter;
 import mx.nic.rdap.server.privacy.NameserverPrivacyFilter;
 import mx.nic.rdap.server.renderer.RendererPool;
+import mx.nic.rdap.server.renderer.RendererWrapper;
 import mx.nic.rdap.server.result.RdapResult;
 import mx.nic.rdap.server.servlet.AcceptHeaderFieldParser.Accept;
 import mx.nic.rdap.server.util.PrivacyUtil;
@@ -65,12 +66,13 @@ public abstract class RdapServlet extends HttpServlet {
 			return;
 		}
 
-		Renderer renderer = findRenderer(request);
+		RendererWrapper renderer = findRenderer(request);
 		response.setCharacterEncoding("UTF-8");
-		response.setContentType(renderer.getResponseContentType());
+
+		response.setContentType(renderer.getMimeType());
 		// Recommendation of RFC 7480 section 5.6
 		response.setHeader("Access-Control-Allow-Origin", "*");
-		renderResult(renderer, result, response.getWriter());
+		renderResult(renderer.getRenderer(), result, response.getWriter());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -187,8 +189,8 @@ public abstract class RdapServlet extends HttpServlet {
 	 * Tries hard to find the best suitable renderer for
 	 * <code>httpRequest</code>.
 	 */
-	private Renderer findRenderer(HttpServletRequest httpRequest) {
-		Renderer renderer;
+	private RendererWrapper findRenderer(HttpServletRequest httpRequest) {
+		RendererWrapper renderer;
 
 		AcceptHeaderFieldParser parser = new AcceptHeaderFieldParser(httpRequest.getHeader("Accept"));
 		PriorityQueue<Accept> accepts = parser.getQueue();
