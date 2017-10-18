@@ -339,7 +339,7 @@ public class RdapConfiguration {
 		String[] split = ownerRoles.split(",");
 		Set<Role> loadedRoles = new HashSet<Role>();
 		for (String role : split) {
-			role = role.trim();
+			role = role.trim().toLowerCase();
 			if (role.isEmpty()) {
 				continue;
 			}
