@@ -41,11 +41,11 @@ public class SampleIpNetworkDaoImpl implements IpNetworkDAO {
 		return network;
 	}
 
+	// This is what you'd do if you didn't want to implement one of the methods
 	// @Override
 	// public IpNetwork getByAddressBlock(AddressBlock ipAddress)
 	// throws RdapDataAccessException {
-	// // This is what you'd do if you didn't want to implement one of the
-	// // methods. These exceptions become HTTP 501s.
+	// // These exceptions become HTTP 501s.
 	// throw new NotImplementedException("Not implemented yet.");
 	// }
 
