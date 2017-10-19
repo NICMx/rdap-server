@@ -2,7 +2,7 @@
 
 One way to do this in Tomcat is to define the datasource in `context.xml`.
 
-Create `$CATALINA_HOME/webapps/rdap/META-INF/context.xml`, insert the following content and replace the dummy values (in square brackets):
+The file `$CATALINA_HOME/webapps/rdap/META-INF/context.xml` must be created, then the following content must be inserted and the dummy values (in square brackets) replaced:
 
 	<?xml version="1.0" encoding="UTF-8"?>
 	<Context path="/rdap">
@@ -13,6 +13,6 @@ Create `$CATALINA_HOME/webapps/rdap/META-INF/context.xml`, insert the following 
 			url="[URL]"
 			username="[username]"
 			password="[password]"
-			validationQuery="select 1 from dual" />
+			validationQuery="select 1" />
 	</Context>
 

@@ -4,7 +4,8 @@ The latest SQL Provider can be found [here](sql-provider-download.html).
 
 	mv ~/Downloads/rdap-sql-provider-{{ site.latest-sql-provider }}.jar WEB-INF/lib
 
-If your classpath only contains one implementation, that's all you need. Otherwise state the provider's hub class in the `data-access.properties` file:
+If classpath only contains one implementation, that's all there is needed. Otherwise the provider's hub class must be specified in the [`data-access.properties`](https://github.com/NICMx/rdap-server/blob/master/src/main/webapp/WEB-INF/data-access.properties) file:
 
 	echo "data-access-implementation = mx.nic.rdap.sql.impl.SqlProviderImplementation" > WEB-INF/data-access.properties
 
+This file is rdap-server's data access configuration file] and contains some predefined properties that are useful for the reference implementation; more details on this configuration can be seen [here](data-access-configuration.html).

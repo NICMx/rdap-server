@@ -1,6 +1,6 @@
-## Add your queries to the classpath
+## Add custom queries to the classpath
 
-There are more elegant ways to do this, but a relatively fuss-free and reliable one is by placing the `user_sql_files` directory in `WEB-INF/classes`.
+There are more elegant ways to do this, but a relatively fuss-free and reliable option is to place in `WEB-INF/classes` the custom directory (that must contain all the customized queries files); assuming that such directory is named `user_sql_files`, this can be done:
 
 	mv ~/Documents/user_sql_files WEB-INF/classes
 

@@ -2,6 +2,6 @@
 
 	cd $CATALINA_HOME/lib
 	# https://dev.mysql.com/downloads/connector/j/
-	wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.40.zip
-	unzip -j mysql-connector-java-5.1.40.zip mysql-connector-java-5.1.40/mysql-connector-java-5.1.40-bin.jar
+	wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.44.zip
+	unzip -j mysql-connector-java-5.1.44.zip mysql-connector-java-5.1.44/mysql-connector-java-5.1.44-bin.jar
 
