@@ -2,19 +2,19 @@
 title: Database Tables Definition
 ---
 
-# Exporting your database to Red Dog's builtin schema
+# Exporting a database to Red Dog's built-in schema
 
 ## Introduction
 
 Red Dog's builtin schema is an ordinary relational database conceived in MySQL. Users that aim to implement [Option 3](intro.html#option-3-using-red-dogs-builtin-schema) need to build a mechanism to populate this database and keep it updated.
 
-Given that the means through which you will export your data depends on the specific format in which you have it stored, this documentation cannot go into detail as to how to do it. Instead, this will serve as reference material for Red Dog's schema.
+The means through which the data is exported will depend on how the data is stored in the origin database, this documentation cannot fall into details on how to do it. Instead, this will serve as reference material for Red Dog's schema.
 
-Red Dog's database contains 62 tables. Though the task of populating them might seem daunting, it is important to note that you likely only need a fraction of them. The main ones are [autonomous_system_number](#autonomous_system_number), [domain](#domain), [entity](#entity), [ip_network](#ip_network) and [nameserver](#nameserver). Pick only the ones you need and branch from there.
+Red Dog's database contains 68 tables. Though the task of populating them might seem daunting, it is important to note that's likely to need only a fraction of them. The main ones are [autonomous_system_number](#autonomous_system_number), [domain](#domain), [entity](#entity), [ip_network](#ip_network) and [nameserver](#nameserver). Pick only the ones needed and branch from there.
 
 ## Full Schema definition
 
-You can find the script to generate the database [here](https://raw.githubusercontent.com/NICMx/rdap-sql-provider/master/src/main/resources/META-INF/sql/Database.sql "SQL file with tables") and the ER diagram [here](img/diagram/db-er.png).
+The script to generate the database is located [here](https://raw.githubusercontent.com/NICMx/rdap-sql-provider/master/src/main/resources/META-INF/sql/Database.sql "SQL file with tables") and the ER diagram [here](img/diagram/db-er.png).
 
 These are the tables:
 
@@ -66,6 +66,7 @@ These are the tables:
 	<li><a href="#nameserver_remarks">nameserver_remarks</a></li>
 	<li><a href="#nameserver_status">nameserver_status</a></li>
 	<li><a href="#public_id">public_id</a></li>
+	<li><a href="#rdap_access_role">rdap_access_role</a></li>
 	<li><a href="#rdap_user">rdap_user</a></li>
 	<li><a href="#rdap_user_role">rdap_user_role</a></li>
 	<li><a href="#relation">relation</a></li>
@@ -408,7 +409,7 @@ This table contains the information about events that have occurred on an instan
 |eve\_id|bigint(20)|Event's id. Auto increment.|No||| 
 |eac\_id|smallint(6)|Event's action's id|No|event\_action|eac\_id| 
 |eve\_actor|varchar(45)|Event actor|Yes||| 
-|eve\_date|varchar(45)|Event date|Yes||| 
+|eve\_date|datetime|Event date|Yes||| 
 
 **Primary key**: eve\_id.
 
@@ -645,18 +646,28 @@ This table contains the information about links. Its fields are the following:
 
 **Primary_key**: pid_id.
 
+### rdap_access_role
+
+This table contains a catalog of the roles that any user could have. Its fields are the following:
+
+|Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
+|:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
+|rar\_name|varchar(45)|Role name. Unique|No||| 
+|rar\_description|varchar(250)|Role description.|No||| 
+
+**Primary_key**: rar\_name.
+
 ### rdap_user
 
 This table contains the information about the users. Its fields are the following:
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
-|rus\_id|bigint(200) Auto increment.|User's id|No||| 
-|rus\_name|varchar(16)|User's name. Unique|No||| 
+|rus\_name|varchar(100)|User's name. Unique|No||| 
 |rus\_pass|varchar(200)|User's password.|No||| 
 |rus\_max\_search\_results|int(11)|Max number of results for the user|Yes||| 
 
-**Primary_key**: rus\_id.
+**Primary_key**: rus\_name.
 
 ### rdap_user_role
 
@@ -664,10 +675,10 @@ This table contains the information about the user's roles. Its fields are the f
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
-|rus\_id|varchar(16)|User's name|No|rdap\_user|rus\_name| 
-|rur\_value|varchar(45)|Role's name|No||| 
+|rus\_name|varchar(100)|User's name|No|rdap\_user|rus\_name| 
+|rar\_name|varchar(45)|Role's name|No|rdap\_access\_role|rar\_name| 
 
-**Primary_key**: rus\_name, rur\_name.
+**Primary_key**: rus\_name, rar\_name.
 
 ### relation
 
@@ -772,6 +783,7 @@ This table contains the variants names. Its fields are the following:
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
 |var\_ldh\_name|varchar(63)|Variant's ldh name.|Yes||| 
 |var\_id|bigint(20)|Variant's id|No|variant|var\_id| 
+|var\_unicode\_name|varchar(255)|Variant's unicode name.|Yes||| 
 
 **This table does not have a primary key.**
 
