@@ -45,6 +45,7 @@ These are the tables:
 	<li><a href="#entity_links">entity_links</a></li>
 	<li><a href="#entity_public_ids">entity_public_ids</a></li>
 	<li><a href="#entity_remarks">entity_remarks</a></li>
+	<li><a href="#entity_role">entity_role</a></li>
 	<li><a href="#entity_status">entity_status</a></li>
 	<li><a href="#event">event</a></li>
 	<li><a href="#event_action">event_action</a></li>
@@ -58,7 +59,11 @@ These are the tables:
 	<li><a href="#ip_network_remarks">ip_network_remarks</a></li>
 	<li><a href="#ip_network_status">ip_network_status</a></li>
 	<li><a href="#ip_version">ip_version</a></li>
+	<li><a href="#key_data">key_data</a></li>
+	<li><a href="#key_events">key_events</a></li>
+	<li><a href="#key_links">key_links</a></li>
 	<li><a href="#link">link</a></li>
+	<li><a href="#link_lang">link_lang</a></li>
 	<li><a href="#nameserver">nameserver</a></li>
 	<li><a href="#nameserver_entity_roles">nameserver_entity_roles</a></li>
 	<li><a href="#nameserver_events">nameserver_events</a></li>
@@ -389,6 +394,17 @@ This table contains the relation between an Entity and its remarks. Its fields a
 
 **Primary key**: ent\_id, rem\_id.
 
+### entity_role
+
+This table contains the relation between an Entity and its role. Its fields are the following:
+
+|Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
+|:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
+|ent\_id|bigint|Entity's id| No | entity | ent\_id|
+|rol\_id|tinyint|Role's id| No | roles | rol\_id| 
+
+**Primary key**: ent\_id, rol\_id.
+
 ### entity_status
 
 This table contains the relation between an Entity and its status. Its fields are the following:
@@ -547,6 +563,43 @@ This table contains the catalog of ip version types. Its fields are the followin
 
 **Primary key**: ive\_id.
 
+### key_data
+
+This table contains the information of the Key Data related to the Secure DNS information of a domain. Its fields are the following:
+
+|Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
+|:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
+|kd\_id|bigint Auto increment.|Key data id|No||| 
+|sdns\_id|bigint|Secure DNS id|No|secure\_dns|sdns\_id| 
+|kd\_flags|int unsigned|Key data flags|Yes||| 
+|kd\_protocol|int unsigned|Key data protocol|Yes||| 
+|kd\_public\_key|varchar(255)|Key data public key|Yes||| 
+|kd\_algorithm|int unsigned|Key data algorithm|Yes||| 
+
+**Primary_key**: kd\_id, sdns\_id.
+
+### key_events
+
+This table contains the events related to a Key Data. Its fields are the following:
+
+|Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
+|:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
+|kd\_id|bigint|Key data id|No|key\_data|kd\_id| 
+|eve\_id|bigint|Event id|No|event|eve\_id| 
+
+**Primary_key**: kd\_id, eve\_id.
+
+### key_links
+
+This table contains the links related to a Key Data. Its fields are the following:
+
+|Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
+|:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
+|kd\_id|bigint|Key data id|No|key\_data|kd\_id| 
+|lin\_id|bigint|Link id|No|link|lin\_id| 
+
+**Primary_key**: kd\_id, lin\_id.
+
 ### link
 
 This table contains the information about links. Its fields are the following:
@@ -556,13 +609,23 @@ This table contains the information about links. Its fields are the following:
 |lin\_id|bigint(20) Auto increment.|Link's id|No||| 
 |lin\_value|varchar(45)|Link's value|Yes||| 
 |lin\_rel|varchar(45)|Link's rel attribute|Yes||| 
-|lin\_href|varchar(45)|Link's href attribute|Yes||| 
-|lin\_hreflang|varchar(45)|Link's href language|Yes||| 
+|lin\_href|varchar(45)|Link's href attribute|No||| 
 |lin\_title|varchar(45)|Link's title|Yes||| 
 |lin\_media|varchar(45)|Link's media attribute|Yes||| 
 |lin\_type|varchar(45)|Link's type|Yes||| 
 
 **Primary_key**: lin_id.
+
+### link_lang
+
+This table contains the languages related to a link. Its fields are the following:
+
+|Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
+|:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
+|lin\_id|bigint|Link id|No|link|lin\_id| 
+|lan\_hreflang|varchar(45)|Language|No||| 
+
+**Primary_key**: lin\_id, lan\_hreflang.
 
 ### nameserver
 
