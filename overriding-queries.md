@@ -62,13 +62,13 @@ The Red Dog implemented SQL files are the following:
 *	[Zone.sql](#zonesql)
 
 The Red Dog SQL files calling catalogs and other needed catalogs:
-(If overwriten, the implementer MUST make sure all of these are set)
+(If overwritten, the implementer MUST make sure all of these are set)
 
 *	[CountryCode.sql](#countrycode)
 *	[EventAction](#eventaction)
 *	[IpVersion](#ipversion)
-*	[Role.sql](#role)
-*	[Status.sql](#status)
+*	[Roles](#roles)
+*	[Status](#status)
 *	[VariantRelation](#variantrelation)
 
 ## SQL Files
@@ -102,7 +102,7 @@ The following table describes each alias and value type that the queries must re
 |Alias name|Value Type|Allows Null|Description|Example|
 |:---------|:--------:|:---------:|:----------|:-----:|
 |dom_id|	Long|	No|	Domain's id|	123|
-|dom_handle|	String|	Yes|	An RIR-unique identifier of the domain registration|	XXXX|
+|dom_handle|	String|	Yes|	An RIR/DNR unique identifier of the domain registration|	XXXX|
 |dom_ldh_name|	String|	Yes|	A string representing a domain name in LDH form|	xn--exampl-gva|
 |dom_unicode_name|	String|	Yes|	A string representing a domain in U-label form|	examplé|
 |dom_port43|	String|	Yes|	A string containing the fully qualified host name or IP address of the WHOIS server where the domain instance may be found|whois.example.com|
@@ -183,17 +183,17 @@ The following table describes each alias and value type that the queries must re
 |Alias name|Value Type|Allows Null|Description|Example|
 |:---------|:--------:|:---------:|:----------|:-----:|
 |ine_id|	Long|	No|	Ip network's id|	123|
-|ine_handle|	String|	No|	An RIR-unique identifier of the Ip network registration|	XXXXX|
+|ine_handle|	String|	No|	An RIR/DNR unique identifier of the Ip network registration|	XXXXX|
 |ine_start_address_up|	String|	Yes|	The up part of the starting IP address of the network|	2306144275399704592|
 |ine_start_address_down|	String|	Yes|	The down part of the starting IP address of the network|	0|
 |ine_end_address_up|	String|	Yes|	The up part of the ending IP address of the network|	2306144275399704592|
 |ine_end_address_down|	String|	Yes|	The down part of the ending IP address of the network|	18446744073709551615|
 |ine_name|	String|	Yes|	An identifier assigned to the network registration by the registration holder|	some_name|
-|ine_type|	String|	Yes|	A string containing a RIR-specific classification of the Network|	private|
+|ine_type|	String|	Yes|	A string containing a RIR/DNR specific classification of the Network|	private|
 |ine_port43|	String|	Yes|	A string containing the fully qualified host name or IP address of the WHOIS server where the Ip network instance may be found.	|whois.example.com|
 |ccd_id|	Integer|	No|	Country code's id (Refer to [CountryCode catalog](#countrycode))|	484|
 |ip_version_id|	Integer|	No|	Ip version's id (Refer to [IpVersion catalog](#ipversion))|	6|
-|ine_parent_handle|	String|	Yes|	A string containing a RIR-unique identifier of the parent network of this network registration|	XXXX|
+|ine_parent_handle|	String|	Yes|	A string containing a RIR/DNR unique identifier of the parent network of this network registration|	XXXX|
 |ine_cidr|	Integer|	Yes|	Network mask length of the IP address|	64|
 
 The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/IpNetwork.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/IpNetwork.sql).
@@ -245,7 +245,7 @@ The following table describes each alias and value type that the queries must re
 |Alias name|Value Type|Allows Null|Description|Example|
 |:---------|:--------:|:---------:|:----------|:-----:|
 |nse_id|	Long|	No|	Nameserver's id|	123|
-|nse_handle|	String|	Yes|	A RIR-unique identifier of the nameserver registration|	XXXXX|
+|nse_handle|	String|	Yes|	A RIR/DNR unique identifier of the nameserver registration|	XXXXX|
 |nse_ldh_name|	String|	Yes|	A string describing a nameserver name in LDH form as described| ns1.xn--exampl-gva.com|
 |nse_unicode_name|	String|	Yes|	A string containing a nameserver name with U-labels|	ns1.examplé.com|
 |nse_port43|	String|	Yes|	A simple string containing the fully qualified host name or IP address of the WHOIS server where the nameserver instance may be found|	whois.example.com|
@@ -393,13 +393,13 @@ The following table describes each alias and value type that the queries must re
 |Alias name|Value Type|Allows Null|Description|Example|
 |:---------|:--------:|:---------:|:----------|:-----:|
 |vpi_id|	Long|	No|	Postal info's id|	123|
-|vca_id|	String|	Yes|	Vcard's id (Refert to [VCard.sql](#vcardsql))|	Joe Jobs|
+|vca_id|	String|	Yes|	Vcard's id (Refer to [VCard.sql](#vcardsql))|	Joe Jobs|
 |vpi_type|	String|	Yes|	Postal info's type|	local|
 |vpi_country|	String|	Yes|	Country|	Mexico|
 |vpi_city|	String|	Yes|	City|	Juarez|
-|vpi_street1|	String|	Yes|	Street|	Luis Elizondo|
-|vpi_street2|	String|	Yes|	Street|	Altavista|
-|vpi_street3|	String|	Yes|	Street|	100|
+|vpi_street1|	String|	Yes|	Street (first part)|	Luis Elizondo|
+|vpi_street2|	String|	Yes|	Street (second part)|	Altavista|
+|vpi_street3|	String|	Yes|	Street (third part)|	100|
 |vpi_state|	String|	Yes|	State.|	Guadalajara|
 |vpi_postal_code|	String|	Yes|	Postal code.|	34020|
 
@@ -512,7 +512,7 @@ The following values have been registered in the “RDAP JSON Values” registry
 
 The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/Status.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Status.sql).
 
-This catalog is needed since the following objects can retrieve it: [Autnum.sql](#autnumsql), [Domain.sql](#domainsql), [Entity.sql](#entitysql), [IpNetwork](#ipnetworksql), and [Nameserver.sql](#nameserversql).
+This catalog is needed since the following objects can retrieve it: [Autnum.sql](#autnumsql), [Domain.sql](#domainsql), [Entity.sql](#entitysql), [IpNetwork.sql](#ipnetworksql), and [Nameserver.sql](#nameserversql).
 
 
 ### VariantRelation
