@@ -10,85 +10,87 @@ Red Dog's builtin schema is an ordinary relational database conceived in MySQL. 
 
 The means through which the data is exported will depend on how the data is stored in the origin database, this documentation cannot fall into details on how to do it. Instead, this will serve as reference material for Red Dog's schema.
 
-Red Dog's database contains 68 tables. Though the task of populating them might seem daunting, it is important to note that's likely to need only a fraction of them. The main ones are [autonomous_system_number](#autonomous_system_number), [domain](#domain), [entity](#entity), [ip_network](#ip_network) and [nameserver](#nameserver). Pick only the ones needed and branch from there.
+Red Dog's database contains 68 tables. Though the task of populating them might seem daunting, it is important to note that's likely to need only a fraction of them. The main ones are [autonomous_system_number](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql), [domain](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql), [entity](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql), [ip_network](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) and [nameserver](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql). Pick only the ones needed and branch from there.
 
 ## Full Schema definition
 
 The script to generate the database is located [here](https://raw.githubusercontent.com/NICMx/rdap-sql-provider/master/src/main/resources/META-INF/sql/Database.sql "SQL file with tables") and the ER diagram [here](img/diagram/db-er.png).
 
-These are the tables:
+The following table shows the database tables, to see more detail of each table there's a link to its creation script:
 
-<ol class="three-columns">
-	<li><a href="#asn_entity_roles">asn_entity_roles</a></li>
-	<li><a href="#asn_events">asn_events</a></li>
-	<li><a href="#asn_links">asn_links</a></li>
-	<li><a href="#asn_remarks">asn_remarks</a></li>
-	<li><a href="#asn_status">asn_status</a></li>
-	<li><a href="#autonomous_system_number">autonomous_system_number</a></li>
-	<li><a href="#country_code">country_code</a></li>
-	<li><a href="#domain">domain</a></li>
-	<li><a href="#domain_entity_roles">domain_entity_roles</a></li>
-	<li><a href="#domain_events">domain_events</a></li>
-	<li><a href="#domain_links">domain_links</a></li>
-	<li><a href="#domain_nameservers">domain_nameservers</a></li>
-	<li><a href="#domain_networks">domain_networks</a></li>
-	<li><a href="#domain_public_ids">domain_public_ids</a></li>
-	<li><a href="#domain_remarks">domain_remarks</a></li>
-	<li><a href="#domain_status">domain_status</a></li>
-	<li><a href="#ds_data">ds_data</a></li>
-	<li><a href="#ds_events">ds_events</a></li>
-	<li><a href="#ds_links">ds_links</a></li>
-	<li><a href="#entity">entity</a></li>
-	<li><a href="#entity_contact">entity_contact</a></li>
-	<li><a href="#entity_entity_roles">entity_entity_roles</a></li>
-	<li><a href="#entity_events">entity_events</a></li>
-	<li><a href="#entity_links">entity_links</a></li>
-	<li><a href="#entity_public_ids">entity_public_ids</a></li>
-	<li><a href="#entity_remarks">entity_remarks</a></li>
-	<li><a href="#entity_role">entity_role</a></li>
-	<li><a href="#entity_status">entity_status</a></li>
-	<li><a href="#event">event</a></li>
-	<li><a href="#event_action">event_action</a></li>
-	<li><a href="#event_links">event_links</a></li>
-	<li><a href="#ip_address">ip_address</a></li>
-	<li><a href="#ip_network">ip_network</a></li>
-	<li><a href="#ip_network_entity_roles">ip_network_entity_roles</a></li>
-	<li><a href="#ip_network_events">ip_network_events</a></li>
-	<li><a href="#ip_network_links">ip_network_links</a></li>
-	<li><a href="#ip_network_parent_relation">ip_network_parent_relation</a></li>
-	<li><a href="#ip_network_remarks">ip_network_remarks</a></li>
-	<li><a href="#ip_network_status">ip_network_status</a></li>
-	<li><a href="#ip_version">ip_version</a></li>
-	<li><a href="#key_data">key_data</a></li>
-	<li><a href="#key_events">key_events</a></li>
-	<li><a href="#key_links">key_links</a></li>
-	<li><a href="#link">link</a></li>
-	<li><a href="#link_lang">link_lang</a></li>
-	<li><a href="#nameserver">nameserver</a></li>
-	<li><a href="#nameserver_entity_roles">nameserver_entity_roles</a></li>
-	<li><a href="#nameserver_events">nameserver_events</a></li>
-	<li><a href="#nameserver_links">nameserver_links</a></li>
-	<li><a href="#nameserver_remarks">nameserver_remarks</a></li>
-	<li><a href="#nameserver_status">nameserver_status</a></li>
-	<li><a href="#public_id">public_id</a></li>
-	<li><a href="#rdap_access_role">rdap_access_role</a></li>
-	<li><a href="#rdap_user">rdap_user</a></li>
-	<li><a href="#rdap_user_role">rdap_user_role</a></li>
-	<li><a href="#relation">relation</a></li>
-	<li><a href="#remark">remark</a></li>
-	<li><a href="#remark_description">remark_description</a></li>
-	<li><a href="#remark_links">remark_links</a></li>
-	<li><a href="#roles">roles</a></li>
-	<li><a href="#secure_dns">secure_dns</a></li>
-	<li><a href="#status">status</a></li>
-	<li><a href="#variant">variant</a></li>
-	<li><a href="#variant_name">variant_name</a></li>
-	<li><a href="#variant_relation">variant_relation</a></li>
-	<li><a href="#vcard">vcard</a></li>
-	<li><a href="#vcard_postal_info">vcard_postal_info</a></li>
-	<li><a href="#zone">zone</a></li>
-</ol>
+| Table | Description | Table details |
+|------------------|------------------------------------------------------------------------|--------------------------|
+| asn_entity_roles | This table contains the role that an Entity has in relation to an ASN. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| asn_events | This table contains the relation between an ASN and its events. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| asn_links | This table contains the relation between an ASN and its links. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| asn_remarks | This table contains the relation between an ASN and its remarks. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| asn_status | This table contains the relation between an ASN and its status. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| autonomous_system_number | This table contains the information of the Autonomous system numbers (ASN). | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| country_code | This table contains the catalog of the two-character country code. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| domain | This table contains the information about the domain registration. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| domain_entity_roles | This table contains the role that an Entity has in relation to a Domain. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| domain_events | This table contains the relation between a Domain and its events. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| domain_links | This table contains the relation between a Domain and its links. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| domain_nameservers | This table contains the relation between a Domain and its nameservers. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| domain_networks | This table contains the relation between a Domain and its ip networks. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| domain_public_ids | This table contains the relation between a Domain and its public ids. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| domain_remarks | This table contains the relation between a Domain and its remarks. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| domain_status | This table contains the relation between a Domain and its status. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| ds_data | This table contains the information of a secure DNS DS record. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| ds_events | This table contains the relation between a DS Data and its events. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| ds_links | This table contains the relation between a DS Data and its links. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| entity | This table contains the information of organizations, corporations, governments, non-profits, clubs, individual persons, and informal groups of people. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| entity_contact | This table contains the relation between an Entity and its contact VCard. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| entity_entity_roles | This table contains the role that an Entity has in relation to another Entity. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| entity_events | This table contains the relation between an Entity and its events. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| entity_links | This table contains the relation between an Entity and its links. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| entity_public_ids | This table contains the relation between an Entity and its public ids. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| entity_remarks | This table contains the relation between an Entity and its remarks. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| entity_role | This table contains the relation between an Entity and its role. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| entity_status | This table contains the relation between an Entity and its status. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| event | This table contains the information about events that have occurred on an object instance. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| event_action | This table contains the catalog of Events Actions. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| event_links | This table contains the relation between an Event and its links. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| ip_address | This table contains the information of a nameserver's ip addresses. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| ip_network | This table contains the information about the network registration and entities related to an IP network. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| ip_network_entity_roles | This table contains the role that an Entity has in relation to an IP Network. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| ip_network_events | This table contains the relation between an IP Network and its events. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| ip_network_links | This table contains the relation between an IP Network and its links. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| ip_network_parent_relation | This table contains the relation between an IP Network and its parent network. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| ip_network_remarks | This table contains the relation between an IP Network and its remarks. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| ip_network_status | This table contains the relation between an IP Network and its status. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| ip_version | This table contains the catalog of ip version types. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| key_data | This table contains the information of the Key Data related to the Secure DNS information of a domain. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| key_events | This table contains the events related to a Key Data. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| key_links | This table contains the links related to a Key Data. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| link | This table contains the information about links. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| link_lang | This table contains the languages related to a link. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| nameserver | This table contains information regarding DNS nameservers used in both forward and reverse DNS. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| nameserver_entity_roles | This table contains the role that an Entity has in relation to a Nameserver. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| nameserver_events | This table contains the relation between a Nameserver and its events. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| nameserver_links | This table contains the relation between a Nameserver and its links. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| nameserver_remarks | This table contains the relation between a Nameserver and its remarks. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| nameserver_status | This table contains the relation between a Nameserver and its status. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| public_id | This table contains the information about Public IDs. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| rdap_access_role | This table contains a catalog of the access roles that a user could have. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| rdap_user | This table contains the information about the users. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| rdap_user_role | This table contains the Access Roles that a User has. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| relation | This table contains the catalog of Variant relations. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| remark | This table contains the information about the Remarks that denote information about an object. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| remark_description | This table contains the Remark's descriptions. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| remark_links | This table contains the relation between a Remark and its links. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| roles | This table contains the catalog of Roles that an entity could have. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| secure_dns | This table contains the information about a domain Secure DNS. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| status | This table contains the Status catalog. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| variant | This table contains information about the domain's variants. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| variant_name | This table contains the variants names. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| variant_relation | This table contains the type of relations of a Variant. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| vcard | This table contains the entities VCards. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| vcard_postal_info | This table contains the VCards postal information. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
+| zone | This table contains the zones managed by the RDAP server owner. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql) |
 
+
+TODO DEPRECATED!! (still hasn't been removed to copy/paste the descriptions to the DB scripts)
 
 Each table is described in the following sections:
 
@@ -166,6 +168,7 @@ This table contains the information of the Autonomous system numbers (ASN).
 **Primary key**: asn\_id, ccd\_id.
 
 ### country_code
+
 This table contains the catalog of the two-character country code.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
@@ -465,6 +468,7 @@ This table contains the information of a nameserver's ip addresses.
 **Primary key**: iad\_id, nse\_id.
 
 ### ip_network
+
 This table contains the information about the network registration and entities related to an IP network.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
@@ -769,7 +773,7 @@ This table contains the information about the Remarks that denote information ab
 
 ### remark_description
 
-This table contains a Remark's descriptions.
+This table contains the Remark's descriptions.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
