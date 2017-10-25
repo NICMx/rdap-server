@@ -94,7 +94,7 @@ Each table is described in the following sections:
 
 ### asn_entity_roles
 
-This table contains the role that an Entity has in relation to an ASN. Its fields are the following:
+This table contains the role that an Entity has in relation to an ASN.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -106,7 +106,7 @@ This table contains the role that an Entity has in relation to an ASN. Its field
 
 ### asn_events
 
-This table contains the relation between an ASN and its events. Its fields are the following:
+This table contains the relation between an ASN and its events.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -117,7 +117,7 @@ This table contains the relation between an ASN and its events. Its fields are t
 
 ### asn_links
 
-This table contains the relation between an ASN and its links. Its fields are the following:
+This table contains the relation between an ASN and its links.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -128,7 +128,7 @@ This table contains the relation between an ASN and its links. Its fields are th
 
 ### asn_remarks
 
-This table contains the relation between an ASN and its remarks. Its fields are the following:
+This table contains the relation between an ASN and its remarks.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -139,7 +139,7 @@ This table contains the relation between an ASN and its remarks. Its fields are 
 
 ### asn_status
 
-This table contains the relation between an ASN and its status. Its fields are the following:
+This table contains the relation between an ASN and its status.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -150,23 +150,23 @@ This table contains the relation between an ASN and its status. Its fields are t
 
 ### autonomous_system_number
 
-This table contains the information of the Autonomous system numbers (ASN). Its fields are the following:
+This table contains the information of the Autonomous system numbers (ASN).
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
-|asn\_id|bigint(20)|ASN's id. Auto increment. Unique| No |   | | 
-|asn\_handle|varchar(100)|An RIR-unique identifier of the autnum registration. Unique| No |  | | 
+|asn\_id|bigint(20)|ASN's unique id| No |   | | 
+|asn\_handle|varchar(100)|A RIR unique identifier of the autnum registration| No |  | | 
 |asn\_start\_autnum|bigint(20)|A number representing the starting number in the block of Autonomous System numbers| No ||| 
 |asn\_end\_autnum|bigint(20)|A number representing the ending number in the block of Autonomous System numbers| No ||| 
-|asn\_name|varchar(200)|An identifier assigned to the autnum registration by the the registration holder.| Yes |   | | 
-|asn\_type|varchar(200)|A string containing an RIR-specific classification of the autnum| Yes |   | | 
-|asn\_port43|varchar(254)|A simple string containing the fully qualified host name or IP addres of the WHOIS server where the ASN instance may be found.| Yes |   | | 
+|asn\_name|varchar(200)|An identifier assigned to the autnum registration by the registration holder| Yes |   | | 
+|asn\_type|varchar(200)|A string containing a RIR specific classification of the autnum| Yes |   | | 
+|asn\_port43|varchar(254)|A string containing the fully qualified host name or IP addres of the WHOIS server where the ASN instance may be found| Yes |   | | 
 |ccd\_id|smallint(5) unsigned|Country code id| No |country\_code   |cc\_id | 
 
 **Primary key**: asn\_id, ccd\_id.
 
 ### country_code
-This table contains the catalog of the two-character country code. Its fields are the following:
+This table contains the catalog of the two-character country code.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -176,22 +176,22 @@ This table contains the catalog of the two-character country code. Its fields ar
 **Primary key**: ccd\_id
 
 ### domain
-This table contains the information about the domain registration. Its fields are the following:
+This table contains the information about the domain registration.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
-|dom\_id|bigint(20)|Domain's id: Auto increment. Unique|No||| 
-|dom\_handle|varchar(255)|An RIR-unique identifier of the domain registration. Unique|No|||
-|dom\_ldh\_name|varchar(64)|A string describing a domain name in LDH form as described|Yes|||
-|dom\_unicode\_name|varchar(255)|A string containing a domain name with U-labels||||
-|dom\_port43|varchar(254)|A simple string containing the fully qualified host name or IP address of the WHOIS server where the domain instance may be found.|Yes|||
+|dom\_id|bigint(20)|Domain's unique id|No||| 
+|dom\_handle|varchar(255)|A RIR/DNR unique identifier of the domain registration|No|||
+|dom\_ldh\_name|varchar(64)|A string containing a domain name in LDH form|Yes|||
+|dom\_unicode\_name|varchar(255)|A string containing a domain name in U-label||||
+|dom\_port43|varchar(254)|A string containing the fully qualified host name or IP address of the WHOIS server where the domain instance may be found|Yes|||
 |zone\_id|smallint(6)|Zone's id|No|||
 
 **Primary key**: dom\_id, zone\_id
 
 ### domain_entity_roles
 
-This table contains the role that an Entity has in relation to a Domain. Its fields are the following:
+This table contains the role that an Entity has in relation to a Domain.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -203,7 +203,7 @@ This table contains the role that an Entity has in relation to a Domain. Its fie
 
 ### domain_events
 
-This table contains the relation between a Domain and its events. Its fields are the following:
+This table contains the relation between a Domain and its events.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -214,7 +214,7 @@ This table contains the relation between a Domain and its events. Its fields are
 
 ### domain_links
 
-This table contains the relation between a Domain and its links. Its fields are the following:
+This table contains the relation between a Domain and its links.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -225,7 +225,7 @@ This table contains the relation between a Domain and its links. Its fields are 
 
 ### domain_nameservers
 
-This table contains the relation between a Domain and its nameservers. Its fields are the following:
+This table contains the relation between a Domain and its nameservers.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -236,7 +236,7 @@ This table contains the relation between a Domain and its nameservers. Its field
 
 ### domain_networks
 
-This table contains the relation between a Domain and its ip networks. Its fields are the following:
+This table contains the relation between a Domain and its ip networks.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -247,18 +247,18 @@ This table contains the relation between a Domain and its ip networks. Its field
 
 ### domain_public_ids
 
-This table contains the relation between a Domain and its public ids. Its fields are the following:
+This table contains the relation between a Domain and its public ids.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
 |dom\_id|bigint(20)|Domain's id| No | domain | dom\_id| 
-|pid\_id|bigint(20)|Public id's id. Unique| No | public_id | pid\_id| 
+|pid\_id|bigint(20)|Public id's id| No | public_id | pid\_id| 
 
 **Primary key**: dom\_id, pid\_id.
 
 ### domain_remarks
 
-This table contains the relation between a Domain and its remarks. Its fields are the following:
+This table contains the relation between a Domain and its remarks.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -269,7 +269,7 @@ This table contains the relation between a Domain and its remarks. Its fields ar
 
 ### domain_status
 
-This table contains the relation between a Domain and its status. Its fields are the following:
+This table contains the relation between a Domain and its status.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -280,22 +280,22 @@ This table contains the relation between a Domain and its status. Its fields are
 
 ### ds_data
 
-This table contains the information of a secure DNS DS record. Its fields are the following:
+This table contains the information of a secure DNS DS record.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
-|dsd\_id|bigint(20)|Ds data's id. Auto increment| No | | | 
+|dsd\_id|bigint(20)|Ds data's id| No | | | 
 |sdns\_id|bigint(20)|Secure DNS's id| No | secure_dns | sdns\_id| 
-|dsd\_keytag|int(11)|An integer as specified by the key tag field of a DNS DS record.| No | | | 
-|dsd\_algorithm|int(11)|An integer as specified by the algorithm field of a DNS DS record.| No | | | 
-|dsd\_digest|varchar(255)|A string as specified by the digest field of a DNS DS record.| No | | | 
-|dsd\_digest_type|int(11)|An integer as specified by the digest type field of a DNS DS record.| No | | | 
+|dsd\_keytag|int(11)|An integer as specified by the key tag field of a DNS DS record| No | | | 
+|dsd\_algorithm|int(11)|An integer as specified by the algorithm field of a DNS DS record| No | | | 
+|dsd\_digest|varchar(255)|A string as specified by the digest field of a DNS DS record| No | | | 
+|dsd\_digest_type|int(11)|An integer as specified by the digest type field of a DNS DS record| No | | | 
 
 **Primary key**: dsd\_id, sdns\_id.
 
 ### ds_events
 
-This table contains the relation between a Domain and its events. Its fields are the following:
+This table contains the relation between a DS Data and its events.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -306,7 +306,7 @@ This table contains the relation between a Domain and its events. Its fields are
 
 ### ds_links
 
-This table contains the relation between a Domain and its links. Its fields are the following:
+This table contains the relation between a DS Data and its links.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -317,19 +317,19 @@ This table contains the relation between a Domain and its links. Its fields are 
 
 ### entity
 
-This table contains the information of organizations, corportation, governments, non-profits, clubs, individual persons, and informal groups of people. Its fields are the following:
+This table contains the information of organizations, corporations, governments, non-profits, clubs, individual persons, and informal groups of people.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
-|ent\_id|bigint(20)|Entity's id. Auto increment. Unique|No||| 
-|ent\_handle|varchar(255)|An RIR-unique identifier of the entity registration. Unique|Yes|||
-|dom\_port43|varchar(254)|A simple string containing the fully qualified host name or IP address of the WHOIS server where the entity instance may be found.| Yes|||
+|ent\_id|bigint(20)|Entity's unique id|No||| 
+|ent\_handle|varchar(255)|A RIR/DNR unique identifier of the entity registration|Yes|||
+|dom\_port43|varchar(254)|A string containing the fully qualified host name or IP address of the WHOIS server where the entity instance may be found| Yes|||
 
 **Primary key**: ent\_id, zone\_id
 
 ### entity_contact
 
-This table contains the relation between an Entity and its vcard. Its fields are the following:
+This table contains the relation between an Entity and its contact VCard.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -340,7 +340,7 @@ This table contains the relation between an Entity and its vcard. Its fields are
 
 ### entity_entity_roles
 
-This table contains the role that an Entity has in relation to another Entity. Its fields are the following:
+This table contains the role that an Entity has in relation to another Entity.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -352,7 +352,7 @@ This table contains the role that an Entity has in relation to another Entity. I
 
 ### entity_events
 
-This table contains the relation between an Entity and its events. Its fields are the following:
+This table contains the relation between an Entity and its events.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -363,7 +363,7 @@ This table contains the relation between an Entity and its events. Its fields ar
 
 ### entity_links
 
-This table contains the relation between an Entity and its links. Its fields are the following:
+This table contains the relation between an Entity and its links.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -374,18 +374,18 @@ Primary key: ent\_id, lin\_id.
 
 ### entity_public_ids
 
-This table contains the relation between an Entity and its public ids. Its fields are the following:
+This table contains the relation between an Entity and its public ids.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
 |ent\_id|bigint(20)|Entity's id| No | entity | ent\_id| 
-|pid\_id|bigint(20)|Public id's id. Unique| No | public\_id | pid\_id| 
+|pid\_id|bigint(20)|Public id's id| No | public\_id | pid\_id| 
 
 **Primary key**: ent\_id, pid\_id.
 
 ### entity_remarks
 
-This table contains the relation between an Entity and its remarks. Its fields are the following:
+This table contains the relation between an Entity and its remarks.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -396,7 +396,7 @@ This table contains the relation between an Entity and its remarks. Its fields a
 
 ### entity_role
 
-This table contains the relation between an Entity and its role. Its fields are the following:
+This table contains the relation between an Entity and its role.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -407,7 +407,7 @@ This table contains the relation between an Entity and its role. Its fields are 
 
 ### entity_status
 
-This table contains the relation between an Entity and its status. Its fields are the following:
+This table contains the relation between an Entity and its status.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -418,12 +418,12 @@ This table contains the relation between an Entity and its status. Its fields ar
 
 ### event
 
-This table contains the information about events that have occurred on an instance of an object class. Its fields are the following:
+This table contains the information about events that have occurred on an object instance.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
-|eve\_id|bigint(20)|Event's id. Auto increment.|No||| 
-|eac\_id|smallint(6)|Event's action's id|No|event\_action|eac\_id| 
+|eve\_id|bigint(20)|Event's id|No||| 
+|eac\_id|smallint(6)|Event action's id|No|event\_action|eac\_id| 
 |eve\_actor|varchar(45)|Event actor|Yes||| 
 |eve\_date|datetime|Event date|Yes||| 
 
@@ -431,7 +431,7 @@ This table contains the information about events that have occurred on an instan
 
 ### event_action
 
-This table contains the catalog of events actions. Its fields are the following:
+This table contains the catalog of Events Actions.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -442,7 +442,7 @@ This table contains the catalog of events actions. Its fields are the following:
 
 ### event_links
 
-This table contains the relation between an Event and its links. Its fields are the following:
+This table contains the relation between an Event and its links.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -453,11 +453,11 @@ Primary key: eve\_id, lin\_id.
 
 ### ip_address
 
-This table contains the information about the nameserver's ip addresses. Its fields are the following:
+This table contains the information of a nameserver's ip addresses.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
-|iad\_id|int(11)|IP address's id. Auto increment.| No ||| 
+|iad\_id|int(11)|IP address's id| No ||| 
 |nse\_id|bigint(20)|Nameserver's id| No | nameserver | nse\_id| 
 |iad\_type|tinyint(4)|IP address type (4 or 6)| No ||| 
 |iad\_value|varbinary(16)|IP address value| No ||| 
@@ -465,29 +465,29 @@ This table contains the information about the nameserver's ip addresses. Its fie
 **Primary key**: iad\_id, nse\_id.
 
 ### ip_network
-This table contains the information about the network registration and entities related to an IP network. Its fields are the following:
+This table contains the information about the network registration and entities related to an IP network.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
 |ine\_id|bigint(20). Auto Increment. Unsigned|IP network's id|No|||
-|ine\_handle|varchar(255)|An RIR-unique identifier of the IP network registration. Unique|No|||
-|ine\_start\_address\_up|bigint(20) unsigned|The up part of the starting IP address of the network.|Yes|||
-|ine\_start\_address\_down|bigint(20) unsigned|The down part of the starting IP address of the network.|Yes|||
-|ine\_end\_address\_up|bigint(20) unsigned|The up part of the ending IP address of the network.|Yes|||
-|ine\_end\_address\_down|bigint(20) unsigned|The down part of the ending IP address of the network.|Yes|||
-|ine\_name|varchar(255)|An identifier assigned to the network registration by the registration holder.|Yes|||
-|ine\_type|varchar(255)|A string containing a RIR-specific classification of the Network.|Yes|||
-|ine\_port43|varchar(254)|A simple string containing the fully qualified host name or IP address of the WHOIS server where the IP network instance may be found.|Yes|||
-|ccd\_id|smallint(5) unsigned|Country code's id.|No|country\_code|ccd\_id|
-|ip\_version\_id|tinyint(3) unsigned|IP version's id.| No|ip\_version|ive\_id|
-|ine\_parent\_handle|varchar(255)|A string containing a RIR-unique identifier of the parent network of this network registration.|Yes|||
-|ine\_cidr|smallint(6)|Network mask length of the IP address.|Yes|||
+|ine\_handle|varchar(255)|A RIR/DNR unique identifier of the IP network registration|No|||
+|ine\_start\_address\_up|bigint(20) unsigned|The up part of the starting IP address of the network|Yes|||
+|ine\_start\_address\_down|bigint(20) unsigned|The down part of the starting IP address of the network|Yes|||
+|ine\_end\_address\_up|bigint(20) unsigned|The up part of the ending IP address of the network|Yes|||
+|ine\_end\_address\_down|bigint(20) unsigned|The down part of the ending IP address of the network|Yes|||
+|ine\_name|varchar(255)|An identifier assigned to the network registration by the registration holder|Yes|||
+|ine\_type|varchar(255)|A string containing a RIR/DNR specific classification of the Network|Yes|||
+|ine\_port43|varchar(254)|A string containing the fully qualified host name or IP address of the WHOIS server where the IP network instance may be found|Yes|||
+|ccd\_id|smallint(5) unsigned|Country code's id|No|country\_code|ccd\_id|
+|ip\_version\_id|tinyint(3) unsigned|IP version's id| No|ip\_version|ive\_id|
+|ine\_parent\_handle|varchar(255)|A string containing a RIR/DNR unique identifier of the parent network of this network registration|Yes|||
+|ine\_cidr|smallint(6)|Network mask length of the IP address|Yes|||
 
 **Primary key**: ine\_id.
 
 ### ip_network_entity_roles
 
-This table contains the role that an Entity has in relation to an IP Network. Its fields are the following:
+This table contains the role that an Entity has in relation to an IP Network.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -499,7 +499,7 @@ This table contains the role that an Entity has in relation to an IP Network. It
 
 ### ip_network_events
 
-This table contains the relation between an IP Network and its events. Its fields are the following:
+This table contains the relation between an IP Network and its events.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -510,7 +510,7 @@ This table contains the relation between an IP Network and its events. Its field
 
 ### ip_network_links
 
-This table contains the relation between an IP Network and its links. Its fields are the following:
+This table contains the relation between an IP Network and its links.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -521,7 +521,7 @@ This table contains the relation between an IP Network and its links. Its fields
 
 ### ip_network_parent_relation
 
-This table contains the relation between an IP Network and its parent network. Its fields are the following:
+This table contains the relation between an IP Network and its parent network.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -532,7 +532,7 @@ This table contains the relation between an IP Network and its parent network. I
 
 ### ip_network_remarks
 
-This table contains the relation between an IP Network and its remarks. Its fields are the following:
+This table contains the relation between an IP Network and its remarks.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -543,7 +543,7 @@ This table contains the relation between an IP Network and its remarks. Its fiel
 
 ### ip_network_status
 
-This table contains the relation between an IP Network and its status. Its fields are the following:
+This table contains the relation between an IP Network and its status.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -554,7 +554,7 @@ This table contains the relation between an IP Network and its status. Its field
 
 ### ip_version
 
-This table contains the catalog of ip version types. Its fields are the following:
+This table contains the catalog of ip version types.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -565,44 +565,44 @@ This table contains the catalog of ip version types. Its fields are the followin
 
 ### key_data
 
-This table contains the information of the Key Data related to the Secure DNS information of a domain. Its fields are the following:
+This table contains the information of the Key Data related to the Secure DNS information of a domain.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
-|kd\_id|bigint Auto increment.|Key data id|No||| 
-|sdns\_id|bigint|Secure DNS id|No|secure\_dns|sdns\_id| 
-|kd\_flags|int unsigned|Key data flags|Yes||| 
-|kd\_protocol|int unsigned|Key data protocol|Yes||| 
-|kd\_public\_key|varchar(255)|Key data public key|Yes||| 
-|kd\_algorithm|int unsigned|Key data algorithm|Yes||| 
+|kd\_id|bigint Auto increment.|Key data's id|No||| 
+|sdns\_id|bigint|Secure DNS's id|No|secure\_dns|sdns\_id| 
+|kd\_flags|int unsigned|Key data's flags|Yes||| 
+|kd\_protocol|int unsigned|Key data's protocol|Yes||| 
+|kd\_public\_key|varchar(255)|Key data's public key|Yes||| 
+|kd\_algorithm|int unsigned|Key data's algorithm|Yes||| 
 
 **Primary_key**: kd\_id, sdns\_id.
 
 ### key_events
 
-This table contains the events related to a Key Data. Its fields are the following:
+This table contains the events related to a Key Data.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
-|kd\_id|bigint|Key data id|No|key\_data|kd\_id| 
-|eve\_id|bigint|Event id|No|event|eve\_id| 
+|kd\_id|bigint|Key data's id|No|key\_data|kd\_id| 
+|eve\_id|bigint|Event's id|No|event|eve\_id| 
 
 **Primary_key**: kd\_id, eve\_id.
 
 ### key_links
 
-This table contains the links related to a Key Data. Its fields are the following:
+This table contains the links related to a Key Data.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
-|kd\_id|bigint|Key data id|No|key\_data|kd\_id| 
-|lin\_id|bigint|Link id|No|link|lin\_id| 
+|kd\_id|bigint|Key data's id|No|key\_data|kd\_id| 
+|lin\_id|bigint|Link's id|No|link|lin\_id| 
 
 **Primary_key**: kd\_id, lin\_id.
 
 ### link
 
-This table contains the information about links. Its fields are the following:
+This table contains the information about links.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -618,32 +618,32 @@ This table contains the information about links. Its fields are the following:
 
 ### link_lang
 
-This table contains the languages related to a link. Its fields are the following:
+This table contains the languages related to a link.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
-|lin\_id|bigint|Link id|No|link|lin\_id| 
+|lin\_id|bigint|Link's id|No|link|lin\_id| 
 |lan\_hreflang|varchar(45)|Language|No||| 
 
 **Primary_key**: lin\_id, lan\_hreflang.
 
 ### nameserver
 
-This table contains information regardin DNS nameservers used in both forward and reverse DNS. Its fields are the following:
+This table contains information regarding DNS nameservers used in both forward and reverse DNS.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
-|nse\_id|bigint(20) Auto increment.|Nameserver's id.|No||| 
-|nse\_value|varchar(100)|A RIR-unique identifier of the nameserver registration. Unique.|No||| 
-|nse\_rel|varchar(254)|A string describing a nameserver name in LDH form as described.|Yes||| 
-|nse\_href|varchar(255)|A string containing a nameserver name with U-labels|Yes||| 
-|nse\_hreflang|varchar(254)|A simple string containing the fully qualified host name or IP address of the WHOIS server where the nameserver instance may be found.|Yes||| 
+|nse\_id|bigint(20) Auto increment.|Nameserver's id|No||| 
+|nse\_value|varchar(100)|A RIR/DNR unique identifier of the nameserver registration|No||| 
+|nse\_rel|varchar(254)|A string containing a nameserver name in LDH form|Yes||| 
+|nse\_href|varchar(255)|A string containing a nameserver name in U-label|Yes||| 
+|nse\_hreflang|varchar(254)|A string containing the fully qualified host name or IP address of the WHOIS server where the nameserver instance may be found|Yes||| 
 
 **Primary_key**: nse_id.
 
 ### nameserver_entity_roles
 
-This table contains the role that an Entity has in relation to a Nameserver. Its fields are the following:
+This table contains the role that an Entity has in relation to a Nameserver.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -655,7 +655,7 @@ This table contains the role that an Entity has in relation to a Nameserver. Its
 
 ### nameserver_events
 
-This table contains the relation between a Nameserver and its events. Its fields are the following:
+This table contains the relation between a Nameserver and its events.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -666,7 +666,7 @@ This table contains the relation between a Nameserver and its events. Its fields
 
 ### nameserver_links
 
-This table contains the relation between a Nameserver and its links. Its fields are the following:
+This table contains the relation between a Nameserver and its links.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -677,7 +677,7 @@ This table contains the relation between a Nameserver and its links. Its fields 
 
 ### nameserver_remarks
 
-This table contains the relation between a Nameserver and its remarks. Its fields are the following:
+This table contains the relation between a Nameserver and its remarks.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -688,7 +688,7 @@ This table contains the relation between a Nameserver and its remarks. Its field
 
 ### nameserver_status
 
-This table contains the relation between a Nameserver and its status. Its fields are the following:
+This table contains the relation between a Nameserver and its status.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -699,7 +699,7 @@ This table contains the relation between a Nameserver and its status. Its fields
 
 ### public_id
 
-This table contains the information about links. Its fields are the following:
+This table contains the information about Public IDs.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -711,41 +711,41 @@ This table contains the information about links. Its fields are the following:
 
 ### rdap_access_role
 
-This table contains a catalog of the roles that any user could have. Its fields are the following:
+This table contains a catalog of the access roles that a user could have.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
-|rar\_name|varchar(45)|Role name. Unique|No||| 
-|rar\_description|varchar(250)|Role description.|No||| 
+|rar\_name|varchar(45)|Access role's name|No||| 
+|rar\_description|varchar(250)|Access role's description|No||| 
 
 **Primary_key**: rar\_name.
 
 ### rdap_user
 
-This table contains the information about the users. Its fields are the following:
+This table contains the information about the users.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
-|rus\_name|varchar(100)|User's name. Unique|No||| 
-|rus\_pass|varchar(200)|User's password.|No||| 
-|rus\_max\_search\_results|int(11)|Max number of results for the user|Yes||| 
+|rus\_name|varchar(100)|User's name|No||| 
+|rus\_pass|varchar(200)|User's password|No||| 
+|rus\_max\_search\_results|int(11)|Max number of results that will be returned for the user|Yes||| 
 
 **Primary_key**: rus\_name.
 
 ### rdap_user_role
 
-This table contains the information about the user's roles. Its fields are the following:
+This table contains the Access Roles that a User has.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
 |rus\_name|varchar(100)|User's name|No|rdap\_user|rus\_name| 
-|rar\_name|varchar(45)|Role's name|No|rdap\_access\_role|rar\_name| 
+|rar\_name|varchar(45)|Access role's name|No|rdap\_access\_role|rar\_name| 
 
 **Primary_key**: rus\_name, rar\_name.
 
 ### relation
 
-This table contains the catalog of Variant relations. Its fields are the following:
+This table contains the catalog of Variant relations.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -756,32 +756,32 @@ This table contains the catalog of Variant relations. Its fields are the followi
 
 ### remark
 
-This table contains the information about the remarks, which are structure that denote information about the object class that contains them. Its fields are the following:
+This table contains the information about the Remarks that denote information about an object.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
 |rem\_id|bigint(20) Auto increment.|Remark's id|No||| 
-|rem\_title|varchar(255)|Remark's title.|Yes||| 
-|rem\_type|varchar(255)|Remark's type.|Yes||| 
+|rem\_title|varchar(255)|Remark's title|Yes||| 
+|rem\_type|varchar(255)|Remark's type|Yes||| 
 |rem\_lang|varchar(255)|Remark's language|Yes||| 
 
 **Primary_key**: rem\_id.
 
 ### remark_description
 
-This table contains the remark's descriptions. Its fields are the following:
+This table contains a Remark's descriptions.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
 |rem\_id|bigint(20) Auto increment.|Remark's id|No|remark|rem_id| 
-|rde\_order|mediumint(9)|Description's order.|No||| 
-|rde\_description|varchar(255)|Description.|No||| 
+|rde\_order|mediumint(9)|Placement of the description at the Remark|No||| 
+|rde\_description|varchar(255)|Remark's description|No||| 
 
 **This table does not have a primary key.**
 
 ### remark_links
 
-This table contains the relation between a Remark and its links. Its fields are the following:
+This table contains the relation between a Remark and its links.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
@@ -792,107 +792,107 @@ This table contains the relation between a Remark and its links. Its fields are 
 
 ### roles
 
-This table contains the catalog of entity's roles. Its fields are the following:
+This table contains the catalog of Roles that an entity could have.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
 |rol\_id|tinyint(4)|Role's id|No||| 
-|role\_name|varchar(100)|Role's name.|Yes||| 
+|role\_name|varchar(100)|Role's name|Yes||| 
 
 **Primary_key**: rol\_id.
 
 ### secure_dns
 
-This table contains the information about the domains secure dns. Its fields are the following:
+This table contains the information about a domain Secure DNS.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
 |sdns\_id|bigint(20) Auto increment.|Secure dns' id|No||| 
-|sdns\_zone\_signed|tinyint(1)|1 if the zone has been signed, 0 otherwise.|No||| 
-|sdns\_delegation\_signed|tinyint(1)|1 if there are DS records in the parent, 0 otherwise.|No||| 
-|sdns\_max\_sig\_life|int(11)|An integer representing the signature lifetime in seconds to be used when creating the RRSIG DS record in the parent zone.|Yes||| 
-|dom\_id|bigint(20)|Domain's id.|No|domain|dom\_id| 
+|sdns\_zone\_signed|tinyint(1)|Flag to show if the zone has been signed (1=true, 0=false)|No||| 
+|sdns\_delegation\_signed|tinyint(1)|Flag to show if there are DS records in the parent (1=true, 0=false)|No||| 
+|sdns\_max\_sig\_life|int(11)|An integer representing the signature lifetime in seconds to be used when creating the RRSIG DS record in the parent zone|Yes||| 
+|dom\_id|bigint(20)|Domain's id|No|domain|dom\_id| 
 
 **Primary_key**: sdns\_id.
 
 ### status
 
-This table contains the catalog of status. Its fields are the following:
+This table contains the Status catalog.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
-|rol\_id|tinyint(4)|Role's id|No||| 
-|role\_name|varchar(100)|Status's name.|Yes||| 
+|sta\_id|smallint(4)|Status's id|No||| 
+|sta\_name|varchar(100)|Status's name.|Yes||| 
 
 **Primary_key**: sta\_id.
 
 ### variant
 
-This table contains information about the domain's variants. Its fields are the following:
+This table contains information about the domain's variants.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
 |var\_id|bigint(20)|Variant's id|No||| 
-|var\_idn\_table|varchar(100)|Variant's IDN table.|Yes||| 
+|var\_idn\_table|varchar(100)|Variant's IDN table|Yes||| 
 |dom\_id|bigint(20)|Domain's id|No|domain|dom\_id| 
 
 **Primary_key**: var\_id, dom\_id.
 
 ### variant_name
 
-This table contains the variants names. Its fields are the following:
+This table contains the variants names.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
-|var\_ldh\_name|varchar(63)|Variant's ldh name.|Yes||| 
+|var\_ldh\_name|varchar(63)|Variant's ldh name|Yes||| 
 |var\_id|bigint(20)|Variant's id|No|variant|var\_id| 
-|var\_unicode\_name|varchar(255)|Variant's unicode name.|Yes||| 
+|var\_unicode\_name|varchar(255)|Variant's unicode name|Yes||| 
 
 **This table does not have a primary key.**
 
 ### variant_relation
 
-This table contains the relation between a Variant and its relation. Its fields are the following:
+This table contains the type of relations of a Variant.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
-|rel\_id|tinyint(4)|Relation's id.|No|relation|rel\_id| 
-|var\_id|bigint(20)|Variant's id.|No|variant|var\_id| 
+|rel\_id|tinyint(4)|Relation's id|No|relation|rel\_id| 
+|var\_id|bigint(20)|Variant's id|No|variant|var\_id| 
 
 **Primary_key**: rel\_id, var\_id.
 
 ### vcard
 
-This table contains the entities vcards. Its fields are the following:
+This table contains the entities VCards.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
-|vca\_id|bigint(20) auto increment.|Vcard's id.|No||| 
-|vca\_name|varchar(100)|Contact's name.|Yes||| 
-|vca\_company\_name|varchar(255)|Contact's company name.|Yes||| 
-|vca\_company\_url|varchar(255)|Contact's url.|Yes||| 
-|vca\_email|varchar(200)|Contact's email.|Yes||| 
-|vca\_voice|varchar(50)|Contact's telephone.|Yes||| 
-|vca\_cellphone|varchar(50)|Contact's cellphone.|Yes||| 
-|vca\_fax|varchar(50)|Contact's fax.|Yes||| 
-|vca\_job\_title|varchar(200)|Contact's job title.|Yes||| 
+|vca\_id|bigint(20) auto increment.|Vcard's id|No||| 
+|vca\_name|varchar(100)|Contact's name|Yes||| 
+|vca\_company\_name|varchar(255)|Contact's company name|Yes||| 
+|vca\_company\_url|varchar(255)|Contact's url|Yes||| 
+|vca\_email|varchar(200)|Contact's email|Yes||| 
+|vca\_voice|varchar(50)|Contact's telephone|Yes||| 
+|vca\_cellphone|varchar(50)|Contact's cellphone|Yes||| 
+|vca\_fax|varchar(50)|Contact's fax|Yes||| 
+|vca\_job\_title|varchar(200)|Contact's job title|Yes||| 
 
 **Primary_key**: vca\_id.
 
 ### vcard_postal_info
 
-This table contains the vcards postal information like country, city, postal code, etc. Its fields are the following:
+This table contains the VCards postal information.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
-|vpi\_id|bigint(20) auto increment.|Postal info's id.|No||| 
-|vca\_id|bigint(20)|Vcard's id.|No|vcard|vca\_id| 
+|vpi\_id|bigint(20) auto increment.|Postal info's id|No||| 
+|vca\_id|bigint(20)|Vcard's id|No|vcard|vca\_id| 
 |vpi\_type|varchar(45)|Postal info's type.|Yes||| 
 |vpi\_country|bigint(100)|Country|Yes||| 
 |vpi\_city|bigint(100)|City|Yes||| 
-|vpi\_street1|bigint(100)|Street|Yes||| 
-|vpi\_street2|bigint(100)|Street|Yes||| 
-|vpi\_street3|bigint(100)|Street|Yes||| 
+|vpi\_street1|bigint(100)|Street (first part)|Yes||| 
+|vpi\_street2|bigint(100)|Street (second part)|Yes||| 
+|vpi\_street3|bigint(100)|Street (third part)|Yes||| 
 |vpi\_state|bigint(100)|State|Yes||| 
 |vpi\_postal\_code|bigint(100)|Postal code|Yes||| 
 
@@ -900,12 +900,12 @@ This table contains the vcards postal information like country, city, postal cod
 
 ### zone
 
-This table contains the zones managed by the RDAP server. Its fields are the following:
+This table contains the zones managed by the RDAP server owner.
 
 |Column name|Column type|Column description|Nullable|Referenced table|Referenced column|
 |:----------|:----------|:-----------------|:-------|:---------------|:---------------:|
-|zone\_id|smallint(6) Auto increment|Zone's id.|No||| 
-|zone\_name|varchar(254)|Zone's name.|No||| 
+|zone\_id|smallint(6) Auto increment|Zone's id|No||| 
+|zone\_name|varchar(254)|Zone's name|No||| 
 
 **Primary_key**: zone\_id.
 
