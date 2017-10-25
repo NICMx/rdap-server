@@ -6,10 +6,11 @@ title: User Authentication
 
 Red Dog can use standard HTTP authentication mechanisms to decide whether information should be served or not.
 
-It should play along with whatever authentication mechanism you set up in the servlet container, though we have a [tutorial](basic-authentication-tomcat.html) for the Tomcat/Basic combination in particular.
+It should play along with whatever authentication mechanism is set up in the servlet container, though actually uses [Apache Shiro<sup>TM</sup>](https://shiro.apache.org/) to simplify the authentication process.
 
-Once that's setup, you can define which HTTP object should be served to which users through standard [security constraints](https://docs.oracle.com/cd/E13222_01/wls/docs81/webapp/web_xml.html#1017885) ([example](http://docs.oracle.com/javaee/5/tutorial/doc/bncbx.html#bnccm)), though in Red Dog's case you can also define constraints [per object field](response-privacy.html).
+Using [Apache Shiro<sup>TM</sup>](https://shiro.apache.org/) the server can define which HTTP object can be served to which users, according to the implementer needs. Beside this protection level, Red Dog also supports the use of constraints per object field or attribute.
 
-You might need [this](optional-authentication.html) if anonymous users are relevant to you, as well.
-
+More information can be seen in the following links:
+* [Using Apache Shiro<sup>TM</sup>](using-shiro.html)
+* [Configuring response privacy](response-privacy.html)
 
