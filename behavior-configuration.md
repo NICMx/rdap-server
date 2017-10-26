@@ -7,145 +7,180 @@ title: Server Behavior Configuration
 ## Index
 
 1. [Introduction](#introduction)
-2. [Keys](#keys)
-	1. [`zones`](#zones)
-	2. [`minimum_search_pattern_length`](#minimum_search_pattern_length)
-	3. [`max_number_result_unauthenticated_user`](#max_number_result_unauthenticated_user)
-	4. [`max_number_result_authenticated_user`](#max_number_result_authenticated_user)
-	5. [`owner_roles`](#owner_roles)
-	6. [`operational_profile`](#operational_profile)
-	7. [`anonymous_username`](#anonymous_username)
-	8. [`allow_search_wildcards_anywhere`](#allow_search_wildcards_anywhere)
+1. [Keys](#keys)
+   1. [language](#language)
+   1. [minimum_search_pattern_length](#minimum_search_pattern_length)
+   1. [max_number_result_authenticated_user](#max_number_result_authenticated_user)
+   1. [max_number_result_unauthenticated_user](#max_number_result_unauthenticated_user)
+   1. [owner_roles_*](#owner_roles_*)
+   1. [allow_multiple_search_wildcards](#allow_multiple_search_wildcards)
+   1. [allow_search_wildcard_anywhere](#allow_search_wildcard_anywhere)
+   1. [user_roles](#user_roles)
+
 
 ## Introduction
 
-`WEB-INF/configuration.properties` is Red Dog's global configuration file. Here is an example of it:
+Red Dog's behavior can be configured to satisfy whatever needs the implementer has. To achieve this, there's a global configuration file located at folder `WEB-INF/configuration.properties` in the installation directory. Here's a preview of the file's beginning:
 
-        # Required. Zones managed (separated by commas). example: mx, lat, com
-        zones=
-        # Optional.Minimum length of the search pattern. Default 5
-        minimum_search_pattern_length=
-        # Optional.Max number of results for the authenticated user. Default 20
-        max.number.result.authenticated.user=
-        # Optional.Max number of results for the unauthenticated user. Default 10
-        max_number_result_unauthenticated_user=
-        # Optional. Indicates the roles that are the owners of the rdap objects. example: registrar, administrative, registrant. Default: empty
-        owner_roles =
-        # Allowed Values: registry, registrar, None. Default: none
-        operational_profile=
-        # Optional. anonymous, username. Default 'anonymous'.
-        anonymous_username = 
+```
+#Optional. Language of the server. Values en=english, es=español. Default: en
+#language = 
 
-A description of every configurable key follows.
+#Optional. Minimum length of the search pattern. Default: 5
+#minimum_search_pattern_length = 
+
+#Optional. Max number of results for the authenticated user. Default: 20
+#max_number_result_authenticated_user = 
+
+#Optional. Max number of results for the unauthenticated user. Default: 10
+#max_number_result_unauthenticated_user =
+```
+
+The next section will explain each of the properties that can be configured to customize Red Dog's server behavior.
 
 ## Keys
 
-### `zones`
+The `configuration.properties` file has several properties, each one with a specific task. In this section those properties and its expected behavior will be explained.
 
-- Type: String (labels separated by commas).
-- Default: None
-- Example: mx, com.mx, edu.mx
+### `language`
 
-Zones managed by the server. The server will refuse to serve domains queries that do not match these zones.
+Language used at the server responses. This value will be set at the `lang` attribute of a [`RdapObject`](https://github.com/NICMx/rdap-core/blob/master/src/main/java/mx/nic/rdap/core/db/RdapObject.java).
+
+This table shows the specs of the property:
+
+| Required? | Type | Default | Example |
+|-----------|------|---------|---------|
+| :x: | String | en | language = es |
 
 ### `minimum_search_pattern_length`
 
-- Type: Integer
-- Default: 5
+Minimum allowed length for search patterns. Any request where the search pattern length is smaller than this property value, will be rejected.
 
-Minimum allowable length for search patterns. Searches whose request strings have a smaller length than this will be rejected.
+**Examples.** If the value is `5`, this is the expected result for each case:
 
-For example:
+| Request                                 | Valid?                                                                     | 
+|-----------------------------------------|----------------------------------------------------------------------------|
+| https://foo.bar/rdap/domains?name=dumm* | :white_check_mark:                                                         |
+| https://foo.bar/rdap/domains?name=dum*  | :x: search pattern length is 4                                             |
+| https://foo.bar/rdap/domains?name=dum** | :x: search pattern length is 4 (consecutive wildcards are treated as one)  |
 
-	https://example.com/rdap/entities?fn=Foo*
+This table shows the specs of the property:
 
-Will be rejected by the default `minimum_search_pattern_length` because the search pattern ("Foo*") has less than five characters.
-
-### `max_number_result_unauthenticated_user`
-
-- Type: Integer
-- Default: 10
-
-Maximum number of results that will be listed within responses to search requests lacking an Authorization header.
-
-For example, if `max_number_result_unauthenticated_user` is 5 and the database contains 10 records that match an authenticated user's search pattern, the server will truncate the response to only 5 records.
+| Required? | Type | Default | Example |
+|--------------------|--------|---------|-------------|
+| :x: | Integer | 5 | minimum_search_pattern_length = 6 |
 
 ### `max_number_result_authenticated_user`
 
-- Type: Integer
-- Default: 20
+Maximum number or results that will be listed within responses to search requests made by authenticated users. This property indicates the default value for all authenticated users.
 
-Default maximum number of results that will be listed within responses to search requests queried by authenticated users. The data access implementation can override this by providing [user-specific](https://github.com/NICMx/rdap-data-access-api/blob/v1.1.0/src/main/java/mx/nic/rdap/db/spi/RdapUserDAO.java#L14) [values](https://github.com/NICMx/rdap-data-access-api/blob/v1.1.0/src/main/java/mx/nic/rdap/db/RdapUser.java#L13).
+If the implementer wishes to customize the max number of results per user (eg. User A can see a max of 50 results, but user B can only see 30 results), the attribute `maxSearchResults` of the object [`RdapUser`](https://github.com/NICMx/rdap-data-access-api/blob/master/src/main/java/mx/nic/rdap/db/RdapUser.java) will be useful to achieve that.
 
-### `owner_roles`
+This table shows the specs of the property:
 
-- Type: Strings (separated by commas)
-- Default: &lt;Empty&gt;
+| Required? | Type | Default | Example |
+|--------------------|--------|---------|-------------|
+| :x: | Integer | 20      | max_number_result_authenticated_user = 30 |
 
-List of user roles that should be able to view more RDAP Object information than others.
+### `max_number_result_unauthenticated_user`
 
-A user (as confirmed by a successful [Authorization header](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Request_fields) validation) will be considered the owner of an RDAP Object (Autnum, Domain, Entity, IP Network or Nameserver) if one of the following conditions is met:
+Maximum number of results that will be listed within responses to search requests made by unauthenticated users.
 
-- (If the RDAP Object is an Entity) The user's username matches the object's [handle](https://github.com/NICMx/rdap-core/blob/v1.1.0/src/main/java/mx/nic/rdap/core/db/RdapObject.java#L17).
-- (If the RDAP Object is not an Entity) the user's username matches the handle of at least one of the [object's entities](https://github.com/NICMx/rdap-core/blob/v1.1.0/src/main/java/mx/nic/rdap/core/db/RdapObject.java#L47) that has at least [one role](https://github.com/NICMx/rdap-core/blob/v1.1.0/src/main/java/mx/nic/rdap/core/db/Entity.java#L33) listed in `owner_roles`.
+This table shows the specs of the property:
 
-So, for example, if your `owner_roles` value is "administrative", and you have the following RDAP object:
+| Required? | Type | Default | Example |
+|--------------------|--------|---------|-------------|
+| :x: | Integer | 10      | max_number_result_unauthenticated_user = 20 |
 
-	Domain (LDH name: "example.com")
-		-> Entity (handle: "Alice", roles: "administrative")
-		-> Entity (handle: "Bob",   roles: "registrant")
-		-> Entity (handle: "Eve",   roles: "technical")
+### `owner_roles_*`
 
-Then only Alice will be considered the owner of example.com.
+List of entity roles that should be able to see more information of a specific RDAP Object. Must be existing roles according to the catalog of [RFC 7483 section 10.2.4](https://tools.ietf.org/html/rfc7483#section-10.2.4).
 
-Owners can be allowed to view object information that is hidden to other users. See [response privacy](response-privacy.html) for more information.
+To specify the owner of each RDAP Object, there’s a list of properties. These properties have the same validations but apply to distinct cases, just as their names prove it:
+* `owner_roles_ip`
+* `owner_roles_autnum`
+* `owner_roles_domain`
+* `owner_roles_nameserver`
 
-### `operational_profile`
+The **Entity** object isn’t considered since it’s a generic object. Still, the next paragraph explains how an **Entity** object is treated.
 
-- Type: Enum (`registry`, `registrar` or `none`)
-- Default: `none`
+A user (as confirmed by a successful [Authorization header](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Request_fields) validation) will be considered the owner of a RDAP Object (Autnum, Domain, Entity, IP Network or Nameserver) if one of the following conditions is met:
+* (If the RDAP Object is an Entity) The user’s username matches the object’s [`handle`](https://github.com/NICMx/rdap-core/blob/master/src/main/java/mx/nic/rdap/core/db/RdapObject.java#L17).
+* (If the RDAP Object is not an Entity) The user’s username matches the handle of at least one of the object’s entities that has at least one role listed in `owner_roles_*`.
 
-Enables or disables a number of additional [validations and requirements](https://www.icann.org/resources/pages/rdap-operational-profile-2016-07-26-en) that should be fulfilled by registries or registrars. 
+The following example will help to understand how this works. If the property `owner_roles_domain` value is **registrant**, and the server has this domain object with the corresponding entities related:
 
-See [issue #30](https://github.com/NICMx/rdap-server/issues/30).
+```
+Domain (LDH name: "example.com")
+  -> Entity (handle: "Alice", roles: "administrative")
+  -> Entity (handle: "Bob",   roles: "registrant")
+  -> Entity (handle: "Eve",   roles: "technical")
+```
 
-### `anonymous_username`
+Then only the user **“Bob”** will be considered the **owner** of the domain **"example.com"**.
 
-- Type: String
-- Default: anonymous
+These properties work in conjunction with [privacy settings](response-privacy.html).
 
-The username your reverse proxy is [appending to requests lacking Authorization headers](optional-authentication.html), for the sake of bypassing the servlet container's mandatory HTTP authentication when what you actually want is to provide partial information to unauthenticated users.
+This table shows the specs of each property:
 
-As far as Red Dog is concerned, requests containing this username will be treated as anonymous and will therefore be served the minimum authorized information available, according to the [response privacy](response-privacy.html) policies.
+| Property               | Required?          | Type   | Default        | Example                            |
+|------------------------|--------------------|--------|----------------|------------------------------------|
+| owner_roles_ip         | :x: | String (can be a list separated by commas) | administrative | owner_roles_ip = technical         |
+| owner_roles_autnum     | :x: | String (can be a list separated by commas) | administrative | owner_roles_autnum = technical     |
+| owner_roles_domain     | :x: | String (can be a list separated by commas) | registrant     | owner_roles_domain = technical     |
+| owner_roles_nameserver | :x: | String (can be a list separated by commas) | registrar      | owner_roles_nameserver = technical |
 
-### `allow_search_wildcards_anywhere`
+### `allow_multiple_search_wildcards`
 
-- Type: Boolean
-- Default: true
+Boolean flag to indicate if the wildcard ‘\*’ can be used more than 1 time on each label of the search patterns. This property is used to comply with [RFC 7482 section 4.1](https://tools.ietf.org/html/rfc7482#section-4.1) allowing the use of the asterisk ‘\*’ wildcard in searches.
 
-The basic specification requires RDAP servers to support, at a minimum, searches where a wildcard can be present at the end of each label. [Here](https://tools.ietf.org/html/rfc7482#section-4.1) is the relevant paragraph:
+The property is used to relieve the cost of searches that could be expensive to the server. If the property has a value of `true` then an object label can have more than one wildcard when used at partial searches, if `false` then only one wildcard per label will be allowed. The following table will help to comprehend this:
 
-	Partial string searching uses the asterisk ('*', US-ASCII value
-	0x002A) character to match zero or more trailing characters.  A
-	character string representing multiple domain name labels MAY be
-	concatenated to the end of the search pattern to limit the scope of
-	the search.  For example, the search pattern "exam*" will match
-	"example.com" and "example.net".  The search pattern "exam*.com" will
-	match "example.com".  If an asterisk appears in a search string, any
-	label that contains the non-asterisk characters in sequence plus zero
-	or more characters in sequence in place of the asterisk would match.
-	Additional pattern matching processing is beyond the scope of this
-	specification.
+| Property value | Search request                                | Valid?                   |
+|----------------|---------------------------------------------  |--------------------------|
+| false          | https://foo.bar/rdap/domains?name=doma\*      | :white_check_mark:       |
+| false          | https://foo.bar/rdap/domains?name=dom\*n.co\* | :white_check_mark:       |
+| false          | https://foo.bar/rdap/domains?name=d\*ma\*     | :x: |
+| true           | https://foo.bar/rdap/domains?name=d\*ma\*     | :white_check_mark:       |
+| true           | https://foo.bar/rdap/domains?name=doma\*.co\* | :white_check_mark:       |
 
-So servers are expected to support queries like the following:
+This table shows the specs of the property:
 
-	exam*.com
+| Required? | Type | Default | Example |
+|--------------------|--------|---------|-------------|
+| :x: | Boolean | false     | allow_multiple_search_wildcards = true |
 
-But whether they support things like this is left at the implementor's discretion:
+### `allow_search_wildcard_anywhere`
 
-	ex*ple.com
+Boolean flag to indicate if the wildcard ‘\*’ can be used anywhere on each label of a search pattern. If the property has a value of `true` is valid to use the wildcard anywhere on each label of the search pattern, if `false` the wildcard can only be used at the end of each label.
 
-When `allow_search_wildcards_anywhere` is `false`, the server will validate only one wildcard is present per label, and only at the end of it. This is simply intended to prevent the data access implementation from having to validate this.
+> ![Warning](img/warning.svg) If the property [`allow_multiple_search_wildcards`](#allow_multiple_search_wildcards) is set to `true`, then the value of `allow_search_wildcard_anywhere` is indifferent.
+
+The following table shows some examples on how this flag works:
+
+| Property value | Search request                              | Valid?                   |
+|----------------|---------------------------------------------|--------------------------|
+| false          | https://foo.bar/rdap/domains?name=doma\*      | :white_check_mark:       |
+| false          | https://foo.bar/rdap/domains?name=dom\*n      | :x: |
+| false          | https://foo.bar/rdap/domains?name=doma\*.co\* | :white_check_mark:       |
+| true           | https://foo.bar/rdap/domains?name=dom\*n      | :white_check_mark:       |
+| true           | https://foo.bar/rdap/domains?name=dom\*n.co\* | :white_check_mark:       |
+
+This table shows the specs of the property:
+
+| Required? | Type | Default | Example |
+|--------------------|--------|---------|-------------|
+| :x: | Boolean | false     | allow_search_wildcard_anywhere = true |
+
+### `user_roles`
+
+List of strings representing custom user roles that can be used to configure [privacy settings](response-privacy.html). The roles defined here **MUST NOT** have any of these values: `any`, `none`, `owner`, or `authenticated`; since those are reserved words used at privacy settings.
+
+This table shows the specs of the property:
+
+| Required? | Type | Default | Example |
+|--------------------|--------|---------|-------------|
+| :x: | String (can be a list separated by commas) | null     | user_roles = president, governor, judge |
 
 ## Where to go next
 
