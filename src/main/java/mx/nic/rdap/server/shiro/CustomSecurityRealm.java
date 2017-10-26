@@ -29,11 +29,12 @@ import org.apache.shiro.util.JdbcUtils;
  */
 public class CustomSecurityRealm extends JdbcRealm {
 
+	/**
+	 * This realm doesn't have logic to load user/roles permissions
+	 */
 	protected boolean permissionsLookupEnabled = false;	
 
 	private static final Logger logger = Logger.getLogger(CustomSecurityRealm.class.getName());
-
-	protected String dataSourceName;
 
 	public CustomSecurityRealm() {
 		super();
