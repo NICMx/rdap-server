@@ -286,7 +286,7 @@ public class DomainPrivacyFilter {
 			return isPrivate;
 		}
 
-		Map<String, PrivacySetting> privacySettings = PrivacyUtil.getKeyDataPrivacySettings();
+		Map<String, PrivacySetting> privacySettings = PrivacyUtil.getDsDataPrivacySettings();
 		Set<Entry<String, PrivacySetting>> entrySet = privacySettings.entrySet();
 		for (DsData ds : dsDatas) {
 			for (Entry<String, PrivacySetting> entry : entrySet) {
