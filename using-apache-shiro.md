@@ -35,6 +35,10 @@ This section will explain how Red Dog uses [Apache Shiro<sup>TM</sup>](https://s
 
 > ![Warning](img/warning.svg) Before further reading, it's recommended that the reader visit [Apache Shiro Reference Documentation](https://shiro.apache.org/reference.html).
 
+Currently Red Dog has the following dependencies from Apache Shiro:
+* [Core v1.4.0](https://mvnrepository.com/artifact/org.apache.shiro/shiro-core/1.4.0)
+* [Shiro-web v1.4.0](https://mvnrepository.com/artifact/org.apache.shiro/shiro-web/1.4.0)
+
 ### Enabling Apache Shiro
 
 By default Apache Shiro is enabled and loaded from the server configuration, this is achieved with the following lines at [`WEB-INF/web.xml`](https://github.com/NICMx/rdap-server/blob/master/src/main/webapp/WEB-INF/web.xml):
