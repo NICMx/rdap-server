@@ -17,6 +17,7 @@ title: Using Apache Shiro
          1. [Basic authentication with restrictive access](#basic-authentication-with-restrictive-access)
          1. [Basic authentication with permissive and restrictive access](#basic-authentication-with-permissive-and-restrictive-access)
          1. [Disable basic authentication](#disable-basic-authentication)
+   1. [Apache Shiro's Subject](#apache-shiros-subject)
 1. [More documentation](#more-documentation)
 
 
@@ -31,6 +32,8 @@ Red Dog uses [Apache Shiro<sup>TM</sup>](https://shiro.apache.org/) in order to 
 ## Apache Shiro at Red Dog
 
 This section will explain how Red Dog uses [Apache Shiro<sup>TM</sup>](https://shiro.apache.org/), this configuration can be altered in order to suite whatever needs the implementer has.
+
+> ![Warning](img/warning.svg) Before further reading, it's recommended that the reader visit [Apache Shiro Reference Documentation](https://shiro.apache.org/reference.html).
 
 ### Enabling Apache Shiro
 
@@ -121,6 +124,8 @@ The `customRealm` must be used, and so is assigned to the [default `SecurityMana
 securityManager.realms = $customRealm
 ```
 
+As the reader may note, the users are loaded from a database and also is expected that its passwords are stored as plain text. This behavior can be modified to suite other needs (probably some needs related to security aspects). If the reader wishes to learn more about this, probably [Apache Shiro Configuration](https://shiro.apache.org/configuration.html#apache-shiro-configuration) will be of help, or also the section [More documentation](#more-documentation) could be visited.
+
 #### Basic authentication
 
 By default the server supports [Basic Authentication](https://tools.ietf.org/html/rfc2617#section-2) using the [BasicHttpAuthenticationFilter](https://shiro.apache.org/static/1.4.0/apidocs/org/apache/shiro/web/filter/authc/BasicHttpAuthenticationFilter.html) filter provided by Apache Shiro. Currently only 2 attributes of the filter are configured:
@@ -210,6 +215,13 @@ Another approach to disable the authentication is to remove the use and declarat
 [urls]
 /** = none
 ```
+### Apache Shiro's Subject
+
+Red Dog uses the [`Subject`](https://shiro.apache.org/static/1.4.0/apidocs/org/apache/shiro/subject/Subject.html) object provided by Apache Shiro. This object simplifies the validations related to users access level based on authentication and the use of access roles.
+
+The [`Subject`](https://shiro.apache.org/static/1.4.0/apidocs/org/apache/shiro/subject/Subject.html) is always available thanks to [`org.apache.shiro.SecurityUtils.getSubject()`](https://shiro.apache.org/static/1.4.0/apidocs/org/apache/shiro/SecurityUtils.html#getSubject--) function, and it contains relevant information such as the user's name and roles (if it's authenticated).
+
+This object is used by [`UserInfo`](https://github.com/NICMx/rdap-server/blob/master/src/main/java/mx/nic/rdap/server/privacy/UserInfo.java#L10) struct, which is a struct useful for privacy settings (learn more at [Configuring _Red Dog_ server response privacy](response-privacy.html)). Beside this, the `Subject` also helps to verify the max number of results than can be shown to a specific user (eg. a request to `/domains` could validate this, just as seen in [`DomainSearchServlet`](https://github.com/NICMx/rdap-server/blob/master/src/main/java/mx/nic/rdap/server/servlet/DomainSearchServlet.java#L85) class).
 
 ## More documentation
 
@@ -218,5 +230,6 @@ Apache Shiro can be customized to suite the needs that the implementer has, Red 
 The purpose of this page is to understand only what's has been done at Red Dog, further explanations are out of scope. So, here's a small guide if the reader wishes to know more about Apache Shiro:
 * [Apache Shiro Main Page](https://shiro.apache.org/)
 * [Apache Shiro Community Forums](https://shiro.apache.org/forums.html)
+* [Apache Shiro Reference Documentation](https://shiro.apache.org/reference.html)
 * [Apache Shiro Documentation](https://shiro.apache.org/documentation.html)
 * [Apache Shiro Web Support](https://shiro.apache.org/web.html)
