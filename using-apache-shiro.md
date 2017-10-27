@@ -81,7 +81,7 @@ Each of these behaviors is explained in the following sections.
 
 Users and its corresponding roles are loaded from a database, using a [`BasicDataSource`](https://tomcat.apache.org/tomcat-8.0-doc/api/org/apache/tomcat/dbcp/dbcp2/BasicDataSource.html) object. This object [can be configured](https://commons.apache.org/proper/commons-dbcp/configuration.html) with the necessary properties to reach a database and get the necessary data from there. Here's how that configuration looks like in the [`WEB-INF/shiro.ini`](https://github.com/NICMx/rdap-server/blob/master/src/main/webapp/WEB-INF/shiro.ini) file (inside the `[main]` section):
 
-```ini
+```
 [main]
 
 ds = org.apache.tomcat.dbcp.dbcp2.BasicDataSource 
@@ -91,9 +91,11 @@ ds.username =
 ds.password = 
 ```
 
+> ![Warning](img/warning.svg) WARNING: Note that the properties aren't configured by default, they must be properly set so that the server can run. If the server is started using the default configuration, then it will crash due do invalid Apache Shiro's configuration.
+
 After the declaration and configuration, the `BasicDataSource` is set as the `DataSource` of the [`CustomSecurityRealm`](https://github.com/NICMx/rdap-server/blob/master/src/main/java/mx/nic/rdap/server/shiro/CustomSecurityRealm.java) class that extends the Shiro's [`JdbcRealm`](https://shiro.apache.org/static/1.4.0/apidocs/org/apache/shiro/realm/jdbc/JdbcRealm.html) class. Beside this, the queries that are used to authenticate a user and get its roles must also be defined (all this is still inside the `[main]` section):
 
-```ini
+```
 [main]
 
 customRealm = mx.nic.rdap.server.shiro.CustomSecurityRealm
