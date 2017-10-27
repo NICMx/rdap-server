@@ -12,7 +12,7 @@ title: Server Behavior Configuration
    1. [minimum_search_pattern_length](#minimum_search_pattern_length)
    1. [max_number_result_authenticated_user](#max_number_result_authenticated_user)
    1. [max_number_result_unauthenticated_user](#max_number_result_unauthenticated_user)
-   1. [owner_roles_*](#owner_roles_*)
+   1. [owner_roles_*](#owner_roles_)
    1. [allow_multiple_search_wildcards](#allow_multiple_search_wildcards)
    1. [allow_search_wildcard_anywhere](#allow_search_wildcard_anywhere)
    1. [user_roles](#user_roles)
