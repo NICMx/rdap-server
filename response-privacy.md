@@ -13,7 +13,7 @@ title: Response privacy
 
 ## Introduction
 
-As required by [RFC 7481](https://tools.ietf.org/html/rfc7481), the Red Dog server allows to protect data using authentication mechanisms.
+As described by [RFC 7481 section 3.3](https://tools.ietf.org/html/rfc7481#section-3.3), the Red Dog server allows to protect data using authorization policies.
 
 Data can be served either to everyone, authenticated users, only the object owners, to specific users with custom roles, or to no one. This level of access can be configured per object field or attribute, as well as the owner objects can be defined by the implementer.
 
