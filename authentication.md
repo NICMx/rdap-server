@@ -11,6 +11,6 @@ It should play along with whatever authentication mechanism is set up in the ser
 Using [Apache Shiro<sup>TM</sup>](https://shiro.apache.org/) the server can define which HTTP object can be served to which users, according to the implementer needs. Beside this protection level, Red Dog also supports the use of constraints per object field or attribute.
 
 More information can be seen in the following links:
-* [Using Apache Shiro<sup>TM</sup>](using-shiro.html)
+* [Using Apache Shiro<sup>TM</sup>](using-apache-shiro.html)
 * [Configuring response privacy](response-privacy.html)
 
