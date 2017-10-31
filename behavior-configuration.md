@@ -50,7 +50,7 @@ This table shows the specs of the property:
 
 | Required? | Type | Default | Example |
 |-----------|------|---------|---------|
-| :x: | String | en | language = es |
+| ![No](img/red_x.svg) | String | en | language = es |
 
 ### `minimum_search_pattern_length`
 
@@ -60,15 +60,15 @@ Minimum allowed length for search patterns. Any request where the search pattern
 
 | Request                                 | Valid?                                                                     | 
 |-----------------------------------------|----------------------------------------------------------------------------|
-| https://foo.bar/rdap/domains?name=dumm* | :white_check_mark:                                                         |
-| https://foo.bar/rdap/domains?name=dum*  | :x: search pattern length is 4                                             |
-| https://foo.bar/rdap/domains?name=dum** | :x: search pattern length is 4 (consecutive wildcards are treated as one)  |
+| https://foo.bar/rdap/domains?name=dumm* | ![Yes](img/green_bkg_check.svg)                                                         |
+| https://foo.bar/rdap/domains?name=dum*  | ![No](img/red_x.svg) search pattern length is 4                                             |
+| https://foo.bar/rdap/domains?name=dum** | ![No](img/red_x.svg) search pattern length is 4 (consecutive wildcards are treated as one)  |
 
 This table shows the specs of the property:
 
 | Required? | Type | Default | Example |
 |--------------------|--------|---------|-------------|
-| :x: | Integer | 5 | minimum_search_pattern_length = 6 |
+| ![No](img/red_x.svg) | Integer | 5 | minimum_search_pattern_length = 6 |
 
 ### `max_number_result_authenticated_user`
 
@@ -80,7 +80,7 @@ This table shows the specs of the property:
 
 | Required? | Type | Default | Example |
 |--------------------|--------|---------|-------------|
-| :x: | Integer | 20      | max_number_result_authenticated_user = 30 |
+| ![No](img/red_x.svg) | Integer | 20      | max_number_result_authenticated_user = 30 |
 
 ### `max_number_result_unauthenticated_user`
 
@@ -90,7 +90,7 @@ This table shows the specs of the property:
 
 | Required? | Type | Default | Example |
 |--------------------|--------|---------|-------------|
-| :x: | Integer | 10      | max_number_result_unauthenticated_user = 20 |
+| ![No](img/red_x.svg) | Integer | 10      | max_number_result_unauthenticated_user = 20 |
 
 ### `owner_roles_*`
 
@@ -125,10 +125,10 @@ This table shows the specs of each property:
 
 | Property               | Required?          | Type   | Default        | Example                            |
 |------------------------|--------------------|--------|----------------|------------------------------------|
-| owner_roles_ip         | :x: | String (can be a list separated by commas) | administrative | owner_roles_ip = technical         |
-| owner_roles_autnum     | :x: | String (can be a list separated by commas) | administrative | owner_roles_autnum = technical     |
-| owner_roles_domain     | :x: | String (can be a list separated by commas) | registrant     | owner_roles_domain = technical     |
-| owner_roles_nameserver | :x: | String (can be a list separated by commas) | registrar      | owner_roles_nameserver = technical |
+| owner_roles_ip         | ![No](img/red_x.svg) | String (can be a list separated by commas) | administrative | owner_roles_ip = technical         |
+| owner_roles_autnum     | ![No](img/red_x.svg) | String (can be a list separated by commas) | administrative | owner_roles_autnum = technical     |
+| owner_roles_domain     | ![No](img/red_x.svg) | String (can be a list separated by commas) | registrant     | owner_roles_domain = technical     |
+| owner_roles_nameserver | ![No](img/red_x.svg) | String (can be a list separated by commas) | registrar      | owner_roles_nameserver = technical |
 
 ### `allow_multiple_search_wildcards`
 
@@ -138,17 +138,17 @@ The property is used to relieve the cost of searches that could be expensive to 
 
 | Property value | Search request                                | Valid?                   |
 |----------------|---------------------------------------------  |--------------------------|
-| false          | https://foo.bar/rdap/domains?name=doma\*      | :white_check_mark:       |
-| false          | https://foo.bar/rdap/domains?name=dom\*n.co\* | :white_check_mark:       |
-| false          | https://foo.bar/rdap/domains?name=d\*ma\*     | :x: |
-| true           | https://foo.bar/rdap/domains?name=d\*ma\*     | :white_check_mark:       |
-| true           | https://foo.bar/rdap/domains?name=doma\*.co\* | :white_check_mark:       |
+| false          | https://foo.bar/rdap/domains?name=doma\*      | ![Yes](img/green_bkg_check.svg)       |
+| false          | https://foo.bar/rdap/domains?name=dom\*n.co\* | ![Yes](img/green_bkg_check.svg)       |
+| false          | https://foo.bar/rdap/domains?name=d\*ma\*     | ![No](img/red_x.svg) |
+| true           | https://foo.bar/rdap/domains?name=d\*ma\*     | ![Yes](img/green_bkg_check.svg)       |
+| true           | https://foo.bar/rdap/domains?name=doma\*.co\* | ![Yes](img/green_bkg_check.svg)       |
 
 This table shows the specs of the property:
 
 | Required? | Type | Default | Example |
 |--------------------|--------|---------|-------------|
-| :x: | Boolean | false     | allow_multiple_search_wildcards = true |
+| ![No](img/red_x.svg) | Boolean | false     | allow_multiple_search_wildcards = true |
 
 ### `allow_search_wildcard_anywhere`
 
@@ -160,17 +160,17 @@ The following table shows some examples on how this flag works:
 
 | Property value | Search request                              | Valid?                   |
 |----------------|---------------------------------------------|--------------------------|
-| false          | https://foo.bar/rdap/domains?name=doma\*      | :white_check_mark:       |
-| false          | https://foo.bar/rdap/domains?name=dom\*n      | :x: |
-| false          | https://foo.bar/rdap/domains?name=doma\*.co\* | :white_check_mark:       |
-| true           | https://foo.bar/rdap/domains?name=dom\*n      | :white_check_mark:       |
-| true           | https://foo.bar/rdap/domains?name=dom\*n.co\* | :white_check_mark:       |
+| false          | https://foo.bar/rdap/domains?name=doma\*      | ![Yes](img/green_bkg_check.svg)       |
+| false          | https://foo.bar/rdap/domains?name=dom\*n      | ![No](img/red_x.svg) |
+| false          | https://foo.bar/rdap/domains?name=doma\*.co\* | ![Yes](img/green_bkg_check.svg)       |
+| true           | https://foo.bar/rdap/domains?name=dom\*n      | ![Yes](img/green_bkg_check.svg)       |
+| true           | https://foo.bar/rdap/domains?name=dom\*n.co\* | ![Yes](img/green_bkg_check.svg)       |
 
 This table shows the specs of the property:
 
 | Required? | Type | Default | Example |
 |--------------------|--------|---------|-------------|
-| :x: | Boolean | false     | allow_search_wildcard_anywhere = true |
+| ![No](img/red_x.svg) | Boolean | false     | allow_search_wildcard_anywhere = true |
 
 ### `user_roles`
 
@@ -180,7 +180,7 @@ This table shows the specs of the property:
 
 | Required? | Type | Default | Example |
 |--------------------|--------|---------|-------------|
-| :x: | String (can be a list separated by commas) | null     | user_roles = president, governor, judge |
+| ![No](img/red_x.svg) | String (can be a list separated by commas) | null     | user_roles = president, governor, judge |
 
 ## Where to go next
 

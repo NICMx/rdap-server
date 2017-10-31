@@ -31,7 +31,7 @@ List of names of the renderers to be configured, each name will be separated by 
 
 | Required? | Type | Default | Example |
 |--------------------|--------|---------|-------------|
-| :white_check_mark: | String (or List separated by a comma) | NO default value | renderers = json |
+| ![Yes](img/green_bkg_check.svg) | String (or List separated by a comma) | NO default value | renderers = json |
 
 For each name configured in the renderers property, it is necessary to configure three attributes, __{renderer_name}.*__.
 
@@ -41,7 +41,7 @@ Indicates the renderer's rendering class, and will be used by the server to crea
 
 | Required? | Type | Default | Example |
 |--------------------|--------|---------|-------------|
-| :white_check_mark: | String | :x: | json.class = mx.nic.rdap.renderer.json.JsonRenderer |
+| ![Yes](img/green_bkg_check.svg) | String | ![No](img/red_x.svg) | json.class = mx.nic.rdap.renderer.json.JsonRenderer |
 
 
 ### `{renderer_name}.main_mime`
@@ -50,7 +50,7 @@ Indicates that the MIME type will be mapped to the renderer indicated in the .cl
 
 | Required? | Type | Default | Example |
 |--------------------|--------|---------|-------------|
-| :white_check_mark: | String | :x: | json.main_mime = application/rdap+json |
+| ![Yes](img/green_bkg_check.svg) | String | ![No](img/red_x.svg) | json.main_mime = application/rdap+json |
 
 ```
 The structure of a MIME type is very simple; it consists of a type and a subtype, 
@@ -66,7 +66,7 @@ List of MIME types separated by commas, these MIME types will also be mapped to 
 
 | Required? | Type | Default | Example |
 |--------------------|--------|---------|-------------|
-| :x: | String | :x: |  json.mimes = application/json, application/html |
+| ![No](img/red_x.svg) | String | ![No](img/red_x.svg) |  json.mimes = application/json, application/html |
 
 
 
@@ -77,6 +77,6 @@ Sets the renderer name to act as the default renderer for any MIME type. The nam
 
 | Required? | Type | Default | Example |
 |--------------------|--------|---------|-------------|
-| :white_check_mark: | String | :x: | default_renderer = json |
+| ![Yes](img/green_bkg_check.svg) | String | ![No](img/red_x.svg) | default_renderer = json |
 
 

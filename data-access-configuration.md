@@ -50,7 +50,7 @@ This table shows the specs of the property:
 
 | Required? | Type | Default | Example |
 |-----------|------|---------|---------|
-| :x: | String | rdap | schema = mydbschema |
+| ![No](img/red_x.svg) | String | rdap | schema = mydbschema |
 
 ### `data-access-implementation`
 
@@ -58,7 +58,7 @@ Data access implementation class that the server will use as principal whenever 
 
 | Required? | Type | Default | Example |
 |--------------------|--------|---------|-------------|
-| :x: | String | null | data-access-implementation = com.example.MyDataAccessImplementation |
+| ![No](img/red_x.svg) | String | null | data-access-implementation = com.example.MyDataAccessImplementation |
 
 ### `zones`
 
@@ -70,7 +70,7 @@ This table shows the specs of the property:
 
 | Required? | Type | Default | Example |
 |--------------------|--------|---------|-------------|
-| :x: | String (can be a list separated by commas) | * | zones = abc, ghi |
+| ![No](img/red_x.svg) | String (can be a list separated by commas) | * | zones = abc, ghi |
 
 ### `is_reverse_ipv4_enabled`
 
@@ -80,7 +80,7 @@ This table shows the specs of the property:
 
 | Required? | Type | Default | Example |
 |--------------------|--------|---------|-------------|
-| :x: | Boolean | false | is_reverse_ipv4_enabled = true |
+| ![No](img/red_x.svg) | Boolean | false | is_reverse_ipv4_enabled = true |
 
 ### `is_reverse_ipv6_enabled`
 
@@ -90,7 +90,7 @@ This table shows the specs of the property:
 
 | Required? | Type | Default | Example |
 |--------------------|--------|---------|-------------|
-| :x: | Boolean | false | is_reverse_ipv6_enabled = true |
+| ![No](img/red_x.svg) | Boolean | false | is_reverse_ipv6_enabled = true |
 
 ### `nameserver_as_domain_attribute`
 
@@ -100,7 +100,7 @@ This table shows the specs of the property:
 
 | Required? | Type | Default | Example |
 |--------------------|--------|---------|-------------|
-| :white_check_mark: | Boolean | false | nameserver_as_domain_attribute = true |
+| ![Yes](img/green_bkg_check.svg) | Boolean | false | nameserver_as_domain_attribute = true |
 
 ## Where to go next
 
