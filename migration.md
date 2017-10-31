@@ -1,5 +1,5 @@
 ---
-title: Database Tables Definition
+title: Exporting a database to Red Dog's built-in schema
 ---
 
 # Exporting a database to Red Dog's built-in schema
