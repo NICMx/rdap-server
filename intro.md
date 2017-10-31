@@ -7,10 +7,10 @@ title: Introduction to RDAP/Red Dog
 ## Index
 
 1. [What is RDAP?](#what-is-rdap)
-2. [What is Red Dog?](#what-is-red-dog)	
-	1. [Option 1: Development of a DAI](#option-1-development-of-a-dai)
-	2. [Option 2: Overriding SQL Provider queries](#option-2-overriding-sql-provider-queries)
-	3. [Option 3: Using Red Dog's builtin schema](#option-3-using-red-dogs-builtin-schema)
+1. [What is Red Dog?](#what-is-red-dog)	
+   1. [Option 1: Development of a DAI](#option-1-development-of-a-dai)
+   1. [Option 2: Overriding SQL Provider queries](#option-2-overriding-sql-provider-queries)
+   1. [Option 3: Using Red Dog's builtin schema](#option-3-using-red-dogs-builtin-schema)
 
 ## What is RDAP?
 
@@ -19,7 +19,7 @@ RDAP (_Registration Data Access Protocol_) is a successor of WHOIS--a protocol u
 Some advantages of RDAP over WHOIS are
 
 - Standardized request and response formats, in contrast to WHOIS' provider-defined arbitrary text.
-- Reliance on Representational State Transfer (REST) technologies, a strong base which is widely known.
+- Reliance on [Representational State Transfer (REST)](http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm) technologies, a strong base which is widely known.
 - Bootstrapping, the automatic determination of where a query should be sent.
 - Support for Internationalized Domain Names and support for localized registration data.
 - Support for identification, authentication and access control to the service.
@@ -40,7 +40,7 @@ The [Data Access API](https://github.com/NICMx/rdap-data-access-api) (DAA) proje
 
 By rolling out your own DAI you can wrap your database to the server in any way you want. This can range from anything from direct queries to `Your Main Database`, or to a mirror of it, to queries to non-relational databases.
 
-[Here](data-access-layer.html) are some directions that might help you get started in creating a DAI.
+The page [Data Access Layer](data-access-layer.html) has some directions that might help you get started in creating a DAI.
 
 ### Option 2: Overriding SQL Provider queries
 
@@ -48,18 +48,18 @@ The [SQL Provider](https://github.com/NICMx/rdap-sql-provider) project is a func
 
 ![Fig. 2 - SQL Provider](img/diagram/intro-option-2.svg)
 
-You can find the specifications these queries need to fulfill [here](overriding-queries.html "Overriding Red Dog Queries").
+The page [Overriding Red Dog Queries](overriding-queries.html) helps to find the specifications that these queries need to fulfill.
 
 > ![Warning](img/warning.svg) Please identify and be aware of the maintenance overhead of using this option if future bugs or RFC updates require modifications to the query specification.
 
-## Option 3: Using Red Dog's builtin schema
+### Option 3: Using Red Dog's builtin schema
 
-The SQL Provider ships with default queries, intended to be used along a predefined schema.
+The [SQL Provider](https://github.com/NICMx/rdap-sql-provider) project ships with default queries, intended to be used along a predefined database schema.
 
 ![Fig. 3 - SQL Provider default](img/diagram/intro-option-3.svg)
 
 What you need to provide under this architecture is a means to export your data from your core database to Red Dog's database.
 
-Directions [here](migration.html).
+The page [Exporting a database to Red Dog's built-in schema](migration.html) will help to understand the predefined schema.
 
 > ![Warning](img/warning.svg) Please identify and be aware of the maintenance overhead of using this option if future bugs or RFC updates require modifications to Red Dog's schema.
