@@ -1,6 +1,6 @@
 ---
 category: Download
-title: RDAP Data Access Api Download
+title: RDAP Text Renderer Download
 ---
 
 # RDAP Text Renderer Download

@@ -1,9 +1,9 @@
 ---
 category: Download
-title: RDAP Data Access Api Download
+title: RDAP Renderer API Download
 ---
 
-# RDAP Renderer Api Download
+# RDAP Renderer API Download
 
 Interface which renderer implementations are expected to implement. Documentation [here](renderer-layer.html).
 

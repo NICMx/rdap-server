@@ -1,9 +1,9 @@
 ---
 category: Download
-title: RDAP Data Access Api Download
+title: RDAP Renderer Test API Download
 ---
 
-# RDAP Data Access Api Download
+# RDAP Renderer Test API Download
 
 API which renderer implementations are expected to use in its unit tests. Documentation [here](renderer-implementation.html).
 
