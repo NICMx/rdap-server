@@ -13,6 +13,7 @@ Red Dog's rate limiter is simply a [servlet filter](http://www.oracle.com/techne
 Notice that what this is doing is to reduce request floods from well-behaved clients. The client is still free to continue sending simultaneous requests, so this approach is by no means a DOS attack prevention system. It also prevents the server from wasting too many resources handling the whole request, but notice that servlet filters act fairly late during a packet processing pipeline.
 
 If the filter fulfills the implementer needs, the `web.xml` file must include at its `<web-app>` tag something like this:
+
 ```xml
 <filter>
 	<filter-name>RateLimitFilter</filter-name>
