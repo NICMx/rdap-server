@@ -63,6 +63,27 @@ public class PrivacyUtil {
 	public static final String IP_NETWORK_REMARKS = "ip_network_remarks";
 	public static final String IP_NETWORK_EVENTS = "ip_network_events";
 
+	private static final String DOMAIN_EVENTS_LINKS = "domain_events_links";
+	private static final String DOMAIN_REMARKS_LINKS = "domain_remarks_links";
+	private static final String KEY_DATA_EVENTS = "key_data_events";
+	private static final String KEY_DATA_EVENTS_LINKS = "key_data_events_links";
+	private static final String KEY_DATA_LINKS = "key_data_links";
+	private static final String DS_DATA_EVENTS = "ds_data_events";
+	private static final String DS_DATA_EVENTS_LINKS = "ds_data_events_links";
+	private static final String DS_DATA_LINKS = "ds_data_links";
+
+	private static final String NAMESERVER_EVENTS_LINKS = "nameserver_events_links";
+	private static final String NAMESERVER_REMARKS_LINKS = "nameserver_remarks_links";
+
+	private static final String IP_NETWORK_EVENTS_LINKS = "ip_network_events_links";
+	private static final String IP_NETWORK_REMARKS_LINKS = "ip_network_remarks_links";
+
+	private static final String AUTNUM_EVENTS_LINKS = "autnum_events_links";
+	private static final String AUTNUM_REMARKS_LINKS = "autnum_remarks_links";
+
+	private static final String ENTITY_EVENTS_LINKS = "entity_events_links";
+	private static final String ENTITY_REMARKS_LINKS = "entity_remarks_links";
+
 	// ***** End of names of the properties files *****
 
 	/** Path where the default properties are read */
@@ -105,6 +126,27 @@ public class PrivacyUtil {
 		loadObjectPrivacySettings(IP_NETWORK_LINKS);
 		loadObjectPrivacySettings(IP_NETWORK_EVENTS);
 		loadObjectPrivacySettings(IP_NETWORK_REMARKS);
+
+		loadObjectPrivacySettings(DOMAIN_EVENTS_LINKS);
+		loadObjectPrivacySettings(DOMAIN_REMARKS_LINKS);
+		loadObjectPrivacySettings(KEY_DATA_EVENTS);
+		loadObjectPrivacySettings(KEY_DATA_EVENTS_LINKS);
+		loadObjectPrivacySettings(KEY_DATA_LINKS);
+		loadObjectPrivacySettings(DS_DATA_EVENTS);
+		loadObjectPrivacySettings(DS_DATA_EVENTS_LINKS);
+		loadObjectPrivacySettings(DS_DATA_LINKS);
+
+		loadObjectPrivacySettings(NAMESERVER_EVENTS_LINKS);
+		loadObjectPrivacySettings(NAMESERVER_REMARKS_LINKS);
+
+		loadObjectPrivacySettings(IP_NETWORK_EVENTS_LINKS);
+		loadObjectPrivacySettings(IP_NETWORK_REMARKS_LINKS);
+
+		loadObjectPrivacySettings(AUTNUM_EVENTS_LINKS);
+		loadObjectPrivacySettings(AUTNUM_REMARKS_LINKS);
+
+		loadObjectPrivacySettings(ENTITY_EVENTS_LINKS);
+		loadObjectPrivacySettings(ENTITY_REMARKS_LINKS);
 
 	}
 	
@@ -332,6 +374,70 @@ public class PrivacyUtil {
 
 	public static Map<String, PrivacySetting> getVCardPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(VCARD);
+	}
+
+	public static Map<String, PrivacySetting> getDomainEventsLinksPrivacySettings() {
+		return OBJECTS_PRIVACY_SETTING.get(DOMAIN_EVENTS_LINKS);
+	}
+
+	public static Map<String, PrivacySetting> getDomainRemarksLinksPrivacySettings() {
+		return OBJECTS_PRIVACY_SETTING.get(DOMAIN_REMARKS_LINKS);
+	}
+
+	public static Map<String, PrivacySetting> getKeyDataEventsPrivacySettings() {
+		return OBJECTS_PRIVACY_SETTING.get(KEY_DATA_EVENTS);
+	}
+
+	public static Map<String, PrivacySetting> getKeyDataEventsLinksPrivacySettings() {
+		return OBJECTS_PRIVACY_SETTING.get(KEY_DATA_EVENTS_LINKS);
+	}
+
+	public static Map<String, PrivacySetting> getKeyDataLinksPrivacySettings() {
+		return OBJECTS_PRIVACY_SETTING.get(KEY_DATA_LINKS);
+	}
+
+	public static Map<String, PrivacySetting> getDsDataEventsPrivacySettings() {
+		return OBJECTS_PRIVACY_SETTING.get(DS_DATA_EVENTS);
+	}
+
+	public static Map<String, PrivacySetting> getDsDataEventsLinksPrivacySettings() {
+		return OBJECTS_PRIVACY_SETTING.get(DS_DATA_EVENTS_LINKS);
+	}
+
+	public static Map<String, PrivacySetting> getDsDataLinksPrivacySettings() {
+		return OBJECTS_PRIVACY_SETTING.get(DS_DATA_LINKS);
+	}
+
+	public static Map<String, PrivacySetting> getNameserverEventsLinksPrivacySettings() {
+		return OBJECTS_PRIVACY_SETTING.get(NAMESERVER_EVENTS_LINKS);
+	}
+
+	public static Map<String, PrivacySetting> getNameserverRemarksLinksPrivacySettings() {
+		return OBJECTS_PRIVACY_SETTING.get(NAMESERVER_REMARKS_LINKS);
+	}
+
+	public static Map<String, PrivacySetting> getIpNetworkEventsLinksPrivacySettings() {
+		return OBJECTS_PRIVACY_SETTING.get(IP_NETWORK_EVENTS_LINKS);
+	}
+
+	public static Map<String, PrivacySetting> getIpNetworkRemarksLinksPrivacySettings() {
+		return OBJECTS_PRIVACY_SETTING.get(IP_NETWORK_REMARKS_LINKS);
+	}
+
+	public static Map<String, PrivacySetting> getAutnumEventsLinksPrivacySettings() {
+		return OBJECTS_PRIVACY_SETTING.get(AUTNUM_EVENTS_LINKS);
+	}
+
+	public static Map<String, PrivacySetting> getAutnumRemarksLinksPrivacySettings() {
+		return OBJECTS_PRIVACY_SETTING.get(AUTNUM_REMARKS_LINKS);
+	}
+
+	public static Map<String, PrivacySetting> getEntityEventsLinksPrivacySettings() {
+		return OBJECTS_PRIVACY_SETTING.get(ENTITY_EVENTS_LINKS);
+	}
+
+	public static Map<String, PrivacySetting> getEntityRemarksLinksPrivacySettings() {
+		return OBJECTS_PRIVACY_SETTING.get(ENTITY_REMARKS_LINKS);
 	}
 
 	/**

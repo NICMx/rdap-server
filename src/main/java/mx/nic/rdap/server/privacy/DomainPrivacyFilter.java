@@ -113,7 +113,8 @@ public class DomainPrivacyFilter {
 					isPrivate = true;
 				} else {
 					isPrivate |= ObjectPrivacyFilter.filterRemarks(domain.getRemarks(), userInfo,
-							PrivacyUtil.getDomainRemarkPrivacySettings(), PrivacyUtil.getDomainLinkPrivacySettings());
+							PrivacyUtil.getDomainRemarkPrivacySettings(),
+							PrivacyUtil.getDomainRemarksLinksPrivacySettings());
 				}
 				break;
 			case "links":
@@ -137,7 +138,8 @@ public class DomainPrivacyFilter {
 					isPrivate = true;
 				} else {
 					isPrivate |= ObjectPrivacyFilter.filterEvents(domain.getEvents(), userInfo,
-							PrivacyUtil.getDomainEventPrivacySettings(), PrivacyUtil.getDomainLinkPrivacySettings());
+							PrivacyUtil.getDomainEventPrivacySettings(),
+							PrivacyUtil.getDomainEventsLinksPrivacySettings());
 				}
 				break;
 			case "network":
@@ -259,8 +261,8 @@ public class DomainPrivacyFilter {
 						isPrivate = true;
 					} else {
 						isPrivate |= ObjectPrivacyFilter.filterEvents(k.getEvents(), userInfo,
-								PrivacyUtil.getDomainEventPrivacySettings(),
-								PrivacyUtil.getDomainLinkPrivacySettings());
+								PrivacyUtil.getKeyDataEventsPrivacySettings(),
+								PrivacyUtil.getKeyDataEventsLinksPrivacySettings());
 					}
 					break;
 				case "links":
@@ -269,7 +271,7 @@ public class DomainPrivacyFilter {
 						isPrivate = true;
 					} else {
 						isPrivate |= ObjectPrivacyFilter.filterLinks(k.getLinks(), userInfo,
-								PrivacyUtil.getDomainLinkPrivacySettings());
+								PrivacyUtil.getKeyDataLinksPrivacySettings());
 					}
 					break;
 				}
@@ -324,8 +326,8 @@ public class DomainPrivacyFilter {
 						isPrivate = true;
 					} else {
 						isPrivate |= ObjectPrivacyFilter.filterEvents(ds.getEvents(), userInfo,
-								PrivacyUtil.getDomainEventPrivacySettings(),
-								PrivacyUtil.getDomainLinkPrivacySettings());
+								PrivacyUtil.getDsDataEventsPrivacySettings(),
+								PrivacyUtil.getDsDataEventsLinksPrivacySettings());
 					}
 					break;
 				case "links":
@@ -334,7 +336,7 @@ public class DomainPrivacyFilter {
 						isPrivate = true;
 					} else {
 						isPrivate |= ObjectPrivacyFilter.filterLinks(ds.getLinks(), userInfo,
-								PrivacyUtil.getDomainLinkPrivacySettings());
+								PrivacyUtil.getDsDataLinksPrivacySettings());
 					}
 					break;
 				}

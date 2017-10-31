@@ -103,7 +103,7 @@ public class NameserverPrivacyFilter {
 				} else {
 					isPrivate |= ObjectPrivacyFilter.filterRemarks(ns.getRemarks(), userInfo,
 							PrivacyUtil.getNameserverRemarkPrivacySettings(),
-							PrivacyUtil.getNameserverLinkPrivacySettings());
+							PrivacyUtil.getNameserverRemarksLinksPrivacySettings());
 				}
 				break;
 			case "links":
@@ -128,7 +128,7 @@ public class NameserverPrivacyFilter {
 				} else {
 					isPrivate |= ObjectPrivacyFilter.filterEvents(ns.getEvents(), userInfo,
 							PrivacyUtil.getNameserverEventPrivacySettings(),
-							PrivacyUtil.getNameserverLinkPrivacySettings());
+							PrivacyUtil.getNameserverEventsLinksPrivacySettings());
 				}
 				break;
 

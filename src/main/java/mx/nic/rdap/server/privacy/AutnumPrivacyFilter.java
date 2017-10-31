@@ -67,7 +67,8 @@ public class AutnumPrivacyFilter {
 					isPrivate = true;
 				} else {
 					isPrivate |= ObjectPrivacyFilter.filterRemarks(autnum.getRemarks(), userInfo,
-							PrivacyUtil.getAutnumRemarkPrivacySettings(), PrivacyUtil.getAutnumLinkPrivacySettings());
+							PrivacyUtil.getAutnumRemarkPrivacySettings(),
+							PrivacyUtil.getAutnumRemarksLinksPrivacySettings());
 				}
 				break;
 			case "links":
@@ -91,7 +92,8 @@ public class AutnumPrivacyFilter {
 					isPrivate = true;
 				} else {
 					isPrivate |= ObjectPrivacyFilter.filterEvents(autnum.getEvents(), userInfo,
-							PrivacyUtil.getAutnumEventPrivacySettings(), PrivacyUtil.getAutnumLinkPrivacySettings());
+							PrivacyUtil.getAutnumEventPrivacySettings(),
+							PrivacyUtil.getAutnumEventsLinksPrivacySettings());
 				}
 				break;
 			case "startAutnum":

@@ -86,7 +86,8 @@ public class EntityPrivacyFilter {
 					isPrivate = true;
 				} else {
 					isPrivate |= ObjectPrivacyFilter.filterRemarks(entity.getRemarks(), userInfo,
-							PrivacyUtil.getEntityRemarkPrivacySettings(), PrivacyUtil.getEntityLinkPrivacySettings());
+							PrivacyUtil.getEntityRemarkPrivacySettings(),
+							PrivacyUtil.getEntityRemarksLinksPrivacySettings());
 				}
 				break;
 			case "links":
@@ -104,7 +105,8 @@ public class EntityPrivacyFilter {
 					isPrivate = true;
 				} else {
 					isPrivate |= ObjectPrivacyFilter.filterEvents(entity.getEvents(), userInfo,
-							PrivacyUtil.getEntityEventPrivacySettings(), PrivacyUtil.getEntityLinkPrivacySettings());
+							PrivacyUtil.getEntityEventPrivacySettings(),
+							PrivacyUtil.getEntityEventsLinksPrivacySettings());
 				}
 				break;
 			// case "asEventActor":

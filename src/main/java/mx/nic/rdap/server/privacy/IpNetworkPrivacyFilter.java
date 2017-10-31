@@ -89,7 +89,8 @@ public class IpNetworkPrivacyFilter {
 					isPrivate = true;
 				} else {
 					isPrivate |= ObjectPrivacyFilter.filterRemarks(ip.getRemarks(), userInfo,
-							PrivacyUtil.getIpNetworkRemarkPrivacySettings(), PrivacyUtil.getIpNetworkLinkPrivacySettings());
+							PrivacyUtil.getIpNetworkRemarkPrivacySettings(),
+							PrivacyUtil.getIpNetworkRemarksLinksPrivacySettings());
 				}
 				break;
 			case "links":
@@ -113,7 +114,8 @@ public class IpNetworkPrivacyFilter {
 					isPrivate = true;
 				} else {
 					isPrivate |= ObjectPrivacyFilter.filterEvents(ip.getEvents(), userInfo,
-							PrivacyUtil.getIpNetworkEventPrivacySettings(), PrivacyUtil.getIpNetworkLinkPrivacySettings());
+							PrivacyUtil.getIpNetworkEventPrivacySettings(),
+							PrivacyUtil.getIpNetworkEventsLinksPrivacySettings());
 				}
 				break;
 			case "name":
