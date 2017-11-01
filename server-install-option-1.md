@@ -1,5 +1,6 @@
 ---
 title: Server Installation
+breadcrums: ["Documentation", "documentation.html", "Installation/Configuration", "documentation.html#installationconfiguration", "Option 1 - Full Data Access Implementation", "documentation.html#option-1---full-data-access-implementation"]
 ---
 
 {% include installation/0-intro %}

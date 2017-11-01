@@ -1,5 +1,6 @@
 ---
 title: Overriding Red Dog Queries
+breadcrums: ["Documentation", "documentation.html", "Installation/Configuration", "documentation.html#installationconfiguration", "Option 2 - Overriding SQL Provider queries", "documentation.html#option-2---overriding-sql-provider-queries"]
 ---
 
 # Overriding Red Dog Queries

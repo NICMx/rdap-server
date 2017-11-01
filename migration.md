@@ -1,5 +1,6 @@
 ---
 title: Exporting a database to Red Dog's built-in schema
+breadcrums: ["Documentation", "documentation.html", "Installation/Configuration", "documentation.html#installationconfiguration", "Option 3 - Using Red Dog’s builtin schema", "documentation.html#option-3---using-red-dogs-builtin-schema"]
 ---
 
 # Exporting a database to Red Dog's built-in schema

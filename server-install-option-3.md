@@ -1,5 +1,6 @@
 ---
 title: Server Installation
+breadcrums: ["Documentation", "documentation.html", "Installation/Configuration", "documentation.html#installationconfiguration", "Option 3 - Using Red Dog’s builtin schema", "documentation.html#option-3---using-red-dogs-builtin-schema"]
 ---
 
 {% include installation/0-intro %}

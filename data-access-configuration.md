@@ -1,5 +1,6 @@
 ---
 title: Configuring Red Dog reference implementation
+breadcrums: ["Documentation", "documentation.html", "Installation/Configuration", "documentation.html#installationconfiguration", "Option 2 - Overriding SQL Provider queries", "documentation.html#option-2---overriding-sql-provider-queries"]
 ---
 
 # Configuring Red Dog reference implementation
