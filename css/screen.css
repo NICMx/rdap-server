@@ -65,8 +65,15 @@ body > div {
 .content h2 {
 	font-weight: bold;
 	font-size: medium;
-	margin-top: 3em;
+	margin-top: 2.5em;
 	margin-left: -1em;
+}
+
+.content h3 {
+	font-weight: bold;
+	font-size: medium;
+	margin-top: 0.5em;
+	margin-left: -0.5em;
 }
 
 .content a {
