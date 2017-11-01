@@ -94,6 +94,10 @@ body > div {
 	columns: auto 3;
 }
 
+.nav-breadcrumbs {
+	margin-left: -2em;
+}
+
 #news {
 	background-color: #f3efef;
 }
