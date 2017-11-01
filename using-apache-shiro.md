@@ -1,6 +1,6 @@
 ---
 title: Using Apache Shiro
-breadcrums: ["Documentation", "documentation.html", "Further Custom Configuration", "documentation.html#further-custom-configuration"]
+breadcrums: ["Documentation", "documentation.html", "Further Custom Configuration", "documentation.html#further-custom-configuration", "User authentication", "authentication.html"]
 ---
 
 # Using Apache Shiro
