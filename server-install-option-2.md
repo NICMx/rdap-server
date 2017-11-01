@@ -20,6 +20,3 @@ breadcrums: ["Documentation", "documentation.html", "Installation/Configuration"
 {% include installation/7-datasource %}
 
 {% include installation/8-test-sql %}
-
-{% include installation/9-next %}
-

@@ -1,6 +1,7 @@
 ---
 title: Server Behavior Configuration
 breadcrums: ["Documentation", "documentation.html", "Further Custom Configuration", "documentation.html#further-custom-configuration"]
+wheretogo: ["Rate Limit", "rate-limit.html"]
 ---
 
 # Configuring Red Dog server behavior
@@ -182,7 +183,3 @@ This table shows the specs of the property:
 | Required? | Type | Default | Example |
 |--------------------|--------|---------|-------------|
 | ![No](img/red_x.svg) | String (can be a list separated by commas) | null     | user_roles = president, governor, judge |
-
-## Where to go next
-
-[Back to the optional configuration index](documentation.html#further-configuration-optional).

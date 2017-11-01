@@ -1,6 +1,7 @@
 ---
 title: Configuring Red Dog reference implementation
 breadcrums: ["Documentation", "documentation.html", "Installation/Configuration", "documentation.html#installationconfiguration", "Option 2 - Overriding SQL Provider queries", "documentation.html#option-2---overriding-sql-provider-queries"]
+wheretogo: ["Deploying rdap-server with the customized SQL Provider", "server-install-option-2.html", "Deploying rdap-server with the reference SQL Provider", "server-install-option-3.html"]
 ---
 
 # Configuring Red Dog reference implementation
@@ -102,7 +103,3 @@ This table shows the specs of the property:
 | Required? | Type | Default | Example |
 |--------------------|--------|---------|-------------|
 | ![No](img/red_x.svg) | Boolean | false | nameserver_as_domain_attribute = true |
-
-## Where to go next
-
-[Back to the optional configuration index](documentation.html#further-configuration-optional).

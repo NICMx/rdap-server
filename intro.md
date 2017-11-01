@@ -1,6 +1,7 @@
 ---
 title: Introduction to RDAP/Red Dog
 breadcrums: ["Documentation", "documentation.html", "Introduction", "documentation.html#introduction"]
+wheretogo: ["Red Dog Demo Server", "demo-server.html"]
 ---
 
 # Introduction to RDAP/Red Dog

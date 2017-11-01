@@ -1,6 +1,7 @@
 ---
 title: Overriding Red Dog Queries
 breadcrums: ["Documentation", "documentation.html", "Installation/Configuration", "documentation.html#installationconfiguration", "Option 2 - Overriding SQL Provider queries", "documentation.html#option-2---overriding-sql-provider-queries"]
+wheretogo: ["Configuring Red Dog reference implementation", "data-access-configuration.html"]
 ---
 
 # Overriding Red Dog Queries
@@ -534,8 +535,3 @@ This catalog does not have a SQL file but is needed at DB since a [Variant.sql](
 
 *	All necessary values for the RDAP catalogs can be found [here](https://www.iana.org/assignments/rdap-json-values/rdap-json-values.xhtml#rdap-json-values-1 "RDAP JSON Values").
 *	All the [provided queries](https://github.com/NICMx/rdap-sql-provider/tree/master/src/main/resources/META-INF/sql) are those implemented by **Red Dog**, if they are overwritten they don´t have to be the same, they only need to return the same type of data.
-
-## Where to Go Next
-
-After making your own queries now you will have to install the server, steps on how to do this can be found [here](server-install-option-2.html).
-

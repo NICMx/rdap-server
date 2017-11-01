@@ -1,6 +1,7 @@
 ---
 title: Help Response
 breadcrums: ["Documentation", "documentation.html", "Further Custom Configuration", "documentation.html#further-custom-configuration"]
+wheretogo: ["General behavior configuration", "behavior-configuration.html"]
 ---
 
 # Configuring Red Dog Help Response
@@ -68,7 +69,3 @@ More notices can be added by placing new **notice** elements to the XML file, e.
    </notice>
 </help>
 ```
-
-## Where to go next
-
-The minimum RDAP server is now running. You might want to go to the main documentation index's [optional documentation](documentation.html#further-configuration-optional) to tweak it further.

@@ -1,6 +1,7 @@
 ---
 title: Exporting a database to Red Dog's built-in schema
 breadcrums: ["Documentation", "documentation.html", "Installation/Configuration", "documentation.html#installationconfiguration", "Option 3 - Using Red Dog’s builtin schema", "documentation.html#option-3---using-red-dogs-builtin-schema"]
+wheretogo: ["Configuring Red Dog reference implementation", "data-access-configuration.html"]
 ---
 
 # Exporting a database to Red Dog's built-in schema
@@ -89,7 +90,3 @@ The following table shows the database tables, to see more detail of each table 
 | vcard | This table contains the entities VCards. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql#L41) |
 | vcard_postal_info | This table contains the VCards postal information. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql#L1089) |
 | zone | This table contains the zones managed by the RDAP server owner. | [View more](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Database.sql#L146) |
-
-## Where to go next
-
-[Deploying the RDAP Server with the SQL Provider](server-install-option-3.html).

@@ -134,8 +134,3 @@ The roles are complementary to each other, so if a subject has several roles the
 Just as mentioned previously, the **owner** value can be mixed with custom roles, since the value itself is kind of a role.
 
 > ![Warning](img/warning.svg) The values `any`, `none`, and `authenticated` can’t be mixed with each other neither with custom roles nor `owner` value.
-
-## Where to go next
-
-The next document in the _User Authentication_ section is [Optional Authentication](optional-authentication.html "Optional Authentication").
-

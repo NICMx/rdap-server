@@ -20,6 +20,3 @@ breadcrums: ["Documentation", "documentation.html", "Installation/Configuration"
 
 
 {% include installation/8-test-dai %}
-
-{% include installation/9-next %}
-
