@@ -1,6 +1,7 @@
 ---
 title: Rdap Renderer Layer
 breadcrums: ["Documentation", "documentation.html", "Rendering response data", "documentation.html#rendering-response-data"]
+wheretogo: ["Create new renderers", "renderer-implementation.html"]
 ---
 # Red Dog Renderer Layer
 
@@ -79,5 +80,42 @@ Sets the renderer name to act as the default renderer for any MIME type. The nam
 | Required? | Type | Default | Example |
 |--------------------|--------|---------|-------------|
 | ![Yes](img/green_bkg_check.svg) | String | ![No](img/red_x.svg) | default_renderer = json |
+
+## Example
+
+The following is an example configuration of 'renderers.properties' and a table that demonstrates the behavior of the example configuration
+
+
+```
+renderers = json, html, text
+
+json.class = foo.bar.json.JsonRenderer
+json.main_mime = application/json+rdap
+json.mimes = application/json
+
+
+html.class = net.example.html.HtmlRenderer
+html.main_mime = text/html
+html.mimes = application/html, text/xml, application/xml
+
+text.class = com.example.TextRenderer
+text.main_mime = text/plain
+
+default_renderer = json
+
+```
+
+
+
+| MIME type requested | Renderer | MIME type sent by the server |
+|---------------------|----------|------------------------------|
+| application/json | json | application/json+rdap |
+| application/json+rdap | json | application/json+rdap |
+| text/xml | html | text/html |
+| application/html | html | text/html |
+| text/html | html | text/html |
+| text/plain | text | text/plain |
+| application/plain | json (default) | application/json+rdap |
+| text/csv | json (default) | application/json+rdap |
 
 

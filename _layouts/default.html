@@ -24,6 +24,25 @@
 			</div>
 		{% endif %}
 		{{ content }}
+		{% if page.wheretogo %}
+			<h2>Where to go next</h2>
+			<div class="nav-wheretogo">
+			The following page of this module is 
+			{% assign min = 0 %}
+			{% assign max = page.wheretogo.size | minus: 1 %}
+			{% for post in (min..max) %}
+				{% capture mod %}{{ post | modulo: 2 }}{% endcapture %}
+				{% if mod == '0' %}
+					{% capture desc %}{{ page.wheretogo[post] }}{% endcapture %}
+				{% else %}
+					{% if post >= 2 %}
+						or
+					{% endif %}
+					<a href="{{ page.wheretogo[post] }}">{{ desc }}</a>
+				{% endif %}
+			{% endfor %}
+			</div>
+		{% endif %}
 	</div>
 	<div id="copyright">
 		© Red Dog 2017
