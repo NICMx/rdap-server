@@ -101,7 +101,7 @@ This table shows the specs of the property:
 
 | Required? | Type | Default | Example |
 |--------------------|--------|---------|-------------|
-| ![Yes](img/green_bkg_check.svg) | Boolean | false | nameserver_as_domain_attribute = true |
+| ![No](img/red_x.svg) | Boolean | false | nameserver_as_domain_attribute = true |
 
 ## Where to go next
 
