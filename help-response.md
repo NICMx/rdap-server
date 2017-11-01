@@ -1,5 +1,6 @@
 ---
 title: Help Response
+breadcrums: ["Documentation", "documentation.html", "Further Custom Configuration", "documentation.html#further-custom-configuration"]
 ---
 
 # Configuring Red Dog Help Response

@@ -1,6 +1,7 @@
 ---
 category: Download
 title: Demo Server Download
+breadcrums: ["Downloads", "download.html"]
 ---
 
 # Demo Server Download

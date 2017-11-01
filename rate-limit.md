@@ -1,5 +1,6 @@
 ---
 title: Built-in Rate Limit Filter
+breadcrums: ["Documentation", "documentation.html", "Further Custom Configuration", "documentation.html#further-custom-configuration"]
 ---
 
 # Built-in Rate Limit Filter

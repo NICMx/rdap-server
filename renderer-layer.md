@@ -1,9 +1,10 @@
 ---
 title: Rdap Renderer Layer
+breadcrums: ["Documentation", "documentation.html", "Rendering response data", "documentation.html#rendering-response-data"]
 ---
-# Rdap Renderer Layer
+# Red Dog Renderer Layer
 
-The RedDog RDAP server, after forming the response of a user request, delegates the responsibility of rendering the result to an implementation of the renderer-api.
+The Red Dog RDAP server, after forming the response of a user request, delegates the responsibility of rendering the result to an implementation of the renderer-api.
 
 The implementation is chosen based on the MIME type (Content-type) requested by the user at the time of the request.
 
@@ -19,7 +20,7 @@ The RDAP team offers two reference implementations of rdap-renderer-api:
 
 ## Configuring renderers.properties
 
-To tell the RDAP RedDog server which renderer implementations to use, you need to configure the renderers.properties file.
+To tell the RDAP Red Dog server which renderer implementations to use, you need to configure the renderers.properties file.
 
 Here's how this property file should be configured
 
