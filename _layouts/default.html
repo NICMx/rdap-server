@@ -9,6 +9,20 @@
 		{% include top-menu %}
 	</div>
 	<div class="content">
+		{% if page.breadcrums %}
+			<div class="nav-breadcrumbs">
+			{% assign min = 0 %}
+			{% assign max = page.breadcrums.size | minus: 1 %}
+			{% for post in (min..max) %}
+				{% capture mod %}{{ post | modulo: 2 }}{% endcapture %}
+				{% if mod == '0' %}
+					{% capture desc %}{{ page.breadcrums[post] }}{% endcapture %}
+				{% else %}
+					<a href="{{ page.breadcrums[post] }}">{{ desc }}</a> &gt;
+				{% endif %}
+			{% endfor %}{{ page.title }}
+			</div>
+		{% endif %}
 		{{ content }}
 	</div>
 	<div id="copyright">
