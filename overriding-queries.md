@@ -41,26 +41,26 @@ The names of the columns and the number and order of parameters (‘?’ symbols
 
 The Red Dog implemented SQL files are the following:
 
-*	[Autnum.sql](#autnum-sql)
-*	[Domain.sql](#domain-sql)
-*	[DsData.sql](#dsdata-sql)
-*	[Entity.sql](#entity-sql)
-*	[Event.sql](#event-sql)
-*	[IpAddress.sql](#ipaddress-sql)
-*	[IpNetwork.sql](#ipnetwork-sql)
-*	[KeyData.sql](#keydata-sql)
-*	[Link.sql](#link-sql)
-*	[Nameserver.sql](#nameserver-sql)
-*	[PublicId.sql](#publicid-sql)
-*	[RdapAccessRole.sql](#rdapaccessrole-sql)
-*	[RdapUser.sql](#rdapuser-sql)
-*	[Remark.sql](#remark-sql)
-*	[RemarkDescription.sql](#remarkdescription-sql)
-*	[SecureDNS.sql](#securedns-sql)
-*	[Variant.sql](#variant-sql)
-*	[VCard.sql](#vcard-sql)
-*	[VCardPostalInfo.sql](#vcardpostalinfo-sql)
-*	[Zone.sql](#zone-sql)
+*	[Autnum.sql](#autnumsql)
+*	[Domain.sql](#domainsql)
+*	[DsData.sql](#dsdatasql)
+*	[Entity.sql](#entitysql)
+*	[Event.sql](#eventsql)
+*	[IpAddress.sql](#ipaddresssql)
+*	[IpNetwork.sql](#ipnetworksql)
+*	[KeyData.sql](#keydatasql)
+*	[Link.sql](#linksql)
+*	[Nameserver.sql](#nameserversql)
+*	[PublicId.sql](#publicidsql)
+*	[RdapAccessRole.sql](#rdapaccessrolesql)
+*	[RdapUser.sql](#rdapusersql)
+*	[Remark.sql](#remarksql)
+*	[RemarkDescription.sql](#remarkdescriptionsql)
+*	[SecureDNS.sql](#securednssql)
+*	[Variant.sql](#variantsql)
+*	[VCard.sql](#vcardsql)
+*	[VCardPostalInfo.sql](#vcardpostalinfosql)
+*	[Zone.sql](#zonesql)
 
 The Red Dog SQL files calling catalogs and other needed catalogs:
 (If overwritten, the implementer MUST make sure all of these are set)
@@ -107,7 +107,7 @@ The following table describes each alias and value type that the queries must re
 |dom_ldh_name|	String|	Yes|	A string representing a domain name in LDH form|	xn--exampl-gva|
 |dom_unicode_name|	String|	Yes|	A string representing a domain in U-label form|	examplé|
 |dom_port43|	String|	Yes|	A string containing the fully qualified host name or IP address of the WHOIS server where the domain instance may be found|whois.example.com|
-|zone_id|	Integer|	No|	Zone's id (Refer to [Zone.sql](#zone-sql) as it is also needed)| 	1|
+|zone_id|	Integer|	No|	Zone's id (Refer to [Zone.sql](#zonesql) as it is also needed)| 	1|
 
 The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/Domain.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Domain.sql).
 
@@ -119,7 +119,7 @@ This file loads a DSData data object. The following table describes each alias a
 |Alias name|Value Type|Allows Null|Description|Example|
 |:---------|:--------:|:---------:|:----------|:-----:|
 |dsd_id|	Long|	No|	Ds data's id|	123|
-|sdns_id|	Long|	No|	Secure DNS's id (Refer to [SecureDNS.sql](#securedns-sql)|	123|
+|sdns_id|	Long|	No|	Secure DNS's id (Refer to [SecureDNS.sql](#securednssql)|	123|
 |dsd_keytag|	Integer|	No|	An integer as specified by the key tag field of a DNS DS record|	12345|
 |dsd_algorithm|	Integer|	No|	An integer as specified by the algorithm field of a DNS DS record|	3|
 |dsd_digest|	String|	No|	A string as specified by the digest field of a DNS DS record|	49FD46E6C4B45C55D4AC|
@@ -168,7 +168,7 @@ The following table describes each alias and value type that the queries must re
 |Alias name|Value Type|Allows Null|Description|Example|
 |:---------|:--------:|:---------:|:----------|:-----:|
 |iad_id|Long|No|Ip address id|123|
-|nse_id|Long|No|Nameserver's id (Refer to [Nameserver.sql](#nameserver-sql))|123|
+|nse_id|Long|No|Nameserver's id (Refer to [Nameserver.sql](#nameserversql))|123|
 |iad_type|Integer|No|	Ip address type (4 or 6)|4|
 |iad_value|	String|	No|	Ip address decimal value|4204805978|
 
@@ -323,7 +323,7 @@ The following table describes each alias and value type that the queries must re
 |Alias name|Value Type|Allows Null|Description|Example|
 |:---------|:--------:|:---------:|:----------|:-----:|
 |rde_order|	Integer|	No|	Number showing placement of the description at the Remark|	3|
-|rem_id|	Long|	No|	Remark's unique identifier (Refer to [Remark.sql](#remark-sql))|	123|
+|rem_id|	Long|	No|	Remark's unique identifier (Refer to [Remark.sql](#remarksql))|	123|
 |rde_description|	String|	No|	Description content|	Description 3|
 
 The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/RemarkDescription.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/RemarkDescription.sql).
@@ -341,7 +341,7 @@ The following table describes each alias and value type that the queries must re
 |sdns_zone_signed|	Boolean|	No|	Flag to show if the zone has been signed (1=true, 0=false)|	1|
 |sdns_delegation_signed|	Boolean|	No|	Flag to show if there are DS records in the parent (1=true, 0=false)|	1|
 |sdns_max_sig_life|	Integer|	Yes|	An integer representing the signature lifetime in seconds to be used when creating the RRSIG DS record in the parent zone|	63000|
-|dom_id|	Long|	No|	Related Domain id (Refer to [Domain.sql](#domain-sql))|	123|
+|dom_id|	Long|	No|	Related Domain id (Refer to [Domain.sql](#domainsql))|	123|
 
 The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/SecureDNS.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/SecureDNS.sql).
 
@@ -359,7 +359,7 @@ The following table describes each alias and value type that the queries must re
 |vna_ldh_name|	String|	No|	Variant name in LDH format|	xn--exampl-gva|
 |vna_unicode_name|	String|	Yes|	Variant name in Unicode format.|	examplé|
 |rel_id|	Integer|	No|	Variant Relation Id (Refer to [VariantRelation catalog](#variantrelation))|	1|
-|dom_id|	Long|	No|	Related Domain id (Refer to [Domain.sql](#domain-sql))|	123|
+|dom_id|	Long|	No|	Related Domain id (Refer to [Domain.sql](#domainsql))|	123|
 
 The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/Variant.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Variant.sql).
 
@@ -394,7 +394,7 @@ The following table describes each alias and value type that the queries must re
 |Alias name|Value Type|Allows Null|Description|Example|
 |:---------|:--------:|:---------:|:----------|:-----:|
 |vpi_id|	Long|	No|	Postal info's id|	123|
-|vca_id|	String|	Yes|	Vcard's id (Refer to [VCard.sql](#vcard-sql))|	Joe Jobs|
+|vca_id|	String|	Yes|	Vcard's id (Refer to [VCard.sql](#vcardsql))|	Joe Jobs|
 |vpi_type|	String|	Yes|	Postal info's type|	local|
 |vpi_country|	String|	Yes|	Country|	Mexico|
 |vpi_city|	String|	Yes|	City|	Juarez|
@@ -409,7 +409,7 @@ The new SQL file must define the same queries and aliases as the Red Dog's imple
 
 ### Zone.sql
 
-This file is extremely important for the [Domain object](#domain-sql) as all of the queries need this id to work.
+This file is extremely important for the [Domain object](#domainsql) as all of the queries need this id to work.
 
 The following table describes each alias and value type that the queries must return as result columns:
 
@@ -429,7 +429,7 @@ A custom implementation will need to add the following catalogs, as well as its 
 
 Red Dog uses the standard for area codes used by the [United Nations Statistics Division](https://en.wikipedia.org/wiki/United_Nations_Statistics_Division "United Nations Statistics Division from Wikipedia").The complete list of country codes can be found [here](http://www.nationsonline.org/oneworld/country_code_list.htm "ISO Alpha-2, Alpha-3, and Numeric Country Codes").
 
-This catalog does not have a SQL file but is needed at DB since [Autnum.sql](#autnum-sql) and [IpNetwork.sql](#ipnetwork-sql) objects retrieve it.
+This catalog does not have a SQL file but is needed at DB since [Autnum.sql](#autnumsql) and [IpNetwork.sql](#ipnetworksql) objects retrieve it.
 
 
 ### EventAction
@@ -448,7 +448,7 @@ The following values have been registered in the “RDAP JSON Values” registry
 |locked|	The object instance was locked.|
 |unlocked|	The object instance was unlocked.|
 
-This catalog does not have a SQL file but is needed at DB since a [Event.sql](#event-sql) object retrieves it.
+This catalog does not have a SQL file but is needed at DB since a [Event.sql](#eventsql) object retrieves it.
 
 
 ### IpVersion
@@ -460,7 +460,7 @@ The following values have been registered for the IpVersion catalog:
 |4|	IP v4|
 |6|	IP v6|
 
-This catalog does not have a SQL file but is needed at DB since a [IpNetwork.sql](#ipnetwork-sql) object retrieves it.
+This catalog does not have a SQL file but is needed at DB since a [IpNetwork.sql](#ipnetworksql) object retrieves it.
 
 
 ### Roles
@@ -513,7 +513,7 @@ The following values have been registered in the “RDAP JSON Values” registry
 
 The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/Status.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Status.sql).
 
-This catalog is needed since the following objects can retrieve it: [Autnum.sql](#autnum-sql), [Domain.sql](#domain-sql), [Entity.sql](#entity-sql), [IpNetwork.sql](#ipnetwork-sql), and [Nameserver.sql](#nameserver-sql).
+This catalog is needed since the following objects can retrieve it: [Autnum.sql](#autnumsql), [Domain.sql](#domainsql), [Entity.sql](#entitysql), [IpNetwork.sql](#ipnetworksql), and [Nameserver.sql](#nameserversql).
 
 
 ### VariantRelation
@@ -528,7 +528,7 @@ The following values have been registered in the “RDAP JSON Values” registry
 |open registration|	Registration of the variant names is available to generally qualified registrants.|
 |conjoined|	Registration of the variant names occurs automatically with the registration of the containing domain registration.|
 
-This catalog does not have a SQL file but is needed at DB since a [Variant.sql](#variant-sql) object retrieves it.
+This catalog does not have a SQL file but is needed at DB since a [Variant.sql](#variantsql) object retrieves it.
 
 
 ## Additional Notes
