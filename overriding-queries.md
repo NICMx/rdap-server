@@ -6,6 +6,14 @@ wheretogo: ["Configuring Red Dog reference implementation", "data-access-configu
 
 # Overriding Red Dog Queries
 
+## Index
+
+1. [Introduction](#introduction)
+1. [How to override queries](#how-to-override-queries)
+1. [SQL Files](#sql-files)
+1. [Needed Catalogs](#needed-catalogs)
+1. [Additional Notes](#additional-notes)
+
 ## Introduction
 
 This document is a formal definition of the SQL Provider’s query interface. Users that aim to implement [Option 2](intro.html#option-2-overriding-sql-provider-queries) need to provide queries that fulfill these requirements.
