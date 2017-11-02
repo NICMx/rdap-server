@@ -22,7 +22,7 @@ The following sections will help to understand how the privacy settings are conf
 
 ## Privacy configuration files
 
-These files are placed at the folder `WEB-INF/privacy` in the installation directory. They should look like this:
+These files are placed at the folder `WEB-INF/privacy` in the installation directory (the whole list of files can be seen at github's folder [`WEB-INF/privacy`](https://github.com/NICMx/rdap-server/tree/master/src/main/webapp/WEB-INF/privacy)). They should look like this:
 
 ![PRIVACY CONFIGURATION PATH](img/privacy-configuration-path.png)
 
@@ -99,7 +99,7 @@ The example didn’t include the use of custom roles to keep things simple, but 
 
 ## Using custom roles
 
-The declaration and use of custom roles is optional. If the implementer wishes to use custom roles, these must be first defined at the server [configuration](behavior-configuration.html). The roles configured can be used at the privacy settings of each object.
+The declaration and use of custom roles is optional. If the implementer wishes to use custom roles, these must be first defined at the [server configuration](behavior-configuration.html#user_roles). The roles configured can be used at the privacy settings of each object.
 
 To simplify the explanation of the custom roles use, the same example will be taken (`WEB-INF/privacy/domain.properties`) and used only with custom roles mixtures. The file can be modified as follows, assuming that the roles **president**, **governor**, and **judge** are already configured:
 
