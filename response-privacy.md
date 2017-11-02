@@ -60,7 +60,7 @@ Just as stated in the first comments of each file, each attribute can have a spe
 * **any**: everybody (unauthenticated users and authenticated users) can see the attribute. This is the **default** value of every object property.
 * **authenticated**: only authenticated users can see the attribute.
 * **none**: nobody can see the attribute.
-* **owner**: only the owner of the object can see the attribute, this value can be mixed with “_custom roles_”. This value works in conjunction with the configuration property [owner_roles_*](behavior-configuration.html#owner_roles_*).
+* **owner**: only the owner of the object can see the attribute, this value can be mixed with “_custom roles_”. This value works in conjunction with the configuration property [owner_roles_*](behavior-configuration.html#owner_roles_).
 * **List of custom roles**: users with this role(s) can see the attribute, this value(s) can be mixed with “_owner_” value. More information of how this is configured is shown [below](#using-custom-roles).
 
 ## Configuring attributes access
