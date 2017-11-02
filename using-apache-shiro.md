@@ -86,6 +86,8 @@ Basically Red Dog's [`WEB-INF/shiro.ini`](https://github.com/NICMx/rdap-server/b
 
 Each of these behaviors is explained in the following sections.
 
+> ![Warning](img/warning.svg) WARNING: Red Dog has authentication disabled by default, using the [`anon`](https://shiro.apache.org/static/1.4.0/apidocs/org/apache/shiro/web/filter/authc/AnonymousFilter.html) filter; if authentication is needed, the following steps will help to enable authentication using Apache Shiro.
+
 #### Users information
 
 Users and its corresponding roles are loaded from a database, using a [`BasicDataSource`](https://tomcat.apache.org/tomcat-8.0-doc/api/org/apache/tomcat/dbcp/dbcp2/BasicDataSource.html) object. This object [can be configured](https://commons.apache.org/proper/commons-dbcp/configuration.html) with the necessary properties to reach a database and get the necessary data from there. Here's how that configuration looks like in the [`WEB-INF/shiro.ini`](https://github.com/NICMx/rdap-server/blob/master/src/main/webapp/WEB-INF/shiro.ini) file (inside the `[main]` section):
@@ -99,8 +101,6 @@ ds.url =
 ds.username = 
 ds.password = 
 ```
-
-> ![Warning](img/warning.svg) WARNING: Note that the properties aren't configured by default, they must be properly set so that the server can run. If the server is started using the default configuration, then it will crash due do invalid Apache Shiro's configuration.
 
 After the declaration and configuration, the `BasicDataSource` is set as the `DataSource` of the [`CustomSecurityRealm`](https://github.com/NICMx/rdap-server/blob/master/src/main/java/mx/nic/rdap/server/shiro/CustomSecurityRealm.java) class that extends the Shiro's [`JdbcRealm`](https://shiro.apache.org/static/1.4.0/apidocs/org/apache/shiro/realm/jdbc/JdbcRealm.html) class. Beside this, the queries that are used to authenticate a user and get its roles must also be defined (all this is still inside the `[main]` section):
 
@@ -134,7 +134,7 @@ As the reader may note, the users are loaded from a database and also is expecte
 
 #### Basic authentication
 
-By default the server supports [Basic Authentication](https://tools.ietf.org/html/rfc2617#section-2) using the [BasicHttpAuthenticationFilter](https://shiro.apache.org/static/1.4.0/apidocs/org/apache/shiro/web/filter/authc/BasicHttpAuthenticationFilter.html) filter provided by Apache Shiro. Currently only 2 attributes of the filter are configured:
+The server supports [Basic Authentication](https://tools.ietf.org/html/rfc2617#section-2) using the [BasicHttpAuthenticationFilter](https://shiro.apache.org/static/1.4.0/apidocs/org/apache/shiro/web/filter/authc/BasicHttpAuthenticationFilter.html) filter provided by Apache Shiro. Currently only 2 attributes of the filter are configured:
 * `applicationName`: the application name that will be returned as realm in the HTTP header "WWW-Authenticate" when responding a 401 code (see [RFC 7235 section 4.1](https://tools.ietf.org/html/rfc7235#section-4.1)). Default value: `rdap-server`.
 * `enabled`: to enable/disable the filter. Default value: `true`.
 
@@ -152,11 +152,11 @@ This filter works in conjunction with the [users information](#users-information
 
 #### Restrict access
 
-If the authentication filter is going to be used, then it must be related to an URL path or paths. The `[urls]` section helps to define this behavior, the following sections explain what must be done in order to configure the access according to the implementer needs. The **default** behavior is [**Basic authentication with permissive access**](#basic-authentication-with-permissive-access).
+If the authentication filter is going to be used, then it must be related to an URL path or paths. The `[urls]` section helps to define this behavior, the following sections explain what must be done in order to configure the access according to the implementer needs. The **default** behavior is [**Disable basic authentication**](#disable-basic-authentication).
 
 ##### Basic authentication with permissive access
 
-This is the **default** configuration used by the server. The term "permissive access" means that the resources are still public, but whenever the HTTP header "WWW-Authenticate" is received the credentials will be validated in order to authenticate the user. If the authentication fails, then the corresponding **401** HTTP response code will be returned; if the authentication succeeds, then the user will be authenticated and will have access to whatever things the implementer decides.
+The term "permissive access" means that the resources are still public, but whenever the HTTP header "WWW-Authenticate" is received the credentials will be validated in order to authenticate the user. If the authentication fails, then the corresponding **401** HTTP response code will be returned; if the authentication succeeds, then the user will be authenticated and will have access to whatever things the implementer decides.
 
 At Shiro's configuration file, the `authcBasic` filter must be enabled and in the `[urls]` section the corresponding resources must be related to the filter with the `permissive` qualifier (this qualifier is used internally by Apache Shiro to enable the permissive behavior). The configuration at `shiro.ini` must include these lines:
 
@@ -202,7 +202,18 @@ The order of the filters matters (see more at Apache Shiro's documentation of [`
 
 ##### Disable basic authentication
 
-Disabling the authentication is simple. The approach that can be used is to disable the `authcBasic` filter that was defined, the default `[urls]` section doesn't need to be modified. When the filter is disabled, all of the URLs that had a relation with that filter will skip such filter (see more at Apache Shiro's documentation [Enabling and Disabling Filters](http://shiro.apache.org/web.html#enabling-and-disabling-filters)).
+Disabling the authentication is simple, and by **default** is disabled.
+
+One approach to disable the authentication is to remove/comment the use and declaration of the `authcBasic` filter that's used and go up from there removing the unnecessary configurations at `shiro.ini` (eg. the `customRealm` isn't needed so it can be erased, and since it's going to be erased then the line `securityManager.realms = $customRealm` isn't needed as well). Once that the declaration and use of `authcBasic` is removed, instead of using the `authcBasic` filter the `anon` filter can be used; this is the [`AnonymousFilter`](https://shiro.apache.org/static/1.4.0/apidocs/org/apache/shiro/web/filter/authc/AnonymousFilter.html) provided by Apache Shiro (see more information about Apache Shiro's [Default Filters](https://shiro.apache.org/web.html#default-filters)). So the `shiro.ini` file will look like this:
+
+```ini
+[main]
+# ANY OTHER CUSTOM CONFIG #
+[urls]
+/** = none
+```
+
+Another approach that can be used is to disable the `authcBasic` filter that was defined, the default `[urls]` section doesn't need to be modified if the `authcBasic` was being used. When the filter is disabled, all of the URLs that had a relation with that filter will skip such filter (see more at Apache Shiro's documentation [Enabling and Disabling Filters](http://shiro.apache.org/web.html#enabling-and-disabling-filters)).
 
 The configuration at `shiro.ini` must include these lines:
 
@@ -213,14 +224,6 @@ authcBasic.enabled = false
 /** = authcBasic[permissive]
 ```
 
-Another approach to disable the authentication is to remove the use and declaration of the `authcBasic` filter that's used and go up from there removing the unnecessary configurations at `shiro.ini` (eg. the `customRealm` isn't needed so it can be erased, and since it's going to be erased then the line `securityManager.realms = $customRealm` isn't needed as well). Once that the declaration and use of `authcBasic` is removed, instead of using the `authcBasic` filter the `anon` filter can be used; this is the [`AnonymousFilter`](https://shiro.apache.org/static/1.4.0/apidocs/org/apache/shiro/web/filter/authc/AnonymousFilter.html) provided by Apache Shiro (see more information about Apache Shiro's [Default Filters](https://shiro.apache.org/web.html#default-filters)). So the `shiro.ini` file will look like this:
-
-```ini
-[main]
-# ANY OTHER CUSTOM CONFIG #
-[urls]
-/** = none
-```
 ### Apache Shiro's Subject
 
 Red Dog uses the [`Subject`](https://shiro.apache.org/static/1.4.0/apidocs/org/apache/shiro/subject/Subject.html) object provided by Apache Shiro. This object simplifies the validations related to users access level based on authentication and the use of access roles.
