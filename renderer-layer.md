@@ -5,27 +5,37 @@ wheretogo: ["Create new renderers", "renderer-implementation.html"]
 ---
 # Red Dog Renderer Layer
 
-The Red Dog RDAP server, after forming the response of a user request, delegates the responsibility of rendering the result to an implementation of the renderer-api.
+## Index
 
-The implementation is chosen based on the MIME type (Content-type) requested by the user at the time of the request.
+1. [Introduction](#introduction)
+1. [Configuring `renderers.properties`](#configuring-renderersproperties)
+   1. [`renderers`](#renderers)
+   1. [`{renderer_name}.class`](#renderer_nameclass)
+   1. [`{renderer_name}.main_mime`](#renderer_namemain_mime)
+   1. [`{renderer_name}.mimes`](#renderer_namemimes)
+   1. [`default_renderer`](#default_renderer)
+1. [Example](#example)
 
-First, the server gets the MIME type requested by the user, it is checked in the renderer.properties configuration if the MIME type requested by the user is mapped to some renderer implementation.
+## Introduction
 
-If the MIME type is mapped, the response will be rendered with the configured implementation, otherwise, if the MIME type requested by the user does not exist in the configuration, a default implementation is chosen that has been configured for any unregistered MIME type.
+The Red Dog RDAP server, after forming the response of a user request, delegates the responsibility of rendering the result to an implementation of the [**rdap-renderer-api**](https://github.com/NICMx/rdap-renderer-api).
 
+The implementation is chosen based on the MIME type (Content-type) requested by the user at the time of the request. This implementation(s) should be configured at [`WEB-INF/renderer.properties`](https://github.com/NICMx/rdap-server/blob/master/src/main/webapp/WEB-INF/renderers.properties) configuration file.
 
-The RDAP team offers two reference implementations of rdap-renderer-api:
+First, the server gets the MIME type requested by the user, it is checked in the `WEB-INF/renderer.properties` configuration if the MIME type requested by the user is mapped to some renderer implementation.
 
-+ __[rdap-json-renderer](https://github.com/NICMx/rdap-json-renderer)__, this renderer prints the output of the requests in the JSON format as indicated by RFC7483.
+If the MIME type is mapped, the response will be rendered with the configured implementation, otherwise, if the MIME type requested by the user does not exist in the configuration, a default implementation that has been configured for any unregistered MIME type is chosen.
+
+The Red Dog team offers two reference implementations of **rdap-renderer-api**:
+
++ __[rdap-json-renderer](https://github.com/NICMx/rdap-json-renderer)__, this renderer prints the output of the requests in the JSON format as indicated by [RFC 7483](https://tools.ietf.org/html/rfc7483).
 + __[rdap-text-renderer](https://github.com/NICMx/rdap-text-renderer)__, this renderer prints the output in plain text, in a format similar to WHOIS responses.
 
-## Configuring renderers.properties
+## Configuring `renderers.properties`
 
-To tell the RDAP Red Dog server which renderer implementations to use, you need to configure the renderers.properties file.
+To tell the RDAP Red Dog server which renderer implementations to use, the `WEB-INF/renderers.properties` file must be configured.
 
-Here's how this property file should be configured
-
-### keys
+Here's how this property file should be configured.
 
 ### `renderers`
 
@@ -35,7 +45,7 @@ List of names of the renderers to be configured, each name will be separated by 
 |--------------------|--------|---------|-------------|
 | ![Yes](img/green_bkg_check.svg) | String (or List separated by a comma) | NO default value | renderers = json |
 
-For each name configured in the renderers property, it is necessary to configure three attributes, __{renderer_name}.*__.
+For each name configured in the renderers property, it is necessary to configure other attributes (__{renderer_name}.*__) explained below.
 
 ### `{renderer_name}.class`
 
@@ -70,9 +80,6 @@ List of MIME types separated by commas, these MIME types will also be mapped to 
 |--------------------|--------|---------|-------------|
 | ![No](img/red_x.svg) | String | ![No](img/red_x.svg) |  json.mimes = application/json, application/html |
 
-
-
-
 ### `default_renderer`
 
 Sets the renderer name to act as the default renderer for any MIME type. The name must be one of the configured in the renderers property.
@@ -85,8 +92,7 @@ Sets the renderer name to act as the default renderer for any MIME type. The nam
 
 The following is an example configuration of 'renderers.properties' and a table that demonstrates the behavior of the example configuration
 
-
-```
+```ini
 renderers = json, html, text
 
 json.class = foo.bar.json.JsonRenderer
@@ -105,8 +111,6 @@ default_renderer = json
 
 ```
 
-
-
 | MIME type requested | Renderer | MIME type sent by the server |
 |---------------------|----------|------------------------------|
 | application/json | json | application/json+rdap |
@@ -117,5 +121,3 @@ default_renderer = json
 | text/plain | text | text/plain |
 | application/plain | json (default) | application/json+rdap |
 | text/csv | json (default) | application/json+rdap |
-
-
