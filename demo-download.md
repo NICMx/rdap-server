@@ -8,7 +8,7 @@ breadcrums: ["Downloads", "download.html"]
 
 A sample demonstration of a Red Dog server; a standalone Tomcat binary packaged with Red Dog and an embedded ([H2-based](http://www.h2database.com/html/main.html)) database populated with dummy data. The only requirement is Java 8 or superior.
 
-Unzip it and run it with `java -jar demo.jar`. Documentation at [Red Dog Demo Server](demo-server.html)
+Unzip it and run it with `java -jar demo.jar`. Find more documentation at [Red Dog Demo Server](demo-server.html).
 
 - **Bold** marks the most recommended version(s).
 - Normal font signals recommended fallback versions in case the previous option fails you [bug reports welcomed](https://github.com/NICMx/rdap-server/issues).

@@ -8,14 +8,14 @@ breadcrums: ["Documentation", "documentation.html", "Introduction", "documentati
 ## Index
 
 1. [Introduction](#introduction)
-2. [Download](#download)
-3. [Running the demo](#running-the-demo)
-4. [Available features](#available-features)
-5. [Available configuration](#available-configuration)
-6. [Dummy data](#dummy-data)
-	1. [Domain data](#domain-data)
-	2. [Entity data](#entity-data)
-	3. [Nameserver data](#nameserver-data)
+1. [Download](#download)
+1. [Running the demo](#running-the-demo)
+1. [Available features](#available-features)
+1. [Available configuration](#available-configuration)
+1. [Dummy data](#dummy-data)
+   1. [Domain data](#domain-data)
+   1. [Entity data](#entity-data)
+   1. [Nameserver data](#nameserver-data)
 
 ## Introduction
 
@@ -49,16 +49,16 @@ The demo server is now ready to answer requests. In your browser, query the addr
  
 ## Available features
 
-As a demo version, this server has limited features compared to the ones defined in RFC 7482 (excluding ASN and IPs queries), as well as the ones from the full server. Here are examples of queries that should be successful. See the [tables below](#dummy-data) for more options.
+As a demo version, this server has limited features compared to the ones defined in [RFC 7482](https://tools.ietf.org/html/rfc7482) (excluding ASN and IPs queries), as well as the ones from the full server. Here are examples of queries that should be successful. See the [tables below](#dummy-data) for more options.
 
 + Domain query`*`: [`domain/goldfish.com`](http://localhost:8080/rdap-server/domain/goldfish.com)
 + Entity query: [`entity/mr_fish`](http://localhost:8080/rdap-server/entity/mr_fish)
 + Nameserver query: [`nameserver/ns2.chopsuey.net`](http://localhost:8080/rdap-server/nameserver/ns2.chopsuey.net)
-+ Domains search: [`domains?name=p*`](http://localhost:8080/rdap-server/domains?name=p*)
++ Domains search`*`: [`domains?name=p*`](http://localhost:8080/rdap-server/domains?name=p*)
 + Entities search: [`entities?handle=mr*`](http://localhost:8080/rdap-server/entities?handle=mr*)
 + Nameservers search: [`nameservers?name=ns1*`](http://localhost:8080/rdap-server/nameservers?name=ns1*)
 
-`*` Because of the shipped configuration of `zones` (see below), only .com and .com.example domains will yield success.
+`*` Because of the shipped configuration of `zones` (see below), only **'.com'** and **'.com.example'** domains will yield success.
 
 ## Available configuration
 
@@ -68,7 +68,7 @@ Notice that tweaks to this file require a server restart to go live.
 
 ## Dummy data 
 
-The demo's database ships with the following test data:
+The demo database ships with the following test data:
 
 ### Domain data
 
@@ -139,9 +139,8 @@ The demo's database ships with the following test data:
 | NSE13  | ns3.bright.info                 |                        |                 |
 | NSE14  | ns4.bright.info                 |                        |                 |
 | NSE15  | ns5.bright.info                 |                        |                 |
-| NSE16  | ns1.camión.test                 | ns1.xn--camin-3ta.test |                 | 
+| NSE16  | ns1.camión.test                 | ns1.xn--camin-3ta.test |                 |
 | NSE17  | ns2.camión.test                 | ns2.xn--camin-3ta.test |                 |
 | NSE18  | ns3.camión.test                 | ns3.xn--camin-3ta.test |                 |
 | NSE19  | ns4.camión.test                 | ns4.xn--camin-3ta.test |                 |
 | NSE20  | ns5.camión.test                 | ns5.xn--camin-3ta.test |                 |
-
