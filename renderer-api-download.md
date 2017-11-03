@@ -1,7 +1,7 @@
 ---
 category: Download
 title: RDAP Renderer API Download
-breadcrums: ["Downloads", "download.html"]
+breadcrums: ["Download", "download.html"]
 ---
 
 # RDAP Renderer API Download

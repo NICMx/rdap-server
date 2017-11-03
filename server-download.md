@@ -1,7 +1,7 @@
 ---
 category: Download
 title: Server WAR Download
-breadcrums: ["Downloads", "download.html"]
+breadcrums: ["Download", "download.html"]
 ---
 
 # {{ page.title }}

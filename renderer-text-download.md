@@ -1,7 +1,7 @@
 ---
 category: Download
 title: Red Dog Text Renderer Download
-breadcrums: ["Downloads", "download.html"]
+breadcrums: ["Download", "download.html"]
 ---
 
 # Red Dog Text Renderer Download

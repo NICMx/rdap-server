@@ -1,7 +1,7 @@
 ---
 category: Download
 title: RDAP Core Download
-breadcrums: ["Downloads", "download.html"]
+breadcrums: ["Download", "download.html"]
 ---
 
 # RDAP Core Download

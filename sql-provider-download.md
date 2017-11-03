@@ -1,7 +1,7 @@
 ---
 category: Download
 title: RDAP SQL provider Download
-breadcrums: ["Downloads", "download.html"]
+breadcrums: ["Download", "download.html"]
 ---
 
 # RDAP SQL provider Download

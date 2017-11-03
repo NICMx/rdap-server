@@ -1,7 +1,7 @@
 ---
 category: Download
 title: Demo Server Download
-breadcrums: ["Downloads", "download.html"]
+breadcrums: ["Download", "download.html"]
 ---
 
 # {{ page.title }}

@@ -1,7 +1,7 @@
 ---
 category: Download
 title: RDAP Data Access API Download
-breadcrums: ["Downloads", "download.html"]
+breadcrums: ["Download", "download.html"]
 ---
 
 # RDAP Data Access API Download

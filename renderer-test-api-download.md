@@ -1,7 +1,7 @@
 ---
 category: Download
 title: RDAP Renderer Test API Download
-breadcrums: ["Downloads", "download.html"]
+breadcrums: ["Download", "download.html"]
 ---
 
 # RDAP Renderer Test API Download
