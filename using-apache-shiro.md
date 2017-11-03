@@ -1,7 +1,7 @@
 ---
 title: Using Apache Shiro
 breadcrums: ["Documentation", "documentation.html", "Further Custom Configuration", "documentation.html#further-custom-configuration", "User Authentication", "authentication.html"]
-wheretogo: ["Configuring response privacy", "response-privacy.html"]
+wheretogo: ["Configuring Response Privacy", "response-privacy.html"]
 ---
 
 # {{ page.title }}
@@ -230,7 +230,7 @@ Red Dog uses the [`Subject`](https://shiro.apache.org/static/1.4.0/apidocs/org/a
 
 The [`Subject`](https://shiro.apache.org/static/1.4.0/apidocs/org/apache/shiro/subject/Subject.html) is always available thanks to [`org.apache.shiro.SecurityUtils.getSubject()`](https://shiro.apache.org/static/1.4.0/apidocs/org/apache/shiro/SecurityUtils.html#getSubject--) function, and it contains relevant information such as the user's name and roles (if it's authenticated).
 
-This object is used by [`UserInfo`](https://github.com/NICMx/rdap-server/blob/master/src/main/java/mx/nic/rdap/server/privacy/UserInfo.java#L10) struct, which is a struct useful for privacy settings (learn more at [Configuring _Red Dog_ server response privacy](response-privacy.html)). Beside this, the `Subject` also helps to verify the max number of results than can be shown to a specific user (eg. a request to `/domains` could validate this, just as seen in [`DomainSearchServlet`](https://github.com/NICMx/rdap-server/blob/master/src/main/java/mx/nic/rdap/server/servlet/DomainSearchServlet.java#L85) class).
+This object is used by [`UserInfo`](https://github.com/NICMx/rdap-server/blob/master/src/main/java/mx/nic/rdap/server/privacy/UserInfo.java#L10) struct, which is a struct useful for privacy settings (learn more at [Configuring Response Privacy](response-privacy.html)). Beside this, the `Subject` also helps to verify the max number of results than can be shown to a specific user (eg. a request to `/domains` could validate this, just as seen in [`DomainSearchServlet`](https://github.com/NICMx/rdap-server/blob/master/src/main/java/mx/nic/rdap/server/servlet/DomainSearchServlet.java#L85) class).
 
 ## More documentation
 

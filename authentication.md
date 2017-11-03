@@ -13,5 +13,5 @@ Using [Apache Shiro<sup>TM</sup>](https://shiro.apache.org/) the server can defi
 
 More information can be seen in the following links:
 * [Using Apache Shiro<sup>TM</sup>](using-apache-shiro.html)
-* [Configuring response privacy](response-privacy.html)
+* [Configuring Response Privacy](response-privacy.html)
 

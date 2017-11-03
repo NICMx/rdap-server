@@ -40,5 +40,5 @@ title: Documentation Index
 1. [Rate Limit Filter](rate-limit.html)
 1. [User Authentication](authentication.html)
    1. [Using Apache Shiro<sup>TM</sup>](using-apache-shiro.html)
-   1. [Configuring response privacy](response-privacy.html)
+   1. [Configuring Response Privacy](response-privacy.html)
 

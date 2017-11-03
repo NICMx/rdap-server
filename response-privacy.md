@@ -1,9 +1,9 @@
 ---
-title: Response privacy
+title: Configuring Response Privacy
 breadcrums: ["Documentation", "documentation.html", "Further Custom Configuration", "documentation.html#further-custom-configuration", "User Authentication", "authentication.html"]
 ---
 
-# Configuring _Red Dog_ server response privacy
+# {{ page.title }}
 
 ## Index
 
