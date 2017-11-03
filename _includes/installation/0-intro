@@ -1,4 +1,4 @@
-# Server Installation
+# {{ page.title }}
 
 The server is a typical servlet Java WAR; so, simply toss it into a servlet container. The following is an improvised example on how this might be done in Ubuntu/Tomcat; if any other means or environments are flavored, knock yourself out. ([Payara](http://www.payara.fish/) and [Wildfly](http://wildfly.org/) have been tested as well as Tomcat.)
 

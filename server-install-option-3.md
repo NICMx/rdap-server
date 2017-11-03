@@ -1,5 +1,5 @@
 ---
-title: Server Installation
+title: Deploying rdap-server with the reference SQL Provider
 breadcrums: ["Documentation", "documentation.html", "Installation/Configuration", "documentation.html#installationconfiguration", "Option 3 - Using Red Dog’s builtin schema", "documentation.html#option-3---using-red-dogs-builtin-schema"]
 ---
 
