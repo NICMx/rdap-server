@@ -1,7 +1,7 @@
 ---
 title: Configuring Red Dog's Help Response
 breadcrums: ["Documentation", "documentation.html", "Further Custom Configuration", "documentation.html#further-custom-configuration"]
-wheretogo: ["General behavior configuration", "behavior-configuration.html"]
+wheretogo: ["Configuring Red Dog's Server Behavior", "behavior-configuration.html"]
 ---
 
 # {{ page.title }}

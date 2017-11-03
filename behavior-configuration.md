@@ -1,10 +1,10 @@
 ---
-title: Server Behavior Configuration
+title: Configuring Red Dog's Server Behavior
 breadcrums: ["Documentation", "documentation.html", "Further Custom Configuration", "documentation.html#further-custom-configuration"]
 wheretogo: ["Rate Limit", "rate-limit.html"]
 ---
 
-# Configuring Red Dog server behavior
+# {{ page.title }}
 
 ## Index
 

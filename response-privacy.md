@@ -99,7 +99,7 @@ The example didn’t include the use of custom roles to keep things simple, but 
 
 ## Using custom roles
 
-The declaration and use of custom roles is optional. If the implementer wishes to use custom roles, these must be first defined at the [server configuration](behavior-configuration.html#user_roles). The roles configured can be used at the privacy settings of each object.
+The declaration and use of custom roles is optional. If the implementer wishes to use custom roles, these must be first defined when [Configuring Red Dog's Server Behavior](behavior-configuration.html#user_roles). The roles configured can be used at the privacy settings of each object.
 
 To simplify the explanation of the custom roles use, the same example will be taken (`WEB-INF/privacy/domain.properties`) and used only with custom roles mixtures. The file can be modified as follows, assuming that the roles **president**, **governor**, and **judge** are already configured:
 

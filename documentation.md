@@ -36,7 +36,7 @@ title: Documentation Index
 ## Further Custom Configuration 
 
 1. [Configuring Red Dog's Help Response](help-response.html)
-1. [General behavior configuration](behavior-configuration.html)
+1. [Configuring Red Dog's Server Behavior](behavior-configuration.html)
 1. [Rate Limit](rate-limit.html)
 1. [User authentication](authentication.html)
    1. [Using Apache Shiro<sup>TM</sup>](using-apache-shiro.html)

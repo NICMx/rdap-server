@@ -120,7 +120,7 @@ customRealm.userRolesQuery =
 > ```
 > Both queries must receive the user's name to retrieve the corresponding information.
 
-> ![Warning](img/warning.svg) If user roles are going to be used, these must be also configured at property `user_roles` in [Red Dog server configuration](behavior-configuration.html#user_roles). When validating user roles, the characters case is indifferent (eg. Role 'JUDGE' is the same that 'judge').
+> ![Warning](img/warning.svg) If user roles are going to be used, these must be also configured at property `user_roles` when [Configuring Red Dog's Server Behavior](behavior-configuration.html#user_roles). When validating user roles, the characters case is indifferent (eg. Role 'JUDGE' is the same that 'judge').
 
 The `customRealm` must be used, and so is assigned to the [default `SecurityManager`](http://shiro.apache.org/configuration.html#default-securitymanager):
 
