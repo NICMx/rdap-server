@@ -4,7 +4,7 @@ breadcrums: ["Documentation", "documentation.html", "Further Custom Configuratio
 wheretogo: ["Configuring response privacy", "response-privacy.html"]
 ---
 
-# Using Apache Shiro
+# {{ page.title }}
 
 ## Index
 
