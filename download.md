@@ -11,7 +11,7 @@ Red Dog releases can be obtained by selecting a project below.
 |--------------------------------|-------------------------------------------|
 | [Demo Server](demo-download.html) | Demo version of the server, ready to run as an executable JAR. |
 | [Server WAR](server-download.html) | RDAP server, to be plugged into a servlet container along with a Data Access Implementation. |
-| [RDAP Core](core-download.html) | Main objects defined in RDAP RFCs. |
+| [Core](core-download.html) | Main objects defined in RDAP RFCs. |
 | [Data Access API](data-access-api-download.html) | Interface from which Data Access Implementations are expected to implement. |
 | [SQL Provider](sql-provider-download.html) | Red Dog's reference Data Access Implementation. Uses SQL queries to retrieve data for the server. |
 | [Renderer API](renderer-api-download.html) | Interface from which renderer implementations are expected to implement. |
