@@ -1,9 +1,9 @@
 ---
 category: Download
-title: Downloads
+title: Download
 ---
 
-# Downloads
+# {{ page.title }}
 
 Red Dog releases can be obtained by selecting a project below.
 
