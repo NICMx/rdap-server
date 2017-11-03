@@ -28,7 +28,7 @@ title: Documentation Index
 1. [Configuring Red Dog's reference implementation](data-access-configuration.html)
 1. [Deploying `rdap-server` with the reference SQL Provider](server-install-option-3.html)
 
-## Rendering response data
+## Rendering Response Data
 
 1. [Red Dog's Renderer Layer](renderer-layer.html)
 1. [Create a new RDAP-renderer implementation](renderer-implementation.html)

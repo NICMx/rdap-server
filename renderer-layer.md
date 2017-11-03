@@ -1,6 +1,6 @@
 ---
 title: Red Dog's Renderer Layer
-breadcrums: ["Documentation", "documentation.html", "Rendering response data", "documentation.html#rendering-response-data"]
+breadcrums: ["Documentation", "documentation.html", "Rendering Response Data", "documentation.html#rendering-response-data"]
 wheretogo: ["Create a new RDAP-renderer implementation", "renderer-implementation.html"]
 ---
 # {{ page.title }}

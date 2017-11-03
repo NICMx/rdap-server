@@ -1,6 +1,6 @@
 ---
 title: Create a new RDAP-renderer implementation
-breadcrums: ["Documentation", "documentation.html", "Rendering response data", "documentation.html#rendering-response-data"]
+breadcrums: ["Documentation", "documentation.html", "Rendering Response Data", "documentation.html#rendering-response-data"]
 ---
 
 # {{ page.title }}
