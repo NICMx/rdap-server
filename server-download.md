@@ -4,7 +4,7 @@ title: Server WAR Download
 breadcrums: ["Downloads", "download.html"]
 ---
 
-# Server WAR Download
+# {{ page.title }}
 
 A typical servlet WAR intended to serve registration data. To be plugged into a servlet container along with a data access implementation.
 
