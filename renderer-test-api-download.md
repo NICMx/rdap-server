@@ -6,7 +6,7 @@ breadcrums: ["Downloads", "download.html"]
 
 # RDAP Renderer Test API Download
 
-API which renderer implementations are expected to use in its unit tests. Documentation [here](renderer-implementation.html).
+API from which renderer implementations are expected to use in its unit tests. More documentation at [Create a new RDAP-renderer implementation](renderer-implementation.html).
 
 - **Bold** marks the most recommended version(s).
 - Normal font signals recommended fallback versions in case the previous option fails you [bug reports welcomed](https://github.com/NICMx/rdap-renderer-test-api/issues).

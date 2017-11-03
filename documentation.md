@@ -31,7 +31,7 @@ title: Documentation Index
 ## Rendering response data
 
 1. [Red Dog's Renderer Layer](renderer-layer.html)
-1. [Red Dog's default renderer](renderer-implementation.html)
+1. [Create a new RDAP-renderer implementation](renderer-implementation.html)
 
 ## Further Custom Configuration 
 

@@ -3,9 +3,9 @@ title: Create a new RDAP-renderer implementation
 breadcrums: ["Documentation", "documentation.html", "Rendering response data", "documentation.html#rendering-response-data"]
 ---
 
-# Create a new RDAP-renderer implementation
+# {{ page.title }}
 
-RedDog RDAP Server allows to generate new implementations to render the result of a user request.
+Red Dog RDAP Server allows to generate new implementations to render the result of a user request.
 
 To generate a new implementation it is necessary to implement the interface __"[mx.nic.rdap.renderer.Renderer](https://github.com/NICMx/rdap-renderer-api/blob/master/src/main/java/mx/nic/rdap/renderer/Renderer.java)"__ found in the project __"[rdap-renderer-api](https://github.com/NICMx/rdap-renderer-api)"__ 
 
