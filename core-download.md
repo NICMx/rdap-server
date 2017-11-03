@@ -4,7 +4,7 @@ title: RDAP Core Download
 breadcrums: ["Download", "download.html"]
 ---
 
-# RDAP Core Download
+# {{ page.title }}
 
 Basic RDAP components defined by the RFCs. Used as foundation for all the other Red Dog projects.
 
