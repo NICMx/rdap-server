@@ -6,7 +6,7 @@ wheretogo: ["Deploying rdap-server", "server-install-option-1.html"]
 
 # Data Access Layer
 
-As stated [here](intro.html#option-1-development-of-a-dai), an implementation of the data access API will wrap whatever data storage is configured to the RDAP server.
+As stated at [Option 1: Development of a DAI](intro.html#option-1-development-of-a-dai), an implementation of the data access API will wrap whatever data storage is configured to the RDAP server.
 
 To create a custom implementation, the following classes must be provided:
 

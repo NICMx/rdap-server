@@ -8,7 +8,7 @@ wheretogo: ["Configuring Red Dog reference implementation", "data-access-configu
 
 ## Introduction
 
-Red Dog's builtin schema is an ordinary relational database conceived in MySQL. Users that aim to implement [Option 3](intro.html#option-3-using-red-dogs-builtin-schema) need to build a mechanism to populate this database and keep it updated.
+Red Dog's builtin schema is an ordinary relational database conceived in MySQL. Users that aim to implement [Option 3: Using Red Dog’s builtin schema](intro.html#option-3-using-red-dogs-builtin-schema), need to build a mechanism to populate this database and keep it updated.
 
 The means through which the data is exported will depend on how the data is stored in the origin database, this documentation cannot fall into details on how to do it. Instead, this will serve as reference material for Red Dog's schema.
 
