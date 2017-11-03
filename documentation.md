@@ -19,13 +19,13 @@ title: Documentation Index
 ### Option 2 - Overriding SQL Provider queries
 
 1. [Overriding Red Dog's reference queries](overriding-queries.html)
-1. [Configuring Red Dog reference implementation](data-access-configuration.html)
+1. [Configuring Red Dog's reference implementation](data-access-configuration.html)
 1. [Deploying `rdap-server` with the customized SQL Provider](server-install-option-2.html)
 
 ### Option 3 - Using Red Dog's builtin schema
 
 1. [Implementing the Data Export Mechanism](migration.html)
-1. [Configuring Red Dog reference implementation](data-access-configuration.html)
+1. [Configuring Red Dog's reference implementation](data-access-configuration.html)
 1. [Deploying `rdap-server` with the reference SQL Provider](server-install-option-3.html)
 
 ## Rendering response data

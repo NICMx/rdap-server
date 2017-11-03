@@ -1,10 +1,10 @@
 ---
-title: Configuring Red Dog reference implementation
+title: Configuring Red Dog's reference implementation
 breadcrums: ["Documentation", "documentation.html", "Installation/Configuration", "documentation.html#installationconfiguration", "Option 2 - Overriding SQL Provider queries", "documentation.html#option-2---overriding-sql-provider-queries"]
 wheretogo: ["Deploying rdap-server with the customized SQL Provider", "server-install-option-2.html", "Deploying rdap-server with the reference SQL Provider", "server-install-option-3.html"]
 ---
 
-# Configuring Red Dog reference implementation
+# {{ page.title }}
 
 ## Index
 

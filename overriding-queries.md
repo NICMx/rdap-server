@@ -1,7 +1,7 @@
 ---
 title: Overriding Red Dog's reference queries
 breadcrums: ["Documentation", "documentation.html", "Installation/Configuration", "documentation.html#installationconfiguration", "Option 2 - Overriding SQL Provider queries", "documentation.html#option-2---overriding-sql-provider-queries"]
-wheretogo: ["Configuring Red Dog reference implementation", "data-access-configuration.html"]
+wheretogo: ["Configuring Red Dog's reference implementation", "data-access-configuration.html"]
 ---
 
 # {{ page.title }}
