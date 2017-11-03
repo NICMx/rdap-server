@@ -3,7 +3,7 @@ title: User Authentication
 breadcrums: ["Documentation", "documentation.html", "Further Custom Configuration", "documentation.html#further-custom-configuration"]
 ---
 
-# User Authentication
+# {{ page.title }}
 
 Red Dog can use standard HTTP authentication mechanisms to decide whether information should be served or not.
 

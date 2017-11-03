@@ -1,6 +1,6 @@
 ---
 title: Using Apache Shiro
-breadcrums: ["Documentation", "documentation.html", "Further Custom Configuration", "documentation.html#further-custom-configuration", "User authentication", "authentication.html"]
+breadcrums: ["Documentation", "documentation.html", "Further Custom Configuration", "documentation.html#further-custom-configuration", "User Authentication", "authentication.html"]
 wheretogo: ["Configuring response privacy", "response-privacy.html"]
 ---
 

@@ -1,7 +1,7 @@
 ---
 title: Rate Limit Filter
 breadcrums: ["Documentation", "documentation.html", "Further Custom Configuration", "documentation.html#further-custom-configuration"]
-wheretogo: ["User authentication", "authentication.html"]
+wheretogo: ["User Authentication", "authentication.html"]
 ---
 
 # {{ page.title }}
