@@ -1,9 +1,9 @@
 ---
-title: Rdap Renderer Layer
+title: Red Dog's Renderer Layer
 breadcrums: ["Documentation", "documentation.html", "Rendering response data", "documentation.html#rendering-response-data"]
 wheretogo: ["Create new renderers", "renderer-implementation.html"]
 ---
-# Red Dog Renderer Layer
+# {{ page.title }}
 
 ## Index
 
