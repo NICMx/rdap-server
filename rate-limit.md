@@ -1,10 +1,10 @@
 ---
-title: Built-in Rate Limit Filter
+title: Rate Limit Filter
 breadcrums: ["Documentation", "documentation.html", "Further Custom Configuration", "documentation.html#further-custom-configuration"]
 wheretogo: ["User authentication", "authentication.html"]
 ---
 
-# Built-in Rate Limit Filter
+# {{ page.title }}
 
 Some clients can monopolize too many RDAP server resources by making too many requests at once.
 
@@ -32,6 +32,3 @@ If the filter fulfills the implementer needs, the `web.xml` file must include at
 ```
 
 The [`mx.nic.rdap.server.filter.RateLimitFilter`](https://github.com/NICMx/rdap-server/blob/master/src/main/java/mx/nic/rdap/server/filter/RateLimitFilter.java) is already included within Red Dog's WAR. The `limit` init-param is the number of simultaneous requests allowed per IP address. This is all standard [filter](http://docs.oracle.com/cd/E13222_01/wls/docs81/webapp/web_xml.html#1015950) and [filter-mapping](http://docs.oracle.com/cd/E13222_01/wls/docs81/webapp/web_xml.html#1039330) syntax.
-
-[Back to the optional configuration index](documentation.html#further-configuration-optional).
-
