@@ -24,7 +24,7 @@ title: Documentation Index
 
 ### Option 3 - Using Red Dog's builtin schema
 
-1. [Implementing the Data Export Mechanism](migration.html)
+1. [Exporting a database to Red Dog's built-in schema](migration.html)
 1. [Configuring Red Dog's reference implementation](data-access-configuration.html)
 1. [Deploying `rdap-server` with the reference SQL Provider](server-install-option-3.html)
 

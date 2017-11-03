@@ -4,7 +4,7 @@ breadcrums: ["Documentation", "documentation.html", "Installation/Configuration"
 wheretogo: ["Configuring Red Dog's reference implementation", "data-access-configuration.html"]
 ---
 
-# Exporting a database to Red Dog's built-in schema
+# {{ page.title }}
 
 ## Introduction
 
