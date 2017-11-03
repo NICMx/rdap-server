@@ -1,10 +1,10 @@
 ---
-title: Help Response
+title: Configuring Red Dog's Help Response
 breadcrums: ["Documentation", "documentation.html", "Further Custom Configuration", "documentation.html#further-custom-configuration"]
 wheretogo: ["General behavior configuration", "behavior-configuration.html"]
 ---
 
-# Configuring Red Dog Help Response
+# {{ page.title }}
 
 RDAP servers are expected to provide metadata (such as terms of service, supported authentication methods and technical support contact) when [prompted for help](http://tools.ietf.org/html/rfc7482#section-3.1.6 "Help Path Segment Specification"). These responses are expected to look [like this](https://tools.ietf.org/html/rfc7483#section-7).
 
