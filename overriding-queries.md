@@ -1,10 +1,10 @@
 ---
-title: Overriding Red Dog Queries
+title: Overriding Red Dog's reference queries
 breadcrums: ["Documentation", "documentation.html", "Installation/Configuration", "documentation.html#installationconfiguration", "Option 2 - Overriding SQL Provider queries", "documentation.html#option-2---overriding-sql-provider-queries"]
 wheretogo: ["Configuring Red Dog reference implementation", "data-access-configuration.html"]
 ---
 
-# Overriding Red Dog Queries
+# {{ page.title }}
 
 ## Index
 
@@ -20,7 +20,7 @@ This document is a formal definition of the SQL Provider’s query interface. Us
 
 ## How to override queries
 
-The queries are expected to be found in a directory called `user_sql_files/`. This directory should be a collection of `.sql` files, mirroring the ones from the [default implementation](https://github.com/NICMx/rdap-sql-provider/tree/master/src/main/resources/META-INF/sql). The [installation document](server-install-option-2.html) states where this directory should be placed to be detected by Red Dog.
+The queries are expected to be found in a directory called `user_sql_files/` at the installation directory `WEB-INF/classes/` (which is created when the application is deployed). This directory should be a collection of `.sql` files, mirroring the ones from the [default implementation](https://github.com/NICMx/rdap-sql-provider/tree/master/src/main/resources/META-INF/sql). The [installation document](server-install-option-2.html) states where this directory should be placed to be detected by Red Dog.
 
 Except for queries referred as “catalogs”, isn't expected to override all the objects, and within each object isn't required to define every query. Only the necessary queries should be identified and provided. Red Dog will return an [HTTP 501 status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#501) if it receives a request whose result information depends of an undefined query.
 
