@@ -1,9 +1,9 @@
 ---
-title: RDAP Demo Server
+title: Red Dog Demo Server
 breadcrums: ["Documentation", "documentation.html", "Introduction", "documentation.html#introduction"]
 ---
 
-# RDAP Demo Server
+# {{ page.title }}
 
 ## Index
 
