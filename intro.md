@@ -10,7 +10,7 @@ wheretogo: ["Red Dog Demo Server", "demo-server.html"]
 
 1. [What is RDAP?](#what-is-rdap)
 1. [What is Red Dog?](#what-is-red-dog)	
-   1. [Option 1: Development of a DAI](#option-1-development-of-a-dai)
+   1. [Option 1: Full Data Access Implementation](#option-1-full-data-access-implementation)
    1. [Option 2: Overriding SQL Provider queries](#option-2-overriding-sql-provider-queries)
    1. [Option 3: Using Red Dog's builtin schema](#option-3-using-red-dogs-builtin-schema)
 
@@ -34,7 +34,7 @@ Red Dog is a free and open source Java implementation of an RDAP server carcass.
 
 As pictured, deploying Red Dog requires the development of an interface between your database and the servlets. This can be done in three different ways:
 
-### Option 1: Development of a DAI
+### Option 1: Full Data Access Implementation
 
 The [Data Access API](https://github.com/NICMx/rdap-data-access-api) (DAA) project is a module of Red Dog which mainly consists of [a set of Java interfaces](https://github.com/NICMx/rdap-data-access-api/tree/master/src/main/java/mx/nic/rdap/db/spi). The server queries a "Data Access Implementation" (DAI) --an implementation of these interfaces-- to access the data.
 
@@ -42,7 +42,7 @@ The [Data Access API](https://github.com/NICMx/rdap-data-access-api) (DAA) proje
 
 By rolling out your own DAI you can wrap your database to the server in any way you want. This can range from anything from direct queries to `Your Main Database`, or to a mirror of it, to queries to non-relational databases.
 
-The page [Data Access Layer](data-access-layer.html) has some directions that might help you get started in creating a DAI.
+The page [Implementing your Data Access Layer](data-access-layer.html) has some directions that might help you get started in creating a DAI.
 
 ### Option 2: Overriding SQL Provider queries
 

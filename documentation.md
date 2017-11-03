@@ -13,7 +13,7 @@ title: Documentation Index
 
 ### Option 1 - Full Data Access Implementation
 
-1. [Implementing your data access layer](data-access-layer.html)
+1. [Implementing your Data Access Layer](data-access-layer.html)
 1. [Deploying `rdap-server`](server-install-option-1.html)
 
 ### Option 2 - Overriding SQL Provider queries

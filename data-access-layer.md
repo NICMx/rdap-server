@@ -1,12 +1,12 @@
 ---
-title: Data Access Layer
+title: Implementing your Data Access Layer
 breadcrums: ["Documentation", "documentation.html", "Installation/Configuration", "documentation.html#installationconfiguration", "Option 1 - Full Data Access Implementation", "documentation.html#option-1---full-data-access-implementation"]
 wheretogo: ["Deploying rdap-server", "server-install-option-1.html"]
 ---
 
-# Data Access Layer
+# {{ page.title }}
 
-As stated at [Option 1: Development of a DAI](intro.html#option-1-development-of-a-dai), an implementation of the data access API will wrap whatever data storage is configured to the RDAP server.
+As stated at [Option 1: Full Data Access Implementation](intro.html#option-1-full-data-access-implementation), an implementation of the data access API will wrap whatever data storage is configured to the RDAP server.
 
 To create a custom implementation, the following classes must be provided:
 

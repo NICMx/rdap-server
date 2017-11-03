@@ -56,7 +56,7 @@ This table shows the specs of the property:
 
 ### `data-access-implementation`
 
-Data access implementation class that the server will use as principal whenever the classpath has two implementations. This is explained at [Data Access Layer](data-access-layer.html).
+Data access implementation class that the server will use as principal whenever the classpath has two implementations. This is explained at [Implementing your Data Access Layer](data-access-layer.html).
 
 | Required? | Type | Default | Example |
 |--------------------|--------|---------|-------------|
