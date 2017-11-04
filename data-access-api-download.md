@@ -4,9 +4,9 @@ title: RDAP Data Access API Download
 breadcrums: ["Download", "download.html"]
 ---
 
-# RDAP Data Access API Download
+# {{ page.title }}
 
-Interfaces that a Data Access Implementation should implement. More documentation [here](data-access-layer.html).
+Interfaces that a Data Access Implementation should implement. More documentation at page [Implementing your Data Access Layer](data-access-layer.html).
 
 - **Bold** marks the most recommended version(s).
 - Normal font signals recommended fallback versions in case the previous option fails you [bug reports welcomed](https://github.com/NICMx/rdap-data-access-api/issues).
