@@ -2,7 +2,7 @@
 title: Documentation Index
 ---
 
-# Documentation
+# {{ page.title }}
 
 ## Introduction
 

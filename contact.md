@@ -3,7 +3,7 @@ category: Contact
 title: Contact
 ---
 
-# Contact
+# {{ page.title }}
 
 - <reddog-public@nic.mx> is a mail list intended for general public discussion and news. Questions, requests and comments are welcomed.  
 Registration to this list can be done [here](https://mail-lists.nic.mx/listas/listinfo/reddog-public).

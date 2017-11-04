@@ -1,10 +1,9 @@
 ---
-layout: default
 category: About
 title: About
 ---
 
-# About
+# {{ page.title }}
 
 Red Dog is an Open Source RDAP Server implementation, funded and developed by [NIC Mexico](http://www.nic.mx/).
 
