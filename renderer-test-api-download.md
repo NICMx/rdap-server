@@ -4,7 +4,7 @@ title: RDAP Renderer Test API Download
 breadcrums: ["Download", "download.html"]
 ---
 
-# RDAP Renderer Test API Download
+# {{ page.title }}
 
 API from which renderer implementations are expected to use in its unit tests. More documentation at [Create a new RDAP-renderer implementation](renderer-implementation.html).
 

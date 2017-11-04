@@ -4,7 +4,7 @@ title: RDAP Renderer API Download
 breadcrums: ["Download", "download.html"]
 ---
 
-# RDAP Renderer API Download
+# {{ page.title }}
 
 Interface from which renderer implementations are expected to implement. More documentation at [Red Dog's Renderer Layer](renderer-layer.html).
 

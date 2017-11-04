@@ -1,12 +1,12 @@
 ---
 category: Download
-title: Red Dog JSON Renderer Download
+title: RDAP JSON Renderer Download
 breadcrums: ["Download", "download.html"]
 ---
 
-# Red Dog JSON Renderer Download
+# {{ page.title }}
 
-Red Dog's reference JSON renderer implementation. Render the output in JSON format as indicated by RFC7483.
+Red Dog's reference JSON renderer implementation. Renders the output in JSON format as indicated by [RFC 7483](https://tools.ietf.org/html/rfc7483).
 
 - **Bold** marks the most recommended version(s).
 - Normal font signals recommended fallback versions in case the previous option fails you [bug reports welcomed](https://github.com/NICMx/rdap-json-renderer/issues).

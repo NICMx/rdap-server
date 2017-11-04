@@ -1,12 +1,12 @@
 ---
 category: Download
-title: Red Dog Text Renderer Download
+title: RDAP Text Renderer Download
 breadcrums: ["Download", "download.html"]
 ---
 
-# Red Dog Text Renderer Download
+# {{ page.title }}
 
-Red Dog's reference Text renderer implementation. Render the output in Text format similar to WHOIS responses.
+Red Dog's reference Text renderer implementation. Renders the output in Text format similar to WHOIS responses.
 
 - **Bold** marks the most recommended version(s).
 - Normal font signals recommended fallback versions in case the previous option fails you [bug reports welcomed](https://github.com/NICMx/rdap-text-renderer/issues).
