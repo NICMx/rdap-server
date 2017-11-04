@@ -1,10 +1,10 @@
 ---
 category: Download
-title: RDAP SQL provider Download
+title: RDAP SQL Provider Download
 breadcrums: ["Download", "download.html"]
 ---
 
-# RDAP SQL provider Download
+# {{ page.title }}
 
 A Data Access Implementation, intended to yield data to the server by means of queries to a SQL database. Includes default queries to a predefined MySQL database.
 
