@@ -74,7 +74,7 @@ This table shows the specs of the property:
 
 ### `max_number_result_authenticated_user`
 
-Maximum number or results that will be listed within responses to search requests made by authenticated users. This property indicates the default value for all authenticated users.
+Maximum number of results that will be listed within responses to search requests made by authenticated users. This property indicates the default value for all authenticated users.
 
 If the implementer wishes to customize the max number of results per user (eg. User A can see a max of 50 results, but user B can only see 30 results), the attribute `maxSearchResults` of the object [`RdapUser`](https://github.com/NICMx/rdap-data-access-api/blob/master/src/main/java/mx/nic/rdap/db/RdapUser.java) will be useful to achieve that.
 
@@ -145,6 +145,7 @@ The property is used to relieve the cost of searches that could be expensive to 
 | false          | https://example.com/rdap/domains?name=d\*ma\*     | ![No](img/red_x.svg) |
 | true           | https://example.com/rdap/domains?name=d\*ma\*     | ![Yes](img/green_bkg_check.svg)       |
 | true           | https://example.com/rdap/domains?name=doma\*.co\* | ![Yes](img/green_bkg_check.svg)       |
+| true           | https://example.com/rdap/domains?name=d\*ma\*.\*o\* | ![Yes](img/green_bkg_check.svg)       |
 
 This table shows the specs of the property:
 
@@ -165,6 +166,7 @@ The following table shows some examples on how this flag works:
 | false          | https://example.com/rdap/domains?name=doma\*      | ![Yes](img/green_bkg_check.svg)       |
 | false          | https://example.com/rdap/domains?name=dom\*n      | ![No](img/red_x.svg) |
 | false          | https://example.com/rdap/domains?name=doma\*.co\* | ![Yes](img/green_bkg_check.svg)       |
+| false          | https://example.com/rdap/domains?name=dom\*n.c\*m | ![No](img/green_bkg_check.svg)       |
 | true           | https://example.com/rdap/domains?name=dom\*n      | ![Yes](img/green_bkg_check.svg)       |
 | true           | https://example.com/rdap/domains?name=dom\*n.co\* | ![Yes](img/green_bkg_check.svg)       |
 
@@ -177,6 +179,8 @@ This table shows the specs of the property:
 ### `user_roles`
 
 List of strings representing custom user roles that can be used to configure [privacy settings](response-privacy.html). The roles defined here **MUST NOT** have any of these values: `any`, `none`, `owner`, or `authenticated`; since those are reserved words used at privacy settings.
+
+Since each role is expected to be a String, any value (except for the reserved words) that suites the implementer needs can be used, still it's **recommended** to use alphanumeric values. When using roles, its value is used and validated as case insensitive.
 
 This table shows the specs of the property:
 
