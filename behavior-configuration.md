@@ -9,15 +9,15 @@ wheretogo: ["Rate Limit Filter", "rate-limit.html"]
 ## Index
 
 1. [Introduction](#introduction)
-1. [Keys](#keys)
-   1. [language](#language)
-   1. [minimum_search_pattern_length](#minimum_search_pattern_length)
-   1. [max_number_result_authenticated_user](#max_number_result_authenticated_user)
-   1. [max_number_result_unauthenticated_user](#max_number_result_unauthenticated_user)
-   1. [owner_roles_*](#owner_roles_)
-   1. [allow_multiple_search_wildcards](#allow_multiple_search_wildcards)
-   1. [allow_search_wildcard_anywhere](#allow_search_wildcard_anywhere)
-   1. [user_roles](#user_roles)
+1. [Configuring `configuration.properties`](#configuring-configurationproperties)
+   1. [`language`](#language)
+   1. [`minimum_search_pattern_length`](#minimum_search_pattern_length)
+   1. [`max_number_result_authenticated_user`](#max_number_result_authenticated_user)
+   1. [`max_number_result_unauthenticated_user`](#max_number_result_unauthenticated_user)
+   1. [`owner_roles_*`](#owner_roles_)
+   1. [`allow_multiple_search_wildcards`](#allow_multiple_search_wildcards)
+   1. [`allow_search_wildcard_anywhere`](#allow_search_wildcard_anywhere)
+   1. [`user_roles`](#user_roles)
 
 
 ## Introduction
@@ -40,7 +40,7 @@ Red Dog's behavior can be configured to satisfy whatever needs the implementer h
 
 The next section will explain each of the properties that can be configured to customize Red Dog's server behavior.
 
-## Keys
+## Configuring `configuration.properties`
 
 The `configuration.properties` file has several properties, each one with a specific task. In this section those properties and its expected behavior will be explained.
 

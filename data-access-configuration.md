@@ -9,13 +9,13 @@ wheretogo: ["Deploying rdap-server with the customized SQL Provider", "server-in
 ## Index
 
 1. [Introduction](#introduction)
-1. [Keys](#keys)
-   1. [schema](#schema)
-   1. [data-access-implementation](#data-access-implementation)
-   1. [zones](#zones)
-   1. [is_reverse_ipv4_enabled](#is_reverse_ipv4_enabled)
-   1. [is_reverse_ipv6_enabled](#is_reverse_ipv6_enabled)
-   1. [nameserver_as_domain_attribute](#nameserver_as_domain_attribute)
+1. [Configuring `data-access.properties`](#configuring-data-accessproperties)
+   1. [`schema`](#schema)
+   1. [`data-access-implementation`](#data-access-implementation)
+   1. [`zones`](#zones)
+   1. [`is_reverse_ipv4_enabled`](#is_reverse_ipv4_enabled)
+   1. [`is_reverse_ipv6_enabled`](#is_reverse_ipv6_enabled)
+   1. [`nameserver_as_domain_attribute`](#nameserver_as_domain_attribute)
 
 
 ## Introduction
@@ -38,7 +38,7 @@ Red Dog offers a reference data access implementation: **SQL Provider** (git pro
 
 The next section will explain each of the properties that can be configured to customize Red Dog's reference implementation behavior.
 
-## Keys
+## Configuring `data-access.properties`
 
 The `data-access.properties` file has several properties, each one with a specific task. In this section those properties and its expected behavior will be explained.
 
