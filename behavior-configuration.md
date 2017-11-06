@@ -62,9 +62,9 @@ Minimum allowed length for search patterns. Any request where the search pattern
 
 | Request                                 | Valid?                                                                     | 
 |-----------------------------------------|----------------------------------------------------------------------------|
-| https://foo.bar/rdap/domains?name=dumm* | ![Yes](img/green_bkg_check.svg)                                                         |
-| https://foo.bar/rdap/domains?name=dum*  | ![No](img/red_x.svg) search pattern length is 4                                             |
-| https://foo.bar/rdap/domains?name=dum** | ![No](img/red_x.svg) search pattern length is 4 (consecutive wildcards are treated as one)  |
+| https://example.com/rdap/domains?name=dumm* | ![Yes](img/green_bkg_check.svg)                                                         |
+| https://example.com/rdap/domains?name=dum*  | ![No](img/red_x.svg) search pattern length is 4                                             |
+| https://example.com/rdap/domains?name=dum** | ![No](img/red_x.svg) search pattern length is 4 (consecutive wildcards are treated as one)  |
 
 This table shows the specs of the property:
 
@@ -140,11 +140,11 @@ The property is used to relieve the cost of searches that could be expensive to 
 
 | Property value | Search request                                | Valid?                   |
 |----------------|---------------------------------------------  |--------------------------|
-| false          | https://foo.bar/rdap/domains?name=doma\*      | ![Yes](img/green_bkg_check.svg)       |
-| false          | https://foo.bar/rdap/domains?name=dom\*n.co\* | ![Yes](img/green_bkg_check.svg)       |
-| false          | https://foo.bar/rdap/domains?name=d\*ma\*     | ![No](img/red_x.svg) |
-| true           | https://foo.bar/rdap/domains?name=d\*ma\*     | ![Yes](img/green_bkg_check.svg)       |
-| true           | https://foo.bar/rdap/domains?name=doma\*.co\* | ![Yes](img/green_bkg_check.svg)       |
+| false          | https://example.com/rdap/domains?name=doma\*      | ![Yes](img/green_bkg_check.svg)       |
+| false          | https://example.com/rdap/domains?name=dom\*n.co\* | ![Yes](img/green_bkg_check.svg)       |
+| false          | https://example.com/rdap/domains?name=d\*ma\*     | ![No](img/red_x.svg) |
+| true           | https://example.com/rdap/domains?name=d\*ma\*     | ![Yes](img/green_bkg_check.svg)       |
+| true           | https://example.com/rdap/domains?name=doma\*.co\* | ![Yes](img/green_bkg_check.svg)       |
 
 This table shows the specs of the property:
 
@@ -162,11 +162,11 @@ The following table shows some examples on how this flag works:
 
 | Property value | Search request                              | Valid?                   |
 |----------------|---------------------------------------------|--------------------------|
-| false          | https://foo.bar/rdap/domains?name=doma\*      | ![Yes](img/green_bkg_check.svg)       |
-| false          | https://foo.bar/rdap/domains?name=dom\*n      | ![No](img/red_x.svg) |
-| false          | https://foo.bar/rdap/domains?name=doma\*.co\* | ![Yes](img/green_bkg_check.svg)       |
-| true           | https://foo.bar/rdap/domains?name=dom\*n      | ![Yes](img/green_bkg_check.svg)       |
-| true           | https://foo.bar/rdap/domains?name=dom\*n.co\* | ![Yes](img/green_bkg_check.svg)       |
+| false          | https://example.com/rdap/domains?name=doma\*      | ![Yes](img/green_bkg_check.svg)       |
+| false          | https://example.com/rdap/domains?name=dom\*n      | ![No](img/red_x.svg) |
+| false          | https://example.com/rdap/domains?name=doma\*.co\* | ![Yes](img/green_bkg_check.svg)       |
+| true           | https://example.com/rdap/domains?name=dom\*n      | ![Yes](img/green_bkg_check.svg)       |
+| true           | https://example.com/rdap/domains?name=dom\*n.co\* | ![Yes](img/green_bkg_check.svg)       |
 
 This table shows the specs of the property:
 
