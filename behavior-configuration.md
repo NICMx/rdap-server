@@ -142,6 +142,7 @@ The property is used to relieve the cost of searches that could be expensive to 
 |----------------|---------------------------------------------  |--------------------------|
 | false          | https://example.com/rdap/domains?name=doma\*      | ![Yes](img/green_bkg_check.svg)       |
 | false          | https://example.com/rdap/domains?name=dom\*n.co\* | ![Yes](img/green_bkg_check.svg)       |
+| false          | https://example.com/rdap/domains?name=d\*ma\*.\*o\* | ![No](img/red_x.svg)       |
 | false          | https://example.com/rdap/domains?name=d\*ma\*     | ![No](img/red_x.svg) |
 | true           | https://example.com/rdap/domains?name=d\*ma\*     | ![Yes](img/green_bkg_check.svg)       |
 | true           | https://example.com/rdap/domains?name=doma\*.co\* | ![Yes](img/green_bkg_check.svg)       |
@@ -166,7 +167,7 @@ The following table shows some examples on how this flag works:
 | false          | https://example.com/rdap/domains?name=doma\*      | ![Yes](img/green_bkg_check.svg)       |
 | false          | https://example.com/rdap/domains?name=dom\*n      | ![No](img/red_x.svg) |
 | false          | https://example.com/rdap/domains?name=doma\*.co\* | ![Yes](img/green_bkg_check.svg)       |
-| false          | https://example.com/rdap/domains?name=dom\*n.c\*m | ![No](img/green_bkg_check.svg)       |
+| false          | https://example.com/rdap/domains?name=dom\*n.c\*m | ![No](img/red_x.svg)       |
 | true           | https://example.com/rdap/domains?name=dom\*n      | ![Yes](img/green_bkg_check.svg)       |
 | true           | https://example.com/rdap/domains?name=dom\*n.co\* | ![Yes](img/green_bkg_check.svg)       |
 
