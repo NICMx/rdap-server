@@ -38,6 +38,19 @@ public class CustomSecurityRealm extends JdbcRealm {
 
 	public CustomSecurityRealm() {
 		super();
+		// NO SALT by default
+		this.saltStyle = SaltStyle.NO_SALT;
+
+		// Uncomment if a SALT is used and stored in database (the 'authenticationQuery'
+		// must be set to return the salt of the password, eg. "SELECT rus_pass,
+		// rus_pass_salt FROM rdap_user WHERE rus_name = ?").
+		//this.saltStyle = SaltStyle.COLUMN;
+
+		// Uncomment if a SALT is used and the salt will be loaded from wherever you
+		// need. If the salt is the same as the username (default behavior) just
+		// uncomment the line; if the salt is different then overwrite the method
+		// "JdbcRealm.getSaltForUser(String)" and uncomment the line.
+		//this.saltStyle = SaltStyle.EXTERNAL;
 	}
 
 	@Override
