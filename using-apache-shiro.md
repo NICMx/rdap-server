@@ -132,6 +132,8 @@ securityManager.realms = $customRealm
 
 As the reader may note, the users are loaded from a database and also is expected that its passwords are stored as plain text. This behavior can be modified to suite other needs (probably some needs related to security aspects). If the reader wishes to learn more about this, probably [Apache Shiro Configuration](https://shiro.apache.org/configuration.html#apache-shiro-configuration) will be of help, or also the section [More documentation](#more-documentation) could be visited.
 
+> ![Info](img/bulb.svg) Apache Shiro simplifies and encourage the use of hashed passwords, just as seen in its docs "[HashedCredentialsMatcher](https://shiro.apache.org/static/1.4.0/apidocs/org/apache/shiro/authc/credential/HashedCredentialsMatcher.html)" and "[Encrypting Passwords](https://shiro.apache.org/configuration.html#encrypting-passwords)". To aid the implementer in the use and configuration of hashed passwords, the [`WEB-INF/shiro.ini`](https://github.com/NICMx/rdap-server/blob/master/src/main/webapp/WEB-INF/shiro.ini#L58) file has some comments and examples about the subject.
+
 #### Basic authentication
 
 The server supports [Basic Authentication](https://tools.ietf.org/html/rfc2617#section-2) using the [BasicHttpAuthenticationFilter](https://shiro.apache.org/static/1.4.0/apidocs/org/apache/shiro/web/filter/authc/BasicHttpAuthenticationFilter.html) filter provided by Apache Shiro. Currently only 2 attributes of the filter are configured:
@@ -149,6 +151,13 @@ authcBasic.enabled = false
 ```
 
 This filter works in conjunction with the [users information](#users-information) configuration, since the information received from the Authorization HTTP Request header will pass through this filter so that it can authenticate the user. In order to do the authentication, the filter will use the realm set at `securityManager.realms`; here's where Apache Shiro simplifies things, since all the authentication process is handled internally.
+
+> ![Warning](img/warning.svg) WARNING: By default Apache Shiro handles users sessions, this shouldn't be used in a REST service since by nature it should be stateless. To avoid this behavior a `DefaultWebSessionManager` can be used disabling the use of a session cookie (learn more at [Native Sessions - DefaultWebSessionManager](https://shiro.apache.org/web.html#defaultwebsessionmanager)). The `WEB-INF/shiro.ini` file should have the following lines uncommented:
+> ```ini
+> sessionManager = org.apache.shiro.web.session.mgt.DefaultWebSessionManager
+> securityManager.sessionManager = $sessionManager
+> securityManager.sessionManager.sessionIdCookieEnabled = false
+> ```
 
 #### Restrict access
 
