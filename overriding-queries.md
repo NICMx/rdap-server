@@ -178,7 +178,7 @@ The following table describes each alias and value type that the queries must re
 |iad_id|Long|No|Ip address id|123|
 |nse_id|Long|No|Nameserver's id (Refer to [Nameserver.sql](#nameserversql))|123|
 |iad_type|Integer|No|	Ip address type (4 or 6)|4|
-|iad_value|	String|	No|	Ip address decimal value|4204805978|
+|iad_value|	String|	No|	Ip address v4 or v6 format|192.168.1.254 or 2001::FFFF|
 
 The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/IpAddress.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/IpAddress.sql).
 
@@ -193,10 +193,10 @@ The following table describes each alias and value type that the queries must re
 |:---------|:--------:|:---------:|:----------|:-----:|
 |ine_id|	Long|	No|	Ip network's id|	123|
 |ine_handle|	String|	No|	An RIR/DNR unique identifier of the Ip network registration|	XXXXX|
-|ine_start_address_up|	String|	Yes|	The up part of the starting IP address of the network|	2306144275399704592|
-|ine_start_address_down|	String|	Yes|	The down part of the starting IP address of the network|	0|
-|ine_end_address_up|	String|	Yes|	The up part of the ending IP address of the network|	2306144275399704592|
-|ine_end_address_down|	String|	Yes|	The down part of the ending IP address of the network|	18446744073709551615|
+|ine_start_address_up|	Unsigned Long (64 bits) or String(only numbers)|	No(if this represents an IPv6)|	**IPv6**: The "up/left part" (representing the first 64 bits in decimal format of an IPv6 address) of the starting IP address of the network|	2306144275399704592 (It is transform to the first 64 bits of an IPv6 Address: 2001:1200:0000:0010)|
+|ine_start_address_down|	Unsigned Long (64 bits) or String(only numbers)|	No|	**IPv6**: The "down/right part" (representing the last 64 bits in decimal format of an IPv6 address) of the starting IP address of the network. **IPv4**: The starting IPv4 Address of the network in decimal format.|	0 (**IPv6**: It is transform later in code to the last 64 bits of an IPv6 Address: 0000:0000:0000:0000, **IPv4**: It is transform later in code to an IPv4 address: 0.0.0.0)|
+|ine_end_address_up|	Unsigned Long (64 bits) or String(only numbers)|	No(if this represents an IPv6)|	**IPv6**: The "up/left part" (representing the first 64 bits in decimal format of an IPv6 address) of the ending IP address of the network|	2306144275399704592 (It is transform to the first 64 bits of an IPv6 Address: 2001:1200:0000:0010)|
+|ine_end_address_down|	Unsigned Long (64 bits) or String(only numbers)|	No|	**IPv6**: The "down/right part" (representing the last 64 bits in decimal format of an IPv6 address) of the ending IP address of the network. **IPv4**: The ending IPv4 Address of the network in decimal format.|	65535 (**IPv6**: It is transform later in code to the last 64 bits of an IPv6 Address: 0000:0000:0000:FFFF, **IPv4**: It is transform later in code to an IPv4 address: 0.0.255.255)|
 |ine_name|	String|	Yes|	An identifier assigned to the network registration by the registration holder|	some_name|
 |ine_type|	String|	Yes|	A string containing a RIR/DNR specific classification of the Network|	private|
 |ine_port43|	String|	Yes|	A string containing the fully qualified host name or IP address of the WHOIS server where the Ip network instance may be found.	|whois.example.com|
@@ -402,7 +402,7 @@ The following table describes each alias and value type that the queries must re
 |Alias name|Value Type|Allows Null|Description|Example|
 |:---------|:--------:|:---------:|:----------|:-----:|
 |vpi_id|	Long|	No|	Postal info's id|	123|
-|vca_id|	String|	Yes|	Vcard's id (Refer to [VCard.sql](#vcardsql))|	Joe Jobs|
+|vca_id|	Long|	No|	Vcard's id (Refer to [VCard.sql](#vcardsql))|	123|
 |vpi_type|	String|	Yes|	Postal info's type|	local|
 |vpi_country|	String|	Yes|	Country|	Mexico|
 |vpi_city|	String|	Yes|	City|	Juarez|
