@@ -8,6 +8,7 @@ wheretogo: ["Create a new RDAP-renderer implementation", "renderer-implementatio
 ## Index
 
 1. [Introduction](#introduction)
+1. [Adding a renderer-implementation](#adding-a-renderer-implementation)
 1. [Configuring `renderers.properties`](#configuring-renderersproperties)
    1. [`renderers`](#renderers)
    1. [`{renderer_name}.class`](#renderer_nameclass)
@@ -20,16 +21,51 @@ wheretogo: ["Create a new RDAP-renderer implementation", "renderer-implementatio
 
 The Red Dog RDAP server, after forming the response of a user request, delegates the responsibility of rendering the result to an implementation of the [**rdap-renderer-api**](https://github.com/NICMx/rdap-renderer-api).
 
-The implementation is chosen based on the MIME type (Content-type) requested by the user at the time of the request. This implementation(s) should be configured at [`WEB-INF/renderer.properties`](https://github.com/NICMx/rdap-server/blob/master/src/main/webapp/WEB-INF/renderers.properties) configuration file.
+The implementation is chosen based on the MIME type (Content-type) requested by the user at the time of the request. This implementation(s) should be configured at [`WEB-INF/renderers.properties`](https://github.com/NICMx/rdap-server/blob/master/src/main/webapp/WEB-INF/renderers.properties) configuration file.
 
-First, the server gets the MIME type requested by the user, it is checked in the `WEB-INF/renderer.properties` configuration if the MIME type requested by the user is mapped to some renderer implementation.
+First, the server gets the MIME type requested by the user, it is checked in the `WEB-INF/renderers.properties` configuration if the MIME type requested by the user is mapped to some renderer implementation.
 
 If the MIME type is mapped, the response will be rendered with the configured implementation, otherwise, if the MIME type requested by the user does not exist in the configuration, a default implementation that has been configured for any unregistered MIME type is chosen.
 
-The Red Dog team offers two reference implementations of **rdap-renderer-api**:
+The Red Dog team creates two reference implementations of **rdap-renderer-api**:
 
 + __[rdap-json-renderer](https://github.com/NICMx/rdap-json-renderer)__, this renderer prints the output of the requests in the JSON format as indicated by [RFC 7483](https://tools.ietf.org/html/rfc7483).
+	+ This renderer comes loaded and configured on the RDAP-server. 
 + __[rdap-text-renderer](https://github.com/NICMx/rdap-text-renderer)__, this renderer prints the output in plain text, in a format similar to WHOIS responses.
+	+ You need to add the jar and configure this renderer in order to use it.
+	
+## Adding a renderer-implementation
+
+Below are the steps to add a new renderer to the RDAP server.
+
+In this case, we will add, the implementation offered by the Red Dog team, the text-renderer, also these steps, would be the same to add any other implementation.
+
+1. Obtain the JAR of a renderer implementation.
+1. Copy the JAR of the renderer implementation inside the RDAP-server application, in the "WEB-INF/lib" folder.
+1. Configure the file **renderers.properties** so that the RDAP-server detects the new renderer.
+	1. Add to the property "**renderers**" the name of the new renderer to be added, in this case "**text**".
+	1. Add the "**text.class**" property with the following value "**mx.nic.rdap.renderer.text.TextRenderer**" which is the class that implements the Renderer interface.
+	1. Add the "**text.main_mime**" property with the value "**text/plain**" so that the text renderer responds to requests that request that MIME type.
+	1. As an optional configuration we can configure the "**text.mimes**" property with other MIME Types that the Text renderer will accept.
+	
+To know the meaning of each property in the renderers.properties file, click [here](#configuring-renderersproperties)
+
+The following shows how the renderers.properties file would be with the text-renderer and the json-renderer configured.
+
+```ini
+renderers = json, text
+
+json.class = mx.nic.rdap.renderer.json.JsonRenderer
+json.main_mime = application/rdap+json
+json.mimes = application/json
+
+text.class = mx.nic.rdap.renderer.text.TextRenderer
+text.main_mime = text/plain
+
+default_renderer = json
+
+```
+
 
 ## Configuring `renderers.properties`
 
