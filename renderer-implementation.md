@@ -13,7 +13,7 @@ It is necessary to implement all the functions of the interface. Each function s
 
 Each function receives as a parameter a result, which can be of type RequestResponse&lt;T&gt;, SearchResponse&lt;T&gt;, ExceptionResponse and HelpResponse, in addition it receives a PrintWriter.
 
-- The __RequestResponse&lt;T&gt;__ parameter contains information about a specific object, these &lt;T&gt; objects are the objects defined in the RDAP (entity, domain, ns, autnum, ip network) protocol.
+- The __RequestResponse&lt;T&gt;__ parameter contains information about a specific object, these &lt;T&gt; objects are the objects defined in the RDAP protocol (entity, domain, ns, autnum, ip network).
 
 - The parameter of type __SearchResponse&lt;T&gt;__, contains the result of a search performed by a user to the server. The result&lt;T&gt; can be a list of entities, domains, or nameservers.
 
