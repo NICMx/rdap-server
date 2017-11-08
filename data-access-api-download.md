@@ -16,7 +16,8 @@ Interfaces that a Data Access Implementation should implement. More documentatio
 
 |Download |SHA512    |MD5    |Source code(GitHub)|
 |:--------|:---------|:------|:---------|
-|[**1.1.0**](https://github.com/NICMx/releases/raw/master/RedDog/rdap-data-access-api-1.1.0.jar)|[SHA512](https://github.com/NICMx/releases/raw/master/RedDog/rdap-data-access-api-1.1.0.jar.sha)|[MD5](https://github.com/NICMx/releases/raw/master/RedDog/rdap-data-access-api-1.1.0.jar.md5)|[Link](https://github.com/NICMx/rdap-data-access-api/tree/v1.1.0)|
+|[**1.1.1**](https://github.com/NICMx/releases/raw/master/RedDog/rdap-data-access-api-1.1.1.jar)|[SHA512](https://github.com/NICMx/releases/raw/master/RedDog/rdap-data-access-api-1.1.1.jar.sha)|[MD5](https://github.com/NICMx/releases/raw/master/RedDog/rdap-data-access-api-1.1.1.jar.md5)|[Link](https://github.com/NICMx/rdap-data-access-api/tree/v1.1.1)|
+|[~~1.1.0~~](https://github.com/NICMx/releases/raw/master/RedDog/rdap-data-access-api-1.1.0.jar)|[SHA512](https://github.com/NICMx/releases/raw/master/RedDog/rdap-data-access-api-1.1.0.jar.sha)|[MD5](https://github.com/NICMx/releases/raw/master/RedDog/rdap-data-access-api-1.1.0.jar.md5)|[Link](https://github.com/NICMx/rdap-data-access-api/tree/v1.1.0)|
 
 ## 1.0
 
