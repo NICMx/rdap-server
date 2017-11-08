@@ -98,6 +98,19 @@ This table shows the specs of the property:
 
 Boolean flag to indicate if **Nameservers** are used as **Domain** object attributes. If the **Nameservers** are used as attributes, then any search by a specific **Nameserver** will be rejected, and the **Nameservers** related to a **Domain** object won’t have nested objects (eg. Links, Status, Events, etc.).
 
+The following table shows some examples on what's expected from the implementation depending on the `nameserver_as_domain_attribute` value (assuming that domain _example.com_ exists and has related nameservers):
+
+| Property value | Search request | Expected response (HTTP response code and content) |
+|----------------|---------------------------------------------  |--------------------------|
+| false | https://example.com/rdap/domain/example.com | ![Yes](img/green_bkg_check.svg) **200**, domain object with nameservers **including** all nameserver attributes |
+| false | https://example.com/rdap/domains?name=example.com | ![Yes](img/green_bkg_check.svg) **200**, domain(s) object(s) with nameservers **including** all nameserver attributes |
+| false | https://example.com/rdap/nameserver/ns1.example.com | ![Yes](img/green_bkg_check.svg) **200**, nameserver object with all its attributes |
+| false | https://example.com/rdap/nameservers?name=ns1.example.com | ![Yes](img/green_bkg_check.svg) **200**, nameserver(s) object(s) with all its attributes |
+| true | https://example.com/rdap/domain/example.com | ![Yes](img/green_bkg_check.svg) **200**, domain object with nameservers **excluding** the nameserver attributes: ipAddresses, status, remarks, links, events, and entities |
+| true | https://example.com/rdap/domains?name=example.com | ![Yes](img/green_bkg_check.svg) **200**, domain(s) object(s) with nameservers **excluding** the nameserver attributes: ipAddresses, status, remarks, links, events, and entities |
+| true | https://example.com/rdap/nameserver/ns1.example.com | ![No](img/red_x.svg) **501**, error response with description "This server does not implement nameservers requests." |
+| true | https://example.com/rdap/nameservers?name=ns1.example.com | ![No](img/red_x.svg) **501**, error response with description "This server does not implement nameservers requests." |
+
 This table shows the specs of the property:
 
 | Required? | Type | Default | Example |
