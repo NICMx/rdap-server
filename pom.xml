@@ -4,7 +4,7 @@
 
 	<groupId>mx.nic.rdap</groupId>
 	<artifactId>rdap-server</artifactId>
-	<version>1.1.2</version>
+	<version>1.2.0</version>
 	<packaging>war</packaging>
 	<name>RDAP Server</name>
 
@@ -28,7 +28,7 @@
 		<dependency>
 			<groupId>mx.nic.rdap</groupId>
 			<artifactId>rdap-data-access-api</artifactId>
-			<version>1.1.0</version>
+			<version>1.1.1</version>
 		</dependency>
 
 		<dependency>
