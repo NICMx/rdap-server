@@ -10,5 +10,5 @@ If classpath only contains one implementation and it includes a [service provide
 
 	echo "data-access-implementation = mx.nic.rdap.sample.SampleHub" > WEB-INF/data-access.properties
 
-If the implementation requires configuration, now would be a good time to tweak it by adding more key-values to `data-access.properties`. This file is rdap-server's expected [data access configuration file](https://github.com/NICMx/rdap-data-access-api/blob/v1.1.0/src/main/java/mx/nic/rdap/db/spi/DataAccessImplementation.java#L29).
+If the implementation requires configuration, now would be a good time to tweak it by adding more key-values to `data-access.properties`. This file is rdap-server's expected [data access configuration file](https://github.com/NICMx/rdap-data-access-api/blob/v{{ site.latest-data-access-api }}/src/main/java/mx/nic/rdap/db/spi/DataAccessImplementation.java#L29).
 
