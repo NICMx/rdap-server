@@ -21,7 +21,7 @@ The documentation can be seen [here](https://www.reddog.mx/documentation.html).
 
 ## Contact
 
-Any comment or feedback is welcomed, issues can be reported at Red Dog's [Github corner](https://github.com/NICMx/rdap-server).
+Any comment or feedback is welcomed, issues can be reported at Red Dog's [Github corner](https://github.com/NICMx/rdap-server/issues).
 
 Visit our [contact page](https://www.reddog.mx/contact.html) to get more information.
 
