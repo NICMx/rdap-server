@@ -54,19 +54,25 @@ As a demo version, this server has limited features compared to the ones defined
 + Domain query`*`: [`domain/goldfish.com`](http://localhost:8080/rdap-server/domain/goldfish.com)
 + Entity query: [`entity/mr_fish`](http://localhost:8080/rdap-server/entity/mr_fish)
 + Nameserver query: [`nameserver/ns2.chopsuey.net`](http://localhost:8080/rdap-server/nameserver/ns2.chopsuey.net)
-+ Domains search`*`: [`domains?name=cone*`](http://localhost:8080/rdap-server/domains?name=p*)
-+ Entities search: [`entities?handle=don_*`](http://localhost:8080/rdap-server/entities?handle=mr*)
-+ Nameservers search: [`nameservers?name=ns1.*`](http://localhost:8080/rdap-server/nameservers?name=ns1*)
++ Domains search`*`: [`domains?name=cone*`](http://localhost:8080/rdap-server/domains?name=cone*)
++ Entities search: [`entities?handle=don_*`](http://localhost:8080/rdap-server/entities?handle=don_*)
++ Nameservers search: [`nameservers?name=ns1.*`](http://localhost:8080/rdap-server/nameservers?name=ns1.*)
++ Help request: [`help`](http://localhost:8080/rdap-server/help)
 
 `*` Because of the shipped configuration of `zones` (see below), only **'.com'** and **'.com.example'** domains will yield success.
 
 ## Available configuration
 
-`WEB-INF/configuration.properties` is Red Dog's global configuration file. Since the server is running, you might play around with some fields if you want. You can find documentation at page [Configuring Red Dog's Server Behavior](behavior-configuration.html).
+Although this a demo version with limited features, some configurations can be customized so that you can learn more about the server behavior. The following list mentions the files that can be used to configure the demo server:
+* `WEB-INF/configuration.properties` is Red Dog's global configuration file, to tweak it learn more at [Configuring Red Dog's Server Behavior](behavior-configuration.html).
+* `WEB-INF/data-access.properties` is the implementation configuration file, to tweak it learn more at [Configuring Red Dog's reference implementation](data-access-configuration.html).
+* `WEB-INF/shiro.ini` is Apache Shiro's configuration file used by Red Dog, useful for security settings such as: resources protection, user authentication, user roles, etc. To tweak it learn more at [Using Apache Shiro](using-apache-shiro.html).
+* `WEB-INF/privacy` is the folder where privacy settings can be configured, goes along with security configurations. To tweak it learn more at [Configuring Response Privacy](response-privacy.html).
+* `WEB-INF/notices/help.xml` is the file where the 'help' response can be customized, to tweak it learn more at [Configuring Red Dog's Help Response](help-response.html).
 
-Notice that tweaks to this file require a server restart to go live.
+> ![Warning](img/warning.svg) Notice that tweaks to any of these files require a server restart to go live.
 
-## Dummy data 
+## Dummy data
 
 The demo database ships with the following test data:
 
