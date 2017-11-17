@@ -2,6 +2,8 @@ package mx.nic.rdap.server.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.PriorityQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,14 +18,17 @@ import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.IpNetwork;
 import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.RdapObject;
+import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.exception.http.HttpException;
 import mx.nic.rdap.renderer.Renderer;
 import mx.nic.rdap.renderer.object.ExceptionResponse;
 import mx.nic.rdap.renderer.object.HelpResponse;
+import mx.nic.rdap.renderer.object.RdapResponse;
 import mx.nic.rdap.renderer.object.RequestResponse;
 import mx.nic.rdap.renderer.object.SearchResponse;
 import mx.nic.rdap.server.configuration.RdapConfiguration;
+import mx.nic.rdap.server.notices.UserNotices;
 import mx.nic.rdap.server.privacy.AutnumPrivacyFilter;
 import mx.nic.rdap.server.privacy.DomainPrivacyFilter;
 import mx.nic.rdap.server.privacy.EntityPrivacyFilter;
@@ -85,6 +90,17 @@ public abstract class RdapServlet extends HttpServlet {
 			SearchResponse<RdapObject> searchResponse = (SearchResponse<RdapObject>) result.getRdapResponse();
 			searchResponse.getRdapObjects().forEach(rdapObject -> rdapObject.setLang(RdapConfiguration.getServerLanguage()));
 		}
+
+		// Add TOS notice if exists
+		List<Remark> tos = UserNotices.getTos();
+		if (tos != null && !tos.isEmpty()) {
+			RdapResponse response = result.getRdapResponse();
+			if (response.getNotices() == null) {
+				response.setNotices(new ArrayList<>());
+			}
+			response.getNotices().addAll(tos);
+		}
+
 		// Filter objects according to privacy settings
 		boolean wasFiltered = false;
 		switch (result.getResultType()) {
