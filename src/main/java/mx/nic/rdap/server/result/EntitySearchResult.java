@@ -29,18 +29,21 @@ public class EntitySearchResult extends RdapSearchResult {
 			EntityResult.addSelfLinks(header, contextPath, entity);
 			this.entities.add(entity);
 		}
-		setRdapObjects(entities);
 		validateResponse();
 		fillNotices();
-		
+		setRdapObjects(entities);
+		setEntities(entities);
 		setResultType(ResultType.ENTITIES);
+
 		SearchResponse<Entity> searchResponse = new SearchResponse<>();
 		searchResponse.setNotices(getNotices());
 		searchResponse.setRdapObjects(getEntities());
 		searchResponse.setRdapConformance(new ArrayList<>());
 		searchResponse.getRdapConformance().add("rdap_level_0");
+
+		setRdapResponse(searchResponse);
 		
-		setEntities(entities);
+
 	}
 
 
