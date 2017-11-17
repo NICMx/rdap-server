@@ -54,9 +54,9 @@ As a demo version, this server has limited features compared to the ones defined
 + Domain query`*`: [`domain/goldfish.com`](http://localhost:8080/rdap-server/domain/goldfish.com)
 + Entity query: [`entity/mr_fish`](http://localhost:8080/rdap-server/entity/mr_fish)
 + Nameserver query: [`nameserver/ns2.chopsuey.net`](http://localhost:8080/rdap-server/nameserver/ns2.chopsuey.net)
-+ Domains search`*`: [`domains?name=p*`](http://localhost:8080/rdap-server/domains?name=p*)
-+ Entities search: [`entities?handle=mr*`](http://localhost:8080/rdap-server/entities?handle=mr*)
-+ Nameservers search: [`nameservers?name=ns1*`](http://localhost:8080/rdap-server/nameservers?name=ns1*)
++ Domains search`*`: [`domains?name=cone*`](http://localhost:8080/rdap-server/domains?name=p*)
++ Entities search: [`entities?handle=don_*`](http://localhost:8080/rdap-server/entities?handle=mr*)
++ Nameservers search: [`nameservers?name=ns1.*`](http://localhost:8080/rdap-server/nameservers?name=ns1*)
 
 `*` Because of the shipped configuration of `zones` (see below), only **'.com'** and **'.com.example'** domains will yield success.
 
