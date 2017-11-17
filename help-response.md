@@ -1,14 +1,14 @@
 ---
 title: Configuring Red Dog's Help Response
 breadcrums: ["Documentation", "documentation.html", "Further Custom Configuration", "documentation.html#further-custom-configuration"]
-wheretogo: ["Configuring Red Dog's Server Behavior", "behavior-configuration.html"]
+wheretogo: ["Configuring Red Dog's Terms of Service", "terms-of-service.html"]
 ---
 
 # {{ page.title }}
 
 RDAP servers are expected to provide metadata (such as terms of service, supported authentication methods and technical support contact) when [prompted for help](http://tools.ietf.org/html/rfc7482#section-3.1.6 "Help Path Segment Specification"). These responses are expected to look [like this](https://tools.ietf.org/html/rfc7483#section-7).
 
-The content of the Help Response can be configured in the **WEB-INF/notices/** directory by creating an XML file named `help.xml`.
+The content of the Help Response can be configured in the **WEB-INF/notices/** directory by creating an XML file named `help.xml`. This file is **required** by the server, so a default file is already added at the corresponding directory.
 
 The `help.xml` file must have the following format:
 

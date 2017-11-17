@@ -33,10 +33,11 @@ title: Documentation Index
 1. [Red Dog's Renderer Layer](renderer-layer.html)
 1. [Create a new RDAP-renderer implementation](renderer-implementation.html)
 
-## Further Custom Configuration 
+## Further Custom Configuration
 
-1. [Configuring Red Dog's Help Response](help-response.html)
 1. [Configuring Red Dog's Server Behavior](behavior-configuration.html)
+1. [Configuring Red Dog's Help Response](help-response.html)
+1. [Configuring Red Dog's Terms of Service](terms-of-service.html)
 1. [Rate Limit Filter](rate-limit.html)
 1. [User Authentication](authentication.html)
    1. [Using Apache Shiro<sup>TM</sup>](using-apache-shiro.html)
