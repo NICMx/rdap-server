@@ -69,6 +69,7 @@ Although this a demo version with limited features, some configurations can be c
 * `WEB-INF/shiro.ini` is Apache Shiro's configuration file used by Red Dog, useful for security settings such as: resources protection, user authentication, user roles, etc. To tweak it learn more at [Using Apache Shiro](using-apache-shiro.html).
 * `WEB-INF/privacy` is the folder where privacy settings can be configured, goes along with security configurations. To tweak it learn more at [Configuring Response Privacy](response-privacy.html).
 * `WEB-INF/notices/help.xml` is the file where the 'help' response can be customized, to tweak it learn more at [Configuring Red Dog's Help Response](help-response.html).
+* Optionally a file `WEB-INF/notices/tos.xml` can be added to set the server's terms of service, learn more at [Configuring Red Dog's Terms of Service](terms-of-service.html).
 
 > ![Warning](img/warning.svg) Notice that tweaks to any of these files require a server restart to go live.
 
