@@ -44,7 +44,7 @@ public class EntityServlet extends DataAccessServlet<EntityDAO> {
 			return null;
 		}
 
-		return new EntityResult(httpRequest.getScheme()+"://"+httpRequest.getHeader("Host"), httpRequest.getContextPath(), entity,
+		return new EntityResult(Util.getServerUrl(httpRequest), httpRequest.getContextPath(), entity,
 				Util.getUsername(SecurityUtils.getSubject()));
 	}
 

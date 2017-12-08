@@ -45,7 +45,7 @@ public class AutnumServlet extends DataAccessServlet<AutnumDAO> {
 			return null;
 		}
 		
-		return new AutnumResult(httpRequest.getScheme()+"://"+httpRequest.getHeader("Host"), httpRequest.getContextPath(), autnum,
+		return new AutnumResult(Util.getServerUrl(httpRequest), httpRequest.getContextPath(), autnum,
 				Util.getUsername(SecurityUtils.getSubject()));
 	}
 

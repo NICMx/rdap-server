@@ -67,7 +67,7 @@ public class IpNetworkServlet extends DataAccessServlet<IpNetworkDAO> {
 			return null;
 		}
 
-		return new IpResult(httpRequest.getScheme()+"://"+httpRequest.getHeader("Host"), httpRequest.getContextPath(), network,
+		return new IpResult(Util.getServerUrl(httpRequest), httpRequest.getContextPath(), network,
 				Util.getUsername(SecurityUtils.getSubject()));
 	}
 
