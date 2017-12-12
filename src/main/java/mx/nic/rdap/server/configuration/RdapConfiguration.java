@@ -40,6 +40,7 @@ public class RdapConfiguration {
 	private static final String OWNER_ROLES_NAMESERVER_KEY = "owner_roles_nameserver";
 	private static final String ALLOW_MULTIPLE_WILDCARDS_KEY = "allow_multiple_search_wildcards";
 	private static final String ALLOW_WILDCARD_ANYWHERE_KEY = "allow_search_wildcard_anywhere";
+	private static final String ALLOW_REGEX_SEARCHES = "allow_regex_searches";
 	private static final String USER_ROLES_KEY = "user_roles";
 
 	// Settings values
@@ -50,6 +51,7 @@ public class RdapConfiguration {
 	private static Map<String, Set<Role>> objectOwnerRoles;
 	private static boolean allowMultipleWildcards;
 	private static boolean allowSearchWildcardAnywhere;
+	private static boolean allowRegexSearches;
 	private static Set<String> userRoles;
 
 	private RdapConfiguration() {
@@ -202,6 +204,19 @@ public class RdapConfiguration {
 			}
 		}
 
+		if (isPropertyNullOrEmpty(ALLOW_REGEX_SEARCHES)) {
+			invalidProperties.add(ALLOW_REGEX_SEARCHES);
+		} else {
+			String allowRegexSearchesProperty = systemProperties.getProperty(ALLOW_REGEX_SEARCHES).trim();
+			if (allowRegexSearchesProperty.equalsIgnoreCase("true")) {
+				allowRegexSearches = true;
+			} else if (allowRegexSearchesProperty.equalsIgnoreCase("false")) {
+				allowRegexSearches = false;
+			} else {
+				invalidProperties.add(ALLOW_REGEX_SEARCHES);
+			}
+		}
+
 		// Optional property, no problem if it's null
 		userRoles = new HashSet<String>();
 		try {
@@ -275,6 +290,14 @@ public class RdapConfiguration {
 	 */
 	public static boolean allowSearchWildcardAnywhere() {
 		return allowSearchWildcardAnywhere;
+	}
+
+	/**
+	 * @return if the server supports searches using regex (see more at
+	 * https://tools.ietf.org/html/draft-fregly-regext-rdap-search-regex-01).
+	 */
+	public static boolean allowRegexSearches() {
+		return allowRegexSearches;
 	}
 
 	/**
