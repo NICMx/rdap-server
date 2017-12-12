@@ -56,7 +56,7 @@ public class EntitySearchServlet extends DataAccessServlet<EntityDAO> {
 			return null;
 		}
 
-		return new EntitySearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), result, username);
+		return new EntitySearchResult(Util.getServerUrl(httpRequest), httpRequest.getContextPath(), result, username);
 	}
 
 	private SearchResultStruct<Entity> getPartialSearch(String username, RdapSearchRequest searchRequest, EntityDAO dao)

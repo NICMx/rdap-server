@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.text.MessageFormat;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
@@ -53,6 +54,34 @@ public class Util {
 	}
 
 	/**
+	 * Return Server's URL considering that the server isn't at the "front" (eg. uses a proxy, or a balancer)
+	 * 
+	 * @param httpRequest
+	 *            Request received
+	 * @return Server's URL
+	 */
+	public static String getServerUrl(HttpServletRequest httpRequest) {
+		String serverUrl = "{0}://" + httpRequest.getHeader("Host");
+		// First check by optional header "Forwarded" and parameter "proto"
+		// See https://tools.ietf.org/html/rfc7239#section-5.4 
+		if (!isStringEmpty(httpRequest.getHeader("Forwarded"))) {
+			String tmpString = httpRequest.getHeader("Forwarded").replaceAll("\\s+", "");
+			String[] parameters = tmpString.split(";");
+			for (String parameter : parameters) {
+				if (parameter.matches("(?i:^(proto=).+)")) {
+					return MessageFormat.format(serverUrl, parameter.split("=")[1]);
+				}
+			}
+		}
+		// "Forwarded: proto" not present, check for "X-Forwarded-Proto"
+		if (!isStringEmpty(httpRequest.getHeader("X-Forwarded-Proto"))) {
+			return MessageFormat.format(serverUrl, httpRequest.getHeader("X-Forwarded-Proto"));
+		}
+		// Headers not present, use servlet function
+		return MessageFormat.format(serverUrl, httpRequest.getScheme());
+	}
+
+	/**
 	 * Get the username if it's authenticated
 	 * 
 	 * @param subject
@@ -85,4 +114,14 @@ public class Util {
 		return result;
 	}
 
+	/**
+	 * Checks whether the String is null or empty (uses the trim() function)
+	 * 
+	 * @param str
+	 *            String to check
+	 * @return <code>true</code> if String is empty, <code>false</code> otherwise
+	 */
+	public static boolean isStringEmpty(String str) {
+		return str == null || str.trim().isEmpty();
+	}
 }

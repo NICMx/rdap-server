@@ -71,7 +71,7 @@ public class NameserverSearchServlet extends DataAccessServlet<NameserverDAO> {
 			return null;
 		}
 
-		return new NameserverSearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), result,
+		return new NameserverSearchResult(Util.getServerUrl(httpRequest), httpRequest.getContextPath(), result,
 				username);
 	}
 

@@ -53,10 +53,6 @@ public class RdapSearchRequest {
 					"The request must contain at least one of the following parameters: " + Arrays.asList(parameters));
 		}
 		RdapSearchRequest searchReq = new RdapSearchRequest();
-		String searchTypeValue = request.getParameter(SEARCH_TYPE_KEY_PARAM);
-		if (searchTypeValue == null) {
-			searchTypeValue = SEARCHTYPE_PARTIAL_VALUE;
-		}
 
 		boolean hasValidParameter = false;
 		for (String parameter : parameters) {
@@ -78,13 +74,21 @@ public class RdapSearchRequest {
 					"The request must contain at least one of the following parameters: " + Arrays.asList(parameters));
 		}
 
-		switch (searchTypeValue) {
-		case SEARCHTYPE_REGEX_VALUE:
-			searchReq.type = RequestSearchType.REGEX_SEARCH;
-			break;
-		default:
+		if (RdapConfiguration.allowRegexSearches()) {
+			String searchTypeValue = request.getParameter(SEARCH_TYPE_KEY_PARAM);
+			if (searchTypeValue == null) {
+				searchTypeValue = SEARCHTYPE_PARTIAL_VALUE;
+			}
+			switch (searchTypeValue) {
+			case SEARCHTYPE_REGEX_VALUE:
+				searchReq.type = RequestSearchType.REGEX_SEARCH;
+				break;
+			default:
+				searchReq.type = RequestSearchType.PARTIAL_SEARCH;
+				break;
+			}
+		} else {
 			searchReq.type = RequestSearchType.PARTIAL_SEARCH;
-			break;
 		}
 
 		searchReq.validateSearchRequest(isEntityObject, isIp);

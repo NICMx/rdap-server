@@ -76,7 +76,7 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 			return null;
 		}
 
-		return new DomainSearchResult(httpRequest.getHeader("Host"), httpRequest.getContextPath(), result, username);
+		return new DomainSearchResult(Util.getServerUrl(httpRequest), httpRequest.getContextPath(), result, username);
 	}
 
 	private SearchResultStruct<Domain> getPartialSearch(String username, RdapSearchRequest request, DomainDAO dao)
