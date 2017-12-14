@@ -1,4 +1,7 @@
 # {{ page.title }}
 
-The server is a typical servlet Java WAR; so, simply toss it into a servlet container. The following is an improvised example on how this might be done in Ubuntu/Tomcat; if any other means or environments are flavored, knock yourself out. ([Payara](http://www.payara.fish/) and [Wildfly](http://wildfly.org/) have been tested as well as Tomcat.)
+The server is a typical servlet Java WAR; so, simply toss it into a servlet container. The following is an improvised example on how this might be done in Ubuntu/Tomcat; if any other means or environments are flavored, knock yourself out. ([Payara](http://www.payara.fish/) and [Wildfly](http://wildfly.org/) have been tested as well as Tomcat).
 
+> ![Info](img/bulb.svg) General recommendation: if Red Dog's server will be at a production environment, configure a load balancer or a reverse proxy to protect the server.
+
+> ![Info](img/bulb.svg) When configuring the balancer/proxy, the context must be the same as the server. E.g. if the backend server is at `example.com:8080/rdap`, then the frontend service should be at `example.com/rdap` (note that the server context is `/rdap`).
