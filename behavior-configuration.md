@@ -17,6 +17,7 @@ wheretogo: ["Configuring Red Dog's Help Response", "help-response.html"]
    1. [`owner_roles_*`](#owner_roles_)
    1. [`allow_multiple_search_wildcards`](#allow_multiple_search_wildcards)
    1. [`allow_search_wildcard_anywhere`](#allow_search_wildcard_anywhere)
+   1. [`allow_regex_searches`](#allow_regex_searches)
    1. [`user_roles`](#user_roles)
 
 
@@ -176,6 +177,29 @@ This table shows the specs of the property:
 | Required? | Type | Default | Example |
 |--------------------|--------|---------|-------------|
 | ![No](img/red_x.svg) | Boolean | false     | allow_search_wildcard_anywhere = true |
+
+### `allow_regex_searches`
+
+Boolean flag to indicate if the server will support extended searches using REGEX. If the property has a value of `true` the server will support the behavior stated at draft [Registration Data Access Protocol (RDAP) Search Using POSIX Regular Expressions v01](https://tools.ietf.org/html/draft-fregly-regext-rdap-search-regex-01) (see examples at the table below), if `false` then this behavior will be disabled (the parameter `searchtype` will be ignored).
+
+> ![Warning](img/warning.svg) The feature is based on a draft, so it isn't quite updated, use it cautiously. Hopefully this will be updated on a later release.
+
+The following table shows some examples on how this flag works:
+
+| Property value | Search request | Result |
+|----------------|----------------|--------|
+| false | https://example.com/rdap/domains?name=doma\* | Regular partial search |
+| false | https://example.com/rdap/domains?name=doma\*&searchtype=regex | Regular partial search: parameter `searchtype` is ignored |
+| false | https://example.com/rdap/domains?name=Xihkb20pLio=&searchtype=regex | Regular partial search: parameter `searchtype` is ignored, base64 encoded regex sent at `name` will not be decoded |
+| true | https://example.com/rdap/domains?name=doma\* | Regular partial search |
+| true | https://example.com/rdap/domains?name=doma\*&searchtype=regex | Invalid partial search: parameter `searchtype` is used, the parameter `name` MUST be a base64 encoded regex |
+| true | https://example.com/rdap/domains?name=Xihkb20pLio=&searchtype=regex | Regex partial search: parameter `searchtype` is used, regex base64 encoded sent at `name` will be decoded and used (the regex sent is `^(dom).*`) |
+
+This table shows the specs of the property:
+
+| Required? | Type | Default | Example |
+|--------------------|--------|---------|-------------|
+| ![No](img/red_x.svg) | Boolean | false     | allow_regex_searches = true |
 
 ### `user_roles`
 
