@@ -48,6 +48,9 @@ public class ExceptionResult extends RdapResult {
 		case "401":
 			errorTitle = "Forbidden request";
 			errorDescription = "Must log in to process the request";
+			if (localMessage != null && !localMessage.trim().isEmpty()) {
+				errorDescription = localMessage + ". " + errorDescription;
+			}
 			break;
 		case "403":
 			errorTitle = "Forbidden request";
