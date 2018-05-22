@@ -101,6 +101,9 @@ public class PrivacyUtil {
 		loadObjectPrivacySettings(ENTITY_REMARKS);
 
 		loadObjectPrivacySettings(VCARD);
+		for (Role role : Role.values()) {
+			loadRolePrivacySettings(VCARD, role);
+		}
 
 		loadObjectPrivacySettings(DOMAIN);
 		loadObjectPrivacySettings(DOMAIN_PUBLIC_ID);
@@ -150,7 +153,7 @@ public class PrivacyUtil {
 
 	}
 	
-	private static void loadUserPrivacySettings(String fileName, Properties properties) throws IOException {
+	private static boolean loadUserPrivacySettings(String fileName, Properties properties) throws IOException {
 		ServletContext ctxt = RdapInitializer.getServletContext();
 		Path path = null;
 		InputStream inStream = null;
@@ -168,6 +171,8 @@ public class PrivacyUtil {
 			inStream = PrivacyUtil.class.getClassLoader().getResourceAsStream(path.toString());
 		}
 
+		boolean userFileExists = false;
+
 		if (inStream != null) {
 			try {
 				properties.load(inStream);
@@ -176,21 +181,58 @@ public class PrivacyUtil {
 			} finally {
 				inStream.close();
 			}
+
+			userFileExists = true;
 		}
+
+		return userFileExists;
 	}
 
-	private static void loadObjectPrivacySettings(String objectName) throws IOException {
-		Properties properties = new Properties();
+	private static Properties loadDefaulProperties(String objectName) throws IOException {
+		Properties properties;
 		ClassLoader classLoader = PrivacyUtil.class.getClassLoader();
-		HashMap<String, PrivacySetting> objectProperties = new HashMap<>();
 		try (InputStream in = classLoader.getResourceAsStream(DEFAULT_PATH + objectName + ".properties");) {
+			properties = new Properties();
 			properties.load(in);
 		} catch (NullPointerException e) {
 			throw new IOException("Cannot load file: " + DEFAULT_PATH + objectName + ".properties", e);
 		}
 
+		return properties;
+	}
+
+	private static void loadRolePrivacySettings(String objectName, Role role) throws IOException {
+		// First load the default RedDog privacy settings
+		Properties properties = loadDefaulProperties(objectName);
+		// Override with the user "default" privacy settings if exists.
+		loadUserPrivacySettings(objectName, properties);
+		// Then override with the user "role specific" privacy setting for objectName,
+		// if exists.
+		String objectRoleName = objectName + "_" + role.name();
+		boolean userFileExists = loadUserPrivacySettings(objectRoleName, properties);
+
+		// If "the user 'role specific' privacy file" not exists then don't put it on
+		// the map.
+		if (!userFileExists) {
+			return;
+		}
+
+		HashMap<String, PrivacySetting> objectProperties = getPrivacyMap(properties, objectRoleName);
+		OBJECTS_PRIVACY_SETTING.put(objectRoleName, Collections.unmodifiableMap(objectProperties));
+	}
+
+	private static void loadObjectPrivacySettings(String objectName) throws IOException {
+		Properties properties = loadDefaulProperties(objectName);
+
 		loadUserPrivacySettings(objectName, properties);
 
+		HashMap<String, PrivacySetting> objectProperties = getPrivacyMap(properties, objectName);
+
+		OBJECTS_PRIVACY_SETTING.put(objectName, Collections.unmodifiableMap(objectProperties));
+	}
+
+	private static HashMap<String, PrivacySetting> getPrivacyMap(Properties properties, String objectName) {
+		HashMap<String, PrivacySetting> objectProperties = new HashMap<>();
 		StringBuilder builder = new StringBuilder();
 		boolean hasInvalidProperties = false;
 		Set<Object> keySet = properties.keySet();
@@ -265,7 +307,7 @@ public class PrivacyUtil {
 					"Invalid privacy file '" + objectName + ".properties'.\n Invalid values: " + builder.substring(0, builder.toString().length() - 2));
 		}
 
-		OBJECTS_PRIVACY_SETTING.put(objectName, Collections.unmodifiableMap(objectProperties));
+		return objectProperties;
 	}
 
 	public static Map<String, PrivacySetting> getEntityPrivacySettings() {
@@ -374,6 +416,10 @@ public class PrivacyUtil {
 
 	public static Map<String, PrivacySetting> getVCardPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(VCARD);
+	}
+
+	public static Map<String, PrivacySetting> getVCardPrivacySettings(Role role) {
+		return OBJECTS_PRIVACY_SETTING.get(VCARD + "_" + role.name());
 	}
 
 	public static Map<String, PrivacySetting> getDomainEventsLinksPrivacySettings() {

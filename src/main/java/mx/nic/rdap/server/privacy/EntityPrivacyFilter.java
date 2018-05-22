@@ -1,11 +1,13 @@
 package mx.nic.rdap.server.privacy;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 
+import mx.nic.rdap.core.catalog.Role;
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.VCard;
 import mx.nic.rdap.core.db.VCardPostalInfo;
@@ -38,6 +40,11 @@ public class EntityPrivacyFilter {
 
 		Map<String, PrivacySetting> privacySettings = PrivacyUtil.getEntityPrivacySettings();
 
+		List<Role> vCardRoles = entity.getRoles();
+		if (vCardRoles == null) {
+			vCardRoles = Collections.emptyList();
+		}
+
 		for (String key : privacySettings.keySet()) {
 			PrivacySetting setting = privacySettings.get(key);
 			boolean isHidden = setting.isHidden(userInfo);
@@ -54,7 +61,7 @@ public class EntityPrivacyFilter {
 					isPrivate = true;
 				} else {
 					if (!entity.getVCardList().isEmpty()) {
-						isPrivate |= filterVcard(entity.getVCardList().get(0), userInfo);
+						isPrivate |= filterVcard(entity.getVCardList().get(0), userInfo, vCardRoles);
 					}
 				}
 				break;
@@ -165,14 +172,36 @@ public class EntityPrivacyFilter {
 		return isPrivate;
 	}
 
-	private static boolean filterVcard(VCard vcard, UserInfo userInfo) {
+	private static boolean filterVcard(VCard vcard, UserInfo userInfo, List<Role> entitRoles) {
+		if (entitRoles == null || entitRoles.isEmpty()) {
+			return filterVcard(vcard, userInfo, PrivacyUtil.getVCardPrivacySettings());
+		}
+
+		boolean result = false;
+		boolean isFilterByRole = false;
+		for (Role role : entitRoles) {
+			Map<String, PrivacySetting> privacySettings = PrivacyUtil.getVCardPrivacySettings(role);
+			if (privacySettings == null || privacySettings.isEmpty()) {
+				continue;
+			}
+
+			result |= filterVcard(vcard, userInfo, privacySettings);
+			isFilterByRole = true;
+		}
+
+		if (!isFilterByRole) {
+			result = filterVcard(vcard, userInfo, PrivacyUtil.getVCardPrivacySettings());
+		}
+
+		return result;
+	}
+
+	private static boolean filterVcard(VCard vcard, UserInfo userInfo, Map<String, PrivacySetting> privacySettings) {
 		boolean isPrivate = false;
 
 		if (ObjectPrivacyFilter.isValueEmpty(vcard)) {
 			return false;
 		}
-
-		Map<String, PrivacySetting> privacySettings = PrivacyUtil.getVCardPrivacySettings();
 
 		String key = "name";
 		boolean isHidden = privacySettings.get(key).isHidden(userInfo);
@@ -237,20 +266,20 @@ public class EntityPrivacyFilter {
 			List<VCardPostalInfo> postalInfoNull = null;
 			vcard.setPostalInfo(postalInfoNull);
 		} else {
-			isPrivate |= filterPostalInfo(vcard.getPostalInfo(), userInfo);
+			isPrivate |= filterPostalInfo(vcard.getPostalInfo(), userInfo, privacySettings);
 		}
 
 		return isPrivate;
 	}
 
-	private static boolean filterPostalInfo(List<VCardPostalInfo> postalInfos, UserInfo userInfo) {
+	private static boolean filterPostalInfo(List<VCardPostalInfo> postalInfos, UserInfo userInfo,
+			Map<String, PrivacySetting> privacySettings) {
 		boolean isPrivate = false;
 
 		if (ObjectPrivacyFilter.isValueEmpty(postalInfos)) {
 			return false;
 		}
 
-		Map<String, PrivacySetting> privacySettings = PrivacyUtil.getVCardPrivacySettings();
 		String key;
 		boolean isHidden;
 		for (VCardPostalInfo postalInfo : postalInfos) {
