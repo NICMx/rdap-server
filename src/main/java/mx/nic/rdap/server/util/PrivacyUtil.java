@@ -84,6 +84,8 @@ public class PrivacyUtil {
 	private static final String ENTITY_EVENTS_LINKS = "entity_events_links";
 	private static final String ENTITY_REMARKS_LINKS = "entity_remarks_links";
 
+	private static final String ROLE_PRIVACY_STRING = "_ROLE_";
+
 	// ***** End of names of the properties files *****
 
 	/** Path where the default properties are read */
@@ -95,6 +97,10 @@ public class PrivacyUtil {
 
 	public static void loadAllPrivacySettings() throws IOException {
 		loadObjectPrivacySettings(ENTITY);
+		for (Role role : Role.values()) {
+			loadRolePrivacySettings(ENTITY, role);
+		}
+
 		loadObjectPrivacySettings(ENTITY_PUBLIC_ID);
 		loadObjectPrivacySettings(ENTITY_LINKS);
 		loadObjectPrivacySettings(ENTITY_EVENTS);
@@ -208,7 +214,7 @@ public class PrivacyUtil {
 		loadUserPrivacySettings(objectName, properties);
 		// Then override with the user "role specific" privacy setting for objectName,
 		// if exists.
-		String objectRoleName = objectName + "_" + role.name();
+		String objectRoleName = objectName + ROLE_PRIVACY_STRING + role.name();
 		boolean userFileExists = loadUserPrivacySettings(objectRoleName, properties);
 
 		// If "the user 'role specific' privacy file" not exists then don't put it on
@@ -312,6 +318,10 @@ public class PrivacyUtil {
 
 	public static Map<String, PrivacySetting> getEntityPrivacySettings() {
 		return OBJECTS_PRIVACY_SETTING.get(ENTITY);
+	}
+
+	public static Map<String, PrivacySetting> getEntityPrivacySettings(Role role) {
+		return OBJECTS_PRIVACY_SETTING.get(ENTITY + ROLE_PRIVACY_STRING + role.name());
 	}
 
 	public static Map<String, PrivacySetting> getEntityPublicIdsPrivacySettings() {
@@ -419,7 +429,7 @@ public class PrivacyUtil {
 	}
 
 	public static Map<String, PrivacySetting> getVCardPrivacySettings(Role role) {
-		return OBJECTS_PRIVACY_SETTING.get(VCARD + "_" + role.name());
+		return OBJECTS_PRIVACY_SETTING.get(VCARD + ROLE_PRIVACY_STRING + role.name());
 	}
 
 	public static Map<String, PrivacySetting> getDomainEventsLinksPrivacySettings() {

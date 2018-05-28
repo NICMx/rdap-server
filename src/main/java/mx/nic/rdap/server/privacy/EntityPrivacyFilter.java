@@ -35,10 +35,33 @@ public class EntityPrivacyFilter {
 		return filterEntity(entity, userInfo);
 	}
 
-	public static boolean filterEntity(Entity entity, UserInfo userInfo) {
-		boolean isPrivate = false;
+	private static boolean filterEntity(Entity entity, UserInfo userInfo) {
+		List<Role> entityRoles = entity.getRoles();
+		if (entityRoles == null || entityRoles.isEmpty()) {
+			return filterEntity(entity, userInfo, PrivacyUtil.getEntityPrivacySettings());
+		}
 
-		Map<String, PrivacySetting> privacySettings = PrivacyUtil.getEntityPrivacySettings();
+		boolean result = false;
+		boolean isFilterByRole = false;
+		for (Role role : entityRoles) {
+			Map<String, PrivacySetting> privacySettings = PrivacyUtil.getEntityPrivacySettings(role);
+			if (privacySettings == null || privacySettings.isEmpty()) {
+				continue;
+			}
+
+			result |= filterEntity(entity, userInfo, privacySettings);
+			isFilterByRole = true;
+		}
+
+		if (!isFilterByRole) {
+			result = filterEntity(entity, userInfo, PrivacyUtil.getEntityPrivacySettings());
+		}
+
+		return result;
+	}
+
+	private static boolean filterEntity(Entity entity, UserInfo userInfo, Map<String, PrivacySetting> privacySettings) {
+		boolean isPrivate = false;
 
 		List<Role> vCardRoles = entity.getRoles();
 		if (vCardRoles == null) {
@@ -172,14 +195,14 @@ public class EntityPrivacyFilter {
 		return isPrivate;
 	}
 
-	private static boolean filterVcard(VCard vcard, UserInfo userInfo, List<Role> entitRoles) {
-		if (entitRoles == null || entitRoles.isEmpty()) {
+	private static boolean filterVcard(VCard vcard, UserInfo userInfo, List<Role> entityRoles) {
+		if (entityRoles == null || entityRoles.isEmpty()) {
 			return filterVcard(vcard, userInfo, PrivacyUtil.getVCardPrivacySettings());
 		}
 
 		boolean result = false;
 		boolean isFilterByRole = false;
-		for (Role role : entitRoles) {
+		for (Role role : entityRoles) {
 			Map<String, PrivacySetting> privacySettings = PrivacyUtil.getVCardPrivacySettings(role);
 			if (privacySettings == null || privacySettings.isEmpty()) {
 				continue;
