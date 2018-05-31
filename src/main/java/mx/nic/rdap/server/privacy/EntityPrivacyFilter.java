@@ -83,7 +83,8 @@ public class EntityPrivacyFilter {
 					entity.setvCardList(null);
 					isPrivate = true;
 				} else {
-					if (!entity.getVCardList().isEmpty()) {
+					List<VCard> vCardList = entity.getVCardList();
+					if (vCardList != null && !vCardList.isEmpty()) {
 						isPrivate |= filterVcard(entity.getVCardList().get(0), userInfo, vCardRoles);
 					}
 				}
