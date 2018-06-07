@@ -101,6 +101,15 @@ public abstract class RdapServlet extends HttpServlet {
 			response.getNotices().addAll(tos);
 		}
 
+		List<Remark> userNotices = UserNotices.getNotices();
+		if (userNotices != null && !userNotices.isEmpty()) {
+			RdapResponse response = result.getRdapResponse();
+			if (response.getNotices() == null) {
+				response.setNotices(new ArrayList<>());
+			}
+			response.getNotices().addAll(userNotices);
+		}
+
 		// Filter objects according to privacy settings
 		boolean wasFiltered = false;
 		switch (result.getResultType()) {

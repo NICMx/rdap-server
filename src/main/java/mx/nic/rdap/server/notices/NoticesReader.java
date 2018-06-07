@@ -32,6 +32,7 @@ public class NoticesReader {
 	// Paths to xsd files
 	private final static String HELP_XSD = "META-INF/xsd/help.xsd";
 	private final static String TOS_XSD = "META-INF/xsd/tos.xsd";
+	private final static String NOTICES_XSD = "META-INF/xsd/notices.xsd";
 
 	/**
 	 * Parse an XML file, validate the XML against the help.xsd and obtains the
@@ -39,8 +40,7 @@ public class NoticesReader {
 	 */
 	public static List<Remark> parseHelpXML(String filePath)
 			throws SAXException, IOException, ParserConfigurationException {
-		validateXMLWithSchema(filePath, HELP_XSD);
-		return getRemarksFromFilePath(filePath);
+		return parseXML(filePath, HELP_XSD);
 	}
 
 	/**
@@ -49,7 +49,21 @@ public class NoticesReader {
 	 */
 	public static List<Remark> parseTOSXML(String filePath)
 			throws SAXException, IOException, ParserConfigurationException {
-		validateXMLWithSchema(filePath, TOS_XSD);
+		return parseXML(filePath, TOS_XSD);
+	}
+
+	/**
+	 * Parse an XML file, validate the XML against the notices.xsd and obtains the
+	 * Notices from the XML file.
+	 */
+	public static List<Remark> parseNoticesXML(String filePath)
+			throws SAXException, IOException, ParserConfigurationException {
+		return parseXML(filePath, NOTICES_XSD);
+	}
+
+	private static List<Remark> parseXML(String filePath, String xsd)
+			throws SAXException, IOException, ParserConfigurationException {
+		validateXMLWithSchema(filePath, xsd);
 		return getRemarksFromFilePath(filePath);
 	}
 

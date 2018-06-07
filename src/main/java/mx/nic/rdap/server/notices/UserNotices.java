@@ -20,10 +20,12 @@ public class UserNotices {
 	// XML file names
 	private static final String HELP_FILE_NAME = "help.xml";
 	private static final String TOS_FILE_NAME = "tos.xml";
+	private static final String NOTICES_FILE_NAME = "notices.xml";
 
 	// Holder for remarks
 	private static List<Remark> help;
 	private static List<Remark> tos;
+	private static List<Remark> notices;
 
 	/**
 	 * Reads the XML files and stores the information from the XML.
@@ -44,6 +46,13 @@ public class UserNotices {
 		} catch (FileNotFoundException | NoSuchFileException e) {
 			// Nothing happens, continue
 		}
+
+		// The notices are optional.
+		try {
+			notices = NoticesReader.parseNoticesXML(Paths.get(userPath, NOTICES_FILE_NAME).toString());
+		} catch (FileNotFoundException | NoSuchFileException e) {
+			// Nothing happens, continue
+		}
 	}
 
 	public static List<Remark> getHelp() {
@@ -52,6 +61,10 @@ public class UserNotices {
 
 	public static List<Remark> getTos() {
 		return tos;
+	}
+
+	public static List<Remark> getNotices() {
+		return notices;
 	}
 
 }

@@ -3,7 +3,6 @@ package mx.nic.rdap.server.result;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.renderer.object.HelpResponse;
 import mx.nic.rdap.server.notices.UserNotices;
@@ -15,14 +14,18 @@ public class HelpResult extends RdapResult {
 
 	private List<Remark> notices;
 
-	
 	public HelpResult() {
 		notices = new ArrayList<>();
 		notices.addAll(UserNotices.getHelp());
 		if (UserNotices.getTos() != null && !UserNotices.getTos().isEmpty()) {
 			notices.addAll(UserNotices.getTos());
 		}
-		
+
+		List<Remark> userNotices = UserNotices.getNotices();
+		if (userNotices != null && !userNotices.isEmpty()) {
+			notices.addAll(userNotices);
+		}
+
 		setResultType(ResultType.HELP);
 		HelpResponse helpResponse = new HelpResponse();
 		helpResponse.setNotices(notices);
@@ -30,17 +33,8 @@ public class HelpResult extends RdapResult {
 		rdapConformance.add("rdap_level_0");
 		helpResponse.setRdapConformance(rdapConformance);
 		setRdapResponse(helpResponse);
-		
-		
-	}
 
-//	public JsonObject toJson() {
-//		JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-//		JsonArray jsonArray = RemarkJsonWriter.getJsonArray(notices, true, true,
-//				PrivacyUtil.getEntityRemarkPrivacySettings(), PrivacyUtil.getEntityLinkPrivacySettings());
-//		objectBuilder.add("notices", jsonArray);
-//		return objectBuilder.build();
-//	}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -61,5 +55,4 @@ public class HelpResult extends RdapResult {
 	public void validateResponse() {
 	}
 
-	
 }
