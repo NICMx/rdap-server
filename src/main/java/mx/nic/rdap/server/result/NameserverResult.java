@@ -12,19 +12,40 @@ import mx.nic.rdap.renderer.object.RequestResponse;
  */
 public class NameserverResult extends RdapSingleResult {
 
-	public NameserverResult(String header, String contextPath, Nameserver nameserver, String userName) {
+	public NameserverResult(String header, String contextPath, Nameserver nameserver, String userName, int nsCount,
+			boolean isNSSharingConformance) {
 		setRdapObject(nameserver);
 		
 		addSelfLinks(header, contextPath, nameserver);
 		
+
+
 		setResultType(ResultType.NAMESERVER);
 		RequestResponse<Nameserver> nameserverResponse = new RequestResponse<>();
 		nameserverResponse.setNotices(notices);
 		nameserverResponse.setRdapConformance(new ArrayList<>());
 		nameserverResponse.getRdapConformance().add("rdap_level_0");
 		nameserverResponse.setRdapObject(nameserver);
+
+		if (isNSSharingConformance) {
+			nameserverResponse.getRdapConformance().add("rdap_nameservers_sharing_name");
+			if (nsCount > 0) {
+				addSearchOtherNSLink(header, contextPath, nameserver);
+			}
+		}
 		
 		setRdapResponse(nameserverResponse);
+	}
+
+	public void addSearchOtherNSLink(String header, String contextPath, Nameserver nameserver) {
+		Link nsSearchLink = new Link();
+
+		nsSearchLink.setValue(header + contextPath + "/nameserver/" + nameserver.getLdhName());
+		nsSearchLink.setRel("collection");
+		nsSearchLink.setType("application/rdap+json");
+		nsSearchLink.setHref(header + contextPath + "/nameservers?name=" + nameserver.getLdhName());
+
+		nameserver.getLinks().add(nsSearchLink);
 	}
 
 
