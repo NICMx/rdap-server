@@ -68,12 +68,13 @@ public class NameserverServlet extends DataAccessServlet<NameserverDAO> {
 			try {
 				nameserverCount = dao.getNameserverCount(label);
 			} catch (NotImplementedException e) {
-				isNSSharingConformance = false;
+				// throw the exception, if conformance is true the DAO must implement getNameserverCount function.
+				throw e;
 			}
 		}
 
 		return new NameserverResult(Util.getServerUrl(httpRequest), httpRequest.getContextPath(), nameserver,
-				Util.getUsername(SecurityUtils.getSubject()), nameserverCount, isNSSharingConformance);
+				Util.getUsername(SecurityUtils.getSubject()), nameserverCount);
 	}
 
 	private class NameserverRequest {

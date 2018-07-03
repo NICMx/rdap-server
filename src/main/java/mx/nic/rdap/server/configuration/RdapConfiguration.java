@@ -53,6 +53,7 @@ public class RdapConfiguration {
 	private static boolean allowSearchWildcardAnywhere;
 	private static boolean allowRegexSearches;
 	private static Set<String> userRoles;
+	private static boolean isNSSharingNameConformance;
 
 	private RdapConfiguration() {
 		// no code.
@@ -235,6 +236,8 @@ public class RdapConfiguration {
 			}
 			throw invalidValueException;
 		}
+
+		isNSSharingNameConformance = false;
 	}
 
 	/**
@@ -414,4 +417,15 @@ public class RdapConfiguration {
 		PrivacySettingsFactory.initializePool(customRoles);
 	}
 
+	/**
+	 * @return true if implements draft-lozano-rdap-nameserver-sharing-name, false
+	 *         otherwise.
+	 */
+	public static boolean isNameserverSharingNameConformance() {
+		return isNSSharingNameConformance;
+	}
+
+	public static void setNameserverSharingNameConformance(boolean isNameserverSharingNameConformance) {
+		isNSSharingNameConformance = isNameserverSharingNameConformance;
+	}
 }

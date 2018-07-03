@@ -91,6 +91,15 @@ public abstract class RdapServlet extends HttpServlet {
 			searchResponse.getRdapObjects().forEach(rdapObject -> rdapObject.setLang(RdapConfiguration.getServerLanguage()));
 		}
 
+		// Add nsSharingNameConformance
+		if (RdapConfiguration.isNameserverSharingNameConformance()) {
+			if (result.getRdapResponse().getRdapConformance() == null) {
+				result.getRdapResponse().setRdapConformance(new ArrayList<>());
+			}
+
+			result.getRdapResponse().getRdapConformance().add("rdap_nameservers_sharing_name");
+		}
+
 		// Add TOS notice if exists
 		List<Remark> tos = UserNotices.getTos();
 		if (tos != null && !tos.isEmpty()) {

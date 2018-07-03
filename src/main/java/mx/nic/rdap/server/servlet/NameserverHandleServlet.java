@@ -51,11 +51,12 @@ public class NameserverHandleServlet extends DataAccessServlet<NameserverDAO> {
 			return null;
 		}
 
+		// If it is searched by handle, then it indicates that this nameserver is
+		// unique.
 		int nameserverCount = 0;
-		boolean isNSSharingConformance = true;
 
 		return new NameserverResult(Util.getServerUrl(httpRequest), httpRequest.getContextPath(), nameserver,
-				Util.getUsername(SecurityUtils.getSubject()), nameserverCount, isNSSharingConformance);
+				Util.getUsername(SecurityUtils.getSubject()), nameserverCount);
 	}
 
 

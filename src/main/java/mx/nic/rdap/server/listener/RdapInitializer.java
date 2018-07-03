@@ -15,7 +15,9 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
+import mx.nic.rdap.db.exception.http.NotImplementedException;
 import mx.nic.rdap.db.service.DataAccessService;
+import mx.nic.rdap.db.spi.NameserverDAO;
 import mx.nic.rdap.server.configuration.RdapConfiguration;
 import mx.nic.rdap.server.notices.UserNotices;
 import mx.nic.rdap.server.renderer.RendererPool;
@@ -63,6 +65,19 @@ public class RdapInitializer implements ServletContextListener {
 				serverConfig.put(entry.getKey(), entry.getValue());
 			}
 			DataAccessService.initialize(serverConfig);
+
+			// From NameserverDAO check if is compliant with NameserverSharingName Draft
+			try {
+				NameserverDAO nameserverDAO = DataAccessService.getNameserverDAO();
+				if (nameserverDAO != null) {
+					RdapConfiguration
+							.setNameserverSharingNameConformance(nameserverDAO.isNameserverSharingNameConformance());
+				}
+			} catch (NotImplementedException e) {
+				// is not NameserverSharingName conformance
+				RdapConfiguration.setNameserverSharingNameConformance(false);
+			}
+
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}

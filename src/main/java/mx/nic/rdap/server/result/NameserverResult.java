@@ -12,13 +12,10 @@ import mx.nic.rdap.renderer.object.RequestResponse;
  */
 public class NameserverResult extends RdapSingleResult {
 
-	public NameserverResult(String header, String contextPath, Nameserver nameserver, String userName, int nsCount,
-			boolean isNSSharingConformance) {
+	public NameserverResult(String header, String contextPath, Nameserver nameserver, String userName, int nsCount) {
 		setRdapObject(nameserver);
-		
-		addSelfLinks(header, contextPath, nameserver);
-		
 
+		addSelfLinks(header, contextPath, nameserver);
 
 		setResultType(ResultType.NAMESERVER);
 		RequestResponse<Nameserver> nameserverResponse = new RequestResponse<>();
@@ -27,13 +24,10 @@ public class NameserverResult extends RdapSingleResult {
 		nameserverResponse.getRdapConformance().add("rdap_level_0");
 		nameserverResponse.setRdapObject(nameserver);
 
-		if (isNSSharingConformance) {
-			nameserverResponse.getRdapConformance().add("rdap_nameservers_sharing_name");
-			if (nsCount > 0) {
-				addSearchOtherNSLink(header, contextPath, nameserver);
-			}
+		if (nsCount > 0) {
+			addSearchOtherNSLink(header, contextPath, nameserver);
 		}
-		
+
 		setRdapResponse(nameserverResponse);
 	}
 
@@ -47,7 +41,6 @@ public class NameserverResult extends RdapSingleResult {
 
 		nameserver.getLinks().add(nsSearchLink);
 	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -83,5 +76,5 @@ public class NameserverResult extends RdapSingleResult {
 			ent.getLinks().add(self);
 		}
 	}
-	
+
 }
