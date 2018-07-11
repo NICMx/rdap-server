@@ -12,6 +12,8 @@ import mx.nic.rdap.renderer.object.RequestResponse;
  */
 public class NameserverResult extends RdapSingleResult {
 
+	private Link searchOtherNS;
+	
 	public NameserverResult(String header, String contextPath, Nameserver nameserver, String userName, int nsCount) {
 		setRdapObject(nameserver);
 
@@ -39,7 +41,8 @@ public class NameserverResult extends RdapSingleResult {
 		nsSearchLink.setType("application/rdap+json");
 		nsSearchLink.setHref(header + contextPath + "/nameservers?name=" + nameserver.getLdhName());
 
-		nameserver.getLinks().add(nsSearchLink);
+		
+		searchOtherNS = nsSearchLink;
 	}
 
 	/*
@@ -76,5 +79,10 @@ public class NameserverResult extends RdapSingleResult {
 			ent.getLinks().add(self);
 		}
 	}
+	
 
+	public Link getSearchOtherNS() {
+		return searchOtherNS;
+	}
+	
 }

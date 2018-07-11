@@ -16,6 +16,7 @@ import mx.nic.rdap.core.db.Autnum;
 import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.IpNetwork;
+import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.RdapObject;
 import mx.nic.rdap.core.db.Remark;
@@ -36,6 +37,7 @@ import mx.nic.rdap.server.privacy.IpNetworkPrivacyFilter;
 import mx.nic.rdap.server.privacy.NameserverPrivacyFilter;
 import mx.nic.rdap.server.renderer.RendererPool;
 import mx.nic.rdap.server.renderer.RendererWrapper;
+import mx.nic.rdap.server.result.NameserverResult;
 import mx.nic.rdap.server.result.RdapResult;
 import mx.nic.rdap.server.servlet.AcceptHeaderFieldParser.Accept;
 import mx.nic.rdap.server.util.PrivacyUtil;
@@ -47,7 +49,7 @@ public abstract class RdapServlet extends HttpServlet {
 
 	/** This is just a warning shutupper. */
 	private static final long serialVersionUID = 1L;
-	
+
 	private final static Logger logger = Logger.getLogger(RdapServlet.class.getName());
 
 	@Override
@@ -60,7 +62,8 @@ public abstract class RdapServlet extends HttpServlet {
 			response.sendError(e.getHttpResponseStatusCode(), e.getMessage());
 			return;
 		} catch (RdapDataAccessException e) {
-			// Handled as an "Internal Server Error", it probably has some good things to log
+			// Handled as an "Internal Server Error", it probably has some good things to
+			// log
 			logger.log(Level.SEVERE, e.getMessage(), e);
 			response.sendError(500, e.getMessage());
 			return;
@@ -88,7 +91,8 @@ public abstract class RdapServlet extends HttpServlet {
 			requestResponse.getRdapObject().setLang(RdapConfiguration.getServerLanguage());
 		} else if (result.getRdapResponse() instanceof SearchResponse) {
 			SearchResponse<RdapObject> searchResponse = (SearchResponse<RdapObject>) result.getRdapResponse();
-			searchResponse.getRdapObjects().forEach(rdapObject -> rdapObject.setLang(RdapConfiguration.getServerLanguage()));
+			searchResponse.getRdapObjects()
+					.forEach(rdapObject -> rdapObject.setLang(RdapConfiguration.getServerLanguage()));
 		}
 
 		// Add nsSharingNameConformance
@@ -181,11 +185,13 @@ public abstract class RdapServlet extends HttpServlet {
 			renderer.renderIpNetwork(ipRequestResponse, printWriter);
 			break;
 		case NAMESERVER:
-			RequestResponse<Nameserver> nameserverRequestResponse = (RequestResponse<Nameserver>) result.getRdapResponse();
+			RequestResponse<Nameserver> nameserverRequestResponse = (RequestResponse<Nameserver>) result
+					.getRdapResponse();
 			wasFiltered = NameserverPrivacyFilter.filterNameserver(nameserverRequestResponse.getRdapObject());
 			if (wasFiltered) {
 				PrivacyUtil.addPrivacyRemarkAndStatus(nameserverRequestResponse.getRdapObject());
 			}
+			handleNameserver(result, nameserverRequestResponse.getRdapObject());
 			renderer.renderNameserver(nameserverRequestResponse, printWriter);
 			break;
 		case NAMESERVERS:
@@ -204,24 +210,43 @@ public abstract class RdapServlet extends HttpServlet {
 
 	}
 
+	private void handleNameserver(RdapResult result, Nameserver ns) {
+		if (!(result instanceof NameserverResult)) {
+			return;
+		}
+
+		if (!RdapConfiguration.isNameserverSharingNameConformance()) {
+			return;
+		}
+
+		NameserverResult nsResult = (NameserverResult) result;
+
+		Link searchOtherNS = nsResult.getSearchOtherNS();
+		if (searchOtherNS == null) {
+			return;
+		}
+
+		if (ns.getLinks() == null) {
+			ns.setLinks(new ArrayList<>());
+		}
+
+		ns.getLinks().add(searchOtherNS);
+	}
+
 	/**
 	 * Handles the `request` GET request and builds a response. Think of it as a
 	 * {@link HttpServlet#doGet(HttpServletRequest, HttpServletResponse)}, except
 	 * the response will be built for you.
 	 * 
-	 * @param request
-	 *            request to the servlet.
-	 * @param connection
-	 *            Already initialized connection to the database.
+	 * @param request    request to the servlet.
+	 * @param connection Already initialized connection to the database.
 	 * @return response to the user.
-	 * @throws HttpException
-	 *             Errors found handling `request`.
+	 * @throws HttpException Errors found handling `request`.
 	 */
 	protected abstract RdapResult doRdapGet(HttpServletRequest request) throws HttpException, RdapDataAccessException;
 
 	/**
-	 * Tries hard to find the best suitable renderer for
-	 * <code>httpRequest</code>.
+	 * Tries hard to find the best suitable renderer for <code>httpRequest</code>.
 	 */
 	private RendererWrapper findRenderer(HttpServletRequest httpRequest) {
 		RendererWrapper renderer;
