@@ -26,7 +26,7 @@ public class NameserverResult extends RdapSingleResult {
 		nameserverResponse.getRdapConformance().add("rdap_level_0");
 		nameserverResponse.setRdapObject(nameserver);
 
-		if (nsCount > 0) {
+		if (nsCount > 1) {
 			addSearchOtherNSLink(header, contextPath, nameserver);
 		}
 
