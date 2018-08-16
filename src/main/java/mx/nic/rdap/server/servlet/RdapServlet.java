@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import mx.nic.rdap.core.db.Autnum;
 import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.core.db.Entity;
+import mx.nic.rdap.core.db.Event;
 import mx.nic.rdap.core.db.IpNetwork;
 import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.Nameserver;
@@ -29,6 +30,8 @@ import mx.nic.rdap.renderer.object.RdapResponse;
 import mx.nic.rdap.renderer.object.RequestResponse;
 import mx.nic.rdap.renderer.object.SearchResponse;
 import mx.nic.rdap.server.configuration.RdapConfiguration;
+import mx.nic.rdap.server.notices.RequestNotices;
+import mx.nic.rdap.server.notices.UserEvents;
 import mx.nic.rdap.server.notices.UserNotices;
 import mx.nic.rdap.server.privacy.AutnumPrivacyFilter;
 import mx.nic.rdap.server.privacy.DomainPrivacyFilter;
@@ -52,6 +55,7 @@ public abstract class RdapServlet extends HttpServlet {
 
 	private final static Logger logger = Logger.getLogger(RdapServlet.class.getName());
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		RdapResult result;
@@ -62,7 +66,8 @@ public abstract class RdapServlet extends HttpServlet {
 			response.sendError(e.getHttpResponseStatusCode(), e.getMessage());
 			return;
 		} catch (RdapDataAccessException e) {
-			// Handled as an "Internal Server Error", it probably has some good things to
+			// Handled as an "Internal Server Error", it probably has some good
+			// things to
 			// log
 			logger.log(Level.SEVERE, e.getMessage(), e);
 			response.sendError(500, e.getMessage());
@@ -80,11 +85,7 @@ public abstract class RdapServlet extends HttpServlet {
 		response.setContentType(renderer.getMimeType());
 		// Recommendation of RFC 7480 section 5.6
 		response.setHeader("Access-Control-Allow-Origin", "*");
-		renderResult(renderer.getRenderer(), result, response.getWriter());
-	}
 
-	@SuppressWarnings("unchecked")
-	private void renderResult(Renderer renderer, RdapResult result, PrintWriter printWriter) {
 		// Set the language
 		if (result.getRdapResponse() instanceof RequestResponse) {
 			RequestResponse<RdapObject> requestResponse = (RequestResponse<RdapObject>) result.getRdapResponse();
@@ -105,9 +106,109 @@ public abstract class RdapServlet extends HttpServlet {
 		}
 
 		// Add TOS notice if exists
+		addNotices(result.getRdapResponse());
+
+		renderResult(renderer.getRenderer(), result, response.getWriter());
+	}
+
+	@SuppressWarnings("unchecked")
+	private void renderResult(Renderer renderer, RdapResult result, PrintWriter printWriter) {
+		// Filter objects according to privacy settings
+		boolean wasFiltered = false;
+		switch (result.getResultType()) {
+			case AUTNUM :
+				RequestResponse<Autnum> autnumRequestResponse = (RequestResponse<Autnum>) result.getRdapResponse();
+				wasFiltered = AutnumPrivacyFilter.filterAutnum(autnumRequestResponse.getRdapObject());
+				if (wasFiltered) {
+					PrivacyUtil.addPrivacyRemarkAndStatus(autnumRequestResponse.getRdapObject());
+				}
+				handleAutnumPostFilter(result, autnumRequestResponse);
+				renderer.renderAutnum(autnumRequestResponse, printWriter);
+				break;
+			case DOMAIN :
+				RequestResponse<Domain> domainRequestResponse = (RequestResponse<Domain>) result.getRdapResponse();
+				wasFiltered = DomainPrivacyFilter.filterDomain(domainRequestResponse.getRdapObject());
+				if (wasFiltered) {
+					PrivacyUtil.addPrivacyRemarkAndStatus(domainRequestResponse.getRdapObject());
+				}
+				handleDomainPostFilter(result, domainRequestResponse);
+				renderer.renderDomain(domainRequestResponse, printWriter);
+				break;
+			case DOMAINS :
+				SearchResponse<Domain> domainSearchResponse = (SearchResponse<Domain>) result.getRdapResponse();
+				for (Domain domain : domainSearchResponse.getRdapObjects()) {
+					wasFiltered = DomainPrivacyFilter.filterDomain(domain);
+					if (wasFiltered) {
+						PrivacyUtil.addPrivacyRemarkAndStatus(domain);
+					}
+				}
+				renderer.renderDomains(domainSearchResponse, printWriter);
+				break;
+			case ENTITIES :
+				SearchResponse<Entity> entitySearchResponse = (SearchResponse<Entity>) result.getRdapResponse();
+				for (Entity entity : entitySearchResponse.getRdapObjects()) {
+					wasFiltered = EntityPrivacyFilter.filterEntity(entity);
+					if (wasFiltered) {
+						PrivacyUtil.addPrivacyRemarkAndStatus(entity);
+					}
+				}
+				renderer.renderEntities(entitySearchResponse, printWriter);
+				break;
+			case ENTITY :
+				RequestResponse<Entity> entityRequestResponse = (RequestResponse<Entity>) result.getRdapResponse();
+				wasFiltered = EntityPrivacyFilter.filterEntity(entityRequestResponse.getRdapObject());
+				if (wasFiltered) {
+					PrivacyUtil.addPrivacyRemarkAndStatus(entityRequestResponse.getRdapObject());
+				}
+				handleEntityPostFilter(result, entityRequestResponse);
+				renderer.renderEntity(entityRequestResponse, printWriter);
+				break;
+			case EXCEPTION :
+				renderer.renderException((ExceptionResponse) result.getRdapResponse(), printWriter);
+				break;
+			case HELP :
+				renderer.renderHelp((HelpResponse) result.getRdapResponse(), printWriter);
+				break;
+			case IP :
+				RequestResponse<IpNetwork> ipRequestResponse = (RequestResponse<IpNetwork>) result.getRdapResponse();
+				wasFiltered = IpNetworkPrivacyFilter.filterIpNetwork(ipRequestResponse.getRdapObject());
+				if (wasFiltered) {
+					PrivacyUtil.addPrivacyRemarkAndStatus(ipRequestResponse.getRdapObject());
+				}
+				
+				handleIpNetworkPostFilter(result, ipRequestResponse);
+				renderer.renderIpNetwork(ipRequestResponse, printWriter);
+				break;
+			case NAMESERVER :
+				RequestResponse<Nameserver> nameserverRequestResponse = (RequestResponse<Nameserver>) result
+						.getRdapResponse();
+				wasFiltered = NameserverPrivacyFilter.filterNameserver(nameserverRequestResponse.getRdapObject());
+				if (wasFiltered) {
+					PrivacyUtil.addPrivacyRemarkAndStatus(nameserverRequestResponse.getRdapObject());
+				}
+				handleNameserverPostFilter(result, nameserverRequestResponse);
+				renderer.renderNameserver(nameserverRequestResponse, printWriter);
+				break;
+			case NAMESERVERS :
+				SearchResponse<Nameserver> nameserverSearchResponse = (SearchResponse<Nameserver>) result
+						.getRdapResponse();
+				for (Nameserver nameserver : nameserverSearchResponse.getRdapObjects()) {
+					wasFiltered = NameserverPrivacyFilter.filterNameserver(nameserver);
+					if (wasFiltered) {
+						PrivacyUtil.addPrivacyRemarkAndStatus(nameserver);
+					}
+				}
+				renderer.renderNameservers(nameserverSearchResponse, printWriter);
+				break;
+			default :
+				break;
+		}
+
+	}
+
+	private void addNotices(RdapResponse response) {
 		List<Remark> tos = UserNotices.getTos();
 		if (tos != null && !tos.isEmpty()) {
-			RdapResponse response = result.getRdapResponse();
 			if (response.getNotices() == null) {
 				response.setNotices(new ArrayList<>());
 			}
@@ -116,109 +217,20 @@ public abstract class RdapServlet extends HttpServlet {
 
 		List<Remark> userNotices = UserNotices.getNotices();
 		if (userNotices != null && !userNotices.isEmpty()) {
-			RdapResponse response = result.getRdapResponse();
 			if (response.getNotices() == null) {
 				response.setNotices(new ArrayList<>());
 			}
 			response.getNotices().addAll(userNotices);
 		}
 
-		// Filter objects according to privacy settings
-		boolean wasFiltered = false;
-		switch (result.getResultType()) {
-		case AUTNUM:
-			RequestResponse<Autnum> autnumRequestResponse = (RequestResponse<Autnum>) result.getRdapResponse();
-			wasFiltered = AutnumPrivacyFilter.filterAutnum(autnumRequestResponse.getRdapObject());
-			if (wasFiltered) {
-				PrivacyUtil.addPrivacyRemarkAndStatus(autnumRequestResponse.getRdapObject());
-			}
-			renderer.renderAutnum(autnumRequestResponse, printWriter);
-			break;
-		case DOMAIN:
-			RequestResponse<Domain> domainRequestResponse = (RequestResponse<Domain>) result.getRdapResponse();
-			wasFiltered = DomainPrivacyFilter.filterDomain(domainRequestResponse.getRdapObject());
-			if (wasFiltered) {
-				PrivacyUtil.addPrivacyRemarkAndStatus(domainRequestResponse.getRdapObject());
-			}
-			renderer.renderDomain(domainRequestResponse, printWriter);
-			break;
-		case DOMAINS:
-			SearchResponse<Domain> domainSearchResponse = (SearchResponse<Domain>) result.getRdapResponse();
-			for (Domain domain : domainSearchResponse.getRdapObjects()) {
-				wasFiltered = DomainPrivacyFilter.filterDomain(domain);
-				if (wasFiltered) {
-					PrivacyUtil.addPrivacyRemarkAndStatus(domain);
-				}
-			}
-			renderer.renderDomains(domainSearchResponse, printWriter);
-			break;
-		case ENTITIES:
-			SearchResponse<Entity> entitySearchResponse = (SearchResponse<Entity>) result.getRdapResponse();
-			for (Entity entity : entitySearchResponse.getRdapObjects()) {
-				wasFiltered = EntityPrivacyFilter.filterEntity(entity);
-				if (wasFiltered) {
-					PrivacyUtil.addPrivacyRemarkAndStatus(entity);
-				}
-			}
-			renderer.renderEntities(entitySearchResponse, printWriter);
-			break;
-		case ENTITY:
-			RequestResponse<Entity> entityRequestResponse = (RequestResponse<Entity>) result.getRdapResponse();
-			wasFiltered = EntityPrivacyFilter.filterEntity(entityRequestResponse.getRdapObject());
-			if (wasFiltered) {
-				PrivacyUtil.addPrivacyRemarkAndStatus(entityRequestResponse.getRdapObject());
-			}
-			renderer.renderEntity(entityRequestResponse, printWriter);
-			break;
-		case EXCEPTION:
-			renderer.renderException((ExceptionResponse) result.getRdapResponse(), printWriter);
-			break;
-		case HELP:
-			renderer.renderHelp((HelpResponse) result.getRdapResponse(), printWriter);
-			break;
-		case IP:
-			RequestResponse<IpNetwork> ipRequestResponse = (RequestResponse<IpNetwork>) result.getRdapResponse();
-			wasFiltered = IpNetworkPrivacyFilter.filterIpNetwork(ipRequestResponse.getRdapObject());
-			if (wasFiltered) {
-				PrivacyUtil.addPrivacyRemarkAndStatus(ipRequestResponse.getRdapObject());
-			}
-			renderer.renderIpNetwork(ipRequestResponse, printWriter);
-			break;
-		case NAMESERVER:
-			RequestResponse<Nameserver> nameserverRequestResponse = (RequestResponse<Nameserver>) result
-					.getRdapResponse();
-			wasFiltered = NameserverPrivacyFilter.filterNameserver(nameserverRequestResponse.getRdapObject());
-			if (wasFiltered) {
-				PrivacyUtil.addPrivacyRemarkAndStatus(nameserverRequestResponse.getRdapObject());
-			}
-			handleNameserver(result, nameserverRequestResponse.getRdapObject());
-			renderer.renderNameserver(nameserverRequestResponse, printWriter);
-			break;
-		case NAMESERVERS:
-			SearchResponse<Nameserver> nameserverSearchResponse = (SearchResponse<Nameserver>) result.getRdapResponse();
-			for (Nameserver nameserver : nameserverSearchResponse.getRdapObjects()) {
-				wasFiltered = NameserverPrivacyFilter.filterNameserver(nameserver);
-				if (wasFiltered) {
-					PrivacyUtil.addPrivacyRemarkAndStatus(nameserver);
-				}
-			}
-			renderer.renderNameservers(nameserverSearchResponse, printWriter);
-			break;
-		default:
-			break;
-		}
-
+		return;
 	}
 
-	private void handleNameserver(RdapResult result, Nameserver ns) {
-		if (!(result instanceof NameserverResult)) {
-			return;
-		}
-
+	private void handleNameserverPostFilter(RdapResult result, RequestResponse<Nameserver> response) {
 		if (!RdapConfiguration.isNameserverSharingNameConformance()) {
 			return;
 		}
-
+		Nameserver ns = response.getRdapObject();
 		NameserverResult nsResult = (NameserverResult) result;
 
 		Link searchOtherNS = nsResult.getSearchOtherNS();
@@ -231,17 +243,59 @@ public abstract class RdapServlet extends HttpServlet {
 		}
 
 		ns.getLinks().add(searchOtherNS);
+
+		addUserEventsAndNotices(response, RequestNotices.getNsNotices());
+	}
+
+	private void handleDomainPostFilter(RdapResult result, RequestResponse<Domain> response) {
+		addUserEventsAndNotices(response, RequestNotices.getDomainNotices());
+	}
+
+	private void handleEntityPostFilter(RdapResult result, RequestResponse<Entity> response) {
+		addUserEventsAndNotices(response, RequestNotices.getEntityNotices());
+	}
+
+	private void handleIpNetworkPostFilter(RdapResult result, RequestResponse<IpNetwork> response) {
+		addUserEventsAndNotices(response, RequestNotices.getIpNotices());
+	}
+
+	private void handleAutnumPostFilter(RdapResult result, RequestResponse<Autnum> response) {
+		addUserEventsAndNotices(response, RequestNotices.getAutnumNotices());
+	}
+
+	private void addUserEventsAndNotices(RequestResponse<? extends RdapObject> response, List<Remark> requestNotices) {
+
+		RdapObject rdapObject = response.getRdapObject();
+		List<Event> events = UserEvents.getEvents();
+		if (events != null && !events.isEmpty()) {
+			if (rdapObject.getEvents() == null) {
+				rdapObject.setEvents(new ArrayList<>());
+			}
+
+			rdapObject.getEvents().addAll(events);
+		}
+
+		if (requestNotices != null && !requestNotices.isEmpty()) {
+			if (response.getNotices() == null) {
+				response.setNotices(new ArrayList<>());
+			}
+			response.getNotices().addAll(requestNotices);
+		}
+
 	}
 
 	/**
 	 * Handles the `request` GET request and builds a response. Think of it as a
-	 * {@link HttpServlet#doGet(HttpServletRequest, HttpServletResponse)}, except
-	 * the response will be built for you.
+	 * {@link HttpServlet#doGet(HttpServletRequest, HttpServletResponse)}, except the
+	 * response will be built for you.
 	 * 
-	 * @param request    request to the servlet.
-	 * @param connection Already initialized connection to the database.
+	 * @param request
+	 *            request to the servlet.
+	 * @param connection
+	 *            Already initialized connection to the database.
 	 * @return response to the user.
-	 * @throws HttpException Errors found handling `request`.
+	 * @throws HttpException
+	 *             Errors found handling `request`.
 	 */
 	protected abstract RdapResult doRdapGet(HttpServletRequest request) throws HttpException, RdapDataAccessException;
 

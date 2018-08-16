@@ -51,21 +51,15 @@ public class RdapInitializer implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent event) {
 		servletContext = event.getServletContext();
 		try {
-			RendererPool.loadRenderers(loadConfig(RENDERERS_FILE, RENDERER_CONTEXT_PARAM_NAME));
 			Properties serverConfig = loadConfig(CONFIGURATION_FILE, RDAP_CONFIGURATION_PARAM_NAME);
 			RdapConfiguration.loadSystemProperties(serverConfig);
-
 			RdapConfiguration.loadRdapConfiguration();
-			RdapConfiguration.loadConfiguredOwnerRoles();
-			PrivacyUtil.loadAllPrivacySettings();
-			loadUserNotices();
-
 			Properties dataAccessConfig = loadConfig(DATA_ACCESS_FILE, DATA_ACCESS_PARAM_NAME);
 			for (Entry<Object, Object> entry : dataAccessConfig.entrySet()) {
 				serverConfig.put(entry.getKey(), entry.getValue());
 			}
 			DataAccessService.initialize(serverConfig);
-
+			
 			// From NameserverDAO check if is compliant with NameserverSharingName Draft
 			try {
 				NameserverDAO nameserverDAO = DataAccessService.getNameserverDAO();
@@ -77,6 +71,13 @@ public class RdapInitializer implements ServletContextListener {
 				// is not NameserverSharingName conformance
 				RdapConfiguration.setNameserverSharingNameConformance(false);
 			}
+
+			RendererPool.loadRenderers(loadConfig(RENDERERS_FILE, RENDERER_CONTEXT_PARAM_NAME));
+			RdapConfiguration.loadConfiguredOwnerRoles();
+			PrivacyUtil.loadAllPrivacySettings();
+			loadUserNotices();
+
+
 
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
@@ -115,12 +116,14 @@ public class RdapInitializer implements ServletContextListener {
 	}
 
 	private void loadUserNotices() throws SAXException, IOException, ParserConfigurationException {
+		boolean isDefaultPath = false;
 		String userPath = servletContext.getInitParameter(NOTICES_FOLDER_PATH_PARAM_NAME);
 		if (userPath == null || userPath.trim().isEmpty()) {
 			userPath = DEFAULT_NOTICES_FOLDER_PATH;
+			isDefaultPath = true;
 		}
 
-		UserNotices.init(userPath);
+		UserNotices.init(userPath, isDefaultPath);
 	}
 
 }

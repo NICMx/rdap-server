@@ -42,6 +42,10 @@ public class RdapConfiguration {
 	private static final String ALLOW_WILDCARD_ANYWHERE_KEY = "allow_search_wildcard_anywhere";
 	private static final String ALLOW_REGEX_SEARCHES = "allow_regex_searches";
 	private static final String USER_ROLES_KEY = "user_roles";
+	private static final String NOTICES_TIMER_UPDATE_TIME_KEY = "notices_timer_update_time";
+	private static final String EVENTS_TIMER_UPDATE_TIME_KEY = "events_timer_update_time";
+	private static final String IS_DB_DATA_LIVE = "is_db_data_live";
+	
 
 	// Settings values
 	private static String serverLanguage;
@@ -54,6 +58,9 @@ public class RdapConfiguration {
 	private static boolean allowRegexSearches;
 	private static Set<String> userRoles;
 	private static boolean isNSSharingNameConformance;
+	private static int noticesUpdateTime;
+	private static int eventsUpdateTime;
+	private static boolean isDbDataLive;
 
 	private RdapConfiguration() {
 		// no code.
@@ -227,6 +234,41 @@ public class RdapConfiguration {
 			exceptions.add(e);
 		}
 
+		if (isPropertyNullOrEmpty(NOTICES_TIMER_UPDATE_TIME_KEY)) {
+			invalidProperties.add(NOTICES_TIMER_UPDATE_TIME_KEY);
+		} else {
+			String noticesUpdTimeString = systemProperties.getProperty(NOTICES_TIMER_UPDATE_TIME_KEY).trim();
+			try {
+				noticesUpdateTime = Integer.parseInt(noticesUpdTimeString);
+			} catch (NumberFormatException e) {
+				invalidProperties.add(NOTICES_TIMER_UPDATE_TIME_KEY);
+			}
+		}
+
+		if (isPropertyNullOrEmpty(EVENTS_TIMER_UPDATE_TIME_KEY)) {
+			invalidProperties.add(EVENTS_TIMER_UPDATE_TIME_KEY);
+		} else {
+			String eventsUpdTimeString = systemProperties.getProperty(EVENTS_TIMER_UPDATE_TIME_KEY).trim();
+			try {
+				eventsUpdateTime = Integer.parseInt(eventsUpdTimeString);
+			} catch (NumberFormatException e) {
+				invalidProperties.add(EVENTS_TIMER_UPDATE_TIME_KEY);
+			}
+		}
+
+		if (isPropertyNullOrEmpty(IS_DB_DATA_LIVE)) {
+			invalidProperties.add(IS_DB_DATA_LIVE);
+		} else {
+			String isDbDataLiveProperty = systemProperties.getProperty(IS_DB_DATA_LIVE).trim();
+			if (isDbDataLiveProperty.equalsIgnoreCase("true")) {
+				isDbDataLive = true;
+			} else if (isDbDataLiveProperty.equalsIgnoreCase("false")) {
+				isDbDataLive = false;
+			} else {
+				invalidProperties.add(IS_DB_DATA_LIVE);
+			}
+		}
+
 		if (!invalidProperties.isEmpty()) {
 			InitializationException invalidValueException = new InitializationException(
 					"The following required properties were not found or are invalid values in configuration file : "
@@ -238,6 +280,9 @@ public class RdapConfiguration {
 		}
 
 		isNSSharingNameConformance = false;
+		
+		
+		
 	}
 
 	/**
@@ -427,5 +472,18 @@ public class RdapConfiguration {
 
 	public static void setNameserverSharingNameConformance(boolean isNameserverSharingNameConformance) {
 		isNSSharingNameConformance = isNameserverSharingNameConformance;
+	}
+	
+	
+	public static int getEventsUpdateTime() {
+		return eventsUpdateTime;
+	}
+	
+	public static int getNoticesUpdateTime() {
+		return noticesUpdateTime;
+	}
+	
+	public static boolean isDbDataLive() {
+		return isDbDataLive;
 	}
 }

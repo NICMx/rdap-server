@@ -20,6 +20,7 @@ import javax.xml.validation.Validator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import mx.nic.rdap.core.db.Event;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.server.listener.RdapInitializer;
 
@@ -33,6 +34,8 @@ public class NoticesReader {
 	private final static String HELP_XSD = "META-INF/xsd/help.xsd";
 	private final static String TOS_XSD = "META-INF/xsd/tos.xsd";
 	private final static String NOTICES_XSD = "META-INF/xsd/notices.xsd";
+	
+	private final static String EVENTS_XSD ="META-INF/xsd/events.xsd";
 
 	/**
 	 * Parse an XML file, validate the XML against the help.xsd and obtains the
@@ -59,6 +62,18 @@ public class NoticesReader {
 	public static List<Remark> parseNoticesXML(String filePath)
 			throws SAXException, IOException, ParserConfigurationException {
 		return parseXML(filePath, NOTICES_XSD);
+	}
+	
+	/**
+	 * Parse an XML file, validate the XML against the events.xsd and obtains the
+	 * events from the XML file.
+	 */
+	public static List<Event> parseEventsXML(String filePath)
+			throws SAXException, IOException, ParserConfigurationException {
+		validateXMLWithSchema(filePath, EVENTS_XSD);
+		EventsHandler handler = new EventsHandler();
+		parseXML(handler, filePath);
+		return handler.getEventList();
 	}
 
 	private static List<Remark> parseXML(String filePath, String xsd)
@@ -150,5 +165,10 @@ public class NoticesReader {
 				xmlStream.close();
 			}
 		}
+	}
+	
+	
+	static String getRealPath(String file) {
+		return RdapInitializer.getServletContext().getRealPath(file);
 	}
 }

@@ -222,69 +222,120 @@ public class EntityPrivacyFilter {
 
 	private static boolean filterVcard(VCard vcard, UserInfo userInfo, Map<String, PrivacySetting> privacySettings) {
 		boolean isPrivate = false;
-
+		boolean isHidden;
+		PrivacySetting privacySetting;
+		
 		if (ObjectPrivacyFilter.isValueEmpty(vcard)) {
 			return false;
 		}
 
 		String key = "name";
-		boolean isHidden = privacySettings.get(key).isHidden(userInfo);
+		privacySetting = privacySettings.get(key);
+		isHidden = privacySetting.isHidden(userInfo);
 		if (isHidden && !ObjectPrivacyFilter.isValueEmpty(vcard.getName())) {
 			isPrivate = true;
-			vcard.setName(null);
+			if (privacySetting instanceof ObscuredPrivacy) {
+				String textToShow = ((ObscuredPrivacy) privacySetting).getTextToShow();
+				vcard.setName(textToShow);
+			} else {
+				vcard.setName(null);
+			}
 		}
 
 		key = "companyName";
-		isHidden = privacySettings.get(key).isHidden(userInfo);
+		privacySetting = privacySettings.get(key);
+		isHidden = privacySetting.isHidden(userInfo);
 		if (isHidden && !ObjectPrivacyFilter.isValueEmpty(vcard.getCompanyName())) {
 			isPrivate = true;
-			vcard.setCompanyName(null);
+			if (privacySetting instanceof ObscuredPrivacy) {
+				String textToShow = ((ObscuredPrivacy) privacySetting).getTextToShow();
+				vcard.setCompanyName(textToShow);
+			} else {
+				vcard.setCompanyName(null);
+			}
 		}
 
 		key = "companyUrl";
-		isHidden = privacySettings.get(key).isHidden(userInfo);
+		privacySetting = privacySettings.get(key);
+		isHidden = privacySetting.isHidden(userInfo);
 		if (isHidden && !ObjectPrivacyFilter.isValueEmpty(vcard.getCompanyURL())) {
 			isPrivate = true;
-			vcard.setCompanyURL(null);
+			if (privacySetting instanceof ObscuredPrivacy) {
+				String textToShow = ((ObscuredPrivacy) privacySetting).getTextToShow();
+				vcard.setCompanyURL(textToShow);
+			} else {
+				vcard.setCompanyURL(null);
+			}
 		}
 
 		key = "mail";
-		isHidden = privacySettings.get(key).isHidden(userInfo);
+		privacySetting = privacySettings.get(key);
+		isHidden = privacySetting.isHidden(userInfo);
 		if (isHidden && !ObjectPrivacyFilter.isValueEmpty(vcard.getEmail())) {
 			isPrivate = true;
-			vcard.setEmail(null);
+			if (privacySetting instanceof ObscuredPrivacy) {
+				String textToShow = ((ObscuredPrivacy) privacySetting).getTextToShow();
+				vcard.setEmail(textToShow);
+			} else {
+				vcard.setEmail(null);
+			}
 		}
 
 		key = "voice";
-		isHidden = privacySettings.get(key).isHidden(userInfo);
+		privacySetting = privacySettings.get(key);
+		isHidden = privacySetting.isHidden(userInfo);
 		if (isHidden && !ObjectPrivacyFilter.isValueEmpty(vcard.getVoice())) {
 			isPrivate = true;
-			vcard.setVoice(null);
+			if (privacySetting instanceof ObscuredPrivacy) {
+				String textToShow = ((ObscuredPrivacy) privacySetting).getTextToShow();
+				vcard.setVoice(textToShow);
+			} else {
+				vcard.setVoice(null);
+			}
 		}
 
 		key = "cellphone";
-		isHidden = privacySettings.get(key).isHidden(userInfo);
+		privacySetting = privacySettings.get(key);
+		isHidden = privacySetting.isHidden(userInfo);
 		if (isHidden && !ObjectPrivacyFilter.isValueEmpty(vcard.getCellphone())) {
 			isPrivate = true;
-			vcard.setCellphone(null);
+			if (privacySetting instanceof ObscuredPrivacy) {
+				String textToShow = ((ObscuredPrivacy) privacySetting).getTextToShow();
+				vcard.setCellphone(textToShow);
+			} else {
+				vcard.setCellphone(null);
+			}
 		}
 
 		key = "fax";
-		isHidden = privacySettings.get(key).isHidden(userInfo);
+		privacySetting = privacySettings.get(key);
+		isHidden = privacySetting.isHidden(userInfo);
 		if (isHidden && !ObjectPrivacyFilter.isValueEmpty(vcard.getFax())) {
 			isPrivate = true;
-			vcard.setFax(null);
+			if (privacySetting instanceof ObscuredPrivacy) {
+				String textToShow = ((ObscuredPrivacy) privacySetting).getTextToShow();
+				vcard.setFax(textToShow);
+			} else {
+				vcard.setFax(null);
+			}
 		}
 
 		key = "jobTitle";
-		isHidden = privacySettings.get(key).isHidden(userInfo);
+		privacySetting = privacySettings.get(key);
+		isHidden = privacySetting.isHidden(userInfo);
 		if (isHidden && !ObjectPrivacyFilter.isValueEmpty(vcard.getJobTitle())) {
 			isPrivate = true;
-			vcard.setJobTitle(null);
+			if (privacySetting instanceof ObscuredPrivacy) {
+				String textToShow = ((ObscuredPrivacy) privacySetting).getTextToShow();
+				vcard.setJobTitle(textToShow);
+			} else {
+				vcard.setJobTitle(null);
+			}
 		}
 
 		key = "postalInfo";
-		isHidden = privacySettings.get(key).isHidden(userInfo);
+		privacySetting = privacySettings.get(key);
+		isHidden = privacySetting.isHidden(userInfo);
 		if (isHidden && !ObjectPrivacyFilter.isValueEmpty(vcard.getPostalInfo())) {
 			isPrivate = true;
 			List<VCardPostalInfo> postalInfoNull = null;
@@ -306,62 +357,111 @@ public class EntityPrivacyFilter {
 
 		String key;
 		boolean isHidden;
+		PrivacySetting privacySetting;
 		for (VCardPostalInfo postalInfo : postalInfos) {
 
 			key = "type";
-			isHidden = privacySettings.get(key).isHidden(userInfo);
+			privacySetting = privacySettings.get(key);
+			isHidden = privacySetting.isHidden(userInfo);
 			if (isHidden && !ObjectPrivacyFilter.isValueEmpty(postalInfo.getType())) {
 				isPrivate = true;
-				postalInfo.setType(null);
+				if (privacySetting instanceof ObscuredPrivacy) {
+					String textToShow = ((ObscuredPrivacy) privacySetting).getTextToShow();
+					postalInfo.setType(textToShow);
+				} else {
+					postalInfo.setType(null);
+				}
 			}
 
 			key = "street1";
-			isHidden = privacySettings.get(key).isHidden(userInfo);
+			privacySetting = privacySettings.get(key);
+			isHidden = privacySetting.isHidden(userInfo);
 			if (isHidden && !ObjectPrivacyFilter.isValueEmpty(postalInfo.getStreet1())) {
 				isPrivate = true;
-				postalInfo.setStreet1(null);
+				if (privacySetting instanceof ObscuredPrivacy) {
+					String textToShow = ((ObscuredPrivacy) privacySetting).getTextToShow();
+					postalInfo.setStreet1(textToShow);
+				} else {
+					postalInfo.setStreet1(null);
+				}
 			}
 
 			key = "street2";
-			isHidden = privacySettings.get(key).isHidden(userInfo);
+			privacySetting = privacySettings.get(key);
+			isHidden = privacySetting.isHidden(userInfo);
 			if (isHidden && !ObjectPrivacyFilter.isValueEmpty(postalInfo.getStreet2())) {
 				isPrivate = true;
-				postalInfo.setStreet2(null);
+				if (privacySetting instanceof ObscuredPrivacy) {
+					String textToShow = ((ObscuredPrivacy) privacySetting).getTextToShow();
+					postalInfo.setStreet2(textToShow);
+				} else {
+					postalInfo.setStreet2(null);
+				}
 			}
 
 			key = "street3";
-			isHidden = privacySettings.get(key).isHidden(userInfo);
+			privacySetting = privacySettings.get(key);
+			isHidden = privacySetting.isHidden(userInfo);
 			if (isHidden && !ObjectPrivacyFilter.isValueEmpty(postalInfo.getStreet3())) {
 				isPrivate = true;
-				postalInfo.setStreet3(null);
+				if (privacySetting instanceof ObscuredPrivacy) {
+					String textToShow = ((ObscuredPrivacy) privacySetting).getTextToShow();
+					postalInfo.setStreet3(textToShow);
+				} else {
+					postalInfo.setStreet3(null);
+				}
 			}
 
 			key = "postalCode";
-			isHidden = privacySettings.get(key).isHidden(userInfo);
+			privacySetting = privacySettings.get(key);
+			isHidden = privacySetting.isHidden(userInfo);
 			if (isHidden && !ObjectPrivacyFilter.isValueEmpty(postalInfo.getPostalCode())) {
 				isPrivate = true;
-				postalInfo.setPostalCode(null);
+				if (privacySetting instanceof ObscuredPrivacy) {
+					String textToShow = ((ObscuredPrivacy) privacySetting).getTextToShow();
+					postalInfo.setPostalCode(textToShow);
+				} else {
+					postalInfo.setPostalCode(null);
+				}
 			}
 
 			key = "city";
-			isHidden = privacySettings.get(key).isHidden(userInfo);
+			privacySetting = privacySettings.get(key);
+			isHidden = privacySetting.isHidden(userInfo);
 			if (isHidden && !ObjectPrivacyFilter.isValueEmpty(postalInfo.getCity())) {
 				isPrivate = true;
-				postalInfo.setCity(null);
+				if (privacySetting instanceof ObscuredPrivacy) {
+					String textToShow = ((ObscuredPrivacy) privacySetting).getTextToShow();
+					postalInfo.setCity(textToShow);
+				} else {
+					postalInfo.setCity(null);
+				}
 			}
 
 			key = "state";
-			isHidden = privacySettings.get(key).isHidden(userInfo);
+			privacySetting = privacySettings.get(key);
+			isHidden = privacySetting.isHidden(userInfo);
 			if (isHidden && !ObjectPrivacyFilter.isValueEmpty(postalInfo.getState())) {
 				isPrivate = true;
-				postalInfo.setState(null);
+				if (privacySetting instanceof ObscuredPrivacy) {
+					String textToShow = ((ObscuredPrivacy) privacySetting).getTextToShow();
+					postalInfo.setState(textToShow);
+				} else {
+					postalInfo.setState(null);
+				}
 			}
 
 			key = "country";
-			isHidden = privacySettings.get(key).isHidden(userInfo);
+			privacySetting = privacySettings.get(key);
+			isHidden = privacySetting.isHidden(userInfo);
 			if (isHidden && !ObjectPrivacyFilter.isValueEmpty(postalInfo.getCountry())) {
 				isPrivate = true;
-				postalInfo.setCountry(null);
+				if (privacySetting instanceof ObscuredPrivacy) {
+					String textToShow = ((ObscuredPrivacy) privacySetting).getTextToShow();
+					postalInfo.setCountry(textToShow);
+				} else {
+					postalInfo.setCountry(null);
+				}
 			}
 
 		}

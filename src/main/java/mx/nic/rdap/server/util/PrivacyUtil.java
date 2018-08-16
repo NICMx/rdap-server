@@ -22,6 +22,7 @@ import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
 import mx.nic.rdap.server.configuration.RdapConfiguration;
 import mx.nic.rdap.server.listener.RdapInitializer;
+import mx.nic.rdap.server.privacy.ObscuredPrivacy;
 import mx.nic.rdap.server.privacy.PrivacySetting;
 import mx.nic.rdap.server.privacy.PrivacySettingsFactory;
 
@@ -94,7 +95,6 @@ public class PrivacyUtil {
 	/** Path where the user properties are read */
 	private static final String USER_PATH = "WEB-INF/privacy/";
 
-
 	public static void loadAllPrivacySettings() throws IOException {
 		loadObjectPrivacySettings(ENTITY);
 		for (Role role : Role.values()) {
@@ -158,7 +158,7 @@ public class PrivacyUtil {
 		loadObjectPrivacySettings(ENTITY_REMARKS_LINKS);
 
 	}
-	
+
 	private static boolean loadUserPrivacySettings(String fileName, Properties properties) throws IOException {
 		ServletContext ctxt = RdapInitializer.getServletContext();
 		Path path = null;
@@ -212,7 +212,8 @@ public class PrivacyUtil {
 		Properties properties = loadDefaulProperties(objectName);
 		// Override with the user "default" privacy settings if exists.
 		loadUserPrivacySettings(objectName, properties);
-		// Then override with the user "role specific" privacy setting for objectName,
+		// Then override with the user "role specific" privacy setting for
+		// objectName,
 		// if exists.
 		String objectRoleName = objectName + ROLE_PRIVACY_STRING + role.name();
 		boolean userFileExists = loadUserPrivacySettings(objectRoleName, properties);
@@ -255,10 +256,33 @@ public class PrivacyUtil {
 				builder.append(key).append(" (must have a value); ");
 				continue;
 			}
+
+			int indexOfPipe = property.indexOf('|');
+			if (indexOfPipe > 0) {
+				try {
+					String privacy = property.substring(0, indexOfPipe).trim();
+					String textToShow = property.substring(indexOfPipe + 1).trim();
+					
+					if (privacy.isEmpty() || textToShow.isEmpty() || !privacy.equalsIgnoreCase("obscured")) {
+						hasInvalidProperties = true;
+						builder.append(key).append("=").append(property).append(" (invalid obscured value); ");	
+					}
+					
+					ObscuredPrivacy privacySetting = ObscuredPrivacy.create(textToShow);
+					objectProperties.put(key, privacySetting);
+					
+				} catch (IndexOutOfBoundsException e) {
+					hasInvalidProperties = true;
+					builder.append(key).append("=").append(property).append(" (invalid obscured value); ");
+				}
+				continue;
+			}
+
 			if (!property.contains(",")) {
 				try {
 					PrivacyStatus privacyStatus = PrivacyStatus.valueOf(property.toUpperCase());
-					objectProperties.put(key, PrivacySettingsFactory.getSetForRoles(privacyStatus.toString().toLowerCase()));
+					objectProperties.put(key,
+							PrivacySettingsFactory.getSetForRoles(privacyStatus.toString().toLowerCase()));
 				} catch (IllegalArgumentException e) {
 					// Can be a custom role, must be configured
 					if (RdapConfiguration.isUserRoleConfigured(property)) {
@@ -309,8 +333,8 @@ public class PrivacyUtil {
 		}
 
 		if (hasInvalidProperties) {
-			throw new RuntimeException(
-					"Invalid privacy file '" + objectName + ".properties'.\n Invalid values: " + builder.substring(0, builder.toString().length() - 2));
+			throw new RuntimeException("Invalid privacy file '" + objectName + ".properties'.\n Invalid values: "
+					+ builder.substring(0, builder.toString().length() - 2));
 		}
 
 		return objectProperties;
@@ -497,12 +521,12 @@ public class PrivacyUtil {
 	}
 
 	/**
-	 * Adds a {@link Remark} of type {@link RemarkType} <code>OBJECT_AUTHORIZATION</code>,
-	 * and if the <code>rdapObject</code> is an instance of {@link Entity} also adds the
-	 * {@link Status} <code>Private</code>.
+	 * Adds a {@link Remark} of type {@link RemarkType}
+	 * <code>OBJECT_AUTHORIZATION</code>, and if the <code>rdapObject</code> is an
+	 * instance of {@link Entity} also adds the {@link Status} <code>Private</code>.
 	 * 
 	 * @param rdapObject
-	 *             The object to modify
+	 *            The object to modify
 	 */
 	public static void addPrivacyRemarkAndStatus(RdapObject rdapObject) {
 		if (rdapObject.getRemarks() == null) {

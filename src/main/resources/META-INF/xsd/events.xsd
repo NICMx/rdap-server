@@ -1,0 +1,78 @@
+<xs:schema attributeFormDefault="unqualified"
+	elementFormDefault="qualified"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:element name="events">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="event" minOccurs="0"
+					maxOccurs="unbounded" type="event_info" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="event_info">
+		<xs:sequence>
+			<xs:element name="eventAction" minOccurs="1" maxOccurs="1" type="eventActionType"/>
+			<xs:element type="xs:string" name="eventActor"
+				minOccurs="0" maxOccurs="1" />
+			<xs:element name="eventDate" minOccurs="1" maxOccurs="1"
+				type="xs:dateTime" />
+			<xs:element name="links" minOccurs="0" maxOccurs="1"
+				type="links_type">
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+
+	<xs:simpleType name="eventActionType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="registration" />
+			<xs:enumeration value="reregistration" />
+			<xs:enumeration value="last changed" />
+			<xs:enumeration value="expiration" />
+			<xs:enumeration value="deletion" />
+			<xs:enumeration value="reinstantiation" />
+			<xs:enumeration value="transfer" />
+			<xs:enumeration value="locked" />
+			<xs:enumeration value="unlocked" />
+			<xs:enumeration value="last update of rdap database" />
+			<xs:enumeration value="registrar expiration" />
+			<xs:enumeration value="enum validation expiration" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="links_type">
+		<xs:sequence>
+			<xs:element name="link" maxOccurs="unbounded"
+				minOccurs="1" type="link_info">
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="link_info">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute type="xs:string" name="rel"
+					use="optional" />
+				<xs:attribute name="href" use="required">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1" />
+							<xs:whiteSpace value="collapse" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute type="xs:string" name="hreflang"
+					use="optional" />
+				<xs:attribute type="xs:string" name="title"
+					use="optional" />
+				<xs:attribute type="xs:string" name="media"
+					use="optional" />
+				<xs:attribute type="xs:string" name="type"
+					use="optional" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+</xs:schema>
+
