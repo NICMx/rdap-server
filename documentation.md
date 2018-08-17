@@ -38,6 +38,8 @@ title: Documentation Index
 1. [Configuring Red Dog's Server Behavior](behavior-configuration.html)
 1. [Configuring Red Dog's Help Response](help-response.html)
 1. [Configuring Red Dog's Terms of Service](terms-of-service.html)
+1. [Configuring Red Dog's response Notices](notices.html)
+1. [Configuring Red Dog's response Events](events.html)
 1. [Rate Limit Filter](rate-limit.html)
 1. [User Authentication](authentication.html)
    1. [Using Apache Shiro<sup>TM</sup>](using-apache-shiro.html)

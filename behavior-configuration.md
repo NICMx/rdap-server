@@ -19,6 +19,9 @@ wheretogo: ["Configuring Red Dog's Help Response", "help-response.html"]
    1. [`allow_search_wildcard_anywhere`](#allow_search_wildcard_anywhere)
    1. [`allow_regex_searches`](#allow_regex_searches)
    1. [`user_roles`](#user_roles)
+   1. [`notices_timer_update`](#notices_timer_update)
+   1. [`events_timer_update`](#events_timer_update)
+   1. [`is_db_data_live`](#is_db_data_live)
 
 
 ## Introduction
@@ -212,3 +215,40 @@ This table shows the specs of the property:
 | Required? | Type | Default | Example |
 |--------------------|--------|---------|-------------|
 | ![No](img/red_x.svg) | String (can be a list separated by commas) | null     | user_roles = president, governor, judge |
+
+
+### `notices_timer_update`
+Integer number that represent time in seconds. Is used by a `notices update timer` that check every N second, if exists a change in the notices files for each type of requests (i.e. entity, domain, nameserver, autnum, ip)
+
+if the value is set to zero (0 - default value), the timer for the notices will never start nor check for updates. 
+To update the notices, you will need to restart the application.
+This behavior is because not every implementer needs to update notices too often.
+ 
+
+| Required? | Type | Default | Example |
+|--------------------|--------|---------|-------------|
+| ![No](img/red_x.svg) | Integer | 0 | notices_timer_update = 3600 |
+
+### `events_timer_update`
+Integer number that represent time in seconds. Is used by an `event update timer` that check every N second, if exists a change in the event file.
+
+if the value is set to zero (0 - default value), the timer for the events will never start nor check for updates. 
+To update the events, you will need to restart the application.
+This behavior is because not every implementer needs to update events too often.
+ 
+
+| Required? | Type | Default | Example |
+|--------------------|--------|---------|-------------|
+| ![No](img/red_x.svg) | Integer | 0 | events_timer_update = 3600 |
+
+### `is_db_data_live`
+Boolean value to override the timestamp in the eventAction type `last update of RDAP database`.
+
+It is use when the RDAP service provider is querying its database directly, and therefore, using real-time data, so for every request, the timestamp value will be override to the server timestamp when the request was made.
+
+In case that the event `last update of RDAP database` does not exists, this value will be ignored.
+
+| Required? | Type | Default | Example |
+|--------------------|--------|---------|-------------|
+| ![No](img/red_x.svg) | Boolean | false     | is_db_data_live = false |
+

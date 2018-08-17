@@ -11,6 +11,8 @@ breadcrums: ["Documentation", "documentation.html", "Further Custom Configuratio
 * [Privacy configuration files](#privacy-configuration-files)
 * [Configuring attributes access](#configuring-attributes-access)
 * [Using custom roles](#using-custom-roles)
+* [Role specific privacy](#role-specific-privacy)
+* [Replace VCard values](#replace-vcard-values)
 
 ## Introduction
 
@@ -138,3 +140,192 @@ The roles are complementary to each other, so if a subject has several roles the
 Just as mentioned previously, the **owner** value can be mixed with custom roles, since the value itself is kind of a role.
 
 > ![Warning](img/warning.svg) The values `any`, `none`, and `authenticated` can’t be mixed with each other neither with custom roles nor `owner` value.
+
+## Role specific privacy
+For Entity and Vcard privacy files, could exists specific role privacy settings, to create a specific privacy file for the role type that have an entity or a vcard. It needs Its own custom privacy file.
+
+The file name rules are:
+
+* For entities: `entity_ROLE_[RFC7483#10.2.4 Role in upper case].properties`
+* For vcard: `vcard_ROLE_[RFC7483#10.2.4 Role in upper case].properties`
+
+Vcard object doesn’t have a `role` value, so it’s taken from its `entity` container.
+
+It is not necessary to fill all attributes with privacy settings, when the server loads the privacy configurations, it takes first the server privacy files, then the privacy files configured by the implementer (entity.properties), then override it with the specific privacy for the role type.
+
+Example:
+
+```
+{
+     "objectClassName" : "domain",
+     "handle" : "XXXX",
+     "ldhName" : "0.2.192.in-addr.arpa",
+     "nameservers" :
+     [
+       {
+         "objectClassName" : "nameserver",
+         "ldhName" : "ns1.rir.example"
+       },
+       {
+         "objectClassName" : "nameserver",
+         "ldhName" : "ns2.rir.example"
+       }
+     ],
+     "events" :
+     [
+       {
+         "eventAction" : "registration",
+         "eventDate" : "1990-12-31T23:59:59Z"
+       },
+       {
+         "eventAction" : "last changed",
+         "eventDate" : "1991-12-31T23:59:59Z",
+         "eventActor" : "joe@example.com"
+       }
+     ],
+     "entities" :
+     [
+       {
+         "objectClassName" : "entity",
+         "handle" : "XXXX",
+         "vcardArray":[
+           "vcard",
+           [
+             ["version", {}, "text", "4.0"],
+             ["fn", {}, "text", "Joe User"],
+             ["kind", {}, "text", "individual"],
+             ["lang", {
+               "pref":"1"
+             }, "language-tag", "fr"],
+             ["lang", {
+               "pref":"2"
+             }, "language-tag", "en"],
+             ["org", {
+               "type":"work"
+             }, "text", "Example"],
+             ["title", {}, "text", "Research Scientist"],
+             ["role", {}, "text", "Project Lead"],
+             ["adr",
+               { "type":"work" },
+               "text",
+               [
+                 "",
+                 "Suite 1234",
+                 "4321 Rue Somewhere",
+                 "Quebec",
+                 "QC",
+                 "G1V 2M2",
+                 "Canada"
+               ]
+			   ],
+             ["tel",
+               { "type":["work", "voice"], "pref":"1" },
+               "uri", "tel:+1-555-555-1234;ext=102"
+             ],
+             ["email",
+               { "type":"work" },
+               "text", "joe.user@example.com"
+             ]
+           ]
+         ],
+         "roles" : [ "registrar" ],
+         "events" :
+         [
+           {
+             "eventAction" : "registration",
+             "eventDate" : "1990-12-31T23:59:59Z"
+           },
+           {
+             "eventAction" : "last changed",
+             "eventDate" : "1991-12-31T23:59:59Z",
+             "eventActor" : "joe@example.com"
+           }
+         ]
+       },
+	   {
+         "objectClassName" : "entity",
+         "handle" : "XXXX",
+         "vcardArray":[
+           "vcard",
+           [
+             ["version", {}, "text", "4.0"],
+             ["fn", {}, "text", "Joe User"],
+             ["kind", {}, "text", "individual"],
+             ["lang", {
+               "pref":"1"
+             }, "language-tag", "fr"],
+             ["lang", {
+               "pref":"2"
+             }, "language-tag", "en"],
+             ["org", {
+               "type":"work"
+             }, "text", "Example"],
+             ["title", {}, "text", "Research Scientist"],
+             ["role", {}, "text", "Project Lead"],
+             ["adr",
+               { "type":"work" },
+               "text",
+               [
+                 "",
+                 "Suite 1234",
+                 "4321 Rue Somewhere",
+                 "Quebec",
+                 "QC",
+                 "G1V 2M2",
+                 "Canada"
+               ]
+			   ],
+             ["tel",
+               { "type":["work", "voice"], "pref":"1" },
+               "uri", "tel:+1-555-555-1234;ext=102"
+             ],
+             ["email",
+               { "type":"work" },
+               "text", "joe.user@example.com"
+             ]
+           ]
+         ],
+         "roles" : [ "registrant" ],
+         "events" :
+         [
+           {
+             "eventAction" : "registration",
+             "eventDate" : "1990-12-31T23:59:59Z"
+           },
+           {
+             "eventAction" : "last changed",
+             "eventDate" : "1991-12-31T23:59:59Z",
+             "eventActor" : "joe@example.com"
+           }
+         ]
+       }
+     ]
+   }
+```
+
+The previous response was a domain response, that includes two entities attributes.
+
+It is possible to hide or show some information based on the role type that the entity has.
+
+Using the previous response, it is necessary to hide some attributes for all type of entities, so, in the path `WEB-INF/privacy/entity.properties`, it’s configured the privacy based on the requirements.
+
+Now for some reason, RDAP service provider is forced to show some values to all publics, when the entity has the role type `registrant`.
+
+So in order to fill the requirement, in the path `WEB-INF/privacy/`, create a new privacy file for the entity with role type `registrant`, by adding the words `_ROLE_` + [the role type] + `.properties`, for this example, the new file will be `entity_ROLE_REGISTRANT.properties`.
+
+And now, in this new file, the attributes privacy level can be less private for an entity that has the role type `registrant`.
+
+
+
+## Replace VCard values
+The vcard object of a response can be modified by some personalized message.
+
+It can be done by adding the next privacy value in the attributes of vcard privacy file.
+
+In any attribute, in addtion to 'any', 'authenticated', 'none', 'owner' or a custom user role configured in, 
+can be add a new privacy value called `obscured`, also you need to insert a pipe `|` then the text you want to show.
+
+example:
+
+`some_valid_attribute = obscured | To request the information please go to www.example.com/request_info.html`
+
