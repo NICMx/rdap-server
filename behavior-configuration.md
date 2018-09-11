@@ -217,10 +217,10 @@ This table shows the specs of the property:
 | ![No](img/red_x.svg) | String (can be a list separated by commas) | null     | user_roles = president, governor, judge |
 
 
-### `notices_timer_update`
+### `notices_timer_update_time`
 Integer number that represent time in seconds. Is used by a `notices update timer` that check every N second, if exists a change in the notices files for each type of requests (i.e. entity, domain, nameserver, autnum, ip)
 
-if the value is set to zero (0 - default value), the timer for the notices will never start nor check for updates. 
+if the value is less than 10 (0 - default value), the timer for the notices will never start nor check for updates. 
 To update the notices, you will need to restart the application.
 This behavior is because not every implementer needs to update notices too often.
  
@@ -229,10 +229,10 @@ This behavior is because not every implementer needs to update notices too often
 |--------------------|--------|---------|-------------|
 | ![No](img/red_x.svg) | Integer | 0 | notices_timer_update = 3600 |
 
-### `events_timer_update`
+### `events_timer_update_time`
 Integer number that represent time in seconds. Is used by an `event update timer` that check every N second, if exists a change in the event file.
 
-if the value is set to zero (0 - default value), the timer for the events will never start nor check for updates. 
+if the value is less than 10 (0 - default value), the timer for the events will never start nor check for updates. 
 To update the events, you will need to restart the application.
 This behavior is because not every implementer needs to update events too often.
  

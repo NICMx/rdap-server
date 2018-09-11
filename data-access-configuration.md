@@ -15,7 +15,7 @@ wheretogo: ["Deploying rdap-server with the customized SQL Provider", "server-in
    1. [`zones`](#zones)
    1. [`is_reverse_ipv4_enabled`](#is_reverse_ipv4_enabled)
    1. [`is_reverse_ipv6_enabled`](#is_reverse_ipv6_enabled)
-   1. [`nameserver_as_domain_attribute`](#nameserver_as_domain_attribute)
+   1. [`is_ns_sharing_name_enabled`](#is_ns_sharing_name_enabled)
 
 
 ## Introduction
@@ -94,25 +94,12 @@ This table shows the specs of the property:
 |--------------------|--------|---------|-------------|
 | ![No](img/red_x.svg) | Boolean | false | is_reverse_ipv6_enabled = true |
 
-### `nameserver_as_domain_attribute`
+### `is_ns_sharing_name_enabled`
 
-Boolean flag to indicate if **Nameservers** are used as **Domain** object attributes. If the **Nameservers** are used as attributes, then any search by a specific **Nameserver** will be rejected, and the **Nameservers** related to a **Domain** object won’t have nested objects (eg. Links, Status, Events, etc.).
-
-The following table shows some examples on what's expected from the implementation depending on the `nameserver_as_domain_attribute` value (assuming that domain _example.com_ exists and has related nameservers):
-
-| Property value | Search request | Expected response (HTTP response code and content) |
-|----------------|---------------------------------------------  |--------------------------|
-| false | https://example.com/rdap/domain/example.com | ![Yes](img/green_bkg_check.svg) **200**, domain object with nameservers **including** all nameserver attributes |
-| false | https://example.com/rdap/domains?name=example.com | ![Yes](img/green_bkg_check.svg) **200**, domain(s) object(s) with nameservers **including** all nameserver attributes |
-| false | https://example.com/rdap/nameserver/ns1.example.com | ![Yes](img/green_bkg_check.svg) **200**, nameserver object with all its attributes |
-| false | https://example.com/rdap/nameservers?name=ns1.example.com | ![Yes](img/green_bkg_check.svg) **200**, nameserver(s) object(s) with all its attributes |
-| true | https://example.com/rdap/domain/example.com | ![Yes](img/green_bkg_check.svg) **200**, domain object with nameservers **excluding** the nameserver attributes: ipAddresses, status, remarks, links, events, and entities |
-| true | https://example.com/rdap/domains?name=example.com | ![Yes](img/green_bkg_check.svg) **200**, domain(s) object(s) with nameservers **excluding** the nameserver attributes: ipAddresses, status, remarks, links, events, and entities |
-| true | https://example.com/rdap/nameserver/ns1.example.com | ![No](img/red_x.svg) **501**, error response with description "This server does not implement nameservers requests." |
-| true | https://example.com/rdap/nameservers?name=ns1.example.com | ![No](img/red_x.svg) **501**, error response with description "This server does not implement nameservers requests." |
+Boolean flag to indicate if the user wants to enable draft-lozano-rdap-nameservers-sharing-name-02 conformance.
 
 This table shows the specs of the property:
 
 | Required? | Type | Default | Example |
 |--------------------|--------|---------|-------------|
-| ![No](img/red_x.svg) | Boolean | false | nameserver_as_domain_attribute = true |
+| ![No](img/red_x.svg) | Boolean | false | is_ns_sharing_name_enabled = true |

@@ -10,7 +10,6 @@ wheretogo: ["Configuring Red Dog's response Events", "events.html"]
 
 * [Introduction](#introduction)
 * [Notices per request](#notices-per-request)
-
 * [Updater thread](#updater-thread)
 
 ## Introduction
@@ -90,7 +89,7 @@ The RDAP server contains a thread that verifies from time to time, if there are 
 
 The files to update the old “notices per request” files should add the extension `.updated`
 
-This thread is activated when the value `notices_timer_update` in` configuration.properties` is different from 0.
+This thread is activated when the value `notices_timer_update_time` in` configuration.properties` is greater than or equal to 10.
 
-The thread will be activated every `notices_timer_update` seconds, The thread checks if there are files to be updated, if it detects that the files exist, read and validate the new file and if valid, it will update the notices in the requests and also will replace the previous file. Otherwise, if no new notice file exists, the thread will fall asleep and wake up after the configured seconds.
+The thread will be activated every `notices_timer_update_time` seconds, The thread checks if there are files to be updated, if it detects that the files exist, read and validate the new file and if valid, it will update the notices in the requests and also will replace the previous file. Otherwise, if no new notice file exists, the thread will fall asleep and wake up after the configured seconds.
 
