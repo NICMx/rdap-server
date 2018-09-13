@@ -142,6 +142,7 @@ public abstract class RdapServlet extends HttpServlet {
 						PrivacyUtil.addPrivacyRemarkAndStatus(domain);
 					}
 				}
+				handleDomainsPostFilter(domainSearchResponse);
 				renderer.renderDomains(domainSearchResponse, printWriter);
 				break;
 			case ENTITIES :
@@ -152,6 +153,7 @@ public abstract class RdapServlet extends HttpServlet {
 						PrivacyUtil.addPrivacyRemarkAndStatus(entity);
 					}
 				}
+				handleEntitiesPostFilter(entitySearchResponse);
 				renderer.renderEntities(entitySearchResponse, printWriter);
 				break;
 			case ENTITY :
@@ -198,6 +200,7 @@ public abstract class RdapServlet extends HttpServlet {
 						PrivacyUtil.addPrivacyRemarkAndStatus(nameserver);
 					}
 				}
+				handleNameserversPostFilter(nameserverSearchResponse);
 				renderer.renderNameservers(nameserverSearchResponse, printWriter);
 				break;
 			default :
@@ -227,9 +230,12 @@ public abstract class RdapServlet extends HttpServlet {
 	}
 
 	private void handleNameserverPostFilter(RdapResult result, RequestResponse<Nameserver> response) {
+		addToRequestEventsAndNotices(response, RequestNotices.getNsNotices());
+
 		if (!RdapConfiguration.isNameserverSharingNameConformance()) {
 			return;
 		}
+
 		Nameserver ns = response.getRdapObject();
 		NameserverResult nsResult = (NameserverResult) result;
 
@@ -243,28 +249,43 @@ public abstract class RdapServlet extends HttpServlet {
 		}
 
 		ns.getLinks().add(searchOtherNS);
-
-		addUserEventsAndNotices(response, RequestNotices.getNsNotices());
 	}
 
 	private void handleDomainPostFilter(RdapResult result, RequestResponse<Domain> response) {
-		addUserEventsAndNotices(response, RequestNotices.getDomainNotices());
+		addToRequestEventsAndNotices(response, RequestNotices.getDomainNotices());
 	}
 
 	private void handleEntityPostFilter(RdapResult result, RequestResponse<Entity> response) {
-		addUserEventsAndNotices(response, RequestNotices.getEntityNotices());
+		addToRequestEventsAndNotices(response, RequestNotices.getEntityNotices());
 	}
 
 	private void handleIpNetworkPostFilter(RdapResult result, RequestResponse<IpNetwork> response) {
-		addUserEventsAndNotices(response, RequestNotices.getIpNotices());
+		addToRequestEventsAndNotices(response, RequestNotices.getIpNotices());
 	}
 
 	private void handleAutnumPostFilter(RdapResult result, RequestResponse<Autnum> response) {
-		addUserEventsAndNotices(response, RequestNotices.getAutnumNotices());
+		addToRequestEventsAndNotices(response, RequestNotices.getAutnumNotices());
+	}
+	
+	private void handleDomainsPostFilter(SearchResponse<Domain> searchResponse) {
+		addToSearchEventsAndNotices(searchResponse, RequestNotices.getDomainNotices());
+	}
+	
+	private void handleNameserversPostFilter(SearchResponse<Nameserver> searchResponse) {
+		addToSearchEventsAndNotices(searchResponse, RequestNotices.getNsNotices());
+	}
+	
+	private void handleEntitiesPostFilter(SearchResponse<Entity> searchResponse) {
+		addToSearchEventsAndNotices(searchResponse, RequestNotices.getEntityNotices());
 	}
 
-	private void addUserEventsAndNotices(RequestResponse<? extends RdapObject> response, List<Remark> requestNotices) {
-
+	/**
+	 * Function to add to a single request response the events and notices configured in the application
+	 * 
+	 * @param response The object that receive the data
+	 * @param requestNotices The notices that will be added
+	 */
+	private void addToRequestEventsAndNotices(RequestResponse<? extends RdapObject> response, List<Remark> requestNotices) {
 		RdapObject rdapObject = response.getRdapObject();
 		List<Event> events = UserEvents.getEvents();
 		if (events != null && !events.isEmpty()) {
@@ -282,6 +303,32 @@ public abstract class RdapServlet extends HttpServlet {
 			response.getNotices().addAll(requestNotices);
 		}
 
+	}
+	
+	/**
+	 * Function to add to a SearchResponse the events and notices configured in the application.
+	 * 
+	 * @param searchResponse The object that receive the data
+	 * @param requestNotices The notices that will be added
+	 */
+	private void addToSearchEventsAndNotices(SearchResponse<? extends RdapObject> searchResponse, List<Remark> requestNotices) {
+		List<? extends RdapObject> rdapObjects = searchResponse.getRdapObjects();
+		List<Event> events = UserEvents.getEvents();
+		if (events != null && !events.isEmpty() && !rdapObjects.isEmpty()) {
+			for (RdapObject rdapObject : rdapObjects) {
+				if (rdapObject.getEvents() == null) {
+					rdapObject.setEvents(new ArrayList<>());
+				}
+				rdapObject.getEvents().addAll(events);
+ 			}
+		}
+		
+		if (requestNotices != null && !requestNotices.isEmpty()) {
+			if (searchResponse.getNotices() == null) {
+				searchResponse.setNotices(new ArrayList<>());
+			}
+			searchResponse.getNotices().addAll(requestNotices);
+		}
 	}
 
 	/**

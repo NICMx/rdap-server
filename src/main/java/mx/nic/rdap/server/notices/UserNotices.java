@@ -30,6 +30,7 @@ public class UserNotices {
 	private static final String TOS_FILE_NAME = "tos.xml";
 	private static final String NOTICES_FILE_NAME = "notices.xml";
 
+	private static final int MIN_TIMER_TIME = 10;
 	// Holder for remarks
 	private static List<Remark> help;
 	private static List<Remark> tos;
@@ -82,7 +83,7 @@ public class UserNotices {
 		long userEventsTimer = RdapConfiguration.getEventsUpdateTime();
 
 		// if both tasks are set to 0, that means the tasks are disabled.
-		if (noticesTimerUpdate == 0 || userEventsTimer == 0) {
+		if (noticesTimerUpdate < MIN_TIMER_TIME && userEventsTimer < MIN_TIMER_TIME) {
 			return;
 		}
 
@@ -101,16 +102,19 @@ public class UserNotices {
 
 		Timer timer = new Timer("RdapUpdaterThread", true);
 
-		if (noticesTimerUpdate > 0) {
+		if (noticesTimerUpdate >= MIN_TIMER_TIME) {
 			NoticesUpdaterTask task = new NoticesUpdaterTask(userPath);
 			long millis = TimeUnit.SECONDS.toMillis(noticesTimerUpdate);
 			timer.schedule(task, millis, millis);
+			logger.log(Level.INFO, "Notices updater is active");
 		}
 		
-		if (userEventsTimer > 0) {
+		if (userEventsTimer >= MIN_TIMER_TIME) {
 			EventsUpdaterTask task = new EventsUpdaterTask(userPath);
 			long millis = TimeUnit.SECONDS.toMillis(noticesTimerUpdate);
 			timer.schedule(task, millis, millis);
+			
+			logger.log(Level.INFO, "Events updater is active");
 		}
 
 		isTimerActive = true;
