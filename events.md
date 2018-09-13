@@ -14,17 +14,17 @@ wheretogo: ["Rate Limit Filter", "rate-limit.html"]
 
 ## Introduction
 
-If the implementer wants to add events in every request response.
+If the implementer wants to add events in every request response, it is necessary to configure an events configuration file considering the following details:
 
-* The Events are added in every server request response.
+* The Events are displayed in every server request response.
 * The Events are **optional**.
 
-The content of the events can be configured in the **WEB-INF/notices/** directory by creating an XML file named `events.xml`. This file is **optional**, so by default there isn't any file with this name.
+The content of the events can be configured in the **WEB-INF/notices/** directory by creating an XML file named `events.xml`. This file is **optional**, so there is no events.xml default configuration file.
 
 The `events.xml` file must have the following format:
 
-- A root element **events** and many child element called **event**.
-- A **event** element can have four attributes, they must be ordered as listed below.
+- A root element **events** that contains at least one **event** child element.
+- An **event** element has four attributes, they must be ordered as listed below.
 	- A required **eventAction** a string denoting the reason for the event. (Only valid eventActions are allowed, lower case, you can see which are the valid ones [here](https://www.iana.org/assignments/rdap-json-values/rdap-json-values.xhtml))
 	- An optional **eventActor** an optional identifier denoting the actor responsible for the event
 	- A required **eventDate** a string containing the time and date the event occurred.
@@ -62,16 +62,15 @@ Here is an example of a `events.xml` file with all the elements that can contain
 
 ## Querying live DB
 When a RDAP service provider is querying its database directly, and therefore, using real-time data, and also
-an eventAction of type `last update of RDAP database` exists in the events file. The implementator may require that the timestamp in the event
-is the time when the client perform the request, in this case, the value can be override it by enabling the property [is_db_data_live](behavior-configuration.html#is_db_data_live) in the `configuration.properties` file. 
+an eventAction of type `last update of RDAP database` exists in the events file, the implementer may require that the timestamp in the event being the time when the client perform the request, in this case, the value can be override it by enabling the property [is_db_data_live](behavior-configuration.html#is_db_data_live) in the `configuration.properties` file. 
 
 
 ## Updater thread
-The RDAP server contains a thread that verifies from time to time, if there are changes in the “events” files.
+The RDAP server contains a thread that constantly checks if there are changes in the “events” file.
 
-The files to update the old “notices per request” files should add the extension `.updated`
+The file required to update the old “events.xml” files should add the extension `.updated`
 
 This thread is activated when the value `events_timer_update_time` in` configuration.properties` is greater than or equal to 10.
 
-The thread will be activated every `events_timer_update_time` seconds, The thread checks if there are files to be updated, if it detects that the files exist, read and validate the new file and if valid, it will update the notices in the requests and also will replace the previous file. Otherwise, if no new notice file exists, the thread will fall asleep and wake up after the configured seconds.
+The thread will execute the verification every `events_timer_update_time` seconds, checking if there are files to be updated, if it detects that the files exist, then the thread reads and validates the new file and if valid, it will update the events in the requests and also will replace the previous file. Otherwise, if no new event file exists, the thread will fall asleep and wake up after the configured seconds.
 
