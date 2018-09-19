@@ -14,7 +14,7 @@ wheretogo: ["Configuring Red Dog's response Events", "events.html"]
 
 ## Introduction
 
-Additional to the [TOS configuration](terms-of-service.html), if the implementer wants to add custom notices, it (these) can be added by creating a `notices.xml` file.
+Additional to the [TOS configuration](terms-of-service.html), if the implementer wants to add custom notices, these can be added by creating a `notices.xml` file.
 
 * The Notices configured are added as a **notice** in every server response, including error responses and help response.
 * The Notices element can contain unlimited notices (TOS file can contain only one notice).

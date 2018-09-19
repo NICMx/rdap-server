@@ -320,7 +320,7 @@ And now, in this new file, the attributes privacy level can be less private for 
 ## Replace VCard values
 The attributes from an entity’s vcard object can be replaced by any customized message.
 
-In any attribute, in addition to ‘any’, ‘authenticated’, ‘none’, ‘owner’ or a custom user role configured in, it can be added a new privacy value called obscured. Also, it is needed to insert a pipe | next to obscured value, followed by the text that is required to display instead of the original vcard attribute value, as it’s shown on the following example:
+In any attribute, in addition to ‘any’, ‘authenticated’, ‘none’, ‘owner’ or a custom user role configured in, it can be added a new privacy value called obscured. Also, it is needed to insert a pipe &#x7c; next to obscured value, followed by the text that is required to display instead of the original vcard attribute value, as it’s shown on the following example:
 
 `some_valid_attribute = obscured | To request the information please go to www.example.com/request_info.html`
 

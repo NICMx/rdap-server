@@ -13,10 +13,15 @@ Red Dog's reference JSON renderer implementation. Renders the output in JSON for
 - ~~Striked~~ versions are not recommended (either because they’re too old or have known critical bugs).
 
 
+## 1.1
+
+|Download |SHA512    |MD5    |Source code(GitHub)|
+|:--------|:---------|:------|:---------|
+|[**1.1.0**](https://github.com/NICMx/releases/raw/master/RedDog/rdap-json-renderer-1.1.0.jar)|[SHA512](https://github.com/NICMx/releases/raw/master/RedDog/rdap-json-renderer-1.1.0.jar.sha)|[MD5](https://github.com/NICMx/releases/raw/master/RedDog/rdap-json-renderer-1.1.0.jar.md5)|[Link](https://github.com/NICMx/rdap-json-renderer/tree/v1.1.0)|
 
 ## 1.0
 
 |Download |SHA512    |MD5    |Source code(GitHub)|
 |:--------|:---------|:------|:---------|
-|[**1.0.0**](https://github.com/NICMx/releases/raw/master/RedDog/rdap-json-renderer-1.0.0.jar)|[SHA512](https://github.com/NICMx/releases/raw/master/RedDog/rdap-json-renderer-1.0.0.jar.sha)|[MD5](https://github.com/NICMx/releases/raw/master/RedDog/rdap-json-renderer-1.0.0.jar.md5)|[Link](https://github.com/NICMx/rdap-json-renderer/tree/v1.0.0)|
+|[~~1.0.0~~](https://github.com/NICMx/releases/raw/master/RedDog/rdap-json-renderer-1.0.0.jar)|[SHA512](https://github.com/NICMx/releases/raw/master/RedDog/rdap-json-renderer-1.0.0.jar.sha)|[MD5](https://github.com/NICMx/releases/raw/master/RedDog/rdap-json-renderer-1.0.0.jar.md5)|[Link](https://github.com/NICMx/rdap-json-renderer/tree/v1.0.0)|
 
