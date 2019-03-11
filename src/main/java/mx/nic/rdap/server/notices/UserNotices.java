@@ -60,6 +60,7 @@ public class UserNotices {
 			tos = NoticesReader.parseTOSXML(Paths.get(userPath, TOS_FILE_NAME).toString());
 		} catch (FileNotFoundException | NoSuchFileException e) {
 			// Nothing happens, continue
+			logger.log(Level.INFO, "Optional File '" + TOS_FILE_NAME + "' not found, continue. \n\t" + e);
 		}
 
 		// The notices are optional.
@@ -67,6 +68,7 @@ public class UserNotices {
 			notices = NoticesReader.parseNoticesXML(Paths.get(userPath, NOTICES_FILE_NAME).toString());
 		} catch (FileNotFoundException | NoSuchFileException e) {
 			// Nothing happens, continue
+			logger.log(Level.INFO, "Optional File '" + NOTICES_FILE_NAME + "' not found, continue. \n\t" + e);
 		}
 
 		RequestNotices.init(userPath);

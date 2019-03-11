@@ -16,9 +16,11 @@ import javax.servlet.ServletContext;
 import mx.nic.rdap.core.catalog.RemarkType;
 import mx.nic.rdap.core.catalog.Role;
 import mx.nic.rdap.core.catalog.Status;
+import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.RdapObject;
 import mx.nic.rdap.core.db.Remark;
+import mx.nic.rdap.core.db.RemarkDescription;
 import mx.nic.rdap.server.catalog.PrivacyStatus;
 import mx.nic.rdap.server.configuration.RdapConfiguration;
 import mx.nic.rdap.server.listener.RdapInitializer;
@@ -538,8 +540,39 @@ public class PrivacyUtil {
 				rdapObject.setStatus(new ArrayList<Status>());
 			}
 			rdapObject.getStatus().add(Status.PRIVATE);
+		} else if (rdapObject instanceof Domain) {
+			if (RdapConfiguration.addEmailRemark())
+				addEmailRedactedForPrivacy(rdapObject);
 		}
 	}
+	
+	/* Rdap response profile feb-19 2.7.5.3 
+	 * https://www.icann.org/en/system/files/files/rdap-response-profile-15feb19-en.pdf
+	 */
+	private static void addEmailRedactedForPrivacy(RdapObject rdapObject) {
+		if (rdapObject.getRemarks() == null)
+			rdapObject.setRemarks(new ArrayList<>());
+
+		Remark r = new Remark();
+		r.setTitle("EMAIL REDACTED FOR PRIVACY");
+		r.setType("object redacted due to authorization.");
+
+		RemarkDescription rd = new RemarkDescription();
+		rd.setDescription("Please query the RDDS service of the Registrar of Record identified in this output");
+		rd.setOrder(1);
+		rd.setRemarkId(1L);
+
+		RemarkDescription rd2 = new RemarkDescription();
+		rd2.setDescription("for information on how to contact the Registrant of the queried domain name.");
+		rd2.setOrder(2);
+		rd2.setRemarkId(2L);
+
+		r.getDescriptions().add(rd);
+		r.getDescriptions().add(rd2);
+
+		rdapObject.getRemarks().add(r);
+	}
+
 	/**
 	 * @return <code>true</code> if the user is owner of the RdapObject
 	 */

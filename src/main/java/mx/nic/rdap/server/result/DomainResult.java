@@ -55,11 +55,16 @@ public class DomainResult extends RdapSingleResult {
 	 * Generates a link with the self information and add it to the domain
 	 */
 	public static void addSelfLinks(String header, String contextPath, Domain domain) {
-		Link self = new Link(header, contextPath, "domain", domain.getFQDN());
+		String domainName = domain.getFQDN() != null ? domain.getFQDN() : domain.getUnicodeFQDN();
+
+		Link self = new Link(header, contextPath, "domain", domainName);
 		domain.getLinks().add(self);
 
 		for (Nameserver ns : domain.getNameServers()) {
-			self = new Link(header, contextPath, "nameserver", ns.getLdhName());
+			String nsName = ns.getFqdnLdhName() != null ? ns.getFqdnLdhName()
+					: ns.getFqdnUnicodeName();
+			
+			self = new Link(header, contextPath, "nameserver", nsName);
 			ns.getLinks().add(self);
 		}
 

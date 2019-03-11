@@ -105,6 +105,17 @@ public abstract class RdapServlet extends HttpServlet {
 			result.getRdapResponse().getRdapConformance().add("rdap_nameservers_sharing_name");
 		}
 
+		// Add customConformance
+		if (!RdapConfiguration.getCustomConformances().isEmpty()) {
+			if (result.getRdapResponse().getRdapConformance() == null) {
+				result.getRdapResponse().setRdapConformance(new ArrayList<>());
+			}
+
+			for (String conformance : RdapConfiguration.getCustomConformances()) {
+				result.getRdapResponse().getRdapConformance().add(conformance);
+			}
+		}
+		
 		// Add TOS notice if exists
 		addNotices(result.getRdapResponse());
 

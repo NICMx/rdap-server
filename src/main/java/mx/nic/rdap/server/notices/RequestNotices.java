@@ -73,35 +73,37 @@ public class RequestNotices {
 			domainNotices = NoticesReader.parseNoticesXML(Paths.get(userPath, DOMAIN_FILE_NAME).toString());
 		} catch (FileNotFoundException | NoSuchFileException e) {
 			// Nothing happens, continue
-			logger.log(Level.INFO, "Optional File '" + DOMAIN_FILE_NAME + "' not found, continue.", e);
+			logger.log(Level.INFO,
+					"Optional File '" + DOMAIN_FILE_NAME + "' not found, continue. \n\t" + e);
 		}
 
 		try {
 			entityNotices = NoticesReader.parseNoticesXML(Paths.get(userPath, ENTITY_FILE_NAME).toString());
 		} catch (FileNotFoundException | NoSuchFileException e) {
 			// Nothing happens, continue
-			logger.log(Level.INFO, "Optional File '" + ENTITY_FILE_NAME + "' not found, continue.", e);
+			logger.log(Level.INFO, "Optional File '" + ENTITY_FILE_NAME + "' not found, continue. \n\t" + e);
 		}
 
 		try {
 			nsNotices = NoticesReader.parseNoticesXML(Paths.get(userPath, NS_FILE_NAME).toString());
 		} catch (FileNotFoundException | NoSuchFileException e) {
 			// Nothing happens, continue
-			logger.log(Level.INFO, "Optional File '" + NS_FILE_NAME + "' not found, continue.", e);
+			logger.log(Level.INFO, "Optional File '" + NS_FILE_NAME + "' not found, continue. \n\t" + e);
 		}
 
 		try {
 			autnumNotices = NoticesReader.parseNoticesXML(Paths.get(userPath, AUTNUM_FILE_NAME).toString());
 		} catch (FileNotFoundException | NoSuchFileException e) {
 			// Nothing happens, continue
-			logger.log(Level.INFO, "Optional File '" + AUTNUM_FILE_NAME + "' not found, continue.", e);
+			logger.log(Level.INFO, "Optional File '" + AUTNUM_FILE_NAME + "' not found, continue. \n\t" + e);
 		}
 
 		try {
 			ipNotices = NoticesReader.parseNoticesXML(Paths.get(userPath, IP_NETWORK_FILE_NAME).toString());
 		} catch (FileNotFoundException | NoSuchFileException e) {
 			// Nothing happens, continue
-			logger.log(Level.INFO, "Optional File '" + IP_NETWORK_FILE_NAME + "' not found, continue.", e);
+			logger.log(Level.INFO,
+					"Optional File '" + IP_NETWORK_FILE_NAME + "' not found, continue. \n\t" + e);
 		}
 
 		if (RdapConfiguration.getNoticesUpdateTime() > 0) {

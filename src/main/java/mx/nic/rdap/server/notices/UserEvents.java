@@ -45,7 +45,7 @@ public class UserEvents {
 			userEvents = NoticesReader.parseEventsXML(Paths.get(userPath, EVENT_FILE_NAME).toString());
 		} catch (FileNotFoundException | NoSuchFileException e) {
 			// Nothing happens, continue
-			logger.log(Level.INFO, "Optional File '" + EVENT_FILE_NAME + "' not found, continue.", e);
+			logger.log(Level.INFO, "Optional File '" + EVENT_FILE_NAME + "' not found, continue. \n\t" + e);
 		}
 
 		if (RdapConfiguration.getEventsUpdateTime() > 0) {

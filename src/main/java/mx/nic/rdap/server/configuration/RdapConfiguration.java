@@ -3,6 +3,7 @@ package mx.nic.rdap.server.configuration;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -45,6 +46,8 @@ public class RdapConfiguration {
 	private static final String NOTICES_TIMER_UPDATE_TIME_KEY = "notices_timer_update_time";
 	private static final String EVENTS_TIMER_UPDATE_TIME_KEY = "events_timer_update_time";
 	private static final String IS_DB_DATA_LIVE = "is_db_data_live";
+	private static final String ADD_CUSTOM_CONFORMANCE_KEY = "add_custom_conformance";
+	private static final String ADD_EMAIL_REMARK_KEY = "add_email_remark";
 	
 
 	// Settings values
@@ -61,6 +64,9 @@ public class RdapConfiguration {
 	private static int noticesUpdateTime;
 	private static int eventsUpdateTime;
 	private static boolean isDbDataLive;
+	private static List<String> customConformance;
+	private static boolean addEmailRemark;
+	
 
 	private RdapConfiguration() {
 		// no code.
@@ -269,6 +275,26 @@ public class RdapConfiguration {
 			}
 		}
 
+		if (isPropertyNullOrEmpty(ADD_CUSTOM_CONFORMANCE_KEY)) {
+			customConformance = Collections.emptyList();
+		} else {
+			String customConformanceString = systemProperties.getProperty(ADD_CUSTOM_CONFORMANCE_KEY).trim();
+			customConformance = Collections.unmodifiableList(parseConformances(customConformanceString));
+		}
+
+		if (isPropertyNullOrEmpty(ADD_EMAIL_REMARK_KEY)) {
+			invalidProperties.add(ADD_EMAIL_REMARK_KEY);
+		} else {
+			String addEmailRemarkString = systemProperties.getProperty(ADD_EMAIL_REMARK_KEY).trim();
+			if (addEmailRemarkString.equalsIgnoreCase("true")) {
+				addEmailRemark = true;
+			} else if (addEmailRemarkString.equalsIgnoreCase("false")) {
+				addEmailRemark = false;
+			} else {
+				invalidProperties.add(ADD_EMAIL_REMARK_KEY);
+			}
+		}
+
 		if (!invalidProperties.isEmpty()) {
 			InitializationException invalidValueException = new InitializationException(
 					"The following required properties were not found or are invalid values in configuration file : "
@@ -280,9 +306,22 @@ public class RdapConfiguration {
 		}
 
 		isNSSharingNameConformance = false;
-		
-		
-		
+	}
+
+	private static List<String> parseConformances(String plainString) {
+		plainString = plainString.trim();
+		List<String> result = new ArrayList<String>();
+		String[] split = plainString.split(",");
+
+		for (String conformance : split) {
+			conformance = conformance.trim();
+			if (conformance.isEmpty())
+				continue;
+
+			result.add(conformance);
+		}
+
+		return result;
 	}
 
 	/**
@@ -485,5 +524,13 @@ public class RdapConfiguration {
 	
 	public static boolean isDbDataLive() {
 		return isDbDataLive;
+	}
+	
+	public static List<String> getCustomConformances() {
+		return customConformance;
+	}
+	
+	public static boolean addEmailRemark() {
+		return addEmailRemark;
 	}
 }

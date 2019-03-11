@@ -1,5 +1,6 @@
 package mx.nic.rdap.server.privacy;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,8 @@ import org.apache.shiro.subject.Subject;
 
 import mx.nic.rdap.core.catalog.Role;
 import mx.nic.rdap.core.db.Entity;
+import mx.nic.rdap.core.db.Remark;
+import mx.nic.rdap.core.db.RemarkDescription;
 import mx.nic.rdap.core.db.VCard;
 import mx.nic.rdap.core.db.VCardPostalInfo;
 import mx.nic.rdap.server.util.PrivacyUtil;
@@ -190,10 +193,38 @@ public class EntityPrivacyFilter {
 		}
 
 		for (Entity e : entities) {
-			isPrivate |= filterEntity(e, userInfo);
+			boolean isRedacted = filterEntity(e, userInfo);
+			addRedactedForPrivacy(isRedacted, e);
+			isPrivate |= isRedacted;
 		}
 
 		return isPrivate;
+	}
+
+	/*
+	 * Rdap response profile feb-19 2.7.4.3
+	 * https://www.icann.org/en/system/files/files/rdap-response-profile-15feb19-en.
+	 * pdf
+	 */
+	private static void addRedactedForPrivacy(boolean isRedacted, Entity e) {
+		if (!isRedacted)
+			return;
+
+		if (e.getRemarks() == null)
+			e.setRemarks(new ArrayList<>());
+
+		Remark r = new Remark();
+		r.setTitle("REDACTED FOR PRIVACY");
+		r.setType("object redacted due to authorization.");
+
+		RemarkDescription rd = new RemarkDescription();
+		rd.setDescription("Some of the data in this object has been removed.");
+		rd.setOrder(1);
+		rd.setRemarkId(1L);
+
+		r.getDescriptions().add(rd);
+
+		e.getRemarks().add(r);
 	}
 
 	private static boolean filterVcard(VCard vcard, UserInfo userInfo, List<Role> entityRoles) {

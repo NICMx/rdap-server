@@ -71,7 +71,10 @@ public class NameserverResult extends RdapSingleResult {
 	 * @param nameserver
 	 */
 	public static void addSelfLinks(String header, String contextPath, Nameserver nameserver) {
-		Link self = new Link(header, contextPath, "nameserver", nameserver.getLdhName());
+		String nsName = nameserver.getFqdnLdhName() != null ? nameserver.getFqdnLdhName()
+				: nameserver.getFqdnUnicodeName();
+		
+		Link self = new Link(header, contextPath, "nameserver", nsName);
 		nameserver.getLinks().add(self);
 
 		for (Entity ent : nameserver.getEntities()) {

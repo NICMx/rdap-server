@@ -18,7 +18,7 @@ import mx.nic.rdap.server.result.NameserverResult;
 import mx.nic.rdap.server.result.RdapResult;
 import mx.nic.rdap.server.util.Util;
 
-@WebServlet(name = "nameserver", urlPatterns = { "/nameserver/*" })
+@WebServlet(name = "nameserver", urlPatterns = {"/nameserver/*"})
 public class NameserverServlet extends DataAccessServlet<NameserverDAO> {
 
 	private static final long serialVersionUID = 1L;
@@ -54,7 +54,10 @@ public class NameserverServlet extends DataAccessServlet<NameserverDAO> {
 		try {
 			label = new DomainLabel(request.getName());
 		} catch (DomainLabelException e) {
-			throw new BadRequestException(e);
+			if (e.getMessage() != null)
+				throw new BadRequestException("Bad Request: " + e.getMessage(), e);
+			else
+				throw new BadRequestException(e);
 		}
 
 		Nameserver nameserver = dao.getByName(label);
@@ -68,13 +71,36 @@ public class NameserverServlet extends DataAccessServlet<NameserverDAO> {
 			try {
 				nameserverCount = dao.getNameserverCount(label);
 			} catch (NotImplementedException e) {
-				// throw the exception, if conformance is true the DAO must implement getNameserverCount function.
+				// throw the exception, if conformance is true the DAO must implement
+				// getNameserverCount function.
 				throw e;
 			}
 		}
 
+		checkResponse(nameserver, label);
+
 		return new NameserverResult(Util.getServerUrl(httpRequest), httpRequest.getContextPath(), nameserver,
 				Util.getUsername(SecurityUtils.getSubject()), nameserverCount);
+	}
+
+	private static void checkResponse(Nameserver ns, DomainLabel labelRequested) {
+		boolean isAlabel = labelRequested.isALabel();
+		String resultToAdd;
+
+		if (isAlabel && (ns.getLdhName() == null || ns.getLdhName().isEmpty())) {
+			resultToAdd = labelRequested.getALabel().trim();
+			if (resultToAdd.endsWith("."))
+				resultToAdd = resultToAdd.substring(0, resultToAdd.length() - 1);
+
+			ns.setLdhName(resultToAdd);
+		} else if (!isAlabel && (ns.getUnicodeName() == null || ns.getUnicodeName().isEmpty())) {
+			resultToAdd = labelRequested.getULabel().trim();
+
+			if (resultToAdd.endsWith("."))
+				resultToAdd = resultToAdd.substring(0, resultToAdd.length() - 1);
+
+			ns.setUnicodeName(resultToAdd);
+		}
 	}
 
 	private class NameserverRequest {
