@@ -21,6 +21,8 @@ import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.Nameserver;
 import mx.nic.rdap.core.db.RdapObject;
 import mx.nic.rdap.core.db.Remark;
+import mx.nic.rdap.core.db.VCard;
+import mx.nic.rdap.core.db.VCardPostalInfo;
 import mx.nic.rdap.db.exception.RdapDataAccessException;
 import mx.nic.rdap.db.exception.http.HttpException;
 import mx.nic.rdap.renderer.Renderer;
@@ -242,6 +244,7 @@ public abstract class RdapServlet extends HttpServlet {
 
 	private void handleNameserverPostFilter(RdapResult result, RequestResponse<Nameserver> response) {
 		addToRequestEventsAndNotices(response, RequestNotices.getNsNotices());
+		handleCountryProperty(response.getRdapObject());
 
 		if (!RdapConfiguration.isNameserverSharingNameConformance()) {
 			return;
@@ -264,30 +267,75 @@ public abstract class RdapServlet extends HttpServlet {
 
 	private void handleDomainPostFilter(RdapResult result, RequestResponse<Domain> response) {
 		addToRequestEventsAndNotices(response, RequestNotices.getDomainNotices());
+		handleCountryProperty(response.getRdapObject());
 	}
 
 	private void handleEntityPostFilter(RdapResult result, RequestResponse<Entity> response) {
 		addToRequestEventsAndNotices(response, RequestNotices.getEntityNotices());
+		handleCountryProperty(response.getRdapObject());
 	}
 
 	private void handleIpNetworkPostFilter(RdapResult result, RequestResponse<IpNetwork> response) {
 		addToRequestEventsAndNotices(response, RequestNotices.getIpNotices());
+		handleCountryProperty(response.getRdapObject());
 	}
 
 	private void handleAutnumPostFilter(RdapResult result, RequestResponse<Autnum> response) {
 		addToRequestEventsAndNotices(response, RequestNotices.getAutnumNotices());
+		handleCountryProperty(response.getRdapObject());
 	}
 	
 	private void handleDomainsPostFilter(SearchResponse<Domain> searchResponse) {
 		addToSearchEventsAndNotices(searchResponse, RequestNotices.getDomainNotices());
+		for (RdapObject rdapObject : searchResponse.getRdapObjects()) {
+			handleCountryProperty(rdapObject);
+		}
+
 	}
 	
 	private void handleNameserversPostFilter(SearchResponse<Nameserver> searchResponse) {
 		addToSearchEventsAndNotices(searchResponse, RequestNotices.getNsNotices());
+		for (RdapObject rdapObject : searchResponse.getRdapObjects()) {
+			handleCountryProperty(rdapObject);
+		}
 	}
 	
 	private void handleEntitiesPostFilter(SearchResponse<Entity> searchResponse) {
 		addToSearchEventsAndNotices(searchResponse, RequestNotices.getEntityNotices());
+		for (RdapObject rdapObject : searchResponse.getRdapObjects()) {
+			handleCountryProperty(rdapObject);
+		}
+	}
+
+	private void handleCountryProperty(RdapObject rdapObj) {
+		if (rdapObj.getEntities() != null) {
+			for (Entity e : rdapObj.getEntities()) {
+				handleCountryProperty(e);
+			}
+		}
+
+		if (!(rdapObj instanceof Entity)) {
+			return;
+		}
+
+		Entity e = (Entity) rdapObj;
+		if (e.getVCardList() == null || e.getVCardList().isEmpty()) {
+			/* nothing to do */
+			return;
+		}
+
+		VCard vCard = e.getVCardList().get(0);
+		if (vCard.getPostalInfo() == null || vCard.getPostalInfo().isEmpty()) {
+			return;
+		}
+
+		for (VCardPostalInfo postalInfo : vCard.getPostalInfo()) {
+			if (RdapConfiguration.isCountryCodeReleased()) {
+				postalInfo.setCountry(null);
+			} else {
+				postalInfo.setCountryCode(null);
+			}
+		}
 	}
 
 	/**

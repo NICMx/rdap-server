@@ -48,7 +48,7 @@ public class RdapConfiguration {
 	private static final String IS_DB_DATA_LIVE = "is_db_data_live";
 	private static final String ADD_CUSTOM_CONFORMANCE_KEY = "add_custom_conformance";
 	private static final String ADD_EMAIL_REMARK_KEY = "add_email_remark";
-	
+	private static final String ADD_CC_KEY = "is_country_code_released";
 
 	// Settings values
 	private static String serverLanguage;
@@ -66,6 +66,7 @@ public class RdapConfiguration {
 	private static boolean isDbDataLive;
 	private static List<String> customConformance;
 	private static boolean addEmailRemark;
+	private static boolean isCountryCodeReleased;
 	
 
 	private RdapConfiguration() {
@@ -292,6 +293,19 @@ public class RdapConfiguration {
 				addEmailRemark = false;
 			} else {
 				invalidProperties.add(ADD_EMAIL_REMARK_KEY);
+			}
+		}
+
+		if (isPropertyNullOrEmpty(ADD_CC_KEY)) {
+			invalidProperties.add(ADD_CC_KEY);
+		} else {
+			String addEmailRemarkString = systemProperties.getProperty(ADD_CC_KEY).trim();
+			if (addEmailRemarkString.equalsIgnoreCase("true")) {
+				isCountryCodeReleased = true;
+			} else if (addEmailRemarkString.equalsIgnoreCase("false")) {
+				isCountryCodeReleased = false;
+			} else {
+				invalidProperties.add(ADD_CC_KEY);
 			}
 		}
 
@@ -532,5 +546,9 @@ public class RdapConfiguration {
 	
 	public static boolean addEmailRemark() {
 		return addEmailRemark;
+	}
+
+	public static boolean isCountryCodeReleased() {
+		return isCountryCodeReleased;
 	}
 }
