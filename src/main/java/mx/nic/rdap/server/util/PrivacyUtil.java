@@ -16,7 +16,6 @@ import javax.servlet.ServletContext;
 import mx.nic.rdap.core.catalog.RemarkType;
 import mx.nic.rdap.core.catalog.Role;
 import mx.nic.rdap.core.catalog.Status;
-import mx.nic.rdap.core.db.Domain;
 import mx.nic.rdap.core.db.Entity;
 import mx.nic.rdap.core.db.RdapObject;
 import mx.nic.rdap.core.db.Remark;
@@ -540,16 +539,13 @@ public class PrivacyUtil {
 				rdapObject.setStatus(new ArrayList<Status>());
 			}
 			rdapObject.getStatus().add(Status.PRIVATE);
-		} else if (rdapObject instanceof Domain) {
-			if (RdapConfiguration.addEmailRemark())
-				addEmailRedactedForPrivacy(rdapObject);
 		}
 	}
 	
 	/* Rdap response profile feb-19 2.7.5.3 
 	 * https://www.icann.org/en/system/files/files/rdap-response-profile-15feb19-en.pdf
 	 */
-	private static void addEmailRedactedForPrivacy(RdapObject rdapObject) {
+	public static void addEmailRedactedForPrivacy(RdapObject rdapObject) {
 		if (rdapObject.getRemarks() == null)
 			rdapObject.setRemarks(new ArrayList<>());
 

@@ -144,6 +144,8 @@ public abstract class RdapServlet extends HttpServlet {
 				if (wasFiltered) {
 					PrivacyUtil.addPrivacyRemarkAndStatus(domainRequestResponse.getRdapObject());
 				}
+				if (RdapConfiguration.addEmailRemark())
+					PrivacyUtil.addEmailRedactedForPrivacy(domainRequestResponse.getRdapObject());
 				handleDomainPostFilter(result, domainRequestResponse);
 				renderer.renderDomain(domainRequestResponse, printWriter);
 				break;
@@ -154,6 +156,8 @@ public abstract class RdapServlet extends HttpServlet {
 					if (wasFiltered) {
 						PrivacyUtil.addPrivacyRemarkAndStatus(domain);
 					}
+					if (RdapConfiguration.addEmailRemark())
+						PrivacyUtil.addEmailRedactedForPrivacy(domain);
 				}
 				handleDomainsPostFilter(domainSearchResponse);
 				renderer.renderDomains(domainSearchResponse, printWriter);
