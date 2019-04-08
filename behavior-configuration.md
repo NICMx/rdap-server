@@ -252,3 +252,32 @@ In case that the event `last update of RDAP database` event does not exist, this
 |--------------------|--------|---------|-------------|
 | ![No](img/red_x.svg) | Boolean | false     | is_db_data_live = false |
 
+### `add_custom_conformance`
+Rdap Conformances (separated by commas) to be displayed in the result response.
+
+It is used when the RDAP service wants to add custom conformance to the response, e.g. If your RDAP service is compliant with ICANN's RDAP profile, you can add the conformance that tells that you are complying with the profile.
+
+| Required? | Type | Default | Example |
+|--------------------|--------|---------|-------------|
+| ![No](img/red_x.svg) | Strings sepparated by commas | empty | add_custom_conformance = lunar_nic_0 |
+
+
+### `add_email_remark`
+Boolean value.
+
+Indicates if Email remark (from section 2.7.5.3 in ICANN's RDAP response profile) needs to be added to the domain response.
+
+| Required? | Type | Default | Example |
+|--------------------|--------|---------|-------------|
+| ![No](img/red_x.svg) | Boolean | false | add_email_remark = true |
+
+
+### `is_country_code_released`
+Boolean value
+
+Indicates If the ISO-3166-1-alpha-2 parameter has been published in the vCard Properties
+and handle according to the ICANN's RDAP response profile section 1.4
+
+| Required? | Type | Default | Example |
+|--------------------|--------|---------|-------------|
+| ![No](img/red_x.svg) | Boolean | false | is_country_code_released = true |

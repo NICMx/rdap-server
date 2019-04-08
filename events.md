@@ -57,7 +57,7 @@ Here is an example of a `events.xml` file with all the elements that can contain
          <link rel="" href="http://example.com/file" hreflang="" title="" media="" type="">http://example.com/file</link>
       </links>
    </event>
-</notices>
+</events>
 ```
 
 ## Querying live DB
