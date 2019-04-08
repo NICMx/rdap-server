@@ -55,7 +55,7 @@ public class NameserverServlet extends DataAccessServlet<NameserverDAO> {
 			label = new DomainLabel(request.getName());
 		} catch (DomainLabelException e) {
 			if (e.getMessage() != null)
-				throw new BadRequestException("Bad Request: " + e.getMessage(), e);
+				throw new BadRequestException(e.getMessage(), e);
 			else
 				throw new BadRequestException(e);
 		}
