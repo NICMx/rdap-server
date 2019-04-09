@@ -84,7 +84,7 @@ public class NameserverSearchServlet extends DataAccessServlet<NameserverDAO> {
 		case NAME_PARAMETER_KEY:
 			DomainLabel label;
 			try {
-				label = new DomainLabel(request.getParameterValue());
+				label = new DomainLabel(request.getParameterValue(), false);
 			} catch (DomainLabelException e) {
 				throw new BadRequestException(e);
 			}

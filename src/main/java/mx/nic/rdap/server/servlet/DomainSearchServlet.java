@@ -88,7 +88,7 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 		case DOMAIN_NAME:
 			DomainLabel label;
 			try {
-				label = new DomainLabel(domain);
+				label = new DomainLabel(domain, false);
 			} catch (DomainLabelException e) {
 				throw new BadRequestException(e);
 			}
@@ -97,7 +97,7 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 		case NAMESERVER_NAME:
 			DomainLabel nsNameLabel;
 			try {
-				nsNameLabel = new DomainLabel(domain);
+				nsNameLabel = new DomainLabel(domain, false);
 			} catch (DomainLabelException e) {
 				throw new BadRequestException(e);
 			}

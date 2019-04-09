@@ -45,7 +45,7 @@ public class DomainServlet extends DataAccessServlet<DomainDAO> {
 
 		DomainLabel label;
 		try {
-			label = new DomainLabel(request.getFullRequestValue());
+			label = new DomainLabel(request.getFullRequestValue(), true);
 		} catch (DomainLabelException e) {
 			if (e.getMessage() != null) {
 				throw new BadRequestException(e.getMessage(), e);
