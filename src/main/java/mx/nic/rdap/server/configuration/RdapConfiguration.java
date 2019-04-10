@@ -49,6 +49,7 @@ public class RdapConfiguration {
 	private static final String ADD_CUSTOM_CONFORMANCE_KEY = "add_custom_conformance";
 	private static final String ADD_EMAIL_REMARK_KEY = "add_email_remark";
 	private static final String ADD_CC_KEY = "is_country_code_released";
+	private static final String ALLOW_LABELS_MIXTURE = "allow_labels_mixture";
 
 	// Settings values
 	private static String serverLanguage;
@@ -67,6 +68,7 @@ public class RdapConfiguration {
 	private static List<String> customConformance;
 	private static boolean addEmailRemark;
 	private static boolean isCountryCodeReleased;
+	private static boolean allowLabelsMixture;
 	
 
 	private RdapConfiguration() {
@@ -299,11 +301,24 @@ public class RdapConfiguration {
 		if (isPropertyNullOrEmpty(ADD_CC_KEY)) {
 			invalidProperties.add(ADD_CC_KEY);
 		} else {
-			String addEmailRemarkString = systemProperties.getProperty(ADD_CC_KEY).trim();
-			if (addEmailRemarkString.equalsIgnoreCase("true")) {
+			String addCCKey = systemProperties.getProperty(ADD_CC_KEY).trim();
+			if (addCCKey.equalsIgnoreCase("true")) {
 				isCountryCodeReleased = true;
-			} else if (addEmailRemarkString.equalsIgnoreCase("false")) {
+			} else if (addCCKey.equalsIgnoreCase("false")) {
 				isCountryCodeReleased = false;
+			} else {
+				invalidProperties.add(ADD_CC_KEY);
+			}
+		}
+
+		if (isPropertyNullOrEmpty(ALLOW_LABELS_MIXTURE)) {
+			invalidProperties.add(ALLOW_LABELS_MIXTURE);
+		} else {
+			String allowDomainLabelsMixture = systemProperties.getProperty(ALLOW_LABELS_MIXTURE).trim();
+			if (allowDomainLabelsMixture.equalsIgnoreCase("true")) {
+				allowLabelsMixture = true;
+			} else if (allowDomainLabelsMixture.equalsIgnoreCase("false")) {
+				allowLabelsMixture = false;
 			} else {
 				invalidProperties.add(ADD_CC_KEY);
 			}
@@ -550,5 +565,9 @@ public class RdapConfiguration {
 
 	public static boolean isCountryCodeReleased() {
 		return isCountryCodeReleased;
+	}
+
+	public static boolean allowLabelsMixture() {
+		return allowLabelsMixture;
 	}
 }

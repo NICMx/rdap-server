@@ -13,6 +13,7 @@ import mx.nic.rdap.db.exception.http.BadRequestException;
 import mx.nic.rdap.db.exception.http.HttpException;
 import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.db.spi.DomainDAO;
+import mx.nic.rdap.server.configuration.RdapConfiguration;
 import mx.nic.rdap.server.result.DomainResult;
 import mx.nic.rdap.server.result.RdapResult;
 import mx.nic.rdap.server.util.Util;
@@ -46,6 +47,9 @@ public class DomainServlet extends DataAccessServlet<DomainDAO> {
 		DomainLabel label;
 		try {
 			label = new DomainLabel(request.getFullRequestValue(), true);
+			if (!RdapConfiguration.allowLabelsMixture() && label.hasMixture()) {
+				throw new BadRequestException("Invalid domain label: '" + label.getLabel() + "'");
+			}
 		} catch (DomainLabelException e) {
 			if (e.getMessage() != null) {
 				throw new BadRequestException(e.getMessage(), e);
