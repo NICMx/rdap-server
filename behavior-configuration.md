@@ -22,6 +22,10 @@ wheretogo: ["Configuring Red Dog's Help Response", "help-response.html"]
    1. [`notices_timer_update_time`](#notices_timer_update_time)
    1. [`events_timer_update_time`](#events_timer_update_time)
    1. [`is_db_data_live`](#is_db_data_live)
+   1. [`add_custom_conformance`](#add_custom_conformance)
+   1. [`add_email_remark`](#add_email_remark)
+   1. [`is_country_code_released`](#is_country_code_released)
+   1. [`allow_labels_mixture`](#allow_labels_mixture)
 
 
 ## Introduction
@@ -281,3 +285,12 @@ and handle according to the ICANN's RDAP response profile section 1.4
 | Required? | Type | Default | Example |
 |--------------------|--------|---------|-------------|
 | ![No](img/red_x.svg) | Boolean | false | is_country_code_released = true |
+
+### `allow_labels_mixture`
+Boolean value
+
+Indicates if the RDAP server that receives a query string (for domain name or nameserver objects) with a mixture of A-labels and U-labels should reject the query and return an HTTP 400 Bad Request response.
+
+| Required? | Type | Default | Example |
+|--------------------|--------|---------|-------------|
+| ![No](img/red_x.svg) | Boolean | true | allow_labels_mixture = false |
