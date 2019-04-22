@@ -89,8 +89,15 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 			DomainLabel label;
 			try {
 				label = new DomainLabel(domain, false);
+				if (!RdapConfiguration.allowLabelsMixture() && label.hasMixture()) {
+					throw new BadRequestException("Invalid domain label: '" + label.getLabel() + "'");
+				}
 			} catch (DomainLabelException e) {
-				throw new BadRequestException(e);
+				if (e.getMessage() != null) {
+					throw new BadRequestException(e.getMessage(), e);
+				} else {
+					throw new BadRequestException(e);
+				}
 			}
 			result = dao.searchByName(label, resultLimit);
 			break;
@@ -99,13 +106,22 @@ public class DomainSearchServlet extends DataAccessServlet<DomainDAO> {
 			try {
 				nsNameLabel = new DomainLabel(domain, false);
 			} catch (DomainLabelException e) {
-				throw new BadRequestException(e);
+				if (e.getMessage() != null) {
+					throw new BadRequestException(e.getMessage(), e);
+				} else {
+					throw new BadRequestException(e);
+				}
 			}
 
 			// checks that the original label was LDH and not unicode
 			if (!nsNameLabel.getLabel().equalsIgnoreCase(nsNameLabel.getALabel())) {
 				throw new BadRequestException("Only LDH domain labels are allowed.");
 			}
+
+			if (!RdapConfiguration.allowLabelsMixture() && nsNameLabel.hasMixture()) {
+				throw new BadRequestException("Invalid domain label: '" + nsNameLabel.getLabel() + "'");
+			}
+
 			// Gets´s domain by it´s Nameserver name
 			result = dao.searchByNsLDHName(nsNameLabel, resultLimit);
 			break;

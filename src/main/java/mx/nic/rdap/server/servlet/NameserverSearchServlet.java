@@ -85,8 +85,15 @@ public class NameserverSearchServlet extends DataAccessServlet<NameserverDAO> {
 			DomainLabel label;
 			try {
 				label = new DomainLabel(request.getParameterValue(), false);
+				if (!RdapConfiguration.allowLabelsMixture() && label.hasMixture()) {
+					throw new BadRequestException("Invalid domain label: '" + label.getLabel() + "'");
+				}
 			} catch (DomainLabelException e) {
-				throw new BadRequestException(e);
+				if (e.getMessage() != null) {
+					throw new BadRequestException(e.getMessage(), e);
+				} else {
+					throw new BadRequestException(e);
+				}
 			}
 			result = dao.searchByName(label, resultLimit);
 			break;

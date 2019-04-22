@@ -320,7 +320,7 @@ public class RdapConfiguration {
 			} else if (allowDomainLabelsMixture.equalsIgnoreCase("false")) {
 				allowLabelsMixture = false;
 			} else {
-				invalidProperties.add(ADD_CC_KEY);
+				invalidProperties.add(ALLOW_LABELS_MIXTURE);
 			}
 		}
 
