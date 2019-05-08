@@ -15,6 +15,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 import mx.nic.rdap.core.db.Remark;
+import mx.nic.rdap.db.exception.InitializationException;
 import mx.nic.rdap.server.configuration.RdapConfiguration;
 import mx.nic.rdap.server.listener.RdapInitializer;
 
@@ -30,7 +31,7 @@ public class UserNotices {
 	private static final String TOS_FILE_NAME = "tos.xml";
 	private static final String NOTICES_FILE_NAME = "notices.xml";
 
-	private static final int MIN_TIMER_TIME = 10;
+	public static final int MIN_TIMER_TIME = 10;
 	// Holder for remarks
 	private static List<Remark> help;
 	private static List<Remark> tos;
@@ -48,11 +49,12 @@ public class UserNotices {
 	 *             When the XML file content has an invalid format.
 	 * @throws IOException
 	 *             Problems reading the XML file.
+	 * @throws InitializationException 
 	 */
-	public static void init(String userPath, boolean isDefaultPath) throws SAXException, IOException, ParserConfigurationException {
+	public static void init(String userPath, boolean isDefaultPath)
+			throws SAXException, IOException, ParserConfigurationException, InitializationException {
 		isRdapDefaultPath = isDefaultPath;
-		
-		
+
 		help = NoticesReader.parseHelpXML(Paths.get(userPath, HELP_FILE_NAME).toString());
 
 		// The terms of service are optional.

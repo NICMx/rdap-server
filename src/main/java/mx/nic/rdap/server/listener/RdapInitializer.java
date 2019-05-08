@@ -15,6 +15,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
+import mx.nic.rdap.db.exception.InitializationException;
 import mx.nic.rdap.db.exception.http.NotImplementedException;
 import mx.nic.rdap.db.service.DataAccessService;
 import mx.nic.rdap.db.spi.NameserverDAO;
@@ -115,7 +116,8 @@ public class RdapInitializer implements ServletContextListener {
 		return p;
 	}
 
-	private void loadUserNotices() throws SAXException, IOException, ParserConfigurationException {
+	private void loadUserNotices()
+			throws SAXException, IOException, ParserConfigurationException, InitializationException {
 		boolean isDefaultPath = false;
 		String userPath = servletContext.getInitParameter(NOTICES_FOLDER_PATH_PARAM_NAME);
 		if (userPath == null || userPath.trim().isEmpty()) {
