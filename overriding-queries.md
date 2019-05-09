@@ -1,7 +1,7 @@
 ---
-title: Overriding Red Dog's reference queries
+title: Overriding RedDog's reference queries
 breadcrums: ["Documentation", "documentation.html", "Installation/Configuration", "documentation.html#installationconfiguration", "Option 2 - Overriding SQL Provider queries", "documentation.html#option-2---overriding-sql-provider-queries"]
-wheretogo: ["Configuring Red Dog's reference implementation", "data-access-configuration.html"]
+wheretogo: ["Configuring RedDog's reference implementation", "data-access-configuration.html"]
 ---
 
 # {{ page.title }}
@@ -20,9 +20,9 @@ This document is a formal definition of the SQL Provider’s query interface. Us
 
 ## How to override queries
 
-The queries are expected to be found in a directory called `user_sql_files/` at the installation directory `WEB-INF/classes/` (which is created when the application is deployed). This directory should be a collection of `.sql` files, mirroring the ones from the [default implementation](https://github.com/NICMx/rdap-sql-provider/tree/master/src/main/resources/META-INF/sql). The page [Deploying rdap-server with the customized SQL Provider](server-install-option-2.html) states where this directory should be placed to be detected by Red Dog.
+The queries are expected to be found in a directory called `user_sql_files/` at the installation directory `WEB-INF/classes/` (which is created when the application is deployed). This directory should be a collection of `.sql` files, mirroring the ones from the [default implementation](https://github.com/NICMx/rdap-sql-provider/tree/master/src/main/resources/META-INF/sql). The page [Deploying rdap-server with the customized SQL Provider](server-install-option-2.html) states where this directory should be placed to be detected by RedDog.
 
-Except for queries referred as “catalogs”, isn't expected to override all the objects, and within each object isn't required to define every query. Only the necessary queries should be identified and provided. Red Dog will return an [HTTP 501 status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#501) if it receives a request whose result information depends of an undefined query.
+Except for queries referred as “catalogs”, it isn't expected to override all the objects, and within each object isn't required to define every query. Only the necessary queries should be identified and provided. RedDog will return an [HTTP 501 status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#501) if it receives a request whose result information depends of an undefined query.
 
 Each `.sql` file should list the queries needed to interact with the object. The following rules must be followed by each query:
 * Name the query: the first line must contain the name, which is declared using a '#' character followed by a string (eg. #getByRange).
@@ -47,7 +47,7 @@ As an example, here’s how one might implement `Autnum.sql`:
 
 The names of the columns and the number and order of parameters (‘?’ symbols) need to match the requirements listed for each query in the following sections. It should be noted that SQL aliases can be used to rename columns when the query alone would yield some other name.
 
-The Red Dog implemented SQL files are the following:
+The RedDog implemented SQL files are the following:
 
 *	[Autnum.sql](#autnumsql)
 *	[Domain.sql](#domainsql)
@@ -70,7 +70,7 @@ The Red Dog implemented SQL files are the following:
 *	[VCardPostalInfo.sql](#vcardpostalinfosql)
 *	[Zone.sql](#zonesql)
 
-The Red Dog SQL files calling catalogs and other needed catalogs:
+The RedDog SQL files calling catalogs and other needed catalogs:
 (If overwritten, the implementer MUST make sure all of these are set)
 
 *	[CountryCode](#countrycode)
@@ -99,7 +99,7 @@ The following table describes each alias and value type that the queries must re
 |asn_port43|	String|	Yes|	A string containing the fully qualified host name or IP address of the WHOIS server where the ASN instance may be found|whois.example.com|
 |ccd_id|	Integer|	No|	Country code id (Refer to [CountryCode catalog](#countrycode))|	484|
 
-The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/Autnum.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Autnum.sql).
+The new SQL file must define the same queries and aliases as the RedDog's implementation do, so both RedDog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/Autnum.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Autnum.sql).
 
 
 ### Domain.sql
@@ -112,12 +112,11 @@ The following table describes each alias and value type that the queries must re
 |:---------|:--------:|:---------:|:----------|:-----:|
 |dom_id|	Long|	No|	Domain's id|	123|
 |dom_handle|	String|	Yes|	An RIR/DNR unique identifier of the domain registration|	XXXX|
-|dom_ldh_name|	String|	Yes|	A string representing a domain name in LDH form|	xn--exampl-gva|
 |dom_unicode_name|	String|	Yes|	A string representing a domain in U-label form|	examplé|
 |dom_port43|	String|	Yes|	A string containing the fully qualified host name or IP address of the WHOIS server where the domain instance may be found|whois.example.com|
 |zone_id|	Integer|	No|	Zone's id (Refer to [Zone.sql](#zonesql) as it is also needed)| 	1|
 
-The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/Domain.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Domain.sql).
+The new SQL file must define the same queries and aliases as the RedDog's implementation do, so both RedDog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/Domain.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Domain.sql).
 
 
 ### DsData.sql
@@ -133,7 +132,7 @@ This file loads a DSData data object. The following table describes each alias a
 |dsd_digest|	String|	No|	A string as specified by the digest field of a DNS DS record|	49FD46E6C4B45C55D4AC|
 |dsd_digest_type|	Integer|	No|	An integer as specified by the digest type field of a DNS DS record|	1|
 
-The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/DsData.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/DsData.sql).
+The new SQL file must define the same queries and aliases as the RedDog's implementation do, so both RedDog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/DsData.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/DsData.sql).
 
 
 ### Entity.sql
@@ -148,7 +147,7 @@ The following table describes each alias and value type that the queries must re
 |ent_handle|	String|	Yes|	The entity's id assigned in the database|	XXXX|
 |ent_port43|	String|	Yes|	The host or ip address of the WHOIS server where the entity instance may be found|	whois.example.com|
 
-The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/Entity.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Entity.sql).
+The new SQL file must define the same queries and aliases as the RedDog's implementation do, so both RedDog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/Entity.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Entity.sql).
 
 
 ### Event.sql
@@ -164,7 +163,7 @@ The following table describes each alias and value type that the queries must re
 |eve_actor|	String|	Yes|	Event actor|	XXXXX|
 |eve_date|	Timestamp|	Yes|	Event date|	2017-12-31 23:59:59|
 
-The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/Event.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Event.sql).
+The new SQL file must define the same queries and aliases as the RedDog's implementation do, so both RedDog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/Event.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Event.sql).
 
 
 ### IpAddress.sql
@@ -180,7 +179,7 @@ The following table describes each alias and value type that the queries must re
 |iad_type|Integer|No|	Ip address type (4 or 6)|4|
 |iad_value|	String|	No|	Ip address v4 or v6 format|192.168.1.254 or 2001::FFFF|
 
-The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/IpAddress.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/IpAddress.sql).
+The new SQL file must define the same queries and aliases as the RedDog's implementation do, so both RedDog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/IpAddress.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/IpAddress.sql).
 
 
 ### IpNetwork.sql
@@ -205,7 +204,7 @@ The following table describes each alias and value type that the queries must re
 |ine_parent_handle|	String|	Yes|	A string containing a RIR/DNR unique identifier of the parent network of this network registration|	XXXX|
 |ine_cidr|	Integer|	Yes|	Network mask length of the IP address|	64|
 
-The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/IpNetwork.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/IpNetwork.sql).
+The new SQL file must define the same queries and aliases as the RedDog's implementation do, so both RedDog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/IpNetwork.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/IpNetwork.sql).
 
 
 ### KeyData.sql
@@ -223,7 +222,7 @@ The following table describes each alias and value type that the queries must re
 |kd_public_key|	String|	Yes|	Public Key Material|	105klfie05|
 |kd_algorithm|	Integer|	Yes|	Public Key cryptographic algorithm|	5|
 
-The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/KeyData.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/KeyData.sql).
+The new SQL file must define the same queries and aliases as the RedDog's implementation do, so both RedDog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/KeyData.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/KeyData.sql).
 
 
 ### Link.sql
@@ -242,7 +241,7 @@ The following table describes each alias and value type that the queries must re
 |lin_media|	String|	Yes|	A string containing the information style of the content of this link|	screen|
 |lin_type|	String|	Yes|	A string containing the media type|	application/rdap+json|
 
-The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/Link.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Link.sql).
+The new SQL file must define the same queries and aliases as the RedDog's implementation do, so both RedDog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/Link.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Link.sql).
 
 
 ### Nameserver.sql
@@ -255,11 +254,10 @@ The following table describes each alias and value type that the queries must re
 |:---------|:--------:|:---------:|:----------|:-----:|
 |nse_id|	Long|	No|	Nameserver's id|	123|
 |nse_handle|	String|	Yes|	A RIR/DNR unique identifier of the nameserver registration|	XXXXX|
-|nse_ldh_name|	String|	Yes|	A string describing a nameserver name in LDH form as described| ns1.xn--exampl-gva.com|
 |nse_unicode_name|	String|	Yes|	A string containing a nameserver name with U-labels|	ns1.examplé.com|
 |nse_port43|	String|	Yes|	A simple string containing the fully qualified host name or IP address of the WHOIS server where the nameserver instance may be found|	whois.example.com|
 
-The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/Nameserver.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Nameserver.sql).
+The new SQL file must define the same queries and aliases as the RedDog's implementation do, so both RedDog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/Nameserver.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Nameserver.sql).
 
 
 ### PublicId.sql
@@ -274,7 +272,7 @@ The following table describes each alias and value type that the queries must re
 |pid_type|	String|	Yes|	Public id's type|	IANA Registrar ID|
 |pid_identifier|	String|	Yes|	Public id's identifier|	1705|
 
-The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/PublicId.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/PublicId.sql).
+The new SQL file must define the same queries and aliases as the RedDog's implementation do, so both RedDog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/PublicId.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/PublicId.sql).
 
 
 ### RdapAccessRole.sql
@@ -288,7 +286,7 @@ The following table describes each alias and value type that the queries must re
 |rar_name|	String|	No|	Role name|	FBI|
 |rar_description|	String|	No|	Role description|	Federal Bureau of Investigation|
 
-The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/RdapAccessRole.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/RdapAccessRole.sql).
+The new SQL file must define the same queries and aliases as the RedDog's implementation do, so both RedDog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/RdapAccessRole.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/RdapAccessRole.sql).
 
 
 ### RdapUser.sql
@@ -303,7 +301,7 @@ The following table describes each alias and value type that the queries must re
 |rus_pass|	String|	No|	User's password|	321resu|
 |rus_max_search_results|	Integer|	Yes|	Max number of results that will be returned for the user|	100|
 
-The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/RdapUser.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/RdapUser.sql).
+The new SQL file must define the same queries and aliases as the RedDog's implementation do, so both RedDog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/RdapUser.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/RdapUser.sql).
 
 
 ### Remark.sql
@@ -319,7 +317,7 @@ The following table describes each alias and value type that the queries must re
 |rem_type|	String|	Yes|	Remark's type|	Advice|
 |rem_lang|	String|	Yes|	Remark's language|	en|
 
-The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/Remark.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Remark.sql).
+The new SQL file must define the same queries and aliases as the RedDog's implementation do, so both RedDog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/Remark.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Remark.sql).
 
 
 ### RemarkDescription.sql
@@ -334,7 +332,7 @@ The following table describes each alias and value type that the queries must re
 |rem_id|	Long|	No|	Remark's unique identifier (Refer to [Remark.sql](#remarksql))|	123|
 |rde_description|	String|	No|	Description content|	Description 3|
 
-The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/RemarkDescription.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/RemarkDescription.sql).
+The new SQL file must define the same queries and aliases as the RedDog's implementation do, so both RedDog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/RemarkDescription.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/RemarkDescription.sql).
 
 
 ### SecureDNS.sql
@@ -351,7 +349,7 @@ The following table describes each alias and value type that the queries must re
 |sdns_max_sig_life|	Integer|	Yes|	An integer representing the signature lifetime in seconds to be used when creating the RRSIG DS record in the parent zone|	63000|
 |dom_id|	Long|	No|	Related Domain id (Refer to [Domain.sql](#domainsql))|	123|
 
-The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/SecureDNS.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/SecureDNS.sql).
+The new SQL file must define the same queries and aliases as the RedDog's implementation do, so both RedDog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/SecureDNS.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/SecureDNS.sql).
 
 
 ### Variant.sql
@@ -369,7 +367,7 @@ The following table describes each alias and value type that the queries must re
 |rel_id|	Integer|	No|	Variant Relation Id (Refer to [VariantRelation catalog](#variantrelation))|	1|
 |dom_id|	Long|	No|	Related Domain id (Refer to [Domain.sql](#domainsql))|	123|
 
-The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/Variant.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Variant.sql).
+The new SQL file must define the same queries and aliases as the RedDog's implementation do, so both RedDog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/Variant.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Variant.sql).
 
 
 ### VCard.sql 
@@ -390,7 +388,7 @@ The following table describes each alias and value type that the queries must re
 |vca_fax|	String|	Yes|	Contact's fax|	248.697.0908|
 |vca_job_title|	String|	Yes|	Contact's job title|	Engineer|
 
-The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/VCard.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/VCard.sql).
+The new SQL file must define the same queries and aliases as the RedDog's implementation do, so both RedDog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/VCard.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/VCard.sql).
 
 
 ### VCardPostalInfo.sql
@@ -412,7 +410,7 @@ The following table describes each alias and value type that the queries must re
 |vpi_state|	String|	Yes|	State.|	Guadalajara|
 |vpi_postal_code|	String|	Yes|	Postal code.|	34020|
 
-The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/VCardPostalInfo.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/VCardPostalInfo.sql).
+The new SQL file must define the same queries and aliases as the RedDog's implementation do, so both RedDog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/VCardPostalInfo.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/VCardPostalInfo.sql).
 
 
 ### Zone.sql
@@ -426,16 +424,16 @@ The following table describes each alias and value type that the queries must re
 |zone_id|	Integer|	No|	Zone id|	6|
 |zone_name|	String|	No|	Zone name|	net|
 
-The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/Zone.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Zone.sql).
+The new SQL file must define the same queries and aliases as the RedDog's implementation do, so both RedDog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/Zone.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Zone.sql).
 
 
 ## Needed Catalogs
 
-A custom implementation will need to add the following catalogs, as well as its queries so that Red Dog server will properly work.
+A custom implementation will need to add the following catalogs, as well as its queries so that RedDog server will properly work.
 
 ### CountryCode
 
-Red Dog uses the standard for area codes used by the [United Nations Statistics Division](https://en.wikipedia.org/wiki/United_Nations_Statistics_Division "United Nations Statistics Division from Wikipedia").The complete list of country codes can be found [here](http://www.nationsonline.org/oneworld/country_code_list.htm "ISO Alpha-2, Alpha-3, and Numeric Country Codes").
+RedDog uses the standard for area codes used by the [United Nations Statistics Division](https://en.wikipedia.org/wiki/United_Nations_Statistics_Division "United Nations Statistics Division from Wikipedia").The complete list of country codes can be found [here](http://www.nationsonline.org/oneworld/country_code_list.htm "ISO Alpha-2, Alpha-3, and Numeric Country Codes").
 
 This catalog does not have a SQL file but is needed at DB since [Autnum.sql](#autnumsql) and [IpNetwork.sql](#ipnetworksql) objects retrieve it.
 
@@ -489,7 +487,7 @@ The following values have been registered in the “RDAP JSON Values” registry
 |notifications|	An entity object instance designated to receive notifications about association object instances.|
 |noc|	The entity object instance handles communications related to a network operations center (NOC).|
 
-The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/Role.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Role.sql).
+The new SQL file must define the same queries and aliases as the RedDog's implementation do, so both RedDog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/Role.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Role.sql).
 
 This catalog is needed so an object can have Entities with an associated role.
 
@@ -519,7 +517,7 @@ The following values have been registered in the “RDAP JSON Values” registry
 |pending update|	A request has been received for the update or modification of the object instance, but this action is not yet complete.|
 |pending delete|	A request has been received for the deletion or removal of the object instance, but this action is not yet complete. For domains, this might mean that the name is no longer published in DNS but has not yet been purged from the registry database.|
 
-The new SQL file must define the same queries and aliases as the Red Dog's implementation do, so both Red Dog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/Status.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Status.sql).
+The new SQL file must define the same queries and aliases as the RedDog's implementation do, so both RedDog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/Status.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Status.sql).
 
 This catalog is needed since the following objects can retrieve it: [Autnum.sql](#autnumsql), [Domain.sql](#domainsql), [Entity.sql](#entitysql), [IpNetwork.sql](#ipnetworksql), and [Nameserver.sql](#nameserversql).
 
@@ -542,4 +540,4 @@ This catalog does not have a SQL file but is needed at DB since a [Variant.sql](
 ## Additional Notes
 
 *	All necessary values for the RDAP catalogs can be found [here](https://www.iana.org/assignments/rdap-json-values/rdap-json-values.xhtml#rdap-json-values-1 "RDAP JSON Values").
-*	All the [provided queries](https://github.com/NICMx/rdap-sql-provider/tree/master/src/main/resources/META-INF/sql) are those implemented by **Red Dog**, if they are overwritten they don´t have to be the same, they only need to return the same type of data.
+*	All the [provided queries](https://github.com/NICMx/rdap-sql-provider/tree/master/src/main/resources/META-INF/sql) are those implemented by **RedDog**, if they are overwritten they don´t have to be the same, they only need to return the same type of data.

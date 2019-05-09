@@ -1,5 +1,5 @@
 ---
-title: Configuring Red Dog's response Events
+title: Configuring RedDog's response Events
 breadcrums: ["Documentation", "documentation.html", "Further Custom Configuration", "documentation.html#further-custom-configuration"]
 wheretogo: ["Rate Limit Filter", "rate-limit.html"]
 ---
@@ -17,6 +17,8 @@ wheretogo: ["Rate Limit Filter", "rate-limit.html"]
 If the implementer wants to add events in every request response, it is necessary to configure an events configuration file considering the following details:
 
 * The Events are displayed in every server request response.
+* No duplicate events in the configuration file are allowed.
+* Events in the configuration file will override events that match with the Rdap Response.
 * The Events are **optional**.
 
 The content of the events can be configured in the **WEB-INF/notices/** directory by creating an XML file named `events.xml`. This file is **optional**, so there is no events.xml default configuration file.
@@ -41,7 +43,7 @@ Here is an example of a `events.xml` file with all the elements that can contain
 <events>
    <event>
       <eventAction>registration</eventAction>
-      <eventActor>A registered IANA type</eventActor>
+      <eventActor>An event actor</eventActor>
       <eventDate>2018-12-30T23:59:59Z</eventDate>
       <links>
          <link rel="" href="http://example.com" hreflang="" title="" media="" type="">http://example.com</link>
@@ -50,7 +52,6 @@ Here is an example of a `events.xml` file with all the elements that can contain
    </event>
    <event>
       <eventAction>last update of rdap database</eventAction>
-      <eventActor>A registered IANA type</eventActor>
       <eventDate>2018-12-30T23:59:59Z</eventDate>
       <links>
          <link rel="" href="http://example.com" hreflang="" title="" media="" type="">http://example.com</link>

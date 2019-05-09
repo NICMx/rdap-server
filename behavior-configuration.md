@@ -1,7 +1,7 @@
 ---
-title: Configuring Red Dog's Server Behavior
+title: Configuring RedDog's Server Behavior
 breadcrums: ["Documentation", "documentation.html", "Further Custom Configuration", "documentation.html#further-custom-configuration"]
-wheretogo: ["Configuring Red Dog's Help Response", "help-response.html"]
+wheretogo: ["Configuring RedDog's Help Response", "help-response.html"]
 ---
 
 # {{ page.title }}
@@ -30,7 +30,7 @@ wheretogo: ["Configuring Red Dog's Help Response", "help-response.html"]
 
 ## Introduction
 
-Red Dog's behavior can be configured to satisfy whatever needs the implementer has. To achieve this, there's a global configuration file located at folder `WEB-INF/configuration.properties` in the installation directory. Here's a preview of the file's beginning:
+RedDog's behavior can be configured to satisfy whatever needs the implementer has. To achieve this, there's a global configuration file located at folder `WEB-INF/configuration.properties` in the installation directory. Here's a preview of the file's beginning:
 
 ```
 #Optional. Language of the server. Values en=english, es=español. Default: en
@@ -46,7 +46,7 @@ Red Dog's behavior can be configured to satisfy whatever needs the implementer h
 #max_number_result_unauthenticated_user =
 ```
 
-The next section will explain each of the properties that can be configured to customize Red Dog's server behavior.
+The next section will explain each of the properties that can be configured to customize RedDog's server behavior.
 
 ## Configuring `configuration.properties`
 
@@ -246,11 +246,11 @@ This functionality behave this way  because not every implementer needs to updat
 | ![No](img/red_x.svg) | Integer | 0 | events_timer_update = 3600 |
 
 ### `is_db_data_live`
-Boolean value to override the timestamp in the eventAction type `last update of RDAP database`.
+Boolean value to override the timestamp in the eventAction type `last update of RDAP database` on first level RDAP objects.
 
 It is used when the RDAP service provider is querying its database directly, and therefore, using real-time data, so for every request, the timestamp value will be overridden to the server timestamp when the request was made.
 
-In case that the event `last update of RDAP database` event does not exist, this value will be ignored.
+In case that the event `last update of RDAP database` event does not exist, this flag will create an event in the first level RDAP object.
 
 | Required? | Type | Default | Example |
 |--------------------|--------|---------|-------------|

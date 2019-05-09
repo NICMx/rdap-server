@@ -1,4 +1,4 @@
-## Install Red Dog on Tomcat
+## Install RedDog on Tomcat
 
 	mkdir $CATALINA_HOME/webapps/rdap
 	cd $CATALINA_HOME/webapps/rdap

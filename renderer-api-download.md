@@ -6,7 +6,7 @@ breadcrums: ["Download", "download.html"]
 
 # {{ page.title }}
 
-Interface from which renderer implementations are expected to implement. More documentation at [Red Dog's Renderer Layer](renderer-layer.html).
+Interface from which renderer implementations are expected to implement. More documentation at [RedDog's Renderer Layer](renderer-layer.html).
 
 - **Bold** marks the most recommended version(s).
 - Normal font signals recommended fallback versions in case the previous option fails you [bug reports welcomed](https://github.com/NICMx/rdap-renderer-api/issues).

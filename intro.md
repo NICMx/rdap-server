@@ -1,7 +1,7 @@
 ---
-title: What is RDAP/Red Dog?
+title: What is RDAP/RedDog?
 breadcrums: ["Documentation", "documentation.html", "Introduction", "documentation.html#introduction"]
-wheretogo: ["Red Dog Demo Server", "demo-server.html"]
+wheretogo: ["RedDog Demo Server", "demo-server.html"]
 ---
 
 # {{ page.title }}
@@ -9,10 +9,10 @@ wheretogo: ["Red Dog Demo Server", "demo-server.html"]
 ## Index
 
 1. [What is RDAP?](#what-is-rdap)
-1. [What is Red Dog?](#what-is-red-dog)	
+1. [What is RedDog?](#what-is-reddog)	
    1. [Option 1: Full Data Access Implementation](#option-1-full-data-access-implementation)
    1. [Option 2: Overriding SQL Provider queries](#option-2-overriding-sql-provider-queries)
-   1. [Option 3: Using Red Dog's builtin schema](#option-3-using-red-dogs-builtin-schema)
+   1. [Option 3: Using RedDog's builtin schema](#option-3-using-reddogs-builtin-schema)
 
 ## What is RDAP?
 
@@ -26,17 +26,17 @@ Some advantages of RDAP over WHOIS are
 - Support for Internationalized Domain Names and support for localized registration data.
 - Support for identification, authentication and access control to the service.
 
-## What is Red Dog?
+## What is RedDog?
 
-Red Dog is a free and open source Java implementation of an RDAP server carcass. It is a handful of servlets and APIs that can help you serve your registration data in a standard manner.
+RedDog is a free and open source Java implementation of an RDAP server framework. It is a handful of servlets and APIs that can help you serve your registration data in a standard manner.
 
 ![Fig. 1 - Overview](img/diagram/intro-overview.svg)
 
-As pictured, deploying Red Dog requires the development of an interface between your database and the servlets. This can be done in three different ways:
+As pictured, deploying RedDog requires the development of an interface between your database and the servlets. This can be done in three different ways:
 
 ### Option 1: Full Data Access Implementation
 
-The [Data Access API](https://github.com/NICMx/rdap-data-access-api) (DAA) project is a module of Red Dog which mainly consists of [a set of Java interfaces](https://github.com/NICMx/rdap-data-access-api/tree/master/src/main/java/mx/nic/rdap/db/spi). The server queries a "Data Access Implementation" (DAI) --an implementation of these interfaces-- to access the data.
+The [Data Access API](https://github.com/NICMx/rdap-data-access-api) (DAA) project is a module of RedDog which mainly consists of [a set of Java interfaces](https://github.com/NICMx/rdap-data-access-api/tree/master/src/main/java/mx/nic/rdap/db/spi). The server queries a "Data Access Implementation" (DAI) --an implementation of these interfaces-- to access the data.
 
 ![Fig.1 - Full implementation architecture](img/diagram/intro-option-1.svg)
 
@@ -50,18 +50,18 @@ The [SQL Provider](https://github.com/NICMx/rdap-sql-provider) project is a func
 
 ![Fig. 2 - SQL Provider](img/diagram/intro-option-2.svg)
 
-The page [Overriding Red Dog's reference queries](overriding-queries.html) helps to find the specifications that these queries need to fulfill.
+The page [Overriding RedDog's reference queries](overriding-queries.html) helps to find the specifications that these queries need to fulfill.
 
 > ![Warning](img/warning.svg) Please identify and be aware of the maintenance overhead of using this option if future bugs or RFC updates require modifications to the query specification.
 
-### Option 3: Using Red Dog's builtin schema
+### Option 3: Using RedDog's builtin schema
 
 The [SQL Provider](https://github.com/NICMx/rdap-sql-provider) project ships with default queries, intended to be used along a predefined database schema.
 
 ![Fig. 3 - SQL Provider default](img/diagram/intro-option-3.svg)
 
-What you need to provide under this architecture is a means to export your data from your core database to Red Dog's database.
+What you need to provide under this architecture is a means to export your data from your core database to RedDog's database.
 
-The page [Exporting a database to Red Dog's built-in schema](migration.html) will help to understand the predefined schema.
+The page [Exporting a database to RedDog's built-in schema](migration.html) will help to understand the predefined schema.
 
-> ![Warning](img/warning.svg) Please identify and be aware of the maintenance overhead of using this option if future bugs or RFC updates require modifications to Red Dog's schema.
+> ![Warning](img/warning.svg) Please identify and be aware of the maintenance overhead of using this option if future bugs or RFC updates require modifications to RedDog's schema.

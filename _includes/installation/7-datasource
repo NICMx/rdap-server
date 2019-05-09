@@ -1,4 +1,4 @@
-## Create the data source that will link Red Dog and the database
+## Create the data source that will link RedDog and the database
 
 One way to do this in Tomcat is to define the datasource in `context.xml`.
 

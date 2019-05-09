@@ -23,7 +23,7 @@ public class SampleIpNetworkDaoImpl implements IpNetworkDAO {
 		// always return the same sample network, no matter what the user asked
 		// for.
 
-		// Red Dog will create one SampleIpNetworkDaoImpl instance per network
+		// RedDog will create one SampleIpNetworkDaoImpl instance per network
 		// request, so you generally don't need to worry about thread safety.
 		// (You probably want to worry about the speed of your constructor,
 		// though.)

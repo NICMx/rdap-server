@@ -1,7 +1,7 @@
 ---
-title: Configuring Red Dog's Help Response
+title: Configuring 's Help Response
 breadcrums: ["Documentation", "documentation.html", "Further Custom Configuration", "documentation.html#further-custom-configuration"]
-wheretogo: ["Configuring Red Dog's Terms of Service", "terms-of-service.html"]
+wheretogo: ["Configuring 's Terms of Service", "terms-of-service.html"]
 ---
 
 # {{ page.title }}

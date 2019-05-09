@@ -1,5 +1,5 @@
 ---
-title: Configuring Red Dog's reference implementation
+title: Configuring RedDog's reference implementation
 breadcrums: ["Documentation", "documentation.html", "Installation/Configuration", "documentation.html#installationconfiguration", "Option 2 - Overriding SQL Provider queries", "documentation.html#option-2---overriding-sql-provider-queries"]
 wheretogo: ["Deploying rdap-server with the customized SQL Provider", "server-install-option-2.html", "Deploying rdap-server with the reference SQL Provider", "server-install-option-3.html"]
 ---
@@ -20,7 +20,7 @@ wheretogo: ["Deploying rdap-server with the customized SQL Provider", "server-in
 
 ## Introduction
 
-Red Dog offers a reference data access implementation: **SQL Provider** (git project [rdap-sql-provider](https://github.com/NICMx/rdap-sql-provider)). If used, this implementation can be configured as needed altering the file `WEB-INF/data-access.properties` in the installation directory. Here's a preview of the file's beginning:
+RedDog offers a reference data access implementation: **SQL Provider** (git project [rdap-sql-provider](https://github.com/NICMx/rdap-sql-provider)). If used, this implementation can be configured as needed altering the file `WEB-INF/data-access.properties` in the installation directory. Here's a preview of the file's beginning:
 
 ```
 #Optional. Set the schema that the rdap-sql-provider will use. Default: rdap
@@ -36,7 +36,7 @@ Red Dog offers a reference data access implementation: **SQL Provider** (git pro
 #zones = 
 ```
 
-The next section will explain each of the properties that can be configured to customize Red Dog's reference implementation behavior.
+The next section will explain each of the properties that can be configured to customize RedDog's reference implementation behavior.
 
 ## Configuring `data-access.properties`
 

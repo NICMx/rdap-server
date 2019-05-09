@@ -30,7 +30,7 @@ public class SampleHub implements DataAccessImplementation {
 		// Not implementing some data-access DAOs is perfectly acceptable; not
 		// all object types are needed by every RDAP server.
 		// Just return null in those cases.
-		// Red Dog will translate this into an HTTP 501.
+		// RedDog will translate this into an HTTP 501.
 		return null;
 	}
 

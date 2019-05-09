@@ -1,7 +1,7 @@
 ---
-title: Exporting a database to Red Dog's built-in schema
-breadcrums: ["Documentation", "documentation.html", "Installation/Configuration", "documentation.html#installationconfiguration", "Option 3 - Using Red Dog’s builtin schema", "documentation.html#option-3---using-red-dogs-builtin-schema"]
-wheretogo: ["Configuring Red Dog's reference implementation", "data-access-configuration.html"]
+title: Exporting a database to RedDog's built-in schema
+breadcrums: ["Documentation", "documentation.html", "Installation/Configuration", "documentation.html#installationconfiguration", "Option 3 - Using RedDog’s builtin schema", "documentation.html#option-3---using-red-dogs-builtin-schema"]
+wheretogo: ["Configuring RedDog's reference implementation", "data-access-configuration.html"]
 scriptLink: https://github.com/NICMx/rdap-sql-provider/blob/master/src/test/resources/META-INF/sql/Database.sql
 rawScriptLink: https://raw.githubusercontent.com/NICMx/rdap-sql-provider/master/src/test/resources/META-INF/sql/Database.sql
 ---
@@ -10,11 +10,11 @@ rawScriptLink: https://raw.githubusercontent.com/NICMx/rdap-sql-provider/master/
 
 ## Introduction
 
-Red Dog's builtin schema is an ordinary relational database conceived in MySQL. Users that aim to implement [Option 3: Using Red Dog’s builtin schema](intro.html#option-3-using-red-dogs-builtin-schema), need to build a mechanism to populate this database and keep it updated.
+RedDog's builtin schema is an ordinary relational database conceived in MySQL. Users that aim to implement [Option 3: Using RedDog’s builtin schema](intro.html#option-3-using-red-dogs-builtin-schema), need to build a mechanism to populate this database and keep it updated.
 
-The means through which the data is exported will depend on how the data is stored in the origin database, this documentation cannot fall into details on how to do it. Instead, this will serve as reference material for Red Dog's schema.
+The means through which the data is exported will depend on how the data is stored in the origin database, this documentation cannot fall into details on how to do it. Instead, this will serve as reference material for RedDog's schema.
 
-Red Dog's database contains 68 tables. Though the task of populating them might seem daunting, it is important to note that's likely to need only a fraction of them. The main ones are [autonomous_system_number]({{ page.scriptLink }}#L365), [domain]({{ page.scriptLink }}#L161), [entity]({{ page.scriptLink }}#L25), [ip_network]({{ page.scriptLink }}#L626) and [nameserver]({{ page.scriptLink }}#L423). Pick only the ones needed and branch from there.
+RedDog's database contains 68 tables. Though the task of populating them might seem daunting, it is important to note that's likely to need only a fraction of them. The main ones are [autonomous_system_number]({{ page.scriptLink }}#L365), [domain]({{ page.scriptLink }}#L161), [entity]({{ page.scriptLink }}#L25), [ip_network]({{ page.scriptLink }}#L626) and [nameserver]({{ page.scriptLink }}#L423). Pick only the ones needed and branch from there.
 
 ## Full Schema definition
 

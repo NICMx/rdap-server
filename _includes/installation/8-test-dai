@@ -2,7 +2,7 @@
 
 	$CATALINA_HOME/bin/startup.sh
 
-Red Dog server is now running and serving data provided by the implementation.
+RedDog server is now running and serving data provided by the implementation.
 
 ![Sample Firefox screenshot](img/sample-query-custom-mode.png)
 

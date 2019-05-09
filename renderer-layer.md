@@ -1,5 +1,5 @@
 ---
-title: Red Dog's Renderer Layer
+title: RedDog's Renderer Layer
 breadcrums: ["Documentation", "documentation.html", "Rendering Response Data", "documentation.html#rendering-response-data"]
 wheretogo: ["Create a new RDAP-renderer implementation", "renderer-implementation.html"]
 ---
@@ -19,7 +19,7 @@ wheretogo: ["Create a new RDAP-renderer implementation", "renderer-implementatio
 
 ## Introduction
 
-The Red Dog RDAP server, after forming the response of a user request, delegates the responsibility of rendering the result to an implementation of the [**rdap-renderer-api**](https://github.com/NICMx/rdap-renderer-api).
+The RedDog RDAP server, after forming the response of a user request, delegates the responsibility of rendering the result to an implementation of the [**rdap-renderer-api**](https://github.com/NICMx/rdap-renderer-api).
 
 The implementation is chosen based on the MIME type (Content-type) requested by the user at the time of the request. This implementation(s) should be configured at [`WEB-INF/renderers.properties`](https://github.com/NICMx/rdap-server/blob/master/src/main/webapp/WEB-INF/renderers.properties) configuration file.
 
@@ -27,7 +27,7 @@ First, the server gets the MIME type requested by the user, it is checked in the
 
 If the MIME type is mapped, the response will be rendered with the configured implementation, otherwise, if the MIME type requested by the user does not exist in the configuration, a default implementation that has been configured for any unregistered MIME type is chosen.
 
-The Red Dog team creates two reference implementations of **rdap-renderer-api**:
+The RedDog team creates two reference implementations of **rdap-renderer-api**:
 
 + __[rdap-json-renderer](https://github.com/NICMx/rdap-json-renderer)__, this renderer prints the output of the requests in the JSON format as indicated by [RFC 7483](https://tools.ietf.org/html/rfc7483).
 	+ This renderer comes loaded and configured on the RDAP-server. 
@@ -37,7 +37,7 @@ The Red Dog team creates two reference implementations of **rdap-renderer-api**:
 
 ## Configuring `renderers.properties`
 
-To tell the RDAP Red Dog server which renderer implementations to use, the `WEB-INF/renderers.properties` file must be configured.
+To tell the RDAP RedDog server which renderer implementations to use, the `WEB-INF/renderers.properties` file must be configured.
 
 Here's how this property file should be configured.
 
@@ -131,7 +131,7 @@ default_renderer = json
 
 Below are the steps to add a new renderer to the RDAP server.
 
-In this case an implementation offered by the Red Dog team will be added, this is the **text-renderer**. These steps will be the same to add any other implementation(s).
+In this case an implementation offered by the RedDog team will be added, this is the **text-renderer**. These steps will be the same to add any other implementation(s).
 
 1. Obtain the JAR of a renderer implementation.
 1. Copy the JAR of the renderer implementation inside the RDAP-server application, in the `WEB-INF/lib` folder. 

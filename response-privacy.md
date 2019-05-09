@@ -16,7 +16,7 @@ breadcrums: ["Documentation", "documentation.html", "Further Custom Configuratio
 
 ## Introduction
 
-As described by [RFC 7481 section 3.3](https://tools.ietf.org/html/rfc7481#section-3.3), the Red Dog server allows to protect data using authorization policies.
+As described by [RFC 7481 section 3.3](https://tools.ietf.org/html/rfc7481#section-3.3), the RedDog server allows to protect data using authorization policies.
 
 Data can be served either to everyone, authenticated users, only the object owners, to specific users with custom roles, or to no one. This level of access can be configured per object field or attribute, as well as the owner objects can be defined by the implementer.
 
@@ -105,7 +105,7 @@ The example didn’t include the use of custom roles to keep things simple, but 
 
 ## Using custom roles
 
-The declaration and use of custom roles is optional. If the implementer wishes to use custom roles, these must be first defined when [Configuring Red Dog's Server Behavior](behavior-configuration.html#user_roles). The roles configured can be used at the privacy settings of each object.
+The declaration and use of custom roles is optional. If the implementer wishes to use custom roles, these must be first defined when [Configuring RedDog's Server Behavior](behavior-configuration.html#user_roles). The roles configured can be used at the privacy settings of each object.
 
 To simplify the explanation of the custom roles use, the same example will be taken (`WEB-INF/privacy/domain.properties`) and used only with custom roles mixtures. The file can be modified as follows, assuming that the roles **president**, **governor**, and **judge** are already configured:
 

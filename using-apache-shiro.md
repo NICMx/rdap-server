@@ -9,7 +9,7 @@ wheretogo: ["Configuring Response Privacy", "response-privacy.html"]
 ## Index
 
 1. [Why Apache Shiro?](#why-apache-shiro)
-1. [Apache Shiro at Red Dog](#apache-shiro-at-red-dog)
+1. [Apache Shiro at RedDog](#apache-shiro-at-reddog)
    1. [Enabling Apache Shiro](#enabling-apache-shiro)
    1. [Configuring Apache Shiro](#configuring-apache-shiro)
       1. [Users information](#users-information)
@@ -25,19 +25,19 @@ wheretogo: ["Configuring Response Privacy", "response-privacy.html"]
 
 ## Why Apache Shiro?
 
-[Apache Shiro<sup>TM</sup>](https://shiro.apache.org/) is an open source security framework provided by the [Apache Software Fundation](https://www.apache.org/)  licensed just as Red Dog's ([Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)). Citing Apache Shiro's own description:
+[Apache Shiro<sup>TM</sup>](https://shiro.apache.org/) is an open source security framework provided by the [Apache Software Fundation](https://www.apache.org/)  licensed just as RedDog's ([Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)). Citing Apache Shiro's own description:
 
 > Apache Shiro™ is a powerful and easy-to-use Java security framework that performs authentication, authorization, cryptography, and session management.
 
-Red Dog uses [Apache Shiro<sup>TM</sup>](https://shiro.apache.org/) in order to provide authentication mechanisms as described in [RFC 7481 section 3.2](https://tools.ietf.org/html/rfc7481#section-3.2), since the framework facilitates these tasks thanks to its flexibility.
+RedDog uses [Apache Shiro<sup>TM</sup>](https://shiro.apache.org/) in order to provide authentication mechanisms as described in [RFC 7481 section 3.2](https://tools.ietf.org/html/rfc7481#section-3.2), since the framework facilitates these tasks thanks to its flexibility.
 
-## Apache Shiro at Red Dog
+## Apache Shiro at RedDog
 
-This section will explain how Red Dog uses [Apache Shiro<sup>TM</sup>](https://shiro.apache.org/), this configuration can be altered in order to suite whatever needs the implementer has.
+This section will explain how RedDog uses [Apache Shiro<sup>TM</sup>](https://shiro.apache.org/), this configuration can be altered in order to suite whatever needs the implementer has.
 
 > ![Warning](img/warning.svg) Before further reading, it's recommended that the reader visit [Apache Shiro Reference Documentation](https://shiro.apache.org/reference.html).
 
-Currently Red Dog has the following dependencies from Apache Shiro:
+Currently RedDog has the following dependencies from Apache Shiro:
 * [Core v1.4.0](https://mvnrepository.com/artifact/org.apache.shiro/shiro-core/1.4.0)
 * [Shiro-web v1.4.0](https://mvnrepository.com/artifact/org.apache.shiro/shiro-web/1.4.0)
 
@@ -69,7 +69,7 @@ Using this lines, Apache Shiro is expecting to find a configuration file at any 
 * `WEB-INF/shiro.ini`
 * `shiro.ini` at the root of classpath.
 
-By default, Red Dog has the configuration file at [`WEB-INF/shiro.ini`](https://github.com/NICMx/rdap-server/blob/master/src/main/webapp/WEB-INF/shiro.ini); file that is explained in the following section.
+By default, RedDog has the configuration file at [`WEB-INF/shiro.ini`](https://github.com/NICMx/rdap-server/blob/master/src/main/webapp/WEB-INF/shiro.ini); file that is explained in the following section.
 
 This configuration has been obtained following Apache Shiro's documentation. To learn more about Apache Shiro's Configuration, click [here](https://shiro.apache.org/web.html#configuration).
 
@@ -79,14 +79,14 @@ Once Apache Shiro has been enabled, the configuration file is needed, just as st
 
 Just as the configuration set at [`WEB-INF/web.xml`](https://github.com/NICMx/rdap-server/blob/master/src/main/webapp/WEB-INF/web.xml), this configuration is based on Apache Shiro's documentation. To learn more about Apache Shiro's INI Configuration, click [here](https://shiro.apache.org/configuration.html#ini-configuration "INI Configuration") and [here](https://shiro.apache.org/web.html#web-ini-configuration "Web INI Configuration").
 
-Basically Red Dog's [`WEB-INF/shiro.ini`](https://github.com/NICMx/rdap-server/blob/master/src/main/webapp/WEB-INF/shiro.ini) file has the following behavior regarding to the use of Apache Shiro:
+Basically RedDog's [`WEB-INF/shiro.ini`](https://github.com/NICMx/rdap-server/blob/master/src/main/webapp/WEB-INF/shiro.ini) file has the following behavior regarding to the use of Apache Shiro:
 * Get the [users information](#users-information) (password and access roles) from the database.
 * Use [basic authentication](#basic-authentication), as mandatory and/or optional.
 * Optionally, [restrict access](#restrict-access) to specific paths.
 
 Each of these behaviors is explained in the following sections.
 
-> ![Warning](img/warning.svg) WARNING: Red Dog has authentication disabled by default, using the [`anon`](https://shiro.apache.org/static/1.4.0/apidocs/org/apache/shiro/web/filter/authc/AnonymousFilter.html) filter; if authentication is needed, the following steps will help to enable authentication using Apache Shiro.
+> ![Warning](img/warning.svg) WARNING: RedDog has authentication disabled by default, using the [`anon`](https://shiro.apache.org/static/1.4.0/apidocs/org/apache/shiro/web/filter/authc/AnonymousFilter.html) filter; if authentication is needed, the following steps will help to enable authentication using Apache Shiro.
 
 #### Users information
 
@@ -113,14 +113,14 @@ customRealm.authenticationQuery =
 customRealm.userRolesQuery = 
 ```
 
-> ![Warning](img/warning.svg) If the implementer is using the SQL implementation provided by Red Dog, the queries will be something like this:
+> ![Warning](img/warning.svg) If the implementer is using the SQL implementation provided by RedDog, the queries will be something like this:
 > ```ini
 > customRealm.authenticationQuery = SELECT rus_pass FROM rdap_user WHERE rus_name = ?
 > customRealm.userRolesQuery = SELECT rar_name FROM rdap_user_role WHERE rus_name = ?
 > ```
 > Both queries must receive the user's name to retrieve the corresponding information.
 
-> ![Warning](img/warning.svg) If user roles are going to be used, these must be also configured at property `user_roles` when [Configuring Red Dog's Server Behavior](behavior-configuration.html#user_roles). When validating user roles, the characters case is indifferent (eg. Role 'JUDGE' is the same that 'judge').
+> ![Warning](img/warning.svg) If user roles are going to be used, these must be also configured at property `user_roles` when [Configuring RedDog's Server Behavior](behavior-configuration.html#user_roles). When validating user roles, the characters case is indifferent (eg. Role 'JUDGE' is the same that 'judge').
 
 The `customRealm` must be used, and so is assigned to the [default `SecurityManager`](http://shiro.apache.org/configuration.html#default-securitymanager):
 
@@ -195,7 +195,7 @@ The path expression `/domains/**` means that the resources under and including `
 
 ##### Basic authentication with permissive and restrictive access
 
-Thanks to the use of URL paths expressions (eg. `/**`, `/myresource1/**`) the implementer can use distinct filters at each resource that's required, this allows to Red Dog mix the use of permissive and restrictive access in a simple way.
+Thanks to the use of URL paths expressions (eg. `/**`, `/myresource1/**`) the implementer can use distinct filters at each resource that's required, this allows to RedDog mix the use of permissive and restrictive access in a simple way.
 
 The configuration will be a combination of [permissive access](#basic-authentication-with-permissive-access) and [restrictive access](#basic-authentication-with-restrictive-access), so the `shiro.ini` file must include these lines:
 
@@ -235,7 +235,7 @@ authcBasic.enabled = false
 
 ### Apache Shiro's Subject
 
-Red Dog uses the [`Subject`](https://shiro.apache.org/static/1.4.0/apidocs/org/apache/shiro/subject/Subject.html) object provided by Apache Shiro. This object simplifies the validations related to users access level based on authentication and the use of access roles.
+RedDog uses the [`Subject`](https://shiro.apache.org/static/1.4.0/apidocs/org/apache/shiro/subject/Subject.html) object provided by Apache Shiro. This object simplifies the validations related to users access level based on authentication and the use of access roles.
 
 The [`Subject`](https://shiro.apache.org/static/1.4.0/apidocs/org/apache/shiro/subject/Subject.html) is always available thanks to [`org.apache.shiro.SecurityUtils.getSubject()`](https://shiro.apache.org/static/1.4.0/apidocs/org/apache/shiro/SecurityUtils.html#getSubject--) function, and it contains relevant information such as the user's name and roles (if it's authenticated).
 
@@ -243,9 +243,9 @@ This object is used by [`UserInfo`](https://github.com/NICMx/rdap-server/blob/ma
 
 ## More documentation
 
-Apache Shiro can be customized to suite the needs that the implementer has, Red Dog's implementation is just one approach of many configurations that can be done.
+Apache Shiro can be customized to suite the needs that the implementer has, RedDog's implementation is just one approach of many configurations that can be done.
 
-The purpose of this page is to understand only what's has been done at Red Dog, further explanations are out of scope. So, here's a small guide if the reader wishes to know more about Apache Shiro:
+The purpose of this page is to understand only what's has been done at RedDog, further explanations are out of scope. So, here's a small guide if the reader wishes to know more about Apache Shiro:
 * [Apache Shiro Main Page](https://shiro.apache.org/)
 * [Apache Shiro Community Forums](https://shiro.apache.org/forums.html)
 * [Apache Shiro Reference Documentation](https://shiro.apache.org/reference.html)

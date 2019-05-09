@@ -6,7 +6,7 @@ breadcrums: ["Download", "download.html"]
 
 # {{ page.title }}
 
-Red Dog's reference Text renderer implementation. Renders the output in Text format similar to WHOIS responses.
+RedDog's reference Text renderer implementation. Renders the output in Text format similar to WHOIS responses.
 
 - **Bold** marks the most recommended version(s).
 - Normal font signals recommended fallback versions in case the previous option fails you [bug reports welcomed](https://github.com/NICMx/rdap-text-renderer/issues).

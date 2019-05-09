@@ -1,7 +1,7 @@
 ---
-title: Configuring Red Dog's response Notices
+title: Configuring RedDog's response Notices
 breadcrums: ["Documentation", "documentation.html", "Further Custom Configuration", "documentation.html#further-custom-configuration"]
-wheretogo: ["Configuring Red Dog's response Events", "events.html"]
+wheretogo: ["Configuring RedDog's response Events", "events.html"]
 ---
 
 # {{ page.title }}

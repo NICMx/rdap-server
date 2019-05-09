@@ -1,5 +1,5 @@
 ---
-title: Red Dog Demo Server
+title: RedDog Demo Server
 breadcrums: ["Documentation", "documentation.html", "Introduction", "documentation.html#introduction"]
 ---
 
@@ -19,7 +19,7 @@ breadcrums: ["Documentation", "documentation.html", "Introduction", "documentati
 
 ## Introduction
 
-Before you begin a full installation of Red Dog, you can try its features out using our demo server. It is a standalone Tomcat binary packaged with Red Dog and an embedded (H2-based) database populated with dummy data.
+Before you begin a full installation of RedDog, you can try its features out using our demo server. It is a standalone Tomcat binary packaged with RedDog and an embedded (H2-based) database populated with dummy data.
 
 The only requirement is Java 8 or superior.
 
@@ -64,12 +64,12 @@ As a demo version, this server has limited features compared to the ones defined
 ## Available configuration
 
 Although this a demo version with limited features, some configurations can be customized so that you can learn more about the server behavior. The following list mentions the files that can be used to configure the demo server:
-* `WEB-INF/configuration.properties` is Red Dog's global configuration file, to tweak it learn more at [Configuring Red Dog's Server Behavior](behavior-configuration.html).
-* `WEB-INF/data-access.properties` is the implementation configuration file, to tweak it learn more at [Configuring Red Dog's reference implementation](data-access-configuration.html).
-* `WEB-INF/shiro.ini` is Apache Shiro's configuration file used by Red Dog, useful for security settings such as: resources protection, user authentication, user roles, etc. To tweak it learn more at [Using Apache Shiro](using-apache-shiro.html).
+* `WEB-INF/configuration.properties` is RedDog's global configuration file, to tweak it learn more at [Configuring RedDog's Server Behavior](behavior-configuration.html).
+* `WEB-INF/data-access.properties` is the implementation configuration file, to tweak it learn more at [Configuring RedDog's reference implementation](data-access-configuration.html).
+* `WEB-INF/shiro.ini` is Apache Shiro's configuration file used by RedDog, useful for security settings such as: resources protection, user authentication, user roles, etc. To tweak it learn more at [Using Apache Shiro](using-apache-shiro.html).
 * `WEB-INF/privacy` is the folder where privacy settings can be configured, goes along with security configurations. To tweak it learn more at [Configuring Response Privacy](response-privacy.html).
-* `WEB-INF/notices/help.xml` is the file where the 'help' response can be customized, to tweak it learn more at [Configuring Red Dog's Help Response](help-response.html).
-* Optionally a file `WEB-INF/notices/tos.xml` can be added to set the server's terms of service, learn more at [Configuring Red Dog's Terms of Service](terms-of-service.html).
+* `WEB-INF/notices/help.xml` is the file where the 'help' response can be customized, to tweak it learn more at [Configuring RedDog's Help Response](help-response.html).
+* Optionally a file `WEB-INF/notices/tos.xml` can be added to set the server's terms of service, learn more at [Configuring RedDog's Terms of Service](terms-of-service.html).
 
 > ![Warning](img/warning.svg) Notice that tweaks to any of these files require a server restart to go live.
 

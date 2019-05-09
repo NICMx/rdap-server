@@ -2,7 +2,7 @@
 
 	$CATALINA_HOME/bin/startup.sh
 
-Red Dog server is now running and serving data provided by the SQL Provider's queries.
+RedDog server is now running and serving data provided by the SQL Provider's queries.
 
 ![Sample Firefox screenshot](img/sample-query-custom-mode.png)
 
