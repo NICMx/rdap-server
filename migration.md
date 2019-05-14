@@ -14,11 +14,11 @@ RedDog's builtin schema is an ordinary relational database conceived in MySQL. U
 
 The means through which the data is exported will depend on how the data is stored in the origin database, this documentation cannot fall into details on how to do it. Instead, this will serve as reference material for RedDog's schema.
 
-RedDog's database contains 68 tables. Though the task of populating them might seem daunting, it is important to note that's likely to need only a fraction of them. The main ones are [autonomous_system_number]({{ page.scriptLink }}#L365), [domain]({{ page.scriptLink }}#L161), [entity]({{ page.scriptLink }}#L25), [ip_network]({{ page.scriptLink }}#L626) and [nameserver]({{ page.scriptLink }}#L423). Pick only the ones needed and branch from there.
+RedDog's database contains 68 tables. Though the task of populating them might seem daunting, it is important to note that's likely to need only a fraction of them. The main ones are [autonomous_system_number]({{ page.scriptLink }}#L386), [domain]({{ page.scriptLink }}#L182), [entity]({{ page.scriptLink }}#L25), [ip_network]({{ page.scriptLink }}#L647) and [nameserver]({{ page.scriptLink }}#L444). Pick only the ones needed and branch from there.
 
 ## Full Schema definition
 
-The script to generate the database is located [here]({{ page.rawScriptLink }} "SQL file with tables") and the ER diagram [here](img/diagram/db-er.png).
+The script to generate the database is located [here]({{ page.rawScriptLink }} "SQL file with tables").
 
 The following table shows the database tables, to see more detail of each table there's a link to its creation script:
 
@@ -90,5 +90,6 @@ The following table shows the database tables, to see more detail of each table 
 | variant_name | This table contains the variants names. | [View more]({{ page.scriptLink }}#L1091) |
 | variant_relation | This table contains the type of relations of a Variant. | [View more]({{ page.scriptLink }}#L1279) |
 | vcard | This table contains the entities VCards. | [View more]({{ page.scriptLink }}#L41) |
+| vcard_contact_uri | This table contains the contact uri for vCard | [View more]({{ page.scriptLink }}#L62) |
 | vcard_postal_info | This table contains the VCards postal information. | [View more]({{ page.scriptLink }}#L1110) |
 | zone | This table contains the zones managed by the RDAP server owner. | [View more]({{ page.scriptLink }}#L167) |

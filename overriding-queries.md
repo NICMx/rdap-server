@@ -126,7 +126,7 @@ This file loads a DSData data object. The following table describes each alias a
 |Alias name|Value Type|Allows Null|Description|Example|
 |:---------|:--------:|:---------:|:----------|:-----:|
 |dsd_id|	Long|	No|	Ds data's id|	123|
-|sdns_id|	Long|	No|	Secure DNS's id (Refer to [SecureDNS.sql](#securednssql)|	123|
+|sdns_id|	Long|	No|	Secure DNS's id (Refer to [SecureDNS.sql](#securednssql))|	123|
 |dsd_keytag|	Integer|	No|	An integer as specified by the key tag field of a DNS DS record|	12345|
 |dsd_algorithm|	Integer|	No|	An integer as specified by the algorithm field of a DNS DS record|	3|
 |dsd_digest|	String|	No|	A string as specified by the digest field of a DNS DS record|	49FD46E6C4B45C55D4AC|
@@ -216,7 +216,7 @@ The following table describes each alias and value type that the queries must re
 |Alias name|Value Type|Allows Null|Description|Example|
 |:---------|:--------:|:---------:|:----------|:-----:|
 |kd_id|	Long|	No|	Key Data's id|	123|
-|kd_kd_sdns_id|	Long|	No|	Secure DNS id|	123|
+|sdns_id|	Long|	No|	Secure DNS's id (Refer to [SecureDNS.sql](#securednssql))|	123|
 |kd_flags|	Integer|	Yes|	Integer containing the flags|	256|
 |kd_protocol|	Integer|	Yes|	Integer containing the protocol value|	3|
 |kd_public_key|	String|	Yes|	Public Key Material|	105klfie05|
@@ -387,6 +387,9 @@ The following table describes each alias and value type that the queries must re
 |vca_cellphone|	String|	Yes|	Contact's cellphone|	81 8181818181|
 |vca_fax|	String|	Yes|	Contact's fax|	248.697.0908|
 |vca_job_title|	String|	Yes|	Contact's job title|	Engineer|
+|vcu_id|	Long|	No|	Contact Uri's id|	123|
+|vcu_order|	Unsigned Int|	yes|	Prefered order of contact|	1|
+|vcu_uri|	String|	No|	Contact URI|	https://contact.example.com|
 
 The new SQL file must define the same queries and aliases as the RedDog's implementation do, so both RedDog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/VCard.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/VCard.sql).
 
@@ -403,6 +406,7 @@ The following table describes each alias and value type that the queries must re
 |vca_id|	Long|	No|	Vcard's id (Refer to [VCard.sql](#vcardsql))|	123|
 |vpi_type|	String|	Yes|	Postal info's type|	local|
 |vpi_country|	String|	Yes|	Country|	Mexico|
+|vpi_country_code|	String|	Yes|	ISO 3166 2-char Code|	MX|
 |vpi_city|	String|	Yes|	City|	Juarez|
 |vpi_street1|	String|	Yes|	Street (first part)|	Luis Elizondo|
 |vpi_street2|	String|	Yes|	Street (second part)|	Altavista|
