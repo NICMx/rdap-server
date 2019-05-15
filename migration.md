@@ -10,7 +10,7 @@ rawScriptLink: https://raw.githubusercontent.com/NICMx/rdap-sql-provider/master/
 
 ## Introduction
 
-RedDog's builtin schema is an ordinary relational database conceived in MySQL. Users that aim to implement [Option 3: Using RedDog’s builtin schema](intro.html#option-3-using-red-dogs-builtin-schema), need to build a mechanism to populate this database and keep it updated.
+RedDog's builtin schema is an ordinary relational database conceived in MySQL. Users that aim to implement [Option 3: Using RedDog’s builtin schema](intro.html#option-3-using-reddogs-builtin-schema), need to build a mechanism to populate this database and keep it updated.
 
 The means through which the data is exported will depend on how the data is stored in the origin database, this documentation cannot fall into details on how to do it. Instead, this will serve as reference material for RedDog's schema.
 
@@ -67,7 +67,7 @@ The following table shows the database tables, to see more detail of each table 
 | key_data | This table contains the information of the Key Data related to the Secure DNS information of a domain. | [View more]({{ page.scriptLink }}#L1500) |
 | key_events | This table contains the events related to a Key Data. | [View more]({{ page.scriptLink }}#L1547) |
 | key_links | This table contains the links related to a Key Data. | [View more]({{ page.scriptLink }}#L1523) |
-| link | This table contains the information about links. | [View more]({{ page.scriptLink }}#L78) |
+| link | This table contains the information about links. | [View more]({{ page.scriptLink }}#L99) |
 | link_lang | This table contains the languages related to a link. | [View more]({{ page.scriptLink }}#L1571) |
 | nameserver | This table contains information regarding DNS nameservers used in both forward and reverse DNS. | [View more]({{ page.scriptLink }}#L444) |
 | nameserver_entity_roles | This table contains the role that an Entity has in relation to a Nameserver. | [View more]({{ page.scriptLink }}#L1328) |
@@ -80,7 +80,7 @@ The following table shows the database tables, to see more detail of each table 
 | rdap_user | This table contains the information about the users. | [View more]({{ page.scriptLink }}#L1392) |
 | rdap_user_role | This table contains the Access Roles that a User has. | [View more]({{ page.scriptLink }}#L1420) |
 | relation | This table contains the catalog of Variant relations. | [View more]({{ page.scriptLink }}#L1077) |
-| remark | This table contains the information about the Remarks that denote information about an object. | [View more]({{ page.scriptLink }}#L62) |
+| remark | This table contains the information about the Remarks that denote information about an object. | [View more]({{ page.scriptLink }}#L83) |
 | remark_description | This table contains the Remark's descriptions. | [View more]({{ page.scriptLink }}#L240) |
 | remark_links | This table contains the relation between a Remark and its links. | [View more]({{ page.scriptLink }}#L1254) |
 | roles | This table contains the catalog of Roles that an entity could have. | [View more]({{ page.scriptLink }}#L154) |
