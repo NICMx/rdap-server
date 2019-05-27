@@ -318,11 +318,37 @@ public abstract class RdapServlet extends HttpServlet {
 			}
 		}
 
+		if (rdapObj instanceof Domain) {
+			Domain d = (Domain) rdapObj;
+			if (d.getNameServers() != null) {
+				for (Nameserver ns : d.getNameServers()) {
+					handleCountryProperty(ns);
+				}
+			}
+
+			if (d.getIpNetwork() != null) {
+				handleCountryProperty(d.getIpNetwork());
+			}
+		}
+		
 		if (!(rdapObj instanceof Entity)) {
 			return;
 		}
 
 		Entity e = (Entity) rdapObj;
+
+		if (e.getIpNetworks() != null) {
+			for (IpNetwork ip : e.getIpNetworks()) {
+				handleCountryProperty(ip);
+			}
+		}
+
+		if (e.getAutnums() != null) {
+			for (Autnum a : e.getAutnums()) {
+				handleCountryProperty(a);
+			}
+		}
+
 		if (e.getVCardList() == null || e.getVCardList().isEmpty()) {
 			/* nothing to do */
 			return;
@@ -346,19 +372,27 @@ public abstract class RdapServlet extends HttpServlet {
 	private List<Event> mergeEvents(List<Event> userEvents, List<Event> objectEvents) {
 		int userEventsSize = userEvents.size();
 		boolean equals = false;
+		List<Event> mergedEvents = new ArrayList<>(userEvents);
 
 		for (Event oe : objectEvents) {
+			/* The Event action could be hidden in privacy filter. */
+			if (oe.getEventAction() == null) {
+				mergedEvents.add(oe);
+				continue;
+			}
+
 			for (int i = 0 ; i < userEventsSize ; i++) {
 				Event ue = userEvents.get(i);
 				equals = ue.getEventAction().equals(oe.getEventAction());
-				if (equals)
+				if (equals) {
 					break;
+				}
 			}
 			if (!equals)
-				userEvents.add(oe);
+				mergedEvents.add(oe);
 		}
 
-		return userEvents;
+		return mergedEvents;
 	}
 	/**
 	 * Function to add to a single request response the events and notices configured in the application
@@ -370,19 +404,28 @@ public abstract class RdapServlet extends HttpServlet {
 			List<Remark> requestNotices) {
 		RdapObject rdapObject = response.getRdapObject();
 		List<Event> events = UserEvents.getEvents();
-		if (events != null && !events.isEmpty()) {
-			if (rdapObject.getEvents() == null) {
-				rdapObject.setEvents(events);
-			} else {
-				List<Event> mergedEvents = mergeEvents(events, rdapObject.getEvents());
-				rdapObject.setEvents(mergedEvents);
+
+		if (rdapObject != null) {
+			if (events != null && !events.isEmpty()) {
+				if (rdapObject.getEvents() == null) {
+					rdapObject.setEvents(events);
+				} else {
+					List<Event> mergedEvents = mergeEvents(events, rdapObject.getEvents());
+					rdapObject.setEvents(mergedEvents);
+				}
+			}
+
+			/*
+			 * Set the current timestamp on "last update of RDAP database" event if
+			 * configured.
+			 */
+			if (RdapConfiguration.isDbDataLive()) {
+				if (rdapObject.getEvents() == null) {
+					rdapObject.setEvents(new ArrayList<>());
+				}
+				UserEvents.setCurrentTimestamp(rdapObject.getEvents());
 			}
 		}
-		
-		/* Set the current timestamp on "last update of RDAP database" event if configured. */
-		if (RdapConfiguration.isDbDataLive()) {
-			UserEvents.setCurrentTimestamp(rdapObject.getEvents());
-	}
 
 		if (requestNotices != null && !requestNotices.isEmpty()) {
 			if (response.getNotices() == null) {
@@ -390,7 +433,6 @@ public abstract class RdapServlet extends HttpServlet {
 			}
 			response.getNotices().addAll(requestNotices);
 		}
-
 	}
 	
 	/**
@@ -402,24 +444,32 @@ public abstract class RdapServlet extends HttpServlet {
 	private void addToSearchEventsAndNotices(SearchResponse<? extends RdapObject> searchResponse,
 			List<Remark> requestNotices) {
 		List<? extends RdapObject> rdapObjects = searchResponse.getRdapObjects();
-		List<Event> events = UserEvents.getEvents();
-		if (events != null && !events.isEmpty() && !rdapObjects.isEmpty()) {
-			for (RdapObject rdapObject : rdapObjects) {
-				if (rdapObject.getEvents() == null) {
-					rdapObject.setEvents(events);
-				} else {
-					List<Event> mergedEvents = mergeEvents(events, rdapObject.getEvents());
-					rdapObject.setEvents(mergedEvents);
-				}
+		List<Event> userEvents = UserEvents.getEvents();
 
-				/*
-				 * Set the current timestamp on "last update of RDAP database" event if
-				 * configured.
-				 */
-				if (RdapConfiguration.isDbDataLive())
+		if (rdapObjects != null) {
+			if (userEvents != null && !userEvents.isEmpty()) {
+				for (RdapObject rdapObject : rdapObjects) {
+					if (rdapObject.getEvents() == null) {
+						rdapObject.setEvents(new ArrayList<>(userEvents));
+					} else {
+						List<Event> mergedEvents = mergeEvents(userEvents, rdapObject.getEvents());
+						rdapObject.setEvents(mergedEvents);
+					}
+				}
+			}
+
+			/*
+			 * Set the current timestamp on "last update of RDAP database" event if
+			 * configured.
+			 */
+			if (RdapConfiguration.isDbDataLive()) {
+				for (RdapObject rdapObject : rdapObjects) {
+					if (rdapObject.getEvents() == null) {
+						rdapObject.setEvents(new ArrayList<>());
+					}
 					UserEvents.setCurrentTimestamp(rdapObject.getEvents());
- 			}
-			
+				}
+			}
 		}
 		
 		if (requestNotices != null && !requestNotices.isEmpty()) {

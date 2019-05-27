@@ -99,22 +99,27 @@ public class UserEvents {
 		return result;
 	}
 
-	public static void setCurrentTimestamp(List<Event> events) {
+	public static void setCurrentTimestamp(List<Event> events, boolean addLastUpdate) {
 		boolean lastUpdateFound = false; 
 		for (Event e : events) {
-			if (e.getEventAction().equals(EventAction.LAST_UPDATE_OF_RDAP_DATABASE)) {
+			EventAction eventAction = e.getEventAction();
+			if (eventAction != null && eventAction.equals(EventAction.LAST_UPDATE_OF_RDAP_DATABASE)) {
 				Date newDate = new Date();
 				e.setEventDate(newDate);
 				lastUpdateFound = true;
 			}
 		}
 		
-		if (!lastUpdateFound) {
+		if (!lastUpdateFound && addLastUpdate) {
 			Event lastUpdateRdapDatabase = new Event();
 			lastUpdateRdapDatabase.setEventAction(EventAction.LAST_UPDATE_OF_RDAP_DATABASE);
 			lastUpdateRdapDatabase.setEventDate(new Date());
 			events.add(lastUpdateRdapDatabase);
 		}
+	}
+
+	public static void setCurrentTimestamp(List<Event> events) {
+		setCurrentTimestamp(events, true);
 	}
 
 	public static void updateEvents(List<Event> updatedEvents) {
