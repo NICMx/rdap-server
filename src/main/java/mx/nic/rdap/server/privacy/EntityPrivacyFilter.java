@@ -375,6 +375,14 @@ public class EntityPrivacyFilter {
 			isPrivate |= filterPostalInfo(vcard.getPostalInfo(), userInfo, privacySettings);
 		}
 
+		key = "contactUri";
+		privacySetting = privacySettings.get(key);
+		isHidden = privacySetting.isHidden(userInfo);
+		if (isHidden && !ObjectPrivacyFilter.isValueEmpty(vcard.getContactUri())) {
+			isPrivate = true;
+			vcard.setContactUri(null);
+		}
+
 		return isPrivate;
 	}
 
@@ -401,6 +409,19 @@ public class EntityPrivacyFilter {
 					postalInfo.setType(textToShow);
 				} else {
 					postalInfo.setType(null);
+				}
+			}
+
+			key = "countryCode";
+			privacySetting = privacySettings.get(key);
+			isHidden = privacySetting.isHidden(userInfo);
+			if (isHidden && !ObjectPrivacyFilter.isValueEmpty(postalInfo.getCountryCode())) {
+				isPrivate = true;
+				if (privacySetting instanceof ObscuredPrivacy) {
+					String textToShow = ((ObscuredPrivacy) privacySetting).getTextToShow();
+					postalInfo.setCountryCode(textToShow);
+				} else {
+					postalInfo.setCountryCode(null);
 				}
 			}
 
