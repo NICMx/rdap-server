@@ -27,7 +27,26 @@
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>INCLUDE</dispatcher>
 	</filter-mapping>
+	
+	<!-- START DEMO CONFIG -->
 
+	<context-param>
+		<param-name>db.url</param-name>
+		<param-value>jdbc:h2:mem:rdap</param-value>
+	</context-param>
+	<context-param>
+		<param-name>db.user</param-name>
+		<param-value>demo</param-value>
+	</context-param>
+	<context-param>
+		<param-name>db.password</param-name>
+		<param-value>mypass1</param-value>
+	</context-param>
+	<listener>
+		<listener-class>org.h2.server.web.DbStarter</listener-class>
+	</listener>
+	<!-- END DEMO CONFIG -->
+	
 	<error-page>
 		<location>/exception</location>
 	</error-page>
