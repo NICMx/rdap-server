@@ -79,28 +79,28 @@ The demo database ships with the following test data:
 
 ### Domain data
 
-| Handle   | ldh (letter, digit, hyphen) name | Unicode name     | Zone         |
+| Handle   | Unicode name      | Zone         |
 |:---------|:-------------------------------- |:-----------------|:-------------|
-| DOM1     | whiterabbit                      |                  | com          |
-| DOMCOM   | goldfish                         |                  | com          |
-| XXX2     | reddog                           |                  | com          |
-| 1234     | blackcat                         |                  | com          |
-| ylb      | yellowbird                       |                  | com          |
-| DOM2     | conejo_blanco                    |                  | com.example  |
-| DOMCOMMX | pez_dorado                       |                  | com.example  |
-| XXX3     | perro_rojo                       |                  | com.example  |
-| 1235     | gato_negro                       |                  | com.example  |
-| pjra     | pajaro_amarillo                  |                  | com.example  |
-| DOM3     | conejo_blanco                    |                  | example      |
-| DOMMX    | pez_dorado                       |                  | example      |
-| XXX4     | perro_rojo                       |                  | example      |
-| 1236     | gato_negro                       |                  | example      |
-|          | pajaro_amarillo                  |                  | example      |
-| DOM4     | choco                            |                  | test         |
-| DOMLAT   | moka                             |                  | test         |
-| XXX6     | 1.0.168.192                      |                  | in-addr.arpa |
-| 1238     | xn--mxico-bsa                    | méxico           | test         |
-| xnxn     | xn--elpjaroamarillo-pjb          | elpájaroamarillo | test         |
+| DOM1     | whiterabbit       | com          |
+| DOMCOM   | goldfish          | com          |
+| XXX2     | reddog            | com          |
+| 1234     | blackcat          | com          |
+| ylb      | yellowbird        | com          |
+| DOM2     | conejo-blanco     | com.example  |
+| DOMCOMMX | pez-dorado        | com.example  |
+| XXX3     | perro-rojo        | com.example  |
+| 1235     | gato-negro        | com.example  |
+| pjra     | pajaro-amarillo   | com.example  |
+| DOM3     | conejo-blanco     | example      |
+| DOMMX    | pez-dorado        | example      |
+| XXX4     | perro-rojo        | example      |
+| 1236     | gato-negro        | example      |
+|          | pajaro-amarillo   | example      |
+| DOM4     | choco             | test         |
+| DOMLAT   | moka              | test         |
+| XXX6     | 1.0.168.192       | in-addr.arpa |
+| 1238     | méxico            | test         |
+| xnxn     | elpájaroamarillo  | test         |
 
 ### Entity data
 
@@ -129,25 +129,25 @@ The demo database ships with the following test data:
 
 ### Nameserver data
 
-| Handle | ldh(letter, digit, hyphen) name | Unicode name           | IP Address      |
-|:-------|:--------------------------------|:-----------------------|:----------------|
-| NSE1   | ns1.chopsuey.net                |                        | 192.168.1.1     |
-| NSE2   | ns2.chopsuey.net                |                        | 192.168.1.2     |
-| NSE3   | ns3.chopsuey.net                |                        | 192.168.1.3     |
-| NSE4   | ns4.chopsuey.net                |                        | 1:0:0:0:0:0:0:1 |
-| NSE5   | ns5.chopsuey.net                |                        | 2:0:0:0:0:0:0:2 |
-| NSE6   | ns1.white.example               |                        | 192.168.1.4     |
-| NSE7   | ns2.white.example               |                        | 192.168.1.5     |
-| NSE8   | ns3.white.example               |                        | 192.168.1.6     |
-| NSE9   | ns4.white.example               |                        | 192.168.1.7     |
-| NSE10  | ns5.white.example               |                        | 192.168.1.8     |
-| NSE11  | ns1.bright.info                 |                        |                 |
-| NSE12  | ns2.bright.info                 |                        |                 |
-| NSE13  | ns3.bright.info                 |                        |                 |
-| NSE14  | ns4.bright.info                 |                        |                 |
-| NSE15  | ns5.bright.info                 |                        |                 |
-| NSE16  | ns1.camión.test                 | ns1.xn--camin-3ta.test |                 |
-| NSE17  | ns2.camión.test                 | ns2.xn--camin-3ta.test |                 |
-| NSE18  | ns3.camión.test                 | ns3.xn--camin-3ta.test |                 |
-| NSE19  | ns4.camión.test                 | ns4.xn--camin-3ta.test |                 |
-| NSE20  | ns5.camión.test                 | ns5.xn--camin-3ta.test |                 |
+| Handle | ldh(letter, digit, hyphen) name | IP Address      |
+|:-------|:--------------------------------|:----------------|
+| NSE1   | ns1.chopsuey.net                | 192.168.1.1     |
+| NSE2   | ns2.chopsuey.net                | 192.168.1.2     |
+| NSE3   | ns3.chopsuey.net                | 192.168.1.3     |
+| NSE4   | ns4.chopsuey.net                | 1:0:0:0:0:0:0:1 |
+| NSE5   | ns5.chopsuey.net                | 2:0:0:0:0:0:0:2 |
+| NSE6   | ns1.white.example               | 192.168.1.4     |
+| NSE7   | ns2.white.example               | 192.168.1.5     |
+| NSE8   | ns3.white.example               | 192.168.1.6     |
+| NSE9   | ns4.white.example               | 192.168.1.7     |
+| NSE10  | ns5.white.example               | 192.168.1.8     |
+| NSE11  | ns1.bright.info                 |                 |
+| NSE12  | ns2.bright.info                 |                 |
+| NSE13  | ns3.bright.info                 |                 |
+| NSE14  | ns4.bright.info                 |                 |
+| NSE15  | ns5.bright.info                 |                 |
+| NSE16  | ns1.camión.test                 |                 |
+| NSE17  | ns2.camión.test                 |                 |
+| NSE18  | ns3.camión.test                 |                 |
+| NSE19  | ns4.camión.test                 |                 |
+| NSE20  | ns5.camión.test                 |                 |

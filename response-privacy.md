@@ -96,7 +96,7 @@ publicIds = none
 First of all, the properties must be uncommented so that its configured values can be loaded when the server initializes. What has been done in the example is this:
 * `handle`, `ldhName`, `unicodeName` and the rest of the commented properties will be accessible to everybody whenever a domain object is requested.
 * `variants` and `nameservers` will be displayed only if the user that made the request is successfully authenticated.
-* `secureDNS` and `entities` will be displayed exclusively to the user that is owner of the domain object requested, this means that the user must be successfully authenticated and satisfy other requirements (see [owners configuration](behavior-configuration.html#owner_roles_*)).
+* `secureDNS` and `entities` will be displayed exclusively to the user that is owner of the domain object requested, this means that the user must be successfully authenticated and satisfy other requirements (see [owners configuration](behavior-configuration.html#owner_roles_)).
 * `status` and `publicIds` will never be displayed, not even to authenticated users nor owners.
 
 > ![Warning](img/warning.svg) Whenever a property of the response is hidden due to privacy settings, a remark of type `object truncated due to authorization` is added to the corresponding object. If the object is an **Entity** also a `private` status is added to its status list.

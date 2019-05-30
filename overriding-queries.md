@@ -362,7 +362,6 @@ The following table describes each alias and value type that the queries must re
 |:---------|:--------:|:---------:|:----------|:-----:|
 |var_id|	Long|	No|	Variant's id|	123|
 |var_idn_table|	String|	Yes|	Variant's IDN table as listed at [IANA IDN TABLES](https://www.iana.org/domains/idn-tables)|	.lat Spanish|
-|vna_ldh_name|	String|	No|	Variant name in LDH format|	xn--exampl-gva|
 |vna_unicode_name|	String|	Yes|	Variant name in Unicode format.|	examplé|
 |rel_id|	Integer|	No|	Variant Relation Id (Refer to [VariantRelation catalog](#variantrelation))|	1|
 |dom_id|	Long|	No|	Related Domain id (Refer to [Domain.sql](#domainsql))|	123|
@@ -457,6 +456,9 @@ The following values have been registered in the “RDAP JSON Values” registry
 |transfer|	The object instance was transferred from one registrant to another.|
 |locked|	The object instance was locked.|
 |unlocked|	The object instance was unlocked.|
+|last update of RDAP database|An action noting when the information in the object instance in the RDAP database was last synchronized from the authoritative database (e.g. registry database). |
+|registrar expiration|An action noting the expiration date of the object in the registrar system.|
+|enum validation expiration|Association of phone number represented by this ENUM domain to registrant has expired or will expire at a pre-determined date and time.|
 
 This catalog does not have a SQL file but is needed at DB since a [Event.sql](#eventsql) object retrieves it.
 
@@ -520,6 +522,23 @@ The following values have been registered in the “RDAP JSON Values” registry
 |pending transfer|	A request has been received for the transfer of the object instance, but this action is not yet complete.|
 |pending update|	A request has been received for the update or modification of the object instance, but this action is not yet complete.|
 |pending delete|	A request has been received for the deletion or removal of the object instance, but this action is not yet complete. For domains, this might mean that the name is no longer published in DNS but has not yet been purged from the registry database.|
+|add period|This grace period is provided after the initial registration of the object. If the object is deleted by the client during this period, the server provides a credit to the client for the cost of the registration. This maps to the Domain Registry Grace Period Mapping for the Extensible Provisioning Protocol (EPP) [RFC3915] 'addPeriod' status.|
+|auto renew period|This grace period is provided after an object registration period expires and is extended (renewed) automatically by the server. If the object is deleted by the client during this period, the server provides a credit to the client for the cost of the auto renewal. This maps to the Domain Registry Grace Period Mapping for the Extensible Provisioning Protocol (EPP) [RFC3915] 'autoRenewPeriod' status.|
+|client delete prohibited|The client requested that requests to delete the object MUST be rejected. This maps to the Extensible Provisioning Protocol (EPP) Domain Name Mapping [RFC5731], Extensible Provisioning Protocol (EPP) Host Mapping [RFC5732], and Extensible Provisioning Protocol (EPP) Contact Mapping [RFC5733] 'clientDeleteProhibited' status.|
+|client hold|The client requested that the DNS delegation information MUST NOT be published for the object. This maps to the Extensible Provisioning Protocol (EPP) Domain Name Mapping [RFC5731] 'clientHold' status.|
+|client renew prohibited|The client requested that requests to renew the object MUST be rejected. This maps to the Extensible Provisioning Protocol (EPP) Domain Name Mapping [RFC5731] 'clientRenewProhibited' status.|
+|client transfer prohibited|The client requested that requests to transfer the object MUST be rejected. This maps to the Extensible Provisioning Protocol (EPP) Domain Name Mapping [RFC5731] and Extensible Provisioning Protocol (EPP) Contact Mapping [RFC5733] 'clientTransferProhibited' status.|
+|client update prohibited|The client requested that requests to update the object (other than to remove this status) MUST be rejected. This maps to the Extensible Provisioning Protocol (EPP) Domain Name Mapping [RFC5731], Extensible Provisioning Protocol (EPP) Host Mapping [RFC5732], and Extensible Provisioning Protocol (EPP) Contact Mapping [RFC5733] 'clientUpdateProhibited' status.|
+|pending restore|An object is in the process of being restored after being in the redemption period state. This maps to the Domain Registry Grace Period Mapping for the Extensible Provisioning Protocol (EPP) [RFC3915] 'pendingRestore' status.|
+|redemption period|A delete has been received, but the object has not yet been purged because an opportunity exists to restore the object and abort the deletion process. This maps to the Domain Registry Grace Period Mapping for the Extensible Provisioning Protocol (EPP) [RFC3915] 'redemptionPeriod' status.|
+|renew period|This grace period is provided after an object registration period is explicitly extended (renewed) by the client. If the object is deleted by the client during this period, the server provides a credit to the client for the cost of the renewal. This maps to the Domain Registry Grace Period Mapping for the Extensible Provisioning Protocol (EPP) [RFC3915] 'renewPeriod' status.|
+|server delete prohibited|The server set the status so that requests to delete the object MUST be rejected. This maps to the Extensible Provisioning Protocol (EPP) Domain Name Mapping [RFC5731], Extensible Provisioning Protocol (EPP) Host Mapping [RFC5732], and Extensible Provisioning Protocol (EPP) Contact Mapping [RFC5733] 'serverDeleteProhibited' status.|
+|server renew prohibited|The server set the status so that requests to renew the object MUST be rejected. This maps to the Extensible Provisioning Protocol (EPP) Domain Name Mapping [RFC5731] 'serverRenewProhibited' status.|
+|server transfer prohibited|The server set the status so that requests to transfer the object MUST be rejected. This maps to the Extensible Provisioning Protocol (EPP) Domain Name Mapping [RFC5731] and Extensible Provisioning Protocol (EPP) Contact Mapping [RFC5733] 'serverTransferProhibited' status.|
+|server update prohibited|The server set the status so that requests to update the object (other than to remove this status) MUST be rejected. This maps to the Extensible Provisioning Protocol (EPP) Domain Name Mapping [RFC5731], Extensible Provisioning Protocol (EPP) Host Mapping [RFC5732], and Extensible Provisioning Protocol (EPP) Contact Mapping [RFC5733] 'serverUpdateProhibited' status.|
+|server hold|The server set the status so that DNS delegation information MUST NOT be published for the object. This maps to the Extensible Provisioning Protocol (EPP) Domain Name Mapping [RFC5731] 'serverHold' status.|
+|transfer period|This grace period is provided after the successful transfer of object registration sponsorship from one client to another client. If the object is deleted by the client during this period, the server provides a credit to the client for the cost of the transfer. This maps to the Domain Registry Grace Period Mapping for the Extensible Provisioning Protocol (EPP) [RFC3915] 'transferPeriod' status.|
+
 
 The new SQL file must define the same queries and aliases as the RedDog's implementation do, so both RedDog's implementation and the own database columns coincide. The queries and aliases must be like [META-INF/sql/Status.sql](https://github.com/NICMx/rdap-sql-provider/blob/master/src/main/resources/META-INF/sql/Status.sql).
 

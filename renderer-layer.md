@@ -27,7 +27,7 @@ First, the server gets the MIME type requested by the user, it is checked in the
 
 If the MIME type is mapped, the response will be rendered with the configured implementation, otherwise, if the MIME type requested by the user does not exist in the configuration, a default implementation that has been configured for any unregistered MIME type is chosen.
 
-The RedDog team creates two reference implementations of **rdap-renderer-api**:
+The RedDog team has created two reference implementations of **rdap-renderer-api**:
 
 + __[rdap-json-renderer](https://github.com/NICMx/rdap-json-renderer)__, this renderer prints the output of the requests in the JSON format as indicated by [RFC 7483](https://tools.ietf.org/html/rfc7483).
 	+ This renderer comes loaded and configured on the RDAP-server. 

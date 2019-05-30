@@ -16,7 +16,7 @@ wheretogo: ["Rate Limit Filter", "rate-limit.html"]
 
 If the implementer wants to add events in every request response, it is necessary to configure an events configuration file considering the following details:
 
-* The Events are displayed in every server request response.
+* The Events are displayed in every server request response on first Level RDAP objects.
 * No duplicate events in the configuration file are allowed.
 * Events in the configuration file will override events that match with the Rdap Response.
 * The Events are **optional**.

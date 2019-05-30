@@ -16,7 +16,8 @@ A Data Access Implementation, intended to yield data to the server by means of q
 
 |Download |SHA512    |MD5    |SQL Database|Source code(GitHub)|
 |:--------|:---------|:------|:-----------|:------------------|
-|[**1.4.0**](https://github.com/NICMx/releases/raw/master/RedDog/rdap-sql-provider-1.4.0.jar)|[SHA512](https://github.com/NICMx/releases/raw/master/RedDog/rdap-sql-provider-1.4.0.jar.sha)|[MD5](https://github.com/NICMx/releases/raw/master/RedDog/rdap-sql-provider-1.4.0.jar.md5)|[SQL Database](https://raw.githubusercontent.com/NICMx/rdap-sql-provider/v1.4.0/src/test/resources/META-INF/sql/Database.sql)|[Link](https://github.com/NICMx/rdap-sql-provider/tree/v1.4.0)|
+|[**1.4.1**](https://github.com/NICMx/releases/raw/master/RedDog/rdap-sql-provider-1.4.1.jar)|[SHA512](https://github.com/NICMx/releases/raw/master/RedDog/rdap-sql-provider-1.4.1.jar.sha)|[MD5](https://github.com/NICMx/releases/raw/master/RedDog/rdap-sql-provider-1.4.1.jar.md5)|[SQL Database](https://raw.githubusercontent.com/NICMx/rdap-sql-provider/v1.4.1/src/test/resources/META-INF/sql/Database.sql)|[Link](https://github.com/NICMx/rdap-sql-provider/tree/v1.4.1)|
+|[~~1.4.0~~](https://github.com/NICMx/releases/raw/master/RedDog/rdap-sql-provider-1.4.0.jar)|[SHA512](https://github.com/NICMx/releases/raw/master/RedDog/rdap-sql-provider-1.4.0.jar.sha)|[MD5](https://github.com/NICMx/releases/raw/master/RedDog/rdap-sql-provider-1.4.0.jar.md5)|[SQL Database](https://raw.githubusercontent.com/NICMx/rdap-sql-provider/v1.4.0/src/test/resources/META-INF/sql/Database.sql)|[Link](https://github.com/NICMx/rdap-sql-provider/tree/v1.4.0)|
 
 ## 1.3
 

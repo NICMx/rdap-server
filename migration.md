@@ -2,8 +2,8 @@
 title: Exporting a database to RedDog's built-in schema
 breadcrums: ["Documentation", "documentation.html", "Installation/Configuration", "documentation.html#installationconfiguration", "Option 3 - Using RedDog’s builtin schema", "documentation.html#option-3---using-red-dogs-builtin-schema"]
 wheretogo: ["Configuring RedDog's reference implementation", "data-access-configuration.html"]
-scriptLink: https://github.com/NICMx/rdap-sql-provider/blob/master/src/test/resources/META-INF/sql/Database.sql
-rawScriptLink: https://raw.githubusercontent.com/NICMx/rdap-sql-provider/master/src/test/resources/META-INF/sql/Database.sql
+scriptLink: https://github.com/NICMx/rdap-sql-provider/blob/profile-feb19/src/test/resources/META-INF/sql/Database.sql
+rawScriptLink: https://raw.githubusercontent.com/NICMx/rdap-sql-provider/profile-feb19/src/test/resources/META-INF/sql/Database.sql
 ---
 
 # {{ page.title }}
@@ -14,11 +14,11 @@ RedDog's builtin schema is an ordinary relational database conceived in MySQL. U
 
 The means through which the data is exported will depend on how the data is stored in the origin database, this documentation cannot fall into details on how to do it. Instead, this will serve as reference material for RedDog's schema.
 
-RedDog's database contains 68 tables. Though the task of populating them might seem daunting, it is important to note that's likely to need only a fraction of them. The main ones are [autonomous_system_number]({{ page.scriptLink }}#L386), [domain]({{ page.scriptLink }}#L182), [entity]({{ page.scriptLink }}#L25), [ip_network]({{ page.scriptLink }}#L647) and [nameserver]({{ page.scriptLink }}#L444). Pick only the ones needed and branch from there.
+RedDog's database contains 69 tables. Though the task of populating them might seem daunting, it is important to note that's likely to need only a fraction of them. The main ones are [autonomous_system_number]({{ page.scriptLink }}#L386), [domain]({{ page.scriptLink }}#L182), [entity]({{ page.scriptLink }}#L25), [ip_network]({{ page.scriptLink }}#L647) and [nameserver]({{ page.scriptLink }}#L444). Pick only the ones needed and branch from there.
 
 ## Full Schema definition
 
-The script to generate the database is located [here]({{ page.rawScriptLink }} "SQL file with tables").
+The script to generate the database is located [here]({{ page.rawScriptLink }} "SQL file with tables") and the ER diagram [here](img/diagram/reddog-db-er.svg).
 
 The following table shows the database tables, to see more detail of each table there's a link to its creation script:
 
@@ -29,7 +29,7 @@ The following table shows the database tables, to see more detail of each table 
 | asn_links | This table contains the relation between an ASN and its links. | [View more]({{ page.scriptLink }}#L907) |
 | asn_remarks | This table contains the relation between an ASN and its remarks. | [View more]({{ page.scriptLink }}#L882) |
 | asn_status | This table contains the relation between an ASN and its status. | [View more]({{ page.scriptLink }}#L858) |
-| autonomous_system_number | This table contains the information of the Autonomous system numbers (ASN). | [View more]({{ page.scriptLink }}#L384) |
+| autonomous_system_number | This table contains the information of the Autonomous system numbers (ASN). | [View more]({{ page.scriptLink }}#L386) |
 | country_code | This table contains the catalog of the two-character country code. | [View more]({{ page.scriptLink }}#L372) |
 | domain | This table contains the information about the domain registration. | [View more]({{ page.scriptLink }}#L182) |
 | domain_entity_roles | This table contains the role that an Entity has in relation to a Domain. | [View more]({{ page.scriptLink }}#L207) |
@@ -37,7 +37,7 @@ The following table shows the database tables, to see more detail of each table 
 | domain_links | This table contains the relation between a Domain and its links. | [View more]({{ page.scriptLink }}#L582) |
 | domain_nameservers | This table contains the relation between a Domain and its nameservers. | [View more]({{ page.scriptLink }}#L462) |
 | domain_networks | This table contains the relation between a Domain and its ip networks. | [View more]({{ page.scriptLink }}#L689) |
-| domain_public_ids | This table contains the relation between a Domain and its public ids. | [View more]({{ page.scriptLink }}#L1177) |
+| domain_public_ids | This table contains the relation between a Domain and its public ids. | [View more]({{ page.scriptLink }}#L1178) |
 | domain_remarks | This table contains the relation between a Domain and its remarks. | [View more]({{ page.scriptLink }}#L557) |
 | domain_status | This table contains the relation between a Domain and its status. | [View more]({{ page.scriptLink }}#L533) |
 | ds_data | This table contains the information of a secure DNS DS record. | [View more]({{ page.scriptLink }}#L509) |
@@ -57,7 +57,7 @@ The following table shows the database tables, to see more detail of each table 
 | event_links | This table contains the relation between an Event and its links. | [View more]({{ page.scriptLink }}#L1229) |
 | ip_address | This table contains the information of a nameserver's ip addresses. | [View more]({{ page.scriptLink }}#L787) |
 | ip_network | This table contains the information about the network registration and entities related to an IP network. | [View more]({{ page.scriptLink }}#L647) |
-| ip_network_entity_roles | This table contains the role that an Entity has in relation to an IP Network. | [View more]({{ page.scriptLink }}#L1443) |
+| ip_network_entity_roles | This table contains the role that an Entity has in relation to an IP Network. | [View more]({{ page.scriptLink }}#L1444) |
 | ip_network_events | This table contains the relation between an IP Network and its events. | [View more]({{ page.scriptLink }}#L1031) |
 | ip_network_links | This table contains the relation between an IP Network and its links. | [View more]({{ page.scriptLink }}#L1006) |
 | ip_network_parent_relation | This table contains the relation between an IP Network and its parent network. | [View more]({{ page.scriptLink }}#L1475) |

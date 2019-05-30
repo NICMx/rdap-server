@@ -8,4 +8,4 @@ If classpath only contains one implementation, that's all there is needed. Other
 
 	echo "data-access-implementation = mx.nic.rdap.sql.impl.SqlProviderImplementation" > WEB-INF/data-access.properties
 
-This file is rdap-server's data access configuration file] and contains some predefined properties that are useful for the reference implementation; more details on this configuration can be seen [here](data-access-configuration.html).
+This file is rdap-server's data access configuration file and contains some predefined properties that are useful for the reference implementation; more details on this configuration can be seen [here](data-access-configuration.html).
