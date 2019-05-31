@@ -4,7 +4,7 @@
 
 	<groupId>mx.nic.rdap</groupId>
 	<artifactId>rdap-server</artifactId>
-	<version>1.4.1-demo.alpha</version>
+	<version>1.4.1-demo</version>
 	<packaging>jar</packaging>
 	<name>RDAP Server</name>
 
@@ -24,7 +24,7 @@
 		<dependency>
 			<groupId>mx.nic.rdap</groupId>
 			<artifactId>rdap-json-renderer</artifactId>
-			<version>1.2.1-beta.1</version>
+			<version>1.2.1</version>
 		</dependency>
 		<dependency>
 			<groupId>mx.nic.rdap</groupId>
@@ -34,7 +34,7 @@
 		<dependency>
 			<groupId>mx.nic.rdap</groupId>
 			<artifactId>rdap-sql-provider</artifactId>
-			<version>1.4.1-demo.alpha</version>
+			<version>1.4.1-demo</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
