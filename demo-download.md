@@ -18,13 +18,13 @@ Unzip it and run it with `java -jar demo.jar`. Find more documentation at [RedDo
 
 |Download |SHA512    |MD5    |
 |:--------|:---------|:------|
-|[**1.4.0**](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-demo-1.4.0.zip)|[SHA512](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-demo-1.4.0.zip.sha)|[MD5](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-demo-1.4.0.zip.md5)|
+|[**1.4.1**](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-demo-1.4.1.zip)|[SHA512](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-demo-1.4.1.zip.sha)|[MD5](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-demo-1.4.1.zip.md5)|
 
 ## 1.2
 
 |Download |SHA512    |MD5    |
 |:--------|:---------|:------|
-|[**1.2.2**](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-demo-1.2.2.zip)|[SHA512](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-demo-1.2.2.zip.sha)|[MD5](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-demo-1.2.2.zip.md5)|
+|[~~1.2.2~~](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-demo-1.2.2.zip)|[SHA512](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-demo-1.2.2.zip.sha)|[MD5](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-demo-1.2.2.zip.md5)|
 |[~~1.2.1~~](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-demo-1.2.1.zip)|[SHA512](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-demo-1.2.1.zip.sha)|[MD5](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-demo-1.2.1.zip.md5)|
 |[~~1.2.0~~](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-demo-1.2.0.zip)|[SHA512](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-demo-1.2.0.zip.sha)|[MD5](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-demo-1.2.0.zip.md5)|
 

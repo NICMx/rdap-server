@@ -2,8 +2,8 @@
 title: Exporting a database to RedDog's built-in schema
 breadcrums: ["Documentation", "documentation.html", "Installation/Configuration", "documentation.html#installationconfiguration", "Option 3 - Using RedDog’s builtin schema", "documentation.html#option-3---using-red-dogs-builtin-schema"]
 wheretogo: ["Configuring RedDog's reference implementation", "data-access-configuration.html"]
-scriptLink: https://github.com/NICMx/rdap-sql-provider/blob/profile-feb19/src/test/resources/META-INF/sql/Database.sql
-rawScriptLink: https://raw.githubusercontent.com/NICMx/rdap-sql-provider/profile-feb19/src/test/resources/META-INF/sql/Database.sql
+scriptLink: https://github.com/NICMx/rdap-sql-provider/blob/master/src/test/resources/META-INF/sql/Database.sql
+rawScriptLink: https://raw.githubusercontent.com/NICMx/rdap-sql-provider/master/src/test/resources/META-INF/sql/Database.sql
 ---
 
 # {{ page.title }}

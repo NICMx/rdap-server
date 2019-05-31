@@ -1,7 +1,7 @@
 markdown: kramdown
 
 latest-server: 1.4.1
-latest-demo-server: 1.4.0
+latest-demo-server: 1.4.1
 latest-data-access-api: 1.2.0
 latest-sql-provider: 1.4.1
 latest-sample-data-impl: 0.0.2
