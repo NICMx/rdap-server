@@ -28,6 +28,10 @@ title: Documentation Index
 1. [Configuring RedDog's reference implementation](data-access-configuration.html)
 1. [Deploying `rdap-server` with the reference SQL Provider](server-install-option-3.html)
 
+### RedDog's builtin schema
+
+1. [Database version changelog](database-changelog.html)
+
 ## Rendering Response Data
 
 1. [RedDog's Renderer Layer](renderer-layer.html)
@@ -41,6 +45,7 @@ title: Documentation Index
 1. [Configuring RedDog's response Notices](notices.html)
 1. [Configuring RedDog's response Events](events.html)
 1. [Rate Limit Filter](rate-limit.html)
+1. [Configuring a Not Implemented Servlet](return-501.html)
 1. [User Authentication](authentication.html)
    1. [Using Apache Shiro<sup>TM</sup>](using-apache-shiro.html)
    1. [Configuring Response Privacy](response-privacy.html)

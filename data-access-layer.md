@@ -24,6 +24,8 @@ Every DAO will provide information regarding one specific object type. The avail
 5. [`mx.nic.rdap.db.spi.NameserverDAO`](https://github.com/NICMx/rdap-data-access-api/blob/master/src/main/java/mx/nic/rdap/db/spi/NameserverDAO.java)
 6. [`mx.nic.rdap.db.spi.RdapUserDAO`](https://github.com/NICMx/rdap-data-access-api/blob/master/src/main/java/mx/nic/rdap/db/spi/RdapUserDAO.java)
 
+## Example
+
 Here is a simple implementation as an example, see comments inline for details:
 
 1. IP Network DAO: [`mx.nic.rdap.sample.SampleIpNetworkDaoImpl.java`](sample-code/SampleIpNetworkDaoImpl.java)
