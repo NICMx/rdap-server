@@ -101,7 +101,7 @@ public class RdapInitializer implements ServletContextListener {
 		// Then, override with whatever the user set up.
 		String userFilePath = servletContext.getInitParameter(pathParamName);
 		if (userFilePath == null) {
-			userFilePath = "WEB-INF/" + baseFileName + ".properties";
+			userFilePath = "/WEB-INF/" + baseFileName + ".properties";
 		} else {
 			Path path = Paths.get(userFilePath, baseFileName + ".properties");
 			userFilePath = path.toString();
