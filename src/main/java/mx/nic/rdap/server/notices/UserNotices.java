@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.concurrent.TimeUnit;
@@ -15,6 +16,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 import mx.nic.rdap.core.db.Remark;
+import mx.nic.rdap.core.db.RemarkDescription;
 import mx.nic.rdap.db.exception.InitializationException;
 import mx.nic.rdap.server.configuration.RdapConfiguration;
 import mx.nic.rdap.server.listener.RdapInitializer;
@@ -55,7 +57,27 @@ public class UserNotices {
 			throws SAXException, IOException, ParserConfigurationException, InitializationException {
 		isRdapDefaultPath = isDefaultPath;
 
-		help = NoticesReader.parseHelpXML(Paths.get(userPath, HELP_FILE_NAME).toString());
+		try {
+			help = NoticesReader.parseHelpXML(Paths.get(userPath, HELP_FILE_NAME).toString());
+		} catch (FileNotFoundException | NoSuchFileException e) {
+			// Nothing happens, continue
+			logger.log(Level.WARNING, "Optional File '" + HELP_FILE_NAME + "' not found, it is recommended to provide "
+					+ "a help file , continue. \n\t" + e);
+			
+			help = new ArrayList<Remark>();
+			Remark r = new Remark();
+			r.setTitle("Example Help");
+			List<RemarkDescription> lrd = new ArrayList<RemarkDescription>();
+			r.setDescriptions(lrd);
+			RemarkDescription rd = new RemarkDescription();
+			rd.setDescription("Sample Help Description.");
+			RemarkDescription rd1 = new RemarkDescription();
+			rd1.setDescription("Contact the administrator to provide a help file.");
+			lrd.add(rd);
+			lrd.add(rd1);
+			
+			help.add(r);
+		}
 
 		// The terms of service are optional.
 		try {

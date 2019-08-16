@@ -73,7 +73,7 @@ public class RdapInitializer implements ServletContextListener {
 				RdapConfiguration.setNameserverSharingNameConformance(false);
 			}
 
-			RendererPool.loadRenderers(loadConfig(RENDERERS_FILE, RENDERER_CONTEXT_PARAM_NAME));
+			RendererPool.loadRenderers(loadConfig(RENDERERS_FILE, RENDERER_CONTEXT_PARAM_NAME, false));
 			RdapConfiguration.loadConfiguredOwnerRoles();
 			PrivacyUtil.loadAllPrivacySettings();
 			loadUserNotices();
@@ -94,7 +94,12 @@ public class RdapInitializer implements ServletContextListener {
 		return servletContext;
 	}
 
+	
 	private Properties loadConfig(String baseFileName, String pathParamName) throws IOException {
+		return loadConfig(baseFileName, pathParamName, true);
+	}
+	
+	private Properties loadConfig(String baseFileName, String pathParamName, boolean overrideDefault) throws IOException {
 		// First, load the default values (from META-INF).
 		Properties p = Util.loadProperties(baseFileName);
 
@@ -109,6 +114,10 @@ public class RdapInitializer implements ServletContextListener {
 
 		try (InputStream inStream = servletContext.getResourceAsStream(userFilePath);) {
 			if (inStream != null) {
+				if (!overrideDefault && !p.isEmpty()) {
+					p = new Properties();
+				}
+				
 				p.load(inStream);
 			}
 		}
