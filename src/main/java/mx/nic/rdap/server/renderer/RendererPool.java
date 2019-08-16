@@ -39,7 +39,7 @@ public class RendererPool {
 	/**
 	 * Loads and stores the renderers described in <code>properties</code>.
 	 *
-	 * @param file
+	 * @param properties
 	 *            configuration that describes the renderers we're supposed to load.
 	 */
 	public static void loadRenderers(Properties properties)
@@ -144,7 +144,7 @@ public class RendererPool {
 	/**
 	 * Returns the renderer that handles MIME <code>mime</code>.
 	 *
-	 * @param resourceType
+	 * @param mime
 	 *            A content type the user accepts. (Example: "text/plain",
 	 *            "application/xml", etc.)
 	 * @return the renderer that handles MIME <code>mime</code>.

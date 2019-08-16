@@ -6,7 +6,38 @@
 	<artifactId>rdap-server</artifactId>
 	<version>1.4.2</version>
 	<packaging>war</packaging>
-	<name>RDAP Server</name>
+
+	<name>mx.nic.labs.reddog:rdap-server</name>
+	<description>Reddog Server</description>
+	<url>http://www.reddog.mx</url>
+
+	<licenses>
+		<license>
+			<name>The Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Daniel Hernandez Felix</name>
+			<email>dhdzfelix@nic.mx</email>
+			<organization>NIC MX</organization>
+			<organizationUrl>http://www.nic.mx</organizationUrl>
+		</developer>
+		<developer>
+			<name>Francisco Moreno</name>
+			<email>fjarana@nic.mx</email>
+			<organization>NIC MX</organization>
+			<organizationUrl>http://www.nic.mx</organizationUrl>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git://github.com/nicmx/rdap-server.git</connection>
+		<developerConnection>scm:git:ssh://github.com:nicmx/rdap-server.git</developerConnection>
+		<url>http://github.com/nicmx/rdap-server/tree/master</url>
+	</scm>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -64,5 +95,42 @@
 			<version>1.2</version>
 		</dependency>
 	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<version>2.2.1</version>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>3.1.1</version>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 
 </project>
