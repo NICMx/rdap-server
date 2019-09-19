@@ -7,6 +7,7 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -42,9 +43,18 @@ public class NoticesUpdaterTask extends TimerTask {
 	private void checkForUpdate(String fileName, ResultType type) {
 		Path updated = Paths.get(userPath, fileName + RequestNotices.UPDATED_EXTENSION);
 
-		List<Remark> updatedNotices;
+		List<Remark> parsedNotices;
+		List<Remark> updatedNotices = new ArrayList<Remark>();
+		List<Remark> updatedHostNotices = new ArrayList<Remark>();
 		try {
-			updatedNotices = NoticesReader.parseNoticesXML(updated.toString());
+			parsedNotices = NoticesReader.parseNoticesXML(updated.toString());
+			
+			UserNotices.splitHostLinks(parsedNotices, updatedNotices, updatedHostNotices);
+			
+			if (updatedHostNotices.isEmpty()) {
+				updatedHostNotices = null;
+			}
+			
 		} catch (NoSuchFileException | FileNotFoundException e) {
 			return;
 		} catch (SAXException | ParserConfigurationException | IOException e) {
@@ -67,7 +77,7 @@ public class NoticesUpdaterTask extends TimerTask {
 			return;
 		}
 
-		RequestNotices.updateNotices(type, updatedNotices);
+		RequestNotices.updateNotices(type, updatedNotices, updatedHostNotices);
 	}
 
 }

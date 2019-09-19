@@ -15,6 +15,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
+import mx.nic.rdap.core.db.Link;
 import mx.nic.rdap.core.db.Remark;
 import mx.nic.rdap.core.db.RemarkDescription;
 import mx.nic.rdap.db.exception.InitializationException;
@@ -27,7 +28,7 @@ import mx.nic.rdap.server.listener.RdapInitializer;
 public class UserNotices {
 
 	private static Logger logger = Logger.getLogger(UserNotices.class.getName());
-	
+
 	// XML file names
 	private static final String HELP_FILE_NAME = "help.xml";
 	private static final String TOS_FILE_NAME = "tos.xml";
@@ -39,19 +40,52 @@ public class UserNotices {
 	private static List<Remark> tos;
 	private static List<Remark> notices;
 
+	private static List<Remark> helpWithHost;
+	private static List<Remark> tosWithHost;
+	private static List<Remark> noticesWithHost;
+
 	private static boolean isTimerActive = false;
 	private static boolean isRdapDefaultPath;
+
+	static String hostLinkPattern = "${host}";
+
+	static void splitHostLinks(List<Remark> original, List<Remark> normalList, List<Remark> hostList) {
+		boolean found = false;
+		for (Remark r : original) {
+			for (Link l : r.getLinks()) {
+				String value = l.getHref();
+				int indexOf = value.indexOf(hostLinkPattern);
+				if (indexOf >= 0) {
+					hostList.add(r);
+					found = true;
+					break;
+				}
+				indexOf = l.getValue().indexOf(hostLinkPattern);
+				if (indexOf >= 0) {
+					hostList.add(r);
+					found = true;
+					break;
+				}
+			}
+
+			if (!found) {
+				normalList.add(r);
+			}
+
+			found = false;
+		}
+
+		return;
+	}
 
 	/**
 	 * Reads the XML files and stores the information from the XML.
 	 * 
-	 * @param userPath
-	 *            User path that contains the xml files.
-	 * @throws SAXException
-	 *             When the XML file content has an invalid format.
-	 * @throws IOException
-	 *             Problems reading the XML file.
-	 * @throws InitializationException 
+	 * @param userPath User path that contains the xml files.
+	 * @throws SAXException            When the XML file content has an invalid
+	 *                                 format.
+	 * @throws IOException             Problems reading the XML file.
+	 * @throws InitializationException
 	 */
 	public static void init(String userPath, boolean isDefaultPath)
 			throws SAXException, IOException, ParserConfigurationException, InitializationException {
@@ -59,11 +93,24 @@ public class UserNotices {
 
 		try {
 			help = NoticesReader.parseHelpXML(Paths.get(userPath, HELP_FILE_NAME).toString());
+
+			List<Remark> tmp = new ArrayList<Remark>();
+			List<Remark> tmpWithHost = new ArrayList<Remark>();
+
+			splitHostLinks(help, tmp, tmpWithHost);
+
+			if (tmpWithHost.isEmpty()) {
+				tmpWithHost = null;
+			}
+
+			help = tmp;
+			helpWithHost = tmpWithHost;
+
 		} catch (FileNotFoundException | NoSuchFileException e) {
 			// Nothing happens, continue
 			logger.log(Level.WARNING, "Optional File '" + HELP_FILE_NAME + "' not found, it is recommended to provide "
 					+ "a help file , continue. \n\t" + e);
-			
+
 			help = new ArrayList<Remark>();
 			Remark r = new Remark();
 			r.setTitle("Example Help");
@@ -75,13 +122,25 @@ public class UserNotices {
 			rd1.setDescription("Contact the administrator to provide a help file.");
 			lrd.add(rd);
 			lrd.add(rd1);
-			
+
 			help.add(r);
 		}
 
 		// The terms of service are optional.
 		try {
 			tos = NoticesReader.parseTOSXML(Paths.get(userPath, TOS_FILE_NAME).toString());
+
+			List<Remark> tmp = new ArrayList<Remark>();
+			List<Remark> tmpWithHost = new ArrayList<Remark>();
+
+			splitHostLinks(tos, tmp, tmpWithHost);
+
+			if (tmpWithHost.isEmpty()) {
+				tmpWithHost = null;
+			}
+
+			tos = tmp;
+			tosWithHost = tmpWithHost;
 		} catch (FileNotFoundException | NoSuchFileException e) {
 			// Nothing happens, continue
 			logger.log(Level.INFO, "Optional File '" + TOS_FILE_NAME + "' not found, continue. \n\t" + e);
@@ -90,6 +149,19 @@ public class UserNotices {
 		// The notices are optional.
 		try {
 			notices = NoticesReader.parseNoticesXML(Paths.get(userPath, NOTICES_FILE_NAME).toString());
+
+			List<Remark> tmp = new ArrayList<Remark>();
+			List<Remark> tmpWithHost = new ArrayList<Remark>();
+
+			splitHostLinks(notices, tmp, tmpWithHost);
+
+			if (tmpWithHost.isEmpty()) {
+				tmpWithHost = null;
+			}
+
+			notices = tmp;
+			noticesWithHost = tmpWithHost;
+
 		} catch (FileNotFoundException | NoSuchFileException e) {
 			// Nothing happens, continue
 			logger.log(Level.INFO, "Optional File '" + NOTICES_FILE_NAME + "' not found, continue. \n\t" + e);
@@ -113,13 +185,13 @@ public class UserNotices {
 			return;
 		}
 
-		//Check if the files can be update.
+		// Check if the files can be update.
 		String realPath = RdapInitializer.getServletContext().getRealPath("/");
 		if (realPath == null) {
 			logger.log(Level.WARNING, "Can't read the path of WEB-INF, notices and event timers will not work");
 			return;
-		} 
-		
+		}
+
 		// If for some reason this function is called two or more times, we
 		// don't want to create lot of timers.
 		if (isTimerActive) {
@@ -134,33 +206,96 @@ public class UserNotices {
 			timer.schedule(task, millis, millis);
 			logger.log(Level.INFO, "Notices updater is active");
 		}
-		
+
 		if (userEventsTimer >= MIN_TIMER_TIME) {
 			EventsUpdaterTask task = new EventsUpdaterTask(userPath);
 			long millis = TimeUnit.SECONDS.toMillis(noticesTimerUpdate);
 			timer.schedule(task, millis, millis);
-			
+
 			logger.log(Level.INFO, "Events updater is active");
 		}
 
 		isTimerActive = true;
 	}
 
-	public static List<Remark> getHelp() {
-		return help;
+	static String replaceHostPattern(String header, String toReplace) {
+		if (toReplace == null || toReplace.isEmpty()) {
+			return toReplace;
+		}
+
+		String valueResult = toReplace;
+		int indexOf = toReplace.indexOf(hostLinkPattern);
+		if (indexOf >= 0) {
+			StringBuilder sb = new StringBuilder(toReplace);
+			sb.delete(indexOf, indexOf + hostLinkPattern.length());
+			sb.insert(indexOf, header);
+			valueResult = sb.toString();
+//			valueResult = header + toReplace.substring(indexOf + hostLinkPattern.length());
+		}
+		return valueResult;
 	}
 
-	public static List<Remark> getTos() {
-		return tos;
+	static void appendRemarkWithPatternHost(List<Remark> result, List<Remark> listWithHost, String header) {
+		for (Remark r : listWithHost) {
+			Remark clone = new Remark();
+			clone.setDescriptions(r.getDescriptions());
+			clone.setLanguage(r.getLanguage());
+			clone.setTitle(r.getTitle());
+			clone.setType(r.getType());
+
+			for (Link l : r.getLinks()) {
+				Link cl = new Link();
+				cl.setHreflang(l.getHreflang());
+				cl.setMedia(l.getMedia());
+				cl.setRel(l.getRel());
+				cl.setTitle(l.getTitle());
+				cl.setType(l.getType());
+
+				cl.setHref(replaceHostPattern(header, l.getHref()));
+				cl.setValue(replaceHostPattern(header, l.getValue()));
+
+				clone.getLinks().add(cl);
+			}
+
+			result.add(clone);
+		}
 	}
 
-	public static List<Remark> getNotices() {
-		return notices;
+	public static List<Remark> getHelp(String header) {
+		if (helpWithHost == null)
+			return help;
+
+		List<Remark> result = new ArrayList<Remark>(help);
+
+		appendRemarkWithPatternHost(result, helpWithHost, header);
+
+		return result;
 	}
-	
+
+	public static List<Remark> getTos(String header) {
+		if (tosWithHost == null)
+			return tos;
+
+		List<Remark> result = new ArrayList<Remark>(tos);
+
+		appendRemarkWithPatternHost(result, tosWithHost, header);
+
+		return result;
+	}
+
+	public static List<Remark> getNotices(String header) {
+		if (noticesWithHost == null)
+			return notices;
+
+		List<Remark> result = new ArrayList<Remark>(notices);
+
+		appendRemarkWithPatternHost(result, noticesWithHost, header);
+
+		return result;
+	}
+
 	static boolean isRdapDefaultPath() {
 		return isRdapDefaultPath;
 	}
-	
 
 }

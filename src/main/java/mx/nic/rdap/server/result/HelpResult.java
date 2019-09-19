@@ -14,18 +14,10 @@ public class HelpResult extends RdapResult {
 
 	private List<Remark> notices;
 
-	public HelpResult() {
+	public HelpResult(String header) {
 		notices = new ArrayList<>();
-		notices.addAll(UserNotices.getHelp());
-		if (UserNotices.getTos() != null && !UserNotices.getTos().isEmpty()) {
-			notices.addAll(UserNotices.getTos());
-		}
-
-		List<Remark> userNotices = UserNotices.getNotices();
-		if (userNotices != null && !userNotices.isEmpty()) {
-			notices.addAll(userNotices);
-		}
-
+		notices.addAll(UserNotices.getHelp(header));
+		
 		setResultType(ResultType.HELP);
 		HelpResponse helpResponse = new HelpResponse();
 		helpResponse.setNotices(notices);

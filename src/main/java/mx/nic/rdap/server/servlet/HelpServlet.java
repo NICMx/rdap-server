@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import mx.nic.rdap.server.result.HelpResult;
 import mx.nic.rdap.server.result.RdapResult;
+import mx.nic.rdap.server.util.Util;
 
 @WebServlet(name = "help", urlPatterns = { "/help" })
 public class HelpServlet extends RdapServlet {
@@ -19,7 +20,7 @@ public class HelpServlet extends RdapServlet {
 	 */
 	@Override
 	protected RdapResult doRdapGet(HttpServletRequest httpRequest) {
-		RdapResult result = new HelpResult();
+		RdapResult result = new HelpResult(Util.getServerUrl(httpRequest));
 		return result;
 	}
 

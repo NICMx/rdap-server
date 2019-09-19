@@ -46,6 +46,7 @@ import mx.nic.rdap.server.result.NameserverResult;
 import mx.nic.rdap.server.result.RdapResult;
 import mx.nic.rdap.server.servlet.AcceptHeaderFieldParser.Accept;
 import mx.nic.rdap.server.util.PrivacyUtil;
+import mx.nic.rdap.server.util.Util;
 
 /**
  * Base class of all RDAP servlets.
@@ -119,13 +120,13 @@ public abstract class RdapServlet extends HttpServlet {
 		}
 		
 		// Add TOS notice if exists
-		addNotices(result.getRdapResponse());
+		addNotices(result.getRdapResponse(), Util.getServerUrl(request));
 
-		renderResult(renderer.getRenderer(), result, response.getWriter());
+		renderResult(renderer.getRenderer(), result, response.getWriter(), Util.getServerUrl(request));
 	}
 
 	@SuppressWarnings("unchecked")
-	private void renderResult(Renderer renderer, RdapResult result, PrintWriter printWriter) {
+	private void renderResult(Renderer renderer, RdapResult result, PrintWriter printWriter, String originalHeader) {
 		// Filter objects according to privacy settings
 		boolean wasFiltered = false;
 		switch (result.getResultType()) {
@@ -135,7 +136,7 @@ public abstract class RdapServlet extends HttpServlet {
 				if (wasFiltered) {
 					PrivacyUtil.addPrivacyRemarkAndStatus(autnumRequestResponse.getRdapObject());
 				}
-				handleAutnumPostFilter(result, autnumRequestResponse);
+				handleAutnumPostFilter(result, autnumRequestResponse, originalHeader);
 				renderer.renderAutnum(autnumRequestResponse, printWriter);
 				break;
 			case DOMAIN :
@@ -146,7 +147,7 @@ public abstract class RdapServlet extends HttpServlet {
 				}
 				if (RdapConfiguration.addEmailRemark())
 					PrivacyUtil.addEmailRedactedForPrivacy(domainRequestResponse.getRdapObject());
-				handleDomainPostFilter(result, domainRequestResponse);
+				handleDomainPostFilter(result, domainRequestResponse, originalHeader);
 				renderer.renderDomain(domainRequestResponse, printWriter);
 				break;
 			case DOMAINS :
@@ -159,7 +160,7 @@ public abstract class RdapServlet extends HttpServlet {
 					if (RdapConfiguration.addEmailRemark())
 						PrivacyUtil.addEmailRedactedForPrivacy(domain);
 				}
-				handleDomainsPostFilter(domainSearchResponse);
+				handleDomainsPostFilter(domainSearchResponse, originalHeader);
 				renderer.renderDomains(domainSearchResponse, printWriter);
 				break;
 			case ENTITIES :
@@ -170,7 +171,7 @@ public abstract class RdapServlet extends HttpServlet {
 						PrivacyUtil.addPrivacyRemarkAndStatus(entity);
 					}
 				}
-				handleEntitiesPostFilter(entitySearchResponse);
+				handleEntitiesPostFilter(entitySearchResponse, originalHeader);
 				renderer.renderEntities(entitySearchResponse, printWriter);
 				break;
 			case ENTITY :
@@ -179,7 +180,7 @@ public abstract class RdapServlet extends HttpServlet {
 				if (wasFiltered) {
 					PrivacyUtil.addPrivacyRemarkAndStatus(entityRequestResponse.getRdapObject());
 				}
-				handleEntityPostFilter(result, entityRequestResponse);
+				handleEntityPostFilter(result, entityRequestResponse, originalHeader);
 				renderer.renderEntity(entityRequestResponse, printWriter);
 				break;
 			case EXCEPTION :
@@ -195,7 +196,7 @@ public abstract class RdapServlet extends HttpServlet {
 					PrivacyUtil.addPrivacyRemarkAndStatus(ipRequestResponse.getRdapObject());
 				}
 				
-				handleIpNetworkPostFilter(result, ipRequestResponse);
+				handleIpNetworkPostFilter(result, ipRequestResponse, originalHeader);
 				renderer.renderIpNetwork(ipRequestResponse, printWriter);
 				break;
 			case NAMESERVER :
@@ -205,7 +206,7 @@ public abstract class RdapServlet extends HttpServlet {
 				if (wasFiltered) {
 					PrivacyUtil.addPrivacyRemarkAndStatus(nameserverRequestResponse.getRdapObject());
 				}
-				handleNameserverPostFilter(result, nameserverRequestResponse);
+				handleNameserverPostFilter(result, nameserverRequestResponse, originalHeader);
 				renderer.renderNameserver(nameserverRequestResponse, printWriter);
 				break;
 			case NAMESERVERS :
@@ -217,7 +218,7 @@ public abstract class RdapServlet extends HttpServlet {
 						PrivacyUtil.addPrivacyRemarkAndStatus(nameserver);
 					}
 				}
-				handleNameserversPostFilter(nameserverSearchResponse);
+				handleNameserversPostFilter(nameserverSearchResponse, originalHeader);
 				renderer.renderNameservers(nameserverSearchResponse, printWriter);
 				break;
 			default :
@@ -226,8 +227,8 @@ public abstract class RdapServlet extends HttpServlet {
 
 	}
 
-	private void addNotices(RdapResponse response) {
-		List<Remark> tos = UserNotices.getTos();
+	private void addNotices(RdapResponse response, String header) {
+		List<Remark> tos = UserNotices.getTos(header);
 		if (tos != null && !tos.isEmpty()) {
 			if (response.getNotices() == null) {
 				response.setNotices(new ArrayList<>());
@@ -235,7 +236,7 @@ public abstract class RdapServlet extends HttpServlet {
 			response.getNotices().addAll(tos);
 		}
 
-		List<Remark> userNotices = UserNotices.getNotices();
+		List<Remark> userNotices = UserNotices.getNotices(header);
 		if (userNotices != null && !userNotices.isEmpty()) {
 			if (response.getNotices() == null) {
 				response.setNotices(new ArrayList<>());
@@ -246,8 +247,8 @@ public abstract class RdapServlet extends HttpServlet {
 		return;
 	}
 
-	private void handleNameserverPostFilter(RdapResult result, RequestResponse<Nameserver> response) {
-		addToRequestEventsAndNotices(response, RequestNotices.getNsNotices());
+	private void handleNameserverPostFilter(RdapResult result, RequestResponse<Nameserver> response, String header) {
+		addToRequestEventsAndNotices(response, RequestNotices.getNsNotices(header));
 		handleCountryProperty(response.getRdapObject());
 
 		if (!RdapConfiguration.isNameserverSharingNameConformance()) {
@@ -269,43 +270,43 @@ public abstract class RdapServlet extends HttpServlet {
 		ns.getLinks().add(searchOtherNS);
 	}
 
-	private void handleDomainPostFilter(RdapResult result, RequestResponse<Domain> response) {
-		addToRequestEventsAndNotices(response, RequestNotices.getDomainNotices());
+	private void handleDomainPostFilter(RdapResult result, RequestResponse<Domain> response, String header) {
+		addToRequestEventsAndNotices(response, RequestNotices.getDomainNotices(header));
 		handleCountryProperty(response.getRdapObject());
 	}
 
-	private void handleEntityPostFilter(RdapResult result, RequestResponse<Entity> response) {
-		addToRequestEventsAndNotices(response, RequestNotices.getEntityNotices());
+	private void handleEntityPostFilter(RdapResult result, RequestResponse<Entity> response, String header) {
+		addToRequestEventsAndNotices(response, RequestNotices.getEntityNotices(header));
 		handleCountryProperty(response.getRdapObject());
 	}
 
-	private void handleIpNetworkPostFilter(RdapResult result, RequestResponse<IpNetwork> response) {
-		addToRequestEventsAndNotices(response, RequestNotices.getIpNotices());
+	private void handleIpNetworkPostFilter(RdapResult result, RequestResponse<IpNetwork> response, String header) {
+		addToRequestEventsAndNotices(response, RequestNotices.getIpNotices(header));
 		handleCountryProperty(response.getRdapObject());
 	}
 
-	private void handleAutnumPostFilter(RdapResult result, RequestResponse<Autnum> response) {
-		addToRequestEventsAndNotices(response, RequestNotices.getAutnumNotices());
+	private void handleAutnumPostFilter(RdapResult result, RequestResponse<Autnum> response, String header) {
+		addToRequestEventsAndNotices(response, RequestNotices.getAutnumNotices(header));
 		handleCountryProperty(response.getRdapObject());
 	}
 	
-	private void handleDomainsPostFilter(SearchResponse<Domain> searchResponse) {
-		addToSearchEventsAndNotices(searchResponse, RequestNotices.getDomainNotices());
+	private void handleDomainsPostFilter(SearchResponse<Domain> searchResponse, String header) {
+		addToSearchEventsAndNotices(searchResponse, RequestNotices.getDomainNotices(header));
 		for (RdapObject rdapObject : searchResponse.getRdapObjects()) {
 			handleCountryProperty(rdapObject);
 		}
 
 	}
 	
-	private void handleNameserversPostFilter(SearchResponse<Nameserver> searchResponse) {
-		addToSearchEventsAndNotices(searchResponse, RequestNotices.getNsNotices());
+	private void handleNameserversPostFilter(SearchResponse<Nameserver> searchResponse, String header) {
+		addToSearchEventsAndNotices(searchResponse, RequestNotices.getNsNotices(header));
 		for (RdapObject rdapObject : searchResponse.getRdapObjects()) {
 			handleCountryProperty(rdapObject);
 		}
 	}
 	
-	private void handleEntitiesPostFilter(SearchResponse<Entity> searchResponse) {
-		addToSearchEventsAndNotices(searchResponse, RequestNotices.getEntityNotices());
+	private void handleEntitiesPostFilter(SearchResponse<Entity> searchResponse, String header) {
+		addToSearchEventsAndNotices(searchResponse, RequestNotices.getEntityNotices(header));
 		for (RdapObject rdapObject : searchResponse.getRdapObjects()) {
 			handleCountryProperty(rdapObject);
 		}
