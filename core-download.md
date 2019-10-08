@@ -16,7 +16,8 @@ Basic RDAP components defined by the RFCs. Used as foundation for all the other 
 
 |Download |SHA512    |MD5    |Source code(GitHub)|
 |:--------|:---------|:------|:---------|
-|[**1.2.0**](https://github.com/NICMx/releases/raw/master/RedDog/rdap-core-1.2.0.jar)|[SHA512](https://github.com/NICMx/releases/raw/master/RedDog/rdap-core-1.2.0.jar.sha)|[MD5](https://github.com/NICMx/releases/raw/master/RedDog/rdap-core-1.2.0.jar.md5)|[Link](https://github.com/NICMx/rdap-core/tree/v1.2.0)|
+|[**1.2.1**](https://github.com/NICMx/rdap-core/releases/download/1.2.1/rdap-core-1.2.1.jar)|[SHA512](https://github.com/NICMx/rdap-core/releases/download/1.2.1/rdap-core-1.2.1.jar.sha)|[MD5](https://github.com/NICMx/rdap-core/releases/download/1.2.1/rdap-core-1.2.1.jar.md5)|[Link](https://github.com/NICMx/rdap-core/tree/1.2.1)|
+|[~~1.2.0~~](https://github.com/NICMx/releases/raw/master/RedDog/rdap-core-1.2.0.jar)|[SHA512](https://github.com/NICMx/releases/raw/master/RedDog/rdap-core-1.2.0.jar.sha)|[MD5](https://github.com/NICMx/releases/raw/master/RedDog/rdap-core-1.2.0.jar.md5)|[Link](https://github.com/NICMx/rdap-core/tree/v1.2.0)|
 
 ## 1.1
 

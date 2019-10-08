@@ -15,7 +15,7 @@ breadcrums: ["Documentation", "documentation.html"]
 
 ## Introduction
 
-As of today June 28th, 2019, the last version of the database is 1.4.1 and the data-access-api version is 1.2.0, the following tables shows the version relation that support each component.
+As of today Sept 30th, 2019, the last version of the database is 1.4.2 and the data-access-api version is 1.2.0, the following tables shows the version relation that support each component.
 
 | rdap-sql-provider | rdap-data-access-api |
 | ---:| ---------------------:|
@@ -25,6 +25,7 @@ As of today June 28th, 2019, the last version of the database is 1.4.1 and the d
 |1.3.0 | 1.2.0|
 |1.4.0 | 1.2.0|
 |1.4.1 | 1.2.0|
+|1.4.2 | 1.2.0|
 
 <br>
 
@@ -40,6 +41,7 @@ As of today June 28th, 2019, the last version of the database is 1.4.1 and the d
 |1.3.0 | 1.2.0|
 |1.4.0 | 1.2.0|
 |1.4.1 | 1.2.0|
+|1.4.3 | 1.2.0|
 
 
 ## Database schema changelog

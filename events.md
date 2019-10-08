@@ -1,7 +1,7 @@
 ---
 title: Configuring RedDog's response Events
 breadcrums: ["Documentation", "documentation.html", "Further Custom Configuration", "documentation.html#further-custom-configuration"]
-wheretogo: ["Rate Limit Filter", "rate-limit.html"]
+wheretogo: ["Replaceable Link Response", "replaceable-link-response.html"]
 ---
 
 # {{ page.title }}

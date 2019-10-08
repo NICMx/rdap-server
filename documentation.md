@@ -44,6 +44,7 @@ title: Documentation Index
 1. [Configuring RedDog's Terms of Service](terms-of-service.html)
 1. [Configuring RedDog's response Notices](notices.html)
 1. [Configuring RedDog's response Events](events.html)
+1. [Replaceable link response in Links](replaceable-link-response.html)
 1. [Rate Limit Filter](rate-limit.html)
 1. [Configuring a Not Implemented Servlet](return-501.html)
 1. [User Authentication](authentication.html)

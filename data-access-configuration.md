@@ -66,6 +66,10 @@ Data access implementation class that the server will use as principal whenever 
 
 List of managed zones by the server, the character '\*' can be used to state that all the zones will be served. This parameter helps the server to serve only the domains under the zones that are needed by the implementer. If the server receives a request of a domain under an unmanaged zone, then the response will be a **404** HTTP response code.
 
+Zones are loaded at server startup, if you add more zones to your database, you need to restart the server.
+
+The encoding of a .properties file is ISO-8859-1, also known as Latin-1. All non-Latin-1 characters must be entered by using Unicode escape characters, e.g. \uHHHH where HHHH is a hexadecimal index of the character in the Unicode character set. If you are going to write an IDN zone, you must be aware of this.
+
 **Example**. If the DNR manages the zones _abc_, _def_, and _ghi_ but wishes that the server only returns the domains under the zones _abc_ and _ghi_, the property can be configured as follows: `zones = abc, ghi`. If the DNR wishes that all of its zones will be served, then the configuration would be: `zones = *` or `zones = abc, def, ghi`.
 
 This table shows the specs of the property:

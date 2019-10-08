@@ -16,7 +16,8 @@ A typical servlet WAR intended to serve registration data. To be plugged into a 
 
 |Download |SHA512    |MD5    |Source code(GitHub)|
 |:--------|:---------|:------|:---------|
-|[**1.4.1**](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-1.4.1.war)|[SHA512](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-1.4.1.war.sha)|[MD5](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-1.4.1.war.md5)|[Link](https://github.com/NICMx/rdap-server/tree/v1.4.1)|
+|[**1.4.3**](https://github.com/NICMx/rdap-server/releases/download/v1.4.3/rdap-server-1.4.3.war)|[SHA512](https://github.com/NICMx/rdap-server/releases/download/v1.4.3/rdap-server-1.4.3.war.sha)|[MD5](https://github.com/NICMx/rdap-server/releases/download/v1.4.3/rdap-server-1.4.3.war.md5)|[Link](https://github.com/NICMx/rdap-server/tree/v1.4.3)|
+|[~~1.4.1~~](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-1.4.1.war)|[SHA512](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-1.4.1.war.sha)|[MD5](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-1.4.1.war.md5)|[Link](https://github.com/NICMx/rdap-server/tree/v1.4.1)|
 |[~~1.4.0~~](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-1.4.0.war)|[SHA512](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-1.4.0.war.sha)|[MD5](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-1.4.0.war.md5)|[Link](https://github.com/NICMx/rdap-server/tree/v1.4.0)|
 
 ## 1.3
