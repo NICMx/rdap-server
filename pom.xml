@@ -4,7 +4,7 @@
 
 	<groupId>mx.nic.labs.reddog</groupId>
 	<artifactId>rdap-server</artifactId>
-	<version>1.4.3</version>
+	<version>1.5.0</version>
 	<packaging>war</packaging>
 
 	<name>mx.nic.labs.reddog:rdap-server</name>
@@ -46,6 +46,11 @@
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>mx.nic.labs.reddog</groupId>
+			<artifactId>rdap-core</artifactId>
+			<version>1.3.0</version>
+		</dependency>
 		<dependency>
 			<groupId>mx.nic.labs.reddog</groupId>
 			<artifactId>rdap-renderer-api</artifactId>
