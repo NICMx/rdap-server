@@ -12,11 +12,17 @@ A typical servlet WAR intended to serve registration data. To be plugged into a 
 - Normal font signals recommended fallback versions in case the previous option fails you [bug reports welcomed](https://github.com/NICMx/rdap-server/issues).
 - ~~Striked~~ versions are not recommended (either because they’re too old or have known critical bugs).
 
+## 1.5
+
+|Download |SHA512    |MD5    |Source code(GitHub)|
+|:--------|:---------|:------|:---------|
+|[**1.5.0**](https://github.com/NICMx/rdap-server/releases/download/v1.5.0/rdap-server-1.5.0.war)|[SHA512](https://github.com/NICMx/rdap-server/releases/download/v1.5.0/rdap-server-1.5.0.war.sha)|[MD5](https://github.com/NICMx/rdap-server/releases/download/v1.5.0/rdap-server-1.5.0.war.md5)|[Link](https://github.com/NICMx/rdap-server/tree/v1.5.0)|
+
 ## 1.4
 
 |Download |SHA512    |MD5    |Source code(GitHub)|
 |:--------|:---------|:------|:---------|
-|[**1.4.3**](https://github.com/NICMx/rdap-server/releases/download/v1.4.3/rdap-server-1.4.3.war)|[SHA512](https://github.com/NICMx/rdap-server/releases/download/v1.4.3/rdap-server-1.4.3.war.sha)|[MD5](https://github.com/NICMx/rdap-server/releases/download/v1.4.3/rdap-server-1.4.3.war.md5)|[Link](https://github.com/NICMx/rdap-server/tree/v1.4.3)|
+|[~~1.4.3~~](https://github.com/NICMx/rdap-server/releases/download/v1.4.3/rdap-server-1.4.3.war)|[SHA512](https://github.com/NICMx/rdap-server/releases/download/v1.4.3/rdap-server-1.4.3.war.sha)|[MD5](https://github.com/NICMx/rdap-server/releases/download/v1.4.3/rdap-server-1.4.3.war.md5)|[Link](https://github.com/NICMx/rdap-server/tree/v1.4.3)|
 |[~~1.4.1~~](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-1.4.1.war)|[SHA512](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-1.4.1.war.sha)|[MD5](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-1.4.1.war.md5)|[Link](https://github.com/NICMx/rdap-server/tree/v1.4.1)|
 |[~~1.4.0~~](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-1.4.0.war)|[SHA512](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-1.4.0.war.sha)|[MD5](https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-1.4.0.war.md5)|[Link](https://github.com/NICMx/rdap-server/tree/v1.4.0)|
 

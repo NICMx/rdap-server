@@ -1,3 +1,4 @@
 _site/
 .project
 *.md.html
+.jekyll-cache

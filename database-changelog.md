@@ -15,7 +15,7 @@ breadcrums: ["Documentation", "documentation.html"]
 
 ## Introduction
 
-As of today Sept 30th, 2019, the last version of the database is 1.4.2 and the data-access-api version is 1.2.0, the following tables shows the version relation that support each component.
+As of today Nov 20th, 2019, the last version of the database is 1.5.0 and the data-access-api version is 1.2.0, the following tables shows the version relation that support each component.
 
 | rdap-sql-provider | rdap-data-access-api |
 | ---:| ---------------------:|
@@ -26,6 +26,7 @@ As of today Sept 30th, 2019, the last version of the database is 1.4.2 and the d
 |1.4.0 | 1.2.0|
 |1.4.1 | 1.2.0|
 |1.4.2 | 1.2.0|
+|1.5.0 | 1.2.0|
 
 <br>
 
@@ -42,6 +43,7 @@ As of today Sept 30th, 2019, the last version of the database is 1.4.2 and the d
 |1.4.0 | 1.2.0|
 |1.4.1 | 1.2.0|
 |1.4.3 | 1.2.0|
+|1.5.0 | 1.2.0|
 
 
 ## Database schema changelog
@@ -63,12 +65,15 @@ As of today Sept 30th, 2019, the last version of the database is 1.4.2 and the d
 - vcard_contact_uri table is added
 - domain and nameserver tables are altered to remove ldh_name column
 - domain and nameserver tables are altered to change the collate of unicode_name column to 'utf8_bin'
-- vcard_postal_info table is altered to add column vpi_country_code after vpi_country
+- vcard\_postal_info table is altered to add column vpi\_country\_code after vpi\_country
 
 ### v1.4.0 to v1.4.1
 
-- variant_name table is altered to remove ldh_name column. Also, unicode_name column collate change to 'utf8_bin'
+- variant\_name table is altered to remove ldh_name column. Also, unicode_name column collate change to 'utf8_bin'
 - more default values are added to country_code table.
+
+### v1.4.1 to v1.5.0
+- Added two new tables user\_global\_consent and user\_consent\_by\_attributes
 
 ## Data-access-api changelog
 
@@ -93,7 +98,7 @@ Here we show some migration queries to ease your migration. Before you start to 
 - In domain, nameserver and variant_name tables, if your unicode_name column is not populated, you need to populate it first.
 - If all your domains and nameservers are not using IDN, just copy the ldh_name column to unicode_name column, or better, just rename it.
 - If you have some IDNs domain and nameserver names in your database, populate the unicode_name column using u-label format.
-- Rdap-sql-provicer v1.4.1 only use the unicode_name column, the ldh_name column is not used anymore.
+- Rdap-sql-provider v1.4.1 only use the unicode_name column, the ldh_name column is not used anymore.
  
 If you meet the previous consideration, then just pick the migration queries fall-through from your current version of database schema.
 
@@ -234,6 +239,64 @@ CHANGE COLUMN `vna_unicode_name` `vna_unicode_name` VARCHAR(255) CHARACTER SET '
 INSERT INTO rdap.country_code VALUES (531,'CW');
 INSERT INTO rdap.country_code VALUES (534,'SX');
 INSERT INTO rdap.country_code VALUES (535,'BQ');
+```
+
+V1.5.0
+
+```
+-- -----------------------------------------------------
+-- Table `rdap`.`user_consent_by_attributes`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `rdap`.`user_consent_by_attributes` (
+  `ent_id` BIGINT NOT NULL,
+  `uca_handle` TINYINT NOT NULL,
+  `uca_name` TINYINT NOT NULL,
+  `uca_companyName` TINYINT NOT NULL,
+  `uca_companyURL` TINYINT NOT NULL,
+  `uca_email` TINYINT NOT NULL,
+  `uca_voice` TINYINT NOT NULL,
+  `uca_cellphone` TINYINT NOT NULL,
+  `uca_fax` TINYINT NOT NULL,
+  `uca_jobTitle` TINYINT NOT NULL,
+  `uca_contactUri` TINYINT NOT NULL,
+  `uca_type` TINYINT NOT NULL,
+  `uca_country` TINYINT NOT NULL,
+  `uca_countryCode` TINYINT NOT NULL,
+  `uca_city` TINYINT NOT NULL,
+  `uca_state` TINYINT NOT NULL,
+  `uca_street1` TINYINT NOT NULL,
+  `uca_street2` TINYINT NOT NULL,
+  `uca_street3` TINYINT NOT NULL,
+  `uca_postalCode` TINYINT NOT NULL,
+  PRIMARY KEY (`ent_id`),
+  UNIQUE INDEX `ent_id_UNIQUE` (`ent_id` ASC),
+  CONSTRAINT `fk_user_consent_by_attributes_entity`
+    FOREIGN KEY (`ent_id`)
+    REFERENCES `rdap`.`entity` (`ent_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+COMMENT = 'Table for user consent by attribute for contact information';
+
+-- -----------------------------------------------------
+-- Table `rdap`.`user_global_consent`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `rdap`.`user_global_consent` (
+  `ent_id` BIGINT NOT NULL,
+  `ugc_consent` TINYINT NOT NULL,
+  PRIMARY KEY (`ent_id`),
+  UNIQUE INDEX `ent_id_UNIQUE` (`ent_id` ASC),
+  CONSTRAINT `fk_user_global_consent_entity`
+    FOREIGN KEY (`ent_id`)
+    REFERENCES `rdap`.`entity` (`ent_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+COMMENT = 'Table for user global consent for contact information';
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 ```
 
 

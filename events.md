@@ -1,7 +1,7 @@
 ---
 title: Configuring RedDog's response Events
 breadcrums: ["Documentation", "documentation.html", "Further Custom Configuration", "documentation.html#further-custom-configuration"]
-wheretogo: ["Replaceable Link Response", "replaceable-link-response.html"]
+wheretogo: ["User consent configuration", "user-consent.html"]
 ---
 
 # {{ page.title }}

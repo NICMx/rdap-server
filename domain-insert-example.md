@@ -10,7 +10,7 @@ rawScriptLink: https://raw.githubusercontent.com/NICMx/rdap-sql-provider/master/
 
 ## Introduction
 
-This is an step guide to create a simple domain for RedDog
+This step-by-step guide is intended to create a domain RDAP object for RedDog:
 
 Create the zone or TLD, in this case our TLD is "example"
 
@@ -67,14 +67,15 @@ INSERT INTO `rdap`.`domain_nameservers` (`dom_id`, `nse_id`) VALUES ('1', '1');
 INSERT INTO `rdap`.`domain_nameservers` (`dom_id`, `nse_id`) VALUES ('1', '2');
 ```
 
-Create an entity that represent a registrar, this entity could be linked to more domains that are related to this registrar
+Create an entity that represent a registrar, this entity could be linked to more domains that are related to this registrar. (rol_id is a [catalog]({{ page.scriptLink }}#L1672))
+
 
 ```
 INSERT INTO `rdap`.`entity` (`ent_id`, `ent_handle`) VALUES ('1', 'registrar1');
--- rol_id is a [catalog]({{ page.scriptLink }}#)L1672
+-- rol_id is a catalog
 INSERT INTO `rdap`.`entity_role` (`ent_id`, `rol_id`) VALUES ('1', '6');
 -- Create the contact information
-INSERT INTO `rdap`.`vcard` (`vca_id`, `vca_name`, `vca_company_name`, `vca_company_url`, `vca_email`, `vca_voice`, `vca_fax`, `vca_job_title`) VALUES ('1', 'Domains4Everyone', 'Dom4E', 'Dom4e.com', 'contact@dom4e.com', '4511231234', '', '');
+INSERT INTO `rdap`.`vcard` (`vca_id`, `vca_name`, `vca_company_name`, `vca_company_url`, `vca_email`, `vca_voice`, `vca_fax`, `vca_job_title`) VALUES ('1', 'Domains4Everyone', 'Dom4E', 'example.org', 'contact@example.org', '4511231234', '', '');
 INSERT INTO `rdap`.`vcard_postal_info` (`vpi_id`, `vca_id`, `vpi_type`, `vpi_country`, `vpi_country_code`, `vpi_city`, `vpi_street1`, `vpi_state`, `vpi_postal_code`) VALUES ('1', '1', '', 'US', 'US', 'TX', 'street1', 'TX', '78520');
 INSERT INTO `rdap`.`entity_contact` (`ent_id`, `vca_id`) VALUES ('1', '1');
 -- Because this entity is a registrar, It could have a public ID
@@ -86,7 +87,7 @@ Now we create an abuse contact for the registrar
 
 ```
 INSERT INTO `rdap`.`entity` (`ent_id`, `ent_handle`) VALUES ('2', 'registrar1_abuse');
-INSERT INTO `rdap`.`vcard` (`vca_id`, `vca_name`, `vca_company_name`, `vca_email`, `vca_voice`, `vca_job_title`) VALUES ('2', 'John Doe', 'Dom4e', 'abuse@dom4e.com', '4511231234', 'abuse contact');
+INSERT INTO `rdap`.`vcard` (`vca_id`, `vca_name`, `vca_company_name`, `vca_email`, `vca_voice`, `vca_job_title`) VALUES ('2', 'John Doe', 'Dom4e', 'abuse@example.org', '4511231234', 'abuse contact');
 INSERT INTO `rdap`.`vcard_postal_info` (`vpi_id`, `vca_id`, `vpi_country`, `vpi_country_code`, `vpi_city`, `vpi_street1`, `vpi_state`, `vpi_postal_code`) VALUES ('2', '2', 'US', 'US', 'TX', 'street1', 'TX', '78520');
 INSERT INTO `rdap`.`entity_contact` (`ent_id`, `vca_id`) VALUES ('2', '2');
 ```
@@ -101,7 +102,7 @@ Going back to our domain, we create an entity for the registrant
 
 ```
 INSERT INTO `rdap`.`entity` (`ent_id`, `ent_handle`) VALUES ('3', 'registrant_myfirstdomain');
-INSERT INTO `rdap`.`vcard` (`vca_id`, `vca_name`, `vca_company_name`, `vca_email`, `vca_voice`) VALUES ('3', 'Jane Doe', 'myfirstdomain', 'JaneDoe@publicmail.com', '4517894561');
+INSERT INTO `rdap`.`vcard` (`vca_id`, `vca_name`, `vca_company_name`, `vca_email`, `vca_voice`) VALUES ('3', 'Jane Doe', 'myfirstdomain', 'JaneDoe@example.com', '4517894561');
 INSERT INTO `rdap`.`vcard_postal_info` (`vpi_id`, `vca_id`, `vpi_country`, `vpi_country_code`, `vpi_city`, `vpi_street1`, `vpi_state`, `vpi_postal_code`) VALUES ('3', '3', 'MX', 'MX', 'CDMX', 'calle1', 'CDMX', '01000');
 INSERT INTO `rdap`.`entity_contact` (`ent_id`, `vca_id`) VALUES ('3', '3');
 ```
@@ -187,7 +188,7 @@ Self links are generated automatically
                 "email",
                 {},
                 "text",
-                "abuse@dom4e.com"
+                "abuse@example.org"
               ],
               [
                 "tel",
@@ -255,13 +256,13 @@ Self links are generated automatically
             "url",
             {},
             "uri",
-            "Dom4e.com"
+            "example.org"
           ],
           [
             "email",
             {},
             "text",
-            "contact@dom4e.com"
+            "contact@example.org"
           ],
           [
             "tel",
@@ -327,7 +328,7 @@ Self links are generated automatically
             "email",
             {},
             "text",
-            "JaneDoe@publicmail.com"
+            "JaneDoe@example.com"
           ],
           [
             "tel",

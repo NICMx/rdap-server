@@ -93,3 +93,6 @@ The following table shows the database tables, to see more detail of each table 
 | vcard_contact_uri | This table contains the contact uri for vCard | [View more]({{ page.scriptLink }}#L62) |
 | vcard_postal_info | This table contains the VCards postal information. | [View more]({{ page.scriptLink }}#L1110) |
 | zone | This table contains the zones managed by the RDAP server owner. | [View more]({{ page.scriptLink }}#L167) |
+| user_consent_by_attributes | Table for user consent by attribute to publish his contact information. | [View more]({{ page.scriptLink }}#L1611) |
+| user_global_consent | TTable for user global consent to publish his contact information. | [View more]({{ page.scriptLink }}#L1647) |
+

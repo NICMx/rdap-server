@@ -16,6 +16,7 @@ wheretogo: ["Deploying rdap-server with the customized SQL Provider", "server-in
    1. [`is_reverse_ipv4_enabled`](#is_reverse_ipv4_enabled)
    1. [`is_reverse_ipv6_enabled`](#is_reverse_ipv6_enabled)
    1. [`is_ns_sharing_name_enabled`](#is_ns_sharing_name_enabled)
+   1. [`user_consent_type`](#user_consent_type)
 
 
 ## Introduction
@@ -107,3 +108,14 @@ This table shows the specs of the property:
 | Required? | Type | Default | Example |
 |--------------------|--------|---------|-------------|
 | ![No](img/red_x.svg) | Boolean | false | is_ns_sharing_name_enabled = true |
+
+
+### `user_consent_type`
+
+Enum value (NONE, ATTRIBUTES, or GLOBAL) indicates the type of user consent this server supports.
+
+This table shows the specs of the property:
+
+| Required? | Type | Default | Example |
+|--------------------|--------|---------|-------------|
+| ![No](img/red_x.svg) | Enum | NONE | user_consent_type = NONE |

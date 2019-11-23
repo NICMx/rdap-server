@@ -1,11 +1,11 @@
 markdown: kramdown
 
-latest-server: 1.4.3
+latest-server: 1.5.0
 latest-demo-server: 1.4.1
 latest-data-access-api: 1.2.0
-latest-sql-provider: 1.4.2
+latest-sql-provider: 1.5.0
 latest-sample-data-impl: 0.0.2
-latest-apache-tomcat: 8.5.46
+latest-apache-tomcat: 8.5.49
 
 defaults:
   -

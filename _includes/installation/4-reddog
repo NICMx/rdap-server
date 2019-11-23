@@ -3,7 +3,7 @@
 	mkdir $CATALINA_HOME/webapps/rdap
 	cd $CATALINA_HOME/webapps/rdap
 	# www.reddog.mx/server-download.html
-	wget https://github.com/NICMx/releases/raw/master/RedDog/rdap-server-{{ site.latest-server }}.war
+	wget https://github.com/NICMx/rdap-server/releases/download/v{{ site.latest-server }}/rdap-server-{{ site.latest-server }}.war
 	jar -xvf rdap-server-{{ site.latest-server }}.war
 	rm rdap-server-{{ site.latest-server }}.war
 

@@ -31,6 +31,7 @@ title: Documentation Index
 ### RedDog's builtin schema
 
 1. [Database version changelog](database-changelog.html)
+2. [Example\: Creating a domain into RedDog's built-in schema](domain-insert-example.html)
 
 ## Rendering Response Data
 
@@ -44,6 +45,7 @@ title: Documentation Index
 1. [Configuring RedDog's Terms of Service](terms-of-service.html)
 1. [Configuring RedDog's response Notices](notices.html)
 1. [Configuring RedDog's response Events](events.html)
+1. [User consent configuration](user-consent.html)
 1. [Replaceable link response in Links](replaceable-link-response.html)
 1. [Rate Limit Filter](rate-limit.html)
 1. [Configuring a Not Implemented Servlet](return-501.html)
